@@ -1,6 +1,6 @@
 # eosforcewallet
 
-> eos wallet
+> eosforce 桌面钱包
 
 ## 下载
 
