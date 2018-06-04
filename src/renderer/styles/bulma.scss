@@ -1,0 +1,11 @@
+@import '~bulma/sass/utilities/initial-variables';
+
+$family-sans-serif: 'Microsoft YaHei', BlinkMacSystemFont, -apple-system, 'Segoe UI',
+  'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', 'Helvetica', sans-serif;
+
+$family-primary: $family-sans-serif;
+
+$tablet: 360px;
+$desktop: 769px;
+
+@import '~bulma/bulma';
