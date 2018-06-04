@@ -304,7 +304,10 @@ a:hover{
 }
 
 tr.is-vote{
-    background: rgba(0,0,0,.3);
+    background: rgba(0,0,0,.6);
+    td{
+        color:#408ee1 !important
+    }
 }
 .table td, .table th{
     border:none;

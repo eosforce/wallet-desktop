@@ -40,7 +40,6 @@ import { timestamp, number, rate, msToDay } from '@/utils/filter';
 
 export default {
   name: 'AccountOverview',
-  data() {},
   computed: {
     bpInfo() {
       return this.account.info.bpInfo;

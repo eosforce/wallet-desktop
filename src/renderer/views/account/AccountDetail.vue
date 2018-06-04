@@ -17,6 +17,7 @@
         </a>
       </div>
     </div>
+    <div :is="currentTab" keep-alive></div>
     <router-view name="modal"></router-view>
   </div>
 </template>
