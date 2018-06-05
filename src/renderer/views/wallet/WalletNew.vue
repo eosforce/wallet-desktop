@@ -36,6 +36,9 @@
             </p>
           </div>
         </div>
+        <div class="field">
+          <p class="help tips">* 私钥请做好备份！</p>
+        </div>
         <div class="field" style="color:#fff">
           <input type="checkbox" required tabindex="-1" v-model="isAgreeTerm" /> 我已经阅读并同意<a href="#" tabindex="-1">服务及隐私条款</a>
         </div>
