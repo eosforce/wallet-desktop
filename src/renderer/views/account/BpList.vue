@@ -12,12 +12,13 @@
       <thead>
         <tr>
           <th>排名</th>
-          <th>节点用户名</th>
+          <th>用户名</th>
+          <th>佣金费率</th>
           <th>总得票数</th>
-          <th>奖池金额</th>
-          <th>手续费率</th>
-          <th>我的投票</th>
           <th>节点票龄</th>
+          <th>奖池金额</th>
+          <th>我的投票</th>
+          <th>我的票龄</th>
           <th>待领取分红</th>
           <th>赎回金额</th>
           <th>操作</th>
@@ -27,13 +28,14 @@
         <tr v-for="bp in account.bpsTable" :key="bp.name" :class="{'is-vote': bp.vote}">
           <td>{{bp.order}}</td>
           <td>{{bp.name}}</td>
-          <td>{{bp.total_staked | number}}</td>
-          <td>{{bp.rewards_pool | number}}</td>
           <td>{{bp.commission_rate | rate}}</td>
+          <td>{{bp.total_staked | number}}</td>
+          <td>{{bp.bp_voteage | sTom}}分钟</td>
+          <td>{{bp.rewards_pool | number}}</td>
           <td>{{(bp.vote && bp.vote.staked) | number}}</td>
-          <td>{{bp.average | msToDay}}</td>
+          <td>{{bp.me_voteage | sTom}}分钟</td>
           <td>{{(bp.vote && bp.vote.reward) | number}}</td>
-          <td>{{(bp.vote && bp.vote.unstaking) | number}}</td>
+          <td>{{bp.unstaking | number}}</td>
           <td>
             <!-- <select name="selected">
                 <option value="投票"><router-link class="button is-small is-outlined" :to="{name: 'vote', params: { bpname: bp.name }}">投票</router-link></option>
@@ -51,15 +53,15 @@
 </template>
 
 <script>
-import { mapState, mapGetters } from 'vuex'
+import { mapState, mapGetters } from 'vuex';
 
-import { Getters } from '@/constants/types.constants'
-import { number, rate, msToDay } from '@/utils/filter'
+import { Getters } from '@/constants/types.constants';
+import { number, rate, msToDay, sTom } from '@/utils/filter';
 
 export default {
   name: 'TransferRecord',
   data() {
-    return {}
+    return {};
   },
   computed: {
     ...mapState(['account']),
@@ -68,16 +70,17 @@ export default {
     number,
     rate,
     msToDay,
+    sTom,
   },
-}
+};
 </script>
 
 <style scoped>
-  /* .table td .button.is-small, .table th .button.is-small{
+/* .table td .button.is-small, .table th .button.is-small{
      margin-bottom: 5px
   } */
-  .button{
-     padding-left: calc(0.625em - 1px);
-    padding-right: calc(0.625em - 1px);
-  }
+.button {
+  padding-left: calc(0.625em - 1px);
+  padding-right: calc(0.625em - 1px);
+}
 </style>
