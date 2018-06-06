@@ -87,43 +87,25 @@ export const clacReward = (staked, me_voteage, total_staked, bp_voteage, rewards
   const rewardsPoolAmount = toBigNumber(rewards_pool)
   if (!totalStakedAmount.isZero() && !bpVoteageAmount.isZero()) {
     return stakedAmount
-<<<<<<< HEAD
-      .multipliedBy(time)
-      .multipliedBy(rewardsPoolAmount)
-      .dividedBy(totalVoteageAmount.plus(totalStakedAmount.multipliedBy(time)))
-=======
       .multipliedBy(meVoteageAmount)
-      .dividedBy(totalStakedAmount.multipliedBy(bpVoteageAmount))
       .multipliedBy(rewardsPoolAmount)
->>>>>>> change bp
+      .dividedBy(totalStakedAmount.multipliedBy(bpVoteageAmount))
   } else {
     return toBigNumber(0)
   }
 }
 
-<<<<<<< HEAD
-//
-export const clacAverage = (total_voteage, total_staked, voteage_update_time) => {
-=======
-// 计算节点票龄
-export const calcBpVoteage = (total_voteage, total_staked, voteage_update_time) => {
-  const totalVoteageAmount = toBigNumber(total_voteage)
->>>>>>> change bp
-  const totalStakedAmount = toBigNumber(total_staked)
+// 计算票龄
+export const calcVoteage = (voteage, staked, voteage_update_time) => {
+  const totalStakedAmount = toBigNumber(staked)
+  const totalVoteageAmount = toBigNumber(voteage)
   const voteageUpdateTimestamp = toBigNumber(getTimeStamp(voteage_update_time))
   const nowTimestamp = toBigNumber(getTimeStamp())
   const time = nowTimestamp.minus(voteageUpdateTimestamp)
   if (!totalStakedAmount.isZero()) {
-<<<<<<< HEAD
-    return toBigNumber(totalVoteageAmount)
+    return totalVoteageAmount
       .dividedBy(toBigNumber(totalStakedAmount))
       .plus(time)
-=======
-    return totalVoteageAmount
-      .dividedBy(10000)
-      .plus(totalStakedAmount.multipliedBy(time))
-      .dividedBy(totalStakedAmount)
->>>>>>> change bp
   } else {
     return toBigNumber(0)
   }

@@ -9,14 +9,30 @@ import {
   calcTotalAmount,
   clacReward,
   handleApiError,
-  calcBpVoteage,
+  calcVoteage,
 } from '@/utils/util';
 
 export const getNodeList = () => {
   return Promise.resolve([
     {
+      node_name: 'ali1',
+      location: '上海',
+      node_addr: '47.98.151.194',
+      port_http: '8888',
+      port_ssl: '',
+      port_p2p: '9876',
+    },
+    {
+      node_name: 'ali2',
+      location: '北京',
+      node_addr: '47.98.149.73',
+      port_http: '8888',
+      port_ssl: '',
+      port_p2p: '9876',
+    },
+    {
       node_name: 'test1',
-      // location: '日本, 东京',
+      location: '日本',
       node_addr: 'testnet1.bp.eosforce.io',
       port_http: '8888',
       port_ssl: '',
@@ -24,7 +40,7 @@ export const getNodeList = () => {
     },
     {
       node_name: 'test2',
-      // location: '加利福尼亚',
+      location: '日本',
       node_addr: 'testnet2.bp.eosforce.io',
       port_http: '8888',
       port_ssl: '',
@@ -32,7 +48,7 @@ export const getNodeList = () => {
     },
     {
       node_name: 'test3',
-      // location: '新加坡',
+      location: '日本',
       node_addr: 'testnet3.bp.eosforce.io',
       port_http: '8888',
       port_ssl: '',
@@ -40,7 +56,7 @@ export const getNodeList = () => {
     },
     {
       node_name: 'test4',
-      // location: '欧洲, 爱尔兰',
+      location: '日本',
       node_addr: 'testnet4.bp.eosforce.io',
       port_http: '8888',
       port_ssl: '',
@@ -173,16 +189,16 @@ export const getRewardsAndBpsTable = httpEndpoint => async (votesTable, accountN
     }
 
     const { rewards_pool, total_voteage, total_staked, voteage_update_time } = bpRow;
-    bpRow.bp_voteage = calcBpVoteage(total_voteage, total_staked, voteage_update_time);
+    bpRow.bp_voteage = calcVoteage(total_voteage, total_staked, voteage_update_time);
     if (vote) {
       const { bpname, staked, stake_time, unstaking, voteage } = vote;
-      bpRow.me_voteage = calcBpVoteage(voteage, total_staked, vote.voteage_update_time);
-      const reward = toAsset(clacReward(staked, bpRow.me_voteage, total_staked, bpRow.bp_voteage, rewards_pool));
+      const me_voteage = calcVoteage(vote.voteage, vote.staked, vote.voteage_update_time);
+      const reward = toAsset(clacReward(vote.staked, me_voteage, total_staked, bpRow.bp_voteage, rewards_pool));
       const average = toBigNumber(total_voteage)
         .dividedBy(10000)
         .dividedBy(toBigNumber(total_staked))
         .toString();
-      const rewardRow = {
+      const extraRow = {
         bpname,
         staked,
         unstaking,
@@ -190,12 +206,13 @@ export const getRewardsAndBpsTable = httpEndpoint => async (votesTable, accountN
         rewards_pool,
         total_voteage,
         total_staked,
+        me_voteage,
         reward,
         average,
       };
-      rewardsTable.push({ ...rewardRow });
+      rewardsTable.push({ ...extraRow });
 
-      bpRow.vote = { ...rewardRow };
+      bpRow.vote = { ...extraRow };
       bpsHaveVoteTable.push(bpRow);
     } else {
       bpsNoVoteTable.push(bpRow);
@@ -256,7 +273,7 @@ export const transfer = config => {
 export const vote = config => {
   return ({ voter, bpname, amount } = {}) => {
     return Eos.Localnet(config)
-      .vote({ voter, bpname, change: toAsset(amount) })
+      .vote({ voter, bpname, stake: toAsset(amount) })
       .catch(err => {
         return handleApiError(err);
       });

@@ -25,7 +25,7 @@
         <li>总赎回金额:<span class="cl">{{account.info.unstakingTotal | number}}</span></li>
         <li v-if="bpInfo">手续费率:<span class="cl">{{bpInfo.commission_rate | rate}}</span></li>
         <li v-if="bpInfo">总得票金额:<span class="cl">{{bpInfo.total_staked | number}}</span></li>
-        <li v-if="bpInfo">节点票龄:<span class="cl">{{bpInfo.average | msToDay}}</span></li>
+        <li v-if="bpInfo">节点票龄:<span class="cl">{{bpInfo.average | voteage}}</span></li>
         <li v-if="bpInfo">票龄更新时间:<span class="cl">{{bpInfo.voteage_update_time | timestamp}}</span></li>
       </ul>
     </div>
@@ -36,7 +36,7 @@
 import { mapGetters, mapState } from 'vuex';
 
 import { Getters } from '@/constants/types.constants';
-import { timestamp, number, rate, msToDay } from '@/utils/filter';
+import { timestamp, number, rate, voteage } from '@/utils/filter';
 
 export default {
   name: 'AccountOverview',
@@ -55,7 +55,7 @@ export default {
     },
   },
   filters: {
-    msToDay,
+    voteage,
     rate,
     timestamp,
     number,

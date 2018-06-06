@@ -2669,9 +2669,9 @@ eosjs-ecc@^4.0.0:
     ecurve "^1.0.5"
     randombytes "^2.0.5"
 
-"eosjs@git+https://github.com/eosforce/eosjs.git#v0.5.2":
+"eosjs@git+https://github.com/eosforce/eosjs.git#v0.6.0":
   version "12.0.0"
-  resolved "git+https://github.com/eosforce/eosjs.git#2afe7deb4b87077bc16225e02d07ef1a439f0f38"
+  resolved "git+https://github.com/eosforce/eosjs.git#1d53e59198a4e249622838ac5f7888e77ba4407f"
   dependencies:
     babel-polyfill "^6.26.0"
     binaryen "^37.0.0"

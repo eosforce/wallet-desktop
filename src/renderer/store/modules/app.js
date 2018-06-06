@@ -44,7 +44,7 @@ const actions = {
           } else {
             r.value = `http://${node.node_addr}:${node.port_http}`
           }
-          r.name = `${node.node_name} ${r.value}`
+          r.name = `${node.node_name} ${node.location} ${r.value}`
           result.push(r)
           return result
         }, [])
