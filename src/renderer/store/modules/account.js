@@ -52,14 +52,12 @@ const actions = {
     });
   },
   [Actions.GET_ACCOUNT_INFO]({ state, dispatch, commit, getters }) {
-    const accountName = getters[Getters.CURRENT_ACCOUNT_NAME]
-    return getAccountInfo(getters[Getters.CURRENT_NODE])(accountName).then(
-      ({ info, bpsTable }) => {
-        commit(Mutations.SET_ACCOUNT_INFO, { info });
-        commit(Mutations.SET_BPS_TABLE, { bpsTable });
-        return dispatch(Actions.GET_TRANSFER_RECORD, { accountName });
-      }
-    );
+    const accountName = getters[Getters.CURRENT_ACCOUNT_NAME];
+    return getAccountInfo(getters[Getters.CURRENT_NODE])(accountName).then(({ info, bpsTable }) => {
+      commit(Mutations.SET_ACCOUNT_INFO, { info });
+      commit(Mutations.SET_BPS_TABLE, { bpsTable });
+      return dispatch(Actions.GET_TRANSFER_RECORD, { accountName });
+    });
   },
   [Actions.GET_TRANSFER_RECORD]({ commit, getters }, { accountName, pos, offset }) {
     return getTransferRecord(getters[Getters.CURRENT_NODE])({ accountName, pos, offset }).then(result => {

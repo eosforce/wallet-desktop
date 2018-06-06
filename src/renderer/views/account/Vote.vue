@@ -74,13 +74,13 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex'
+import { mapActions, mapState } from 'vuex';
 
-import Message from '@/components/Message'
-import ConfirmModal from '@/components/ConfirmModal'
-import { Actions } from '@/constants/types.constants'
-import { isValidAmount } from '@/utils/rules'
-import { asset } from '@/utils/filter'
+import Message from '@/components/Message';
+import ConfirmModal from '@/components/ConfirmModal';
+import { Actions } from '@/constants/types.constants';
+import { isValidAmount } from '@/utils/rules';
+import { asset } from '@/utils/filter';
 
 export default {
   name: 'vote',
@@ -91,40 +91,40 @@ export default {
 
       showConfirm: false,
       submitting: false,
-    }
+    };
   },
   computed: {
     voter() {
-      return this.$route.params.accountName
+      return this.$route.params.accountName;
     },
     bpname() {
-      return this.$route.params.bpname
+      return this.$route.params.bpname;
     },
     stakedAmount() {
-      const bp = this.account.bpsTable && this.account.bpsTable.find(bp => this.bpname === bp.name)
+      const bp = this.account.bpsTable && this.account.bpsTable.find(bp => this.bpname === bp.name);
       if (bp) {
         if (bp.vote) {
-          return bp.vote.staked
+          return bp.vote.staked;
         } else {
-          return '0 EOS'
+          return '0 EOS';
         }
       } else {
-        return null
+        return null;
       }
     },
     isValidAmount() {
-      return this.amount && isValidAmount(this.amount)
+      return this.amount && isValidAmount(this.amount);
     },
     ...mapState(['app', 'account']),
   },
   methods: {
     confirmInfo() {
       if (this.isValidAmount) {
-        this.showConfirm = true
+        this.showConfirm = true;
       }
     },
     submit() {
-      this.submitting = true
+      this.submitting = true;
       this.vote({
         amount: this.amount,
         bpname: this.bpname,
@@ -132,26 +132,26 @@ export default {
         voter: this.voter,
       })
         .then(result => {
-          Message.success('投票成功')
+          Message.success('投票成功');
         })
         .catch(err => {
           Message.error({
             title: `${err.code ? `code: ${err.code}` : '投票失败'}`,
             message: err.message,
-          })
-          this.submitting = false
-          return Promise.reject(err)
+          });
+          this.submitting = false;
+          return Promise.reject(err);
         })
         .then(() => {
-          this.getAccountInfo({ accountName: this.voter })
-          this.close()
-        })
+          this.getAccountInfo({ accountName: this.voter });
+          this.close();
+        });
     },
     toggle(key, val) {
-      return (this[key] = val === undefined ? !this[key] : val)
+      return (this[key] = val === undefined ? !this[key] : val);
     },
     close() {
-      this.$router.push({ name: 'accountDetail' })
+      this.$router.push({ name: 'accountDetail' });
     },
     ...mapActions({
       getAccountInfo: Actions.GET_ACCOUNT_INFO,
@@ -164,5 +164,5 @@ export default {
   components: {
     ConfirmModal,
   },
-}
+};
 </script>

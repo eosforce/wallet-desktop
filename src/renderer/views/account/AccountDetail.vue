@@ -23,35 +23,35 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
+import { mapState, mapActions } from 'vuex';
 
-import Message from '@/components/Message'
-import { Actions, Getters } from '@/constants/types.constants'
-import AccountOverview from '@/views/account/AccountOverview'
-import TransferRecord from '@/views/account/TransferRecord'
-import BpList from '@/views/account/BpList'
+import Message from '@/components/Message';
+import { Actions, Getters } from '@/constants/types.constants';
+import AccountOverview from '@/views/account/AccountOverview';
+import TransferRecord from '@/views/account/TransferRecord';
+import BpList from '@/views/account/BpList';
 
 export default {
   name: 'AccountDetail',
   data() {
     return {
       currentTab: 'BpList', // currentTab 用于标识当前触发的子组件,
-    }
+    };
   },
   computed: {
     accountName() {
-      return this.$route.params.accountName
+      return this.$route.params.accountName;
     },
     walletData() {
-      return this.wallet.data || {}
+      return this.wallet.data || {};
     },
     ...mapState(['wallet']),
   },
   methods: {
     initAccount() {
       return this.initApp().then(() => {
-        this.fetchAccout({ accountName: this.accountName })
-      })
+        this.fetchAccout({ accountName: this.accountName });
+      });
     },
     ...mapActions({
       fetchAccout: Actions.FETCH_ACCOUNT,
@@ -59,22 +59,22 @@ export default {
       initApp: Actions.INIT_APP,
     }),
     toggleTab: function(tab) {
-      this.currentTab = tab // tab 为当前触发标签页的组件名
+      this.currentTab = tab; // tab 为当前触发标签页的组件名
     },
   },
   beforeRouteUpdate(to, from, next) {
     if (to.params.accountName !== from.params.accountName) {
-      this.initAccount()
+      this.initAccount();
     }
-    next()
+    next();
   },
   created() {
     if (this.walletData.publicKey) {
-      return this.initAccount()
+      return this.initAccount();
     } else {
       this.fetchWallet({ id: this.$route.params.walletId }).then(() => {
-        return this.initAccount()
-      })
+        return this.initAccount();
+      });
     }
   },
   components: {
@@ -82,7 +82,7 @@ export default {
     TransferRecord,
     BpList,
   },
-}
+};
 </script>
 
 <style scoped>

@@ -1,4 +1,4 @@
-import { Notification } from 'element-ui'
+import { Notification } from 'element-ui';
 
 export default {
   getConfig(defaultConfig, value) {
@@ -10,7 +10,7 @@ export default {
       : {
           ...defaultConfig,
           ...value,
-        }
+        };
   },
   warning(value) {
     return Notification(
@@ -20,9 +20,9 @@ export default {
           duration: 3000,
           position: 'top-left',
         },
-        value,
-      ),
-    )
+        value
+      )
+    );
   },
   error(value) {
     return Notification(
@@ -33,9 +33,9 @@ export default {
           duration: 6000,
           position: 'top-left',
         },
-        value,
-      ),
-    )
+        value
+      )
+    );
   },
   success(value) {
     return Notification(
@@ -45,8 +45,8 @@ export default {
           duration: 3000,
           position: 'top-left',
         },
-        value,
-      ),
-    )
+        value
+      )
+    );
   },
-}
+};

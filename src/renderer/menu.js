@@ -1,6 +1,6 @@
-import { remote } from 'electron'
+import { remote } from 'electron';
 
-const { Menu } = remote
+const { Menu } = remote;
 
 export default () => {
   const template = [
@@ -32,7 +32,7 @@ export default () => {
         { role: 'togglefullscreen' },
       ],
     },
-  ]
+  ];
 
-  Menu.setApplicationMenu(Menu.buildFromTemplate(template))
-}
+  Menu.setApplicationMenu(Menu.buildFromTemplate(template));
+};

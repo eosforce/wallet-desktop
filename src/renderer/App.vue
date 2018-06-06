@@ -6,22 +6,22 @@
 </template>
 
 <script>
-import Message from '@/components/Message'
+import Message from '@/components/Message';
 
-import { Actions } from '@/constants/types.constants'
+import { Actions } from '@/constants/types.constants';
 
 export default {
   name: 'eosforcewallet',
   beforeCreate() {
-    document.title = `EOSForce钱包 测试网 ${this.$electron.remote.app.getVersion()}`
+    document.title = `EOSForce钱包 测试网 ${this.$electron.remote.app.getVersion()}`;
     this.$store.dispatch(Actions.INIT_APP).catch(err => {
       Message.error({
         title: '初始化错误',
         message: '节点获取失败',
-      })
-    })
+      });
+    });
   },
-}
+};
 </script>
 
 <style lang="scss">

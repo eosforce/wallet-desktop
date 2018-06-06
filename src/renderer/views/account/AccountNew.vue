@@ -82,13 +82,13 @@
 </template>
 
 <script>
-import { mapActions, mapGetters, mapState } from 'vuex'
+import { mapActions, mapGetters, mapState } from 'vuex';
 
-import Message from '@/components/Message'
-import ConfirmModal from '@/components/ConfirmModal'
-import { Actions, Getters } from '@/constants/types.constants'
-import { randomKey, privateToPublic } from '@/utils/util'
-import { isValidAccountName, isValidPublic } from '@/utils/rules'
+import Message from '@/components/Message';
+import ConfirmModal from '@/components/ConfirmModal';
+import { Actions, Getters } from '@/constants/types.constants';
+import { randomKey, privateToPublic } from '@/utils/util';
+import { isValidAccountName, isValidPublic } from '@/utils/rules';
 
 export default {
   name: 'AccountNew',
@@ -101,14 +101,14 @@ export default {
       modalSubmitting: false,
       showConfirm: false,
       password: '',
-    }
+    };
   },
   computed: {
     isValidAccountName() {
-      return this.accountName && isValidAccountName(this.accountName)
+      return this.accountName && isValidAccountName(this.accountName);
     },
     isValidPublicKey() {
-      return this.publicKey && isValidPublic(this.publicKey)
+      return this.publicKey && isValidPublic(this.publicKey);
     },
     nodeList() {
       return this.app.nodeList.concat(
@@ -119,11 +119,11 @@ export default {
                 name: `本地用户：${name}`,
                 account: name,
                 publicKey: wallet.publicKey,
-              }
-            }),
-          )
-        }, []),
-      )
+              };
+            })
+          );
+        }, [])
+      );
     },
     ...mapState(['app']),
   },
@@ -131,9 +131,9 @@ export default {
     confirmInfo() {
       if (this.isValidAccountName && this.isValidPublicKey && this.accountCreator) {
         if (this.accountCreator.account) {
-          this.showConfirm = true
+          this.showConfirm = true;
         } else {
-          this.submit('node')
+          this.submit('node');
         }
       }
     },
@@ -141,44 +141,44 @@ export default {
       Promise.resolve()
         .then(() => {
           if (type === 'node') {
-            this.submitting = true
+            this.submitting = true;
             return this.newAccountFromNode({
               publicKey: this.publicKey,
               accountName: this.accountName,
               node: this.accountCreator.value,
-            })
+            });
           } else if (type === 'creator') {
-            this.modalSubmitting = true
+            this.modalSubmitting = true;
             return this.newAccount({
               password: this.password,
               publicKey: this.publicKey,
               accountName: this.accountName,
               creator: this.accountCreator.account,
-            })
+            });
           }
         })
         .then(result => {
-          Message.success('用户创建成功')
+          Message.success('用户创建成功');
         })
         .catch(err => {
           Message.error({
             title: `${err.code ? `code: ${err.code}` : '创建账户失败'}`,
             message: err.message,
-          })
-          this.submitting = false
-          this.modalSubmitting = false
-          return Promise.reject(err)
+          });
+          this.submitting = false;
+          this.modalSubmitting = false;
+          return Promise.reject(err);
         })
         .then(() => {
-          this.fetchWalletList()
-          this.$router.push({ name: 'accountDetail', params: { accountName: this.accountName } })
-        })
+          this.fetchWalletList();
+          this.$router.push({ name: 'accountDetail', params: { accountName: this.accountName } });
+        });
     },
     close() {
-      this.$router.push({ name: 'walletDetail' })
+      this.$router.push({ name: 'walletDetail' });
     },
     toggle(key, val) {
-      return (this[key] = val === undefined ? !this[key] : val)
+      return (this[key] = val === undefined ? !this[key] : val);
     },
     ...mapActions({
       newAccount: Actions.NEW_ACCOUNT,
@@ -187,10 +187,10 @@ export default {
     }),
   },
   created() {
-    this.publicKey = this.$route.params.walletId
+    this.publicKey = this.$route.params.walletId;
   },
   components: {
     ConfirmModal,
   },
-}
+};
 </script>

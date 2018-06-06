@@ -63,7 +63,7 @@
 import { mapState, mapGetters } from 'vuex';
 
 import { Getters } from '@/constants/types.constants';
-import { number, rate, voteage} from '@/utils/filter';
+import { number, rate, voteage } from '@/utils/filter';
 
 export default {
   name: 'TransferRecord',
@@ -85,21 +85,21 @@ export default {
 /* .table td .button.is-small, .table th .button.is-small{
      margin-bottom: 5px
   } */
-  .button{
-     padding-left: calc(0.625em - 1px);
-     padding-right: calc(0.625em - 1px);
-  }
-  .is-button span{
-    background: #408ee1;
-    border-radius: 5px;
-    color: #fff;
-    border: none;
-    padding-left: calc(0.625em - 1px);
-    padding-right: calc(0.625em - 1px);
-    padding-bottom: calc(0.375em - 1px);
-    padding-top: calc(0.375em - 1px);
-    text-align: center;
-    white-space: nowrap;
-    cursor: pointer;
-  }
+.button {
+  padding-left: calc(0.625em - 1px);
+  padding-right: calc(0.625em - 1px);
+}
+.is-button span {
+  background: #408ee1;
+  border-radius: 5px;
+  color: #fff;
+  border: none;
+  padding-left: calc(0.625em - 1px);
+  padding-right: calc(0.625em - 1px);
+  padding-bottom: calc(0.375em - 1px);
+  padding-top: calc(0.375em - 1px);
+  text-align: center;
+  white-space: nowrap;
+  cursor: pointer;
+}
 </style>

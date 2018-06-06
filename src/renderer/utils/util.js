@@ -80,36 +80,34 @@ export const calcTotalAmount = (rows = [], key) => {
 
 // 计算分红
 export const clacReward = (staked, me_voteage, total_staked, bp_voteage, rewards_pool) => {
-  const stakedAmount = toBigNumber(staked)
-  const meVoteageAmount = toBigNumber(me_voteage)
-  const totalStakedAmount = toBigNumber(total_staked)
-  const bpVoteageAmount = toBigNumber(bp_voteage)
-  const rewardsPoolAmount = toBigNumber(rewards_pool)
+  const stakedAmount = toBigNumber(staked);
+  const meVoteageAmount = toBigNumber(me_voteage);
+  const totalStakedAmount = toBigNumber(total_staked);
+  const bpVoteageAmount = toBigNumber(bp_voteage);
+  const rewardsPoolAmount = toBigNumber(rewards_pool);
   if (!totalStakedAmount.isZero() && !bpVoteageAmount.isZero()) {
     return stakedAmount
       .multipliedBy(meVoteageAmount)
       .multipliedBy(rewardsPoolAmount)
-      .dividedBy(totalStakedAmount.multipliedBy(bpVoteageAmount))
+      .dividedBy(totalStakedAmount.multipliedBy(bpVoteageAmount));
   } else {
-    return toBigNumber(0)
+    return toBigNumber(0);
   }
-}
+};
 
 // 计算票龄
 export const calcVoteage = (voteage, staked, voteage_update_time) => {
-  const totalStakedAmount = toBigNumber(staked)
-  const totalVoteageAmount = toBigNumber(voteage)
-  const voteageUpdateTimestamp = toBigNumber(getTimeStamp(voteage_update_time))
-  const nowTimestamp = toBigNumber(getTimeStamp())
-  const time = nowTimestamp.minus(voteageUpdateTimestamp)
+  const totalStakedAmount = toBigNumber(staked);
+  const totalVoteageAmount = toBigNumber(voteage);
+  const voteageUpdateTimestamp = toBigNumber(getTimeStamp(voteage_update_time));
+  const nowTimestamp = toBigNumber(getTimeStamp());
+  const time = nowTimestamp.minus(voteageUpdateTimestamp);
   if (!totalStakedAmount.isZero()) {
-    return totalVoteageAmount
-      .dividedBy(toBigNumber(totalStakedAmount))
-      .plus(time)
+    return totalVoteageAmount.dividedBy(toBigNumber(totalStakedAmount)).plus(time);
   } else {
-    return toBigNumber(0)
+    return toBigNumber(0);
   }
-}
+};
 
 // 是否是 object
 export const isObject = val => val != null && typeof val === 'object';

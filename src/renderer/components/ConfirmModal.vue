@@ -23,7 +23,7 @@
 export default {
   name: 'ConfirmModal',
   data() {
-    return {}
+    return {};
   },
   props: {
     show: {
@@ -53,15 +53,15 @@ export default {
       type: Boolean,
       required: false,
       default: true,
-    }
+    },
   },
   methods: {
     close() {
-      this.$emit('close')
+      this.$emit('close');
     },
     confirm() {
-      if(!this.submitting) {
-        this.$emit('confirm')
+      if (!this.submitting) {
+        this.$emit('confirm');
       }
     },
   },
@@ -69,12 +69,12 @@ export default {
     show(val, oldVal) {
       this.$nextTick(() => {
         if (this.$refs.autofocus && val) {
-          this.$refs.autofocus.focus()
+          this.$refs.autofocus.focus();
         }
-      })
+      });
     },
   },
-}
+};
 </script>
 
 <style scoped>

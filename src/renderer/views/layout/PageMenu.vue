@@ -29,20 +29,20 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState } from 'vuex';
 
 export default {
   name: 'PageMenu',
   computed: {
     currentAccountName() {
-      return this.$route.params && this.$route.params.accountName
+      return this.$route.params && this.$route.params.accountName;
     },
     currentWalletId() {
-      return this.$route.params && this.$route.params.walletId
+      return this.$route.params && this.$route.params.walletId;
     },
     ...mapState(['app']),
   },
-}
+};
 </script>
 
 <style scoped>

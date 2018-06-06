@@ -1,59 +1,61 @@
-import dayjs from 'dayjs'
+import dayjs from 'dayjs';
 
-import { toBigNumber } from '@/utils/util'
+import { toBigNumber } from '@/utils/util';
 
 export const number = (value, p = 4) => {
   if (isNaN(value)) {
-    return toBigNumber(value).toFixed(p)
+    return toBigNumber(value).toFixed(p);
   } else {
-    return Number(value).toFixed(p)
+    return Number(value).toFixed(p);
   }
-}
+};
 
 export const asset = value => {
-  if (isNaN(value)) return value
-  return [value, 'EOS'].join(' ')
-}
+  if (isNaN(value)) return value;
+  return [value, 'EOS'].join(' ');
+};
 
 export const rate = value => {
   if (isNaN(value)) {
-    return rate
+    return rate;
   } else {
     return [
       toBigNumber(value)
         .dividedBy(100)
         .toFixed(2),
       '%',
-    ].join(' ')
+    ].join(' ');
   }
-}
+};
 
 export const voteage = (value, p = 1) => {
   if (isNaN(value)) {
-    return (toBigNumber(value).toFixed(p)) + '小时'
+    return toBigNumber(value).toFixed(p) + '小时';
   } else {
-    return (toBigNumber(value)
-      .dividedBy(3600)
-      .toFixed(p)) + '小时'
+    return (
+      toBigNumber(value)
+        .dividedBy(3600)
+        .toFixed(p) + '小时'
+    );
   }
-}
+};
 
 export const timestamp = (value, format = 'YYYY-MM-DD HH:mm:ss') => {
-  value = value + 'Z'
-  const date = dayjs(value)
+  value = value + 'Z';
+  const date = dayjs(value);
   if (date.isValid()) {
-    return date.format(format)
+    return date.format(format);
   } else {
-    return value
+    return value;
   }
-}
+};
 
 export const sTom = (value, p = 1) => {
   if (isNaN(value)) {
-    return toBigNumber(value).toFixed(p)
+    return toBigNumber(value).toFixed(p);
   } else {
     return toBigNumber(value)
       .dividedBy(60)
-      .toFixed(p)
+      .toFixed(p);
   }
-}
+};

@@ -25,11 +25,11 @@
 </template>
 
 <script>
-import PageMenu from '@/views/layout/PageMenu'
-import { mapGetters, mapActions, mapState } from 'vuex'
+import PageMenu from '@/views/layout/PageMenu';
+import { mapGetters, mapActions, mapState } from 'vuex';
 
-import Message from '@/components/Message'
-import { Getters, Actions } from '@/constants/types.constants'
+import Message from '@/components/Message';
+import { Getters, Actions } from '@/constants/types.constants';
 
 export default {
   name: 'WalletDetail',
@@ -45,9 +45,9 @@ export default {
   methods: {
     initWallet(id) {
       this.fetchWallet({ id: id || this.$route.params.walletId }).catch(err => {
-        Message.error(`账户列表加载失败： ${err && err.message}`)
-        return Promise.reject(err)
-      })
+        Message.error(`账户列表加载失败： ${err && err.message}`);
+        return Promise.reject(err);
+      });
     },
     ...mapActions({
       fetchWallet: Actions.FETCH_WALLET,
@@ -55,19 +55,19 @@ export default {
   },
   beforeRouteUpdate(to, from, next) {
     if (to.params.walletId !== from.params.walletId) {
-      this.initWallet(to.params.walletId)
+      this.initWallet(to.params.walletId);
     }
-    next()
+    next();
   },
   created() {
     if (this.$router.currentRoute.name !== 'accountDetail') {
-      this.initWallet()
+      this.initWallet();
     }
   },
   components: {
     PageMenu,
   },
-}
+};
 </script>
 
 <style scoped>
