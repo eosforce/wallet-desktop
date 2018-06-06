@@ -46,9 +46,6 @@
         </tr>
       </tbody>
     </table>
-    <el-tooltip class="item" effect="dark" content="Top Right 提示文字" placement="top-end">
-      <el-button>上右</el-button>
-    </el-tooltip>
   </div>
 </template>
 
