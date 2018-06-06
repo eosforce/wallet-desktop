@@ -110,7 +110,7 @@ export const getAvailable = httpEndpoint => accountName => {
       scope: 'eosio',
       code: 'eosio',
       table: 'accounts',
-      // table_key: accountName,
+      table_key: accountName,
       limit: 10000,
       json: true,
     })
