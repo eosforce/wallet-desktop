@@ -10,7 +10,7 @@ const initState = {
   nodeList: [],
   currentNodeValue: '',
   currentNodeInfo: null,
-  walletList: []
+  walletList: [],
 };
 
 const mutations = {
@@ -28,7 +28,7 @@ const mutations = {
   },
   [Mutations.SET_CURRENT_NODE_INFO](state, { currentNodeInfo }) {
     state.currentNodeInfo = currentNodeInfo;
-  }
+  },
 };
 
 let initPromise;
@@ -65,7 +65,7 @@ const actions = {
         return getAccounts(getters[Getters.CURRENT_NODE])(pk).then(list => {
           return {
             publicKey: pk,
-            accounts: list
+            accounts: list,
           };
         });
       })
@@ -78,10 +78,10 @@ const actions = {
     return getNodeInfo(node).then(result => {
       commit(Mutations.SET_CUREENT_NODE, { currentNodeValue: node });
       commit(Mutations.SET_CURRENT_NODE_INFO, {
-        currentNodeInfo: { http_endpoint: state.currentNodeValue, ...result }
+        currentNodeInfo: { http_endpoint: state.currentNodeValue, ...result },
       });
     });
-  }
+  },
 };
 
 const getters = {
@@ -112,15 +112,15 @@ const getters = {
         return {
           keyProvider: wif,
           httpEndpoint: state.currentNodeInfo.http_endpoint,
-          chainId: state.currentNodeInfo.chain_id
+          chainId: state.currentNodeInfo.chain_id,
         };
       });
-  }
+  },
 };
 
 export default {
   state: initState,
   mutations,
   actions,
-  getters
+  getters,
 };

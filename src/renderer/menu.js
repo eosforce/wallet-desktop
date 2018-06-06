@@ -15,8 +15,8 @@ export default () => {
         { role: 'paste' },
         { role: 'pasteandmatchstyle' },
         { role: 'delete' },
-        { role: 'selectall' }
-      ]
+        { role: 'selectall' },
+      ],
     },
     {
       label: 'View',
@@ -29,9 +29,9 @@ export default () => {
         { role: 'zoomin' },
         { role: 'zoomout' },
         { type: 'separator' },
-        { role: 'togglefullscreen' }
-      ]
-    }
+        { role: 'togglefullscreen' },
+      ],
+    },
   ];
 
   Menu.setApplicationMenu(Menu.buildFromTemplate(template));

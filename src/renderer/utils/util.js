@@ -129,7 +129,7 @@ export const genTrConvertFunc = trName => {
       seq: tr.global_action_seq,
       time: tr.block_time,
       name: act.name,
-      from: act.authorization && act.authorization[0] && act.authorization[0].actor
+      from: act.authorization && act.authorization[0] && act.authorization[0].actor,
     };
   };
   return (
@@ -140,7 +140,7 @@ export const genTrConvertFunc = trName => {
           seq: tr.global_action_seq,
           time: tr.block_time,
           name: '创建用户',
-          from: act.authorization && act.authorization[0] && act.authorization[0].actor
+          from: act.authorization && act.authorization[0] && act.authorization[0].actor,
         };
       },
       vote: tr => {
@@ -151,7 +151,7 @@ export const genTrConvertFunc = trName => {
           name: '投票',
           from: act.data.voter,
           to: act.data.bpname,
-          change: act.data.change
+          change: act.data.change,
         };
       },
       transfer: tr => {
@@ -163,7 +163,7 @@ export const genTrConvertFunc = trName => {
           from: act.data.from,
           to: act.data.to,
           change: act.data.quantity,
-          memo: act.data.memo
+          memo: act.data.memo,
         };
       },
       claim: tr => {
@@ -173,7 +173,7 @@ export const genTrConvertFunc = trName => {
           time: tr.block_time,
           name: '提取分红',
           from: act.data.bpname,
-          to: act.data.voter
+          to: act.data.voter,
         };
       },
       unfreeze: tr => {
@@ -183,9 +183,9 @@ export const genTrConvertFunc = trName => {
           time: tr.block_time,
           name: '解冻',
           from: act.data.bpname,
-          to: act.data.voter
+          to: act.data.voter,
         };
-      }
+      },
     }[trName] || defaultFunc
   );
 };

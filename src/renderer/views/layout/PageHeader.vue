@@ -47,11 +47,11 @@ export default {
   },
   created() {
     const loop = () => {
-      // setTimeout(() => {
-      //   this.fetchNodeInfo({ node: this.nodeValue }).then(() => {
-      //     loop()
-      //   })
-      // }, 3000)
+      setTimeout(() => {
+        this.fetchNodeInfo({ node: this.nodeValue }).then(() => {
+          loop();
+        });
+      }, 3000);
     };
 
     loop();

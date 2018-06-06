@@ -23,7 +23,7 @@ export const rate = value => {
       toBigNumber(value)
         .dividedBy(100)
         .toFixed(2),
-      '%'
+      '%',
     ].join(' ');
   }
 };

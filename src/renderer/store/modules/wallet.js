@@ -6,7 +6,7 @@ import { decrypt, decryptWif } from '@/utils/util';
 
 const initState = {
   data: {},
-  accountList: []
+  accountList: [],
 };
 
 const mutations = {
@@ -15,7 +15,7 @@ const mutations = {
   },
   [Mutations.SET_ACCOUNT_LIST](state, { accountList }) {
     state.accountList = accountList;
-  }
+  },
 };
 
 const actions = {
@@ -42,7 +42,7 @@ const actions = {
   },
   [Actions.NEW_ACCOUNT_FROM_NODE]({ getters, dispatch }, { node, publicKey, accountName }) {
     return newAccountFromNode(node)({ accountName, publicKey });
-  }
+  },
 };
 
 const getters = {
@@ -57,12 +57,12 @@ const getters = {
       return Promise.reject(new Error('密码错误'));
     }
     return decrypt(password, state.data.crypto).privateKey;
-  }
+  },
 };
 
 export default {
   state: initState,
   mutations,
   actions,
-  getters
+  getters,
 };

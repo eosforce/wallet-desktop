@@ -5,7 +5,7 @@ const initState = {
   accountName: '',
   info: {},
   bpsTable: [],
-  transferRecords: []
+  transferRecords: [],
 };
 
 const mutations = {
@@ -20,7 +20,7 @@ const mutations = {
   },
   [Mutations.SET_TRANSFER_RECORDS](state, { transferRecords = [] } = {}) {
     state.transferRecords = transferRecords;
-  }
+  },
 };
 
 const actions = {
@@ -63,18 +63,18 @@ const actions = {
     return getTransferRecord(getters[Getters.CURRENT_NODE])({ accountName, pos, offset }).then(result => {
       commit(Mutations.SET_TRANSFER_RECORDS, { transferRecords: result.actions });
     });
-  }
+  },
 };
 
 const getters = {
   [Getters.CURRENT_ACCOUNT_NAME](state, getters, rootState) {
     return state.accountName;
-  }
+  },
 };
 
 export default {
   state: initState,
   mutations,
   actions,
-  getters
+  getters,
 };

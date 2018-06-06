@@ -5,11 +5,11 @@ export default {
     return typeof value === 'string'
       ? {
           ...defaultConfig,
-          title: value
+          title: value,
         }
       : {
           ...defaultConfig,
-          ...value
+          ...value,
         };
   },
   warning(value) {
@@ -18,7 +18,7 @@ export default {
         {
           type: 'warning',
           duration: 3000,
-          position: 'top-left'
+          position: 'top-left',
         },
         value
       )
@@ -31,7 +31,7 @@ export default {
           type: 'error',
           title: '错误',
           duration: 6000,
-          position: 'top-left'
+          position: 'top-left',
         },
         value
       )
@@ -43,10 +43,10 @@ export default {
         {
           type: 'success',
           duration: 3000,
-          position: 'top-left'
+          position: 'top-left',
         },
         value
       )
     );
-  }
+  },
 };

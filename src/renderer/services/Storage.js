@@ -59,7 +59,7 @@ export const createWalletData = ({ privateKey, password }) => {
       version: '1',
       id,
       publicKey,
-      crypto
+      crypto,
     };
     return Storage.setPath(getWalletKeyFromId(publicKey)).store(data);
   } else {
