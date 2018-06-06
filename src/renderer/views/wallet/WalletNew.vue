@@ -5,9 +5,9 @@
       <form class="cover-page__form" @submit.prevent="!submitting && submit()">
         <div class="field">
           <label class="label">
-            明文私钥
-            <a class="link-button" :disabled="isDisabledRandomKey" @click="randomKey()">
-              生成随机密钥
+            明文私钥（警告：请勿导入真实的主网映射私钥！）
+            <a class="button is-small is-outlined" style="font-size:14px;color:red;margin-bottom:8px;" :disabled="isDisabledRandomKey" @click="randomKey()">
+              请点击生成随机密钥并保存
             </a>
           </label>
           <div class="control">
