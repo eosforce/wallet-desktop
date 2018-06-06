@@ -136,6 +136,7 @@ export const genTrConvertFunc = trName => {
       time: tr.block_time,
       name: act.name,
       from: act.authorization && act.authorization[0] && act.authorization[0].actor,
+        status:checkStatus(tr.status),
     }
   }
   return (
@@ -147,6 +148,7 @@ export const genTrConvertFunc = trName => {
           time: tr.block_time,
           name: '创建用户',
           from: act.authorization && act.authorization[0] && act.authorization[0].actor,
+            status:checkStatus(tr.status),
         }
       },
       vote: tr => {
@@ -158,6 +160,7 @@ export const genTrConvertFunc = trName => {
           from: act.data.voter,
           to: act.data.bpname,
           change: act.data.change,
+            status:checkStatus(tr.status),
         }
       },
       transfer: tr => {
@@ -170,6 +173,7 @@ export const genTrConvertFunc = trName => {
           to: act.data.to,
           change: act.data.quantity,
           memo: act.data.memo,
+            status:checkStatus(tr.status),
         }
       },
       claim: tr => {
@@ -180,6 +184,7 @@ export const genTrConvertFunc = trName => {
           name: '提取分红',
           from: act.data.bpname,
           to: act.data.voter,
+            status:checkStatus(tr.status),
         }
       },
       unfreeze: tr => {
@@ -190,8 +195,19 @@ export const genTrConvertFunc = trName => {
           name: '解冻',
           from: act.data.bpname,
           to: act.data.voter,
+            status:checkStatus(tr.status),
         }
       },
     }[trName] || defaultFunc
   )
+}
+
+var checkStatus = status => {
+  switch(status){
+      case "executed" : return "已执行";break;
+      //case "": return "";break;
+      //case "": return "";break;
+      //case "": return "";break;
+      default : return status;
+  }
 }

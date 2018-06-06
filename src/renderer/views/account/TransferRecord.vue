@@ -21,7 +21,7 @@
         </tr>
       </thead>
       <tbody>
-        <!--<tr v-for="record in recordList" :key="record.seq" v-show="recordList.length">
+        <tr v-for="record in recordList" :key="record.seq" v-show="recordList.length">
           <td>{{record.time | timestamp}}</td>
           <td>{{record.from}}</td>
           <td>{{record.name}}</td>
@@ -32,16 +32,16 @@
         </tr>
         <tr v-show="!recordList.length">
           <td colspan="7" class="empty">暂无交易记录</td>
+        </tr>
+        <!--<tr v-for="(record,index) in account.transferRecords" :key="index">
+            <td>{{record.block_time | timestamp}}</td>
+            <td>{{record.from}}</td>
+            <td>{{record.name}}</td>
+            <td>{{record.to}}</td>
+            <td>{{record.quantity}}</td>
+            <td>{{record.remark}}</td>
+            <td>{{record.status}}</td>
         </tr>-->
-            <tr v-for="(record,index) in account.transferRecords" :key="index">
-                <td>{{record.block_time | timestamp}}</td>
-                <td>{{record.from}}</td>
-                <td>{{record.name}}</td>
-                <td>{{record.to}}</td>
-                <td>{{record.quantity}}</td>
-                <td>{{record.remark}}</td>
-                <td>{{record.status}}</td>
-            </tr>
             </tbody>
         </table>
         <pagination  :pageSize='pageSize' :currentPage='list_bCurrPage'  :total='account.latestTransferNum' @pageChanged='list_bPageChanged'></pagination>

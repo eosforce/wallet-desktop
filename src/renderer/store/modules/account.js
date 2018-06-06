@@ -81,30 +81,17 @@ const actions = {
   },
     [Actions.GET_TRANSFER_RECORD]({ dispatch, commit, getters }, { accountName, pos, offset }) {
         return getTransferRecord(getters[Getters.CURRENT_NODE])({ accountName, pos, offset }).then(result => {
-            let traRecords = [];
-            result.actions.forEach(function (record) {
-                let obj = {};
-                obj.tid = record.action_trace.trx_id ;
-                obj.block_time = record.block_time ;
-                obj.from = record.action_trace.act.data.from;
-                obj.name = record.action_trace.act.name;
-                obj.to = record.action_trace.act.data.to;
-                obj.quantity = record.action_trace.act.data.quantity;
-                obj.remark = "-";
-                obj.status = "-";
-                traRecords.push(obj);
-            })
-            commit(Mutations.SET_TRANSFER_RECORDS, { transferRecords: traRecords });
+            commit(Mutations.SET_TRANSFER_RECORDS, { transferRecords: result.actions });
             if( pos == undefined )
             {
                 commit(Mutations.SET_LATEST_TRANSFER_NUM, { transferRecords: result.actions })
             }
-            dispatch(Actions.GET_TRANS_ACTION, { transferRecords: traRecords });
+            dispatch(Actions.GET_TRANS_ACTION, { transferRecords: result.actions });
         });
     },
     [Actions.GET_TRANS_ACTION]({ commit, getters }, { transferRecords }) {
         return transferRecords.forEach(function (record) {
-            getTransAction(getters[Getters.CURRENT_NODE])({ tid: record.tid }).then(result => {
+            getTransAction(getters[Getters.CURRENT_NODE])({ tid: record.action_trace.trx_id }).then(result => {
                 //console.log(result);
                 if(result.trx)
                 {
@@ -117,7 +104,7 @@ const actions = {
 var addStatus= (transferRecords , actionDetail) => {
     var out=[];
     transferRecords.forEach(function (record) {
-        if(record.tid == actionDetail.id){
+        if(record.action_trace.trx_id == actionDetail.id){
             record.status = actionDetail.trx.receipt.status;
         }
         out.push(record);
