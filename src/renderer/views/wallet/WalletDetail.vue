@@ -43,8 +43,8 @@ export default {
     ...mapState(['account', 'wallet']),
   },
   methods: {
-    initWallet() {
-      this.fetchWallet({ id: this.$route.params.walletId }).catch(err => {
+    initWallet(id) {
+      this.fetchWallet({ id: id || this.$route.params.walletId }).catch(err => {
         Message.error(`账户列表加载失败： ${err && err.message}`)
         return Promise.reject(err)
       })
@@ -55,7 +55,7 @@ export default {
   },
   beforeRouteUpdate(to, from, next) {
     if (to.params.walletId !== from.params.walletId) {
-      this.initWallet()
+      this.initWallet(to.params.walletId)
     }
     next()
   },
