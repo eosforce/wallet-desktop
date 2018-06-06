@@ -12,10 +12,11 @@
       <thead>
         <tr>
           <th>排名</th>
-          <th>节点用户名</th>
+          <th>用户名</th>
+          <th>佣金费率</th>
           <th>总得票数</th>
+          <th>节点票龄</th>
           <th>奖池金额</th>
-          <th>手续费率</th>
           <th>我的投票</th>
           <th>节点票龄</th>
           <th>待领分红</th>
@@ -27,9 +28,10 @@
         <tr v-for="bp in account.bpsTable" :key="bp.name" :class="{'is-vote': bp.vote}">
           <td>{{bp.order}}</td>
           <td>{{bp.name}}</td>
-          <td>{{bp.total_staked | number}}</td>
-          <td>{{bp.rewards_pool | number}}</td>
           <td>{{bp.commission_rate | rate}}</td>
+          <td>{{bp.total_staked | number}}</td>
+          <td>{{bp.bp_voteage | sTom}}分钟</td>
+          <td>{{bp.rewards_pool | number}}</td>
           <td>{{(bp.vote && bp.vote.staked) | number}}</td>
           <td>{{bp.average | msToDay}}</td>
           <td :class="{'is-button': bp.vote && bp.vote.reward}">
@@ -53,15 +55,15 @@
 </template>
 
 <script>
-import { mapState, mapGetters } from 'vuex'
+import { mapState, mapGetters } from 'vuex';
 
-import { Getters } from '@/constants/types.constants'
-import { number, rate, msToDay } from '@/utils/filter'
+import { Getters } from '@/constants/types.constants';
+import { number, rate, msToDay, sTom } from '@/utils/filter';
 
 export default {
   name: 'TransferRecord',
   data() {
-    return {}
+    return {};
   },
   computed: {
     ...mapState(['account']),
@@ -70,12 +72,13 @@ export default {
     number,
     rate,
     msToDay,
+    sTom,
   },
-}
+};
 </script>
 
 <style scoped>
-  /* .table td .button.is-small, .table th .button.is-small{
+/* .table td .button.is-small, .table th .button.is-small{
      margin-bottom: 5px
   } */
   .button{
@@ -93,6 +96,6 @@ export default {
     padding-top: calc(0.375em - 1px);
     text-align: center;
     white-space: nowrap;
-    cursor: pointer; 
+    cursor: pointer;
   }
 </style>
