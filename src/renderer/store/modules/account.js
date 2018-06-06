@@ -1,12 +1,13 @@
 import { Mutations, Actions, Getters } from '@/constants/types.constants';
-import { getAccountInfo, transfer, getTransferRecord, getBpsTable, vote, unfreeze, claim } from '@/services/Eos';
+import { getAccountInfo, transfer, getTransferRecord, getTransAction , getBpsTable, vote, unfreeze, claim } from '@/services/Eos';
 
 const initState = {
   accountName: '',
   info: {},
   bpsTable: [],
   transferRecords: [],
-};
+    latestTransferNum:0
+}
 
 const mutations = {
   [Mutations.SET_ACCOUNT_NAME](state, { accountName = '' } = {}) {
@@ -21,6 +22,12 @@ const mutations = {
   [Mutations.SET_TRANSFER_RECORDS](state, { transferRecords = [] } = {}) {
     state.transferRecords = transferRecords;
   },
+    [Mutations.SET_LATEST_TRANSFER_NUM](state, { transferRecords = [] } = {}) {
+        state.latestTransferNum = getLatestNum(transferRecords)
+    },
+    [Mutations.SET_ACTION_STATUS](state, { actionDetail = [] } = {}) {
+        state.transferRecords = addStatus(state.transferRecords, actionDetail)
+    },
 };
 
 const actions = {
@@ -51,6 +58,17 @@ const actions = {
       return claim(config)({ voter, bpname });
     });
   },
+  [Actions.UPDATE_BP]({ state, dispatch, getters }, { password, producerKey, commissionRate, expiration }) {
+    if (!getters[Getters.CURRENT_ACCOUNT_NAME]) return Promise.reject(new Error('account ²»´æÔÚ'))
+    return getters[Getters.GET_WIF](password).then(wif => {
+      return genUpdatebp(wif)({
+        bpname: getters[Getters.CURRENT_ACCOUNT_NAME],
+        producerKey,
+        commissionRate,
+        expiration: expiration,
+      })
+    })
+  },
   [Actions.GET_ACCOUNT_INFO]({ state, dispatch, commit, getters }) {
     const accountName = getters[Getters.CURRENT_ACCOUNT_NAME]
     return getAccountInfo(getters[Getters.CURRENT_NODE])(accountName).then(
@@ -61,12 +79,62 @@ const actions = {
       }
     );
   },
-  [Actions.GET_TRANSFER_RECORD]({ commit, getters }, { accountName, pos, offset }) {
-    return getTransferRecord(getters[Getters.CURRENT_NODE])({ accountName, pos, offset }).then(result => {
-      commit(Mutations.SET_TRANSFER_RECORDS, { transferRecords: result.actions });
-    });
-  },
+    [Actions.GET_TRANSFER_RECORD]({ dispatch, commit, getters }, { accountName, pos, offset }) {
+        return getTransferRecord(getters[Getters.CURRENT_NODE])({ accountName, pos, offset }).then(result => {
+            let traRecords = [];
+            result.actions.forEach(function (record) {
+                let obj = {};
+                obj.tid = record.action_trace.trx_id ;
+                obj.block_time = record.block_time ;
+                obj.from = record.action_trace.act.data.from;
+                obj.name = record.action_trace.act.name;
+                obj.to = record.action_trace.act.data.to;
+                obj.quantity = record.action_trace.act.data.quantity;
+                obj.remark = "-";
+                obj.status = "-";
+                traRecords.push(obj);
+            })
+            commit(Mutations.SET_TRANSFER_RECORDS, { transferRecords: traRecords });
+            if( pos == undefined )
+            {
+                commit(Mutations.SET_LATEST_TRANSFER_NUM, { transferRecords: result.actions })
+            }
+            dispatch(Actions.GET_TRANS_ACTION, { transferRecords: traRecords });
+        });
+    },
+    [Actions.GET_TRANS_ACTION]({ commit, getters }, { transferRecords }) {
+        return transferRecords.forEach(function (record) {
+            getTransAction(getters[Getters.CURRENT_NODE])({ tid: record.tid }).then(result => {
+                //console.log(result);
+                if(result.trx)
+                {
+                    commit(Mutations.SET_ACTION_STATUS, { actionDetail: result })
+                }
+            });
+        });
+    },
 };
+var addStatus= (transferRecords , actionDetail) => {
+    var out=[];
+    transferRecords.forEach(function (record) {
+        if(record.tid == actionDetail.id){
+            record.status = actionDetail.trx.receipt.status;
+        }
+        out.push(record);
+    })
+    return out;
+}
+
+
+var getLatestNum = transferRecords =>{
+    let latestNum = 0;
+    transferRecords.forEach(function (record) {
+        if(record.account_action_seq > latestNum){
+            latestNum = record.account_action_seq
+        }
+    })
+    return latestNum
+}
 
 const getters = {
   [Getters.CURRENT_ACCOUNT_NAME](state, getters, rootState) {

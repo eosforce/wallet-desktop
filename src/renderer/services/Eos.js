@@ -74,6 +74,13 @@ export const getTransferRecord = httpEndpoint => ({ accountName, pos, offset }) 
   return Eos.Localnet({ httpEndpoint }).getActions({ account_name: accountName, pos: pos, offset: offset, limit: 100 })
 }
 
+// 获取交易详情
+export const getTransAction = httpEndpoint => ({ tid }) => {
+  var act = Eos.Localnet({ httpEndpoint }).getTransaction({ id: tid});
+    //console.log(act)
+    return act
+}
+
 // 从节点创建用户
 export const newAccountFromNode = httpEndpoint => ({ accountName, publicKey }) => {
   return Eos.Localnet({ httpEndpoint })
