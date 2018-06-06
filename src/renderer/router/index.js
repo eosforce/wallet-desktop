@@ -77,7 +77,7 @@ export default new Router({
       path: '/wallet-new',
       name: 'walletNew',
       components: {
-        default: () => import('@/views/wallet/walletNew'),
+        default: () => import('@/views/wallet/WalletNew'),
       },
     },
     {
