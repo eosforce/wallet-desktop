@@ -176,7 +176,7 @@ export const getRewardsAndBpsTable = httpEndpoint => async (votesTable, accountN
     bpRow.bp_voteage = calcBpVoteage(total_voteage, total_staked, voteage_update_time);
     if (vote) {
       const { bpname, staked, stake_time, unstaking, voteage } = vote;
-      bpRow.me_voteage = calcBpVoteage(voteage, total_staked, voteage_update_time);
+      bpRow.me_voteage = calcBpVoteage(voteage, total_staked, vote.voteage_update_time);
       const reward = toAsset(clacReward(staked, bpRow.me_voteage, total_staked, bpRow.bp_voteage, rewards_pool));
       const average = toBigNumber(total_voteage)
         .dividedBy(10000)
