@@ -6,7 +6,7 @@ import { decryptWif } from '@/utils/util'
 
 const initState = {
   walletIdList: [],
-  fee: '0.1 EOS',
+  fee: '0.01 EOS',
   nodeList: [],
   currentNodeValue: '',
   currentNodeInfo: null,
@@ -44,7 +44,7 @@ const actions = {
           } else {
             r.value = `http://${node.node_addr}:${node.port_http}`
           }
-          r.name = `${node.node_name} ${r.value}`
+          r.name = `${node.node_name} ${node.location} ${r.value}`
           result.push(r)
           return result
         }, [])

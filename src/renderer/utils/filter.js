@@ -28,7 +28,7 @@ export const rate = value => {
   }
 }
 
-export const msToDay = (value, p = 1) => {
+export const voteage = (value, p = 1) => {
   if (isNaN(value)) {
     return (toBigNumber(value).toFixed(p)) + '小时'
   } else {
@@ -45,5 +45,15 @@ export const timestamp = (value, format = 'YYYY-MM-DD HH:mm:ss') => {
     return date.format(format)
   } else {
     return value
+  }
+}
+
+export const sTom = (value, p = 1) => {
+  if (isNaN(value)) {
+    return toBigNumber(value).toFixed(p)
+  } else {
+    return toBigNumber(value)
+      .dividedBy(60)
+      .toFixed(p)
   }
 }

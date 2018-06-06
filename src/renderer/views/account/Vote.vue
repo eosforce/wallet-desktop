@@ -16,10 +16,10 @@
           </div>
           <div class="field">
             <label class="label">
-              投票变动金额
+              投票金额
             </label>
             <div class="control">
-              <input v-model="amount" class="input" type="number" step="0.0001" placeholder="单位 EOS" required />
+              <input v-model="amount" min="0" class="input" type="number" step="0.0001" placeholder="单位 EOS" required />
               <p class="help is-danger" v-show="amount && !isValidAmount">
                 金额必须为数字，且最多 4 位小数
               </p>
