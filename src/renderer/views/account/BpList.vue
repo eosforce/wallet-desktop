@@ -18,7 +18,7 @@
           <th>手续费率</th>
           <th>我的投票</th>
           <th>节点票龄</th>
-          <th>待领取分红</th>
+          <th>待领分红</th>
           <th>赎回金额</th>
           <th>操作</th>
         </tr>
@@ -32,17 +32,16 @@
           <td>{{bp.commission_rate | rate}}</td>
           <td>{{(bp.vote && bp.vote.staked) | number}}</td>
           <td>{{bp.average | msToDay}}</td>
-          <td>{{(bp.vote && bp.vote.reward) | number}}</td>
+          <td :class="{'is-button': bp.vote && bp.vote.reward}">
+            <el-tooltip class="item" effect="dark" content="我的投票*我的票龄/(总得票数*节点票龄)" placement="top-end">
+              <router-link v-show="bp.vote" class="button is-small is-outlined" :to="{name: 'claim', params: { bpname: bp.name }}">{{(bp.vote && bp.vote.reward) | number}}</router-link>
+            </el-tooltip>
+          </td>
           <td>{{(bp.vote && bp.vote.unstaking) | number}}</td>
           <td>
-            <!-- <select name="selected">
-                <option value="投票"><router-link class="button is-small is-outlined" :to="{name: 'vote', params: { bpname: bp.name }}">投票</router-link></option>
-                <option value="解除冻结"><router-link v-show="bp.vote" class="button is-small is-outlined" :to="{name: 'unfreeze', params: { bpname: bp.name }}">解除冻结</router-link></option>
-                <option value="提取分红"> <router-link v-show="bp.vote" class="button is-small is-outlined" :to="{name: 'claim', params: { bpname: bp.name }}">提取分红</router-link></option>
-            </select>   -->
             <router-link class="button is-small is-outlined" :to="{name: 'vote', params: { bpname: bp.name }}">投票</router-link>
             <router-link v-show="bp.vote && bp.vote.unstaking !== '0.0000 EOS'" class="button is-small is-outlined" :to="{name: 'unfreeze', params: { bpname: bp.name }}">解冻</router-link>
-            <router-link v-show="bp.vote" class="button is-small is-outlined" :to="{name: 'claim', params: { bpname: bp.name }}">领奖</router-link>
+            <!-- <router-link v-show="bp.vote" class="button is-small is-outlined" :to="{name: 'claim', params: { bpname: bp.name }}">领奖</router-link> -->
           </td>
         </tr>
       </tbody>
@@ -78,6 +77,19 @@ export default {
   } */
   .button{
      padding-left: calc(0.625em - 1px);
+     padding-right: calc(0.625em - 1px);
+  }
+  .is-button span{
+    background: #408ee1;
+    border-radius: 5px;
+    color: #fff;
+    border: none;
+    padding-left: calc(0.625em - 1px);
     padding-right: calc(0.625em - 1px);
+    padding-bottom: calc(0.375em - 1px);
+    padding-top: calc(0.375em - 1px);
+    text-align: center;
+    white-space: nowrap;
+    cursor: pointer; 
   }
 </style>
