@@ -232,7 +232,6 @@ export const getAccountInfo = httpEndpoint => async accountName => {
 
 export const transfer = config => {
   return ({ from, to, amount } = {}) => {
-    // config.keyProvider = '5JrwLgbAwKSdxbKmgg5woBXsDpZvCZ57P6X8opPA2QzTTM7EXad'
     return Eos.Localnet(config)
       .transfer({ from, to, quantity: toAsset(amount), memo: '' })
       .catch(err => {
