@@ -3,9 +3,9 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex'
+import { mapActions, mapState } from 'vuex';
 
-import { Actions, Getters } from '@/constants/types.constants'
+import { Actions, Getters } from '@/constants/types.constants';
 
 export default {
   name: 'dashboard',
@@ -16,19 +16,19 @@ export default {
     redirect() {
       return this.initApp()
         .then(() => {
-          return this.fetchWalletList()
+          return this.fetchWalletList();
         })
         .then(() => {
-          const walletIdList = this.app.walletIdList
+          const walletIdList = this.app.walletIdList;
           if (!walletIdList.length) {
-            this.$router.push({ name: 'walletNew' })
+            this.$router.push({ name: 'walletNew' });
           } else if (walletIdList.length === 1) {
-            this.$router.push({ name: 'walletDetail', params: { walletId: walletIdList[0] } })
+            this.$router.push({ name: 'walletDetail', params: { walletId: walletIdList[0] } });
           } else {
             // @TODO 自动跳转默认钱包
-            this.$router.push({ name: 'walletDetail', params: { walletId: walletIdList[0] } })
+            this.$router.push({ name: 'walletDetail', params: { walletId: walletIdList[0] } });
           }
-        })
+        });
     },
     ...mapActions({
       fetchWalletList: Actions.FETCH_WALLET_LIST,
@@ -37,14 +37,14 @@ export default {
   },
   beforeRouteUpdate(to, from, next) {
     if (to.name === 'dashboard') {
-      this.redirect()
+      this.redirect();
     }
-    next()
+    next();
   },
   created() {
-    this.redirect()
+    this.redirect();
   },
-}
+};
 </script>
 
 <style scoped>

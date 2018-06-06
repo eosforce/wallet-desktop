@@ -32,11 +32,11 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex'
+import { mapActions, mapState } from 'vuex';
 
-import Message from '@/components/Message'
-import ConfirmModal from '@/components/ConfirmModal'
-import { Actions } from '@/constants/types.constants'
+import Message from '@/components/Message';
+import ConfirmModal from '@/components/ConfirmModal';
+import { Actions } from '@/constants/types.constants';
 
 export default {
   name: 'unfreeze',
@@ -44,55 +44,55 @@ export default {
     return {
       password: '',
       submitting: false,
-    }
+    };
   },
   computed: {
     voter() {
-      return this.$route.params.accountName
+      return this.$route.params.accountName;
     },
     bpname() {
-      return this.$route.params.bpname
+      return this.$route.params.bpname;
     },
     unstakingAmount() {
-      const bp = this.account.bpsTable && this.account.bpsTable.find(bp => this.bpname === bp.name)
+      const bp = this.account.bpsTable && this.account.bpsTable.find(bp => this.bpname === bp.name);
       if (bp) {
         if (bp.vote) {
-          return bp.vote.unstaking
+          return bp.vote.unstaking;
         } else {
-          return '0 EOS'
+          return '0 EOS';
         }
       } else {
-        return null
+        return null;
       }
     },
     ...mapState(['app', 'account']),
   },
   methods: {
     submit() {
-      this.submitting = true
+      this.submitting = true;
       this.unfreeze({
         bpname: this.bpname,
         voter: this.voter,
         password: this.password,
       })
         .then(result => {
-          Message.success('解除冻结成功')
+          Message.success('解除冻结成功');
         })
         .catch(err => {
           Message.error({
             title: `${err.code ? `code: ${err.code}` : '解除冻结失败'}`,
             message: err.message,
-          })
-          this.submitting = false
-          return Promise.reject(err)
+          });
+          this.submitting = false;
+          return Promise.reject(err);
         })
         .then(result => {
-          this.getAccountInfo({ accountName: this.voter })
-          this.close()
-        })
+          this.getAccountInfo({ accountName: this.voter });
+          this.close();
+        });
     },
     close() {
-      this.$router.push({ name: 'accountDetail' })
+      this.$router.push({ name: 'accountDetail' });
     },
     ...mapActions({
       getAccountInfo: Actions.GET_ACCOUNT_INFO,
@@ -102,5 +102,5 @@ export default {
   components: {
     ConfirmModal,
   },
-}
+};
 </script>

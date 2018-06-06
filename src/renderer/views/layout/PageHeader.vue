@@ -20,27 +20,27 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
+import { mapState, mapActions } from 'vuex';
 
-import { Actions } from '@/constants/types.constants'
+import { Actions } from '@/constants/types.constants';
 
 export default {
   name: 'PageHeader',
   data() {
     return {
       showWalletNew: false,
-    }
+    };
   },
   computed: {
     nodeInfo() {
-      return this.app.currentNodeInfo || {}
+      return this.app.currentNodeInfo || {};
     },
     nodeValue: {
       get() {
-        return this.app.currentNodeValue
+        return this.app.currentNodeValue;
       },
       set(value) {
-        this.fetchNodeInfo({ node: value })
+        this.fetchNodeInfo({ node: value });
       },
     },
     ...mapState(['app']),
@@ -52,9 +52,9 @@ export default {
       //     loop()
       //   })
       // }, 3000)
-    }
+    };
 
-    loop()
+    loop();
   },
   methods: {
     ...mapActions({
@@ -62,7 +62,7 @@ export default {
       refreshApp: Actions.REFRESH_APP,
     }),
   },
-}
+};
 </script>
 
 <style scoped>

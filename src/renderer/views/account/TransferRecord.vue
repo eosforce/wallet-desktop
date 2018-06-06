@@ -39,20 +39,20 @@
 </template>
 
 <script>
-import { mapState, mapGetters } from 'vuex'
+import { mapState, mapGetters } from 'vuex';
 
-import { timestamp } from '@/utils/filter'
-import { Getters } from '@/constants/types.constants'
-import { genTrConvertFunc } from '@/utils/util'
+import { timestamp } from '@/utils/filter';
+import { Getters } from '@/constants/types.constants';
+import { genTrConvertFunc } from '@/utils/util';
 
 export default {
   name: 'TransferRecord',
   computed: {
     recordList() {
-      if (!this.account.transferRecords || !this.account.transferRecords.length) return []
+      if (!this.account.transferRecords || !this.account.transferRecords.length) return [];
       return this.account.transferRecords.map(tr => {
-        return genTrConvertFunc(tr.action_trace.act.name)(tr)
-      })
+        return genTrConvertFunc(tr.action_trace.act.name)(tr);
+      });
     },
     ...mapState(['account']),
   },
@@ -60,15 +60,15 @@ export default {
     timestamp,
   },
   methods: {},
-}
+};
 </script>
 
 <style scoped>
 .empty {
- height: 100px;
- line-height: 100px;
- color:#999 !important;
- font-size: 20px;
- font-weight: normal
+  height: 100px;
+  line-height: 100px;
+  color: #999 !important;
+  font-size: 20px;
+  font-weight: normal;
 }
 </style>

@@ -12,7 +12,7 @@ export default new Router({
       name: 'dashboard',
       components: {
         header: pageHeader,
-        default: () => import('@/views/wallet/Dashboard'),
+        default: () => import('@/views/wallet/Dashboard')
       },
       children: [
         {
@@ -24,8 +24,8 @@ export default new Router({
               name: 'accountNew',
               path: 'accounts/new',
               components: {
-                modal: () => import('@/views/account/AccountNew'),
-              },
+                modal: () => import('@/views/account/AccountNew')
+              }
             },
             {
               name: 'accountDetail',
@@ -36,53 +36,53 @@ export default new Router({
                   name: 'transfer',
                   path: 'transfer',
                   components: {
-                    modal: () => import('@/views/account/Transfer'),
-                  },
+                    modal: () => import('@/views/account/Transfer')
+                  }
                 },
                 {
                   name: 'vote',
                   path: ':bpname/vote',
                   components: {
-                    modal: () => import('@/views/account/Vote'),
-                  },
+                    modal: () => import('@/views/account/Vote')
+                  }
                 },
                 {
                   name: 'unfreeze',
                   path: ':bpname/unfreeze',
                   components: {
-                    modal: () => import('@/views/account/Unfreeze'),
-                  },
+                    modal: () => import('@/views/account/Unfreeze')
+                  }
                 },
                 {
                   name: 'claim',
                   path: ':bpname/claim',
                   components: {
-                    modal: () => import('@/views/account/Claim'),
-                  },
-                },
-              ],
-            },
-          ],
-        },
-      ],
+                    modal: () => import('@/views/account/Claim')
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
     },
     {
       path: '/entry',
       name: 'entry',
       components: {
-        default: () => import('@/views/entry/Entry'),
-      },
+        default: () => import('@/views/entry/Entry')
+      }
     },
     {
       path: '/wallet-new',
       name: 'walletNew',
       components: {
-        default: () => import('@/views/wallet/WalletNew'),
-      },
+        default: () => import('@/views/wallet/WalletNew')
+      }
     },
     {
       path: '*',
-      redirect: '/',
-    },
-  ],
+      redirect: '/'
+    }
+  ]
 });

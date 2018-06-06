@@ -65,13 +65,13 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex'
+import { mapActions, mapGetters } from 'vuex';
 
-import Message from '@/components/Message'
-import ConfirmModal from '@/components/ConfirmModal'
-import { Actions, Getters } from '@/constants/types.constants'
-import { randomKey, privateToPublic } from '@/utils/util'
-import { isValidPassword, isValidPrivate, isValidAccountName } from '@/utils/rules'
+import Message from '@/components/Message';
+import ConfirmModal from '@/components/ConfirmModal';
+import { Actions, Getters } from '@/constants/types.constants';
+import { randomKey, privateToPublic } from '@/utils/util';
+import { isValidPassword, isValidPrivate, isValidAccountName } from '@/utils/rules';
 
 export default {
   name: 'WalletNew',
@@ -88,75 +88,75 @@ export default {
       walletId: '',
       showConfirm: false,
       accountsList: [],
-    }
+    };
   },
   computed: {
     publicKey() {
-      if (!this.isValidPrivateKey) return ''
-      return privateToPublic(this.privateKey)
+      if (!this.isValidPrivateKey) return '';
+      return privateToPublic(this.privateKey);
     },
     isValidAccountName() {
-      return this.accountName && isValidAccountName(this.accountName)
+      return this.accountName && isValidAccountName(this.accountName);
     },
     isValidPrivateKey() {
-      return this.privateKey && isValidPrivate(this.privateKey)
+      return this.privateKey && isValidPrivate(this.privateKey);
     },
     isValidPassword() {
-      return this.password && isValidPassword(this.password)
+      return this.password && isValidPassword(this.password);
     },
     isValidConfirmPassword() {
-      return this.confirmPassword && this.password === this.confirmPassword
+      return this.confirmPassword && this.password === this.confirmPassword;
     },
   },
   methods: {
     submit() {
-      this.isSubmited = true
+      this.isSubmited = true;
       if (this.isValidPrivateKey && this.isValidPassword && this.isValidConfirmPassword && this.isAgreeTerm) {
-        this.submitting = true
+        this.submitting = true;
         this.newWallet({
           privateKey: this.privateKey,
           password: this.password,
         })
           .then(result => {
-            this.submitting = false
-            this.walletId = result.publicKey
+            this.submitting = false;
+            this.walletId = result.publicKey;
           })
           .catch(err => {
-            this.submitting = false
-            Message.error(err && err.message)
-            return Promise.reject(err)
+            this.submitting = false;
+            Message.error(err && err.message);
+            return Promise.reject(err);
           })
           .then(() => {
-            return this.fetchAccountList({ publicKey: this.publicKey, noset: true })
+            return this.fetchAccountList({ publicKey: this.publicKey, noset: true });
           })
           .then(result => {
             if (!result.length) {
-              this.close()
+              this.close();
             } else {
-              this.accountsList = result
-              this.showConfirm = true
+              this.accountsList = result;
+              this.showConfirm = true;
             }
-          })
+          });
       }
     },
     close() {
       if (this.walletId) {
-        this.$router.push({ name: 'walletDetail', params: { walletId: this.walletId } })
+        this.$router.push({ name: 'walletDetail', params: { walletId: this.walletId } });
       } else {
-        this.$router.push({ name: 'dashboard' })
+        this.$router.push({ name: 'dashboard' });
       }
     },
     randomKey() {
-      if (this.isDisabledRandomKey) return Promise.reject()
-      this.isDisabledRandomKey = true
+      if (this.isDisabledRandomKey) return Promise.reject();
+      this.isDisabledRandomKey = true;
       return randomKey()
         .then(privateKey => {
-          this.privateKey = privateKey
-          this.isDisabledRandomKey = false
+          this.privateKey = privateKey;
+          this.isDisabledRandomKey = false;
         })
         .catch(() => {
-          this.isDisabledRandomKey = false
-        })
+          this.isDisabledRandomKey = false;
+        });
     },
     ...mapActions({
       newWallet: Actions.NEW_WALLET,
@@ -166,7 +166,7 @@ export default {
   components: {
     ConfirmModal,
   },
-}
+};
 </script>
 <style scoped>
 .link-button {

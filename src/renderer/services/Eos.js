@@ -9,7 +9,7 @@ import {
   calcTotalAmount,
   clacReward,
   handleApiError,
-  calcVoteage,
+  calcVoteage
 } from '@/utils/util';
 
 export const getNodeList = () => {
@@ -20,7 +20,7 @@ export const getNodeList = () => {
       node_addr: '47.98.151.194',
       port_http: '8888',
       port_ssl: '',
-      port_p2p: '9876',
+      port_p2p: '9876'
     },
     {
       node_name: 'ali2',
@@ -28,7 +28,7 @@ export const getNodeList = () => {
       node_addr: '47.98.149.73',
       port_http: '8888',
       port_ssl: '',
-      port_p2p: '9876',
+      port_p2p: '9876'
     },
     {
       node_name: 'test1',
@@ -36,7 +36,7 @@ export const getNodeList = () => {
       node_addr: 'testnet1.bp.eosforce.io',
       port_http: '8888',
       port_ssl: '',
-      port_p2p: '9876',
+      port_p2p: '9876'
     },
     {
       node_name: 'test2',
@@ -44,7 +44,7 @@ export const getNodeList = () => {
       node_addr: 'testnet2.bp.eosforce.io',
       port_http: '8888',
       port_ssl: '',
-      port_p2p: '9876',
+      port_p2p: '9876'
     },
     {
       node_name: 'test3',
@@ -52,7 +52,7 @@ export const getNodeList = () => {
       node_addr: 'testnet3.bp.eosforce.io',
       port_http: '8888',
       port_ssl: '',
-      port_p2p: '9876',
+      port_p2p: '9876'
     },
     {
       node_name: 'test4',
@@ -60,8 +60,8 @@ export const getNodeList = () => {
       node_addr: 'testnet4.bp.eosforce.io',
       port_http: '8888',
       port_ssl: '',
-      port_p2p: '9876',
-    },
+      port_p2p: '9876'
+    }
   ]);
   // return fetch(NODE_API_URL, {
   //   headers: {
@@ -106,8 +106,8 @@ export const newAccountFromNode = httpEndpoint => ({ accountName, publicKey }) =
       account: accountName,
       keys: {
         owner: publicKey,
-        active: publicKey,
-      },
+        active: publicKey
+      }
     })
     .catch(err => {
       return handleApiError(err);
@@ -121,7 +121,7 @@ export const newAccount = config => ({ creator, accountName, publicKey }) => {
       creator: creator,
       name: accountName,
       owner: publicKey,
-      active: publicKey,
+      active: publicKey
     })
     .catch(err => {
       return handleApiError(err);
@@ -137,7 +137,7 @@ export const getAvailable = httpEndpoint => accountName => {
       table: 'accounts',
       table_key: accountName,
       limit: 10000,
-      json: true,
+      json: true
     })
     .then(result => {
       const account = result.rows.find(acc => acc.name === accountName);
@@ -184,7 +184,7 @@ export const getRewardsAndBpsTable = httpEndpoint => async (votesTable, accountN
       bpInfo = {
         bpname: bpRow,
         average: toAsset(toBigNumber(bpRow.total_voteage) / toBigNumber(bpRow.total_staked)),
-        ...bpRow,
+        ...bpRow
       };
     }
 
@@ -208,7 +208,7 @@ export const getRewardsAndBpsTable = httpEndpoint => async (votesTable, accountN
         total_staked,
         me_voteage,
         reward,
-        average,
+        average
       };
       rewardsTable.push({ ...extraRow });
 
@@ -228,7 +228,7 @@ export const getRewardsAndBpsTable = httpEndpoint => async (votesTable, accountN
   return {
     rewardsTable,
     bpsTable: bpsHaveVoteTable.concat(bpsNoVoteTable),
-    bpInfo,
+    bpInfo
   };
 };
 
@@ -247,7 +247,7 @@ export const getAccountInfo = httpEndpoint => async accountName => {
     available: toAsset(available), // 可用余额
     stakedTotal: toAsset(stakedTotal), // 总投票金额
     unstakingTotal: toAsset(unstakingTotal), // 总赎回金额
-    rewardTotal: toAsset(rewardTotal), // 总待领取分红
+    rewardTotal: toAsset(rewardTotal) // 总待领取分红
   };
 
   if (bpInfo) {
@@ -256,7 +256,7 @@ export const getAccountInfo = httpEndpoint => async accountName => {
 
   return {
     info,
-    bpsTable,
+    bpsTable
   };
 };
 

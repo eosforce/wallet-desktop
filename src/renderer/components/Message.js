@@ -1,16 +1,16 @@
-import { Notification } from 'element-ui'
+import { Notification } from 'element-ui';
 
 export default {
   getConfig(defaultConfig, value) {
     return typeof value === 'string'
       ? {
           ...defaultConfig,
-          title: value,
+          title: value
         }
       : {
           ...defaultConfig,
-          ...value,
-        }
+          ...value
+        };
   },
   warning(value) {
     return Notification(
@@ -18,11 +18,11 @@ export default {
         {
           type: 'warning',
           duration: 3000,
-          position: 'top-left',
+          position: 'top-left'
         },
-        value,
-      ),
-    )
+        value
+      )
+    );
   },
   error(value) {
     return Notification(
@@ -31,11 +31,11 @@ export default {
           type: 'error',
           title: '错误',
           duration: 6000,
-          position: 'top-left',
+          position: 'top-left'
         },
-        value,
-      ),
-    )
+        value
+      )
+    );
   },
   success(value) {
     return Notification(
@@ -43,10 +43,10 @@ export default {
         {
           type: 'success',
           duration: 3000,
-          position: 'top-left',
+          position: 'top-left'
         },
-        value,
-      ),
-    )
-  },
-}
+        value
+      )
+    );
+  }
+};

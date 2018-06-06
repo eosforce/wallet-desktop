@@ -80,36 +80,34 @@ export const calcTotalAmount = (rows = [], key) => {
 
 // 计算分红
 export const clacReward = (staked, me_voteage, total_staked, bp_voteage, rewards_pool) => {
-  const stakedAmount = toBigNumber(staked)
-  const meVoteageAmount = toBigNumber(me_voteage)
-  const totalStakedAmount = toBigNumber(total_staked)
-  const bpVoteageAmount = toBigNumber(bp_voteage)
-  const rewardsPoolAmount = toBigNumber(rewards_pool)
+  const stakedAmount = toBigNumber(staked);
+  const meVoteageAmount = toBigNumber(me_voteage);
+  const totalStakedAmount = toBigNumber(total_staked);
+  const bpVoteageAmount = toBigNumber(bp_voteage);
+  const rewardsPoolAmount = toBigNumber(rewards_pool);
   if (!totalStakedAmount.isZero() && !bpVoteageAmount.isZero()) {
     return stakedAmount
       .multipliedBy(meVoteageAmount)
       .multipliedBy(rewardsPoolAmount)
-      .dividedBy(totalStakedAmount.multipliedBy(bpVoteageAmount))
+      .dividedBy(totalStakedAmount.multipliedBy(bpVoteageAmount));
   } else {
-    return toBigNumber(0)
+    return toBigNumber(0);
   }
-}
+};
 
 // 计算票龄
 export const calcVoteage = (voteage, staked, voteage_update_time) => {
-  const totalStakedAmount = toBigNumber(staked)
-  const totalVoteageAmount = toBigNumber(voteage)
-  const voteageUpdateTimestamp = toBigNumber(getTimeStamp(voteage_update_time))
-  const nowTimestamp = toBigNumber(getTimeStamp())
-  const time = nowTimestamp.minus(voteageUpdateTimestamp)
+  const totalStakedAmount = toBigNumber(staked);
+  const totalVoteageAmount = toBigNumber(voteage);
+  const voteageUpdateTimestamp = toBigNumber(getTimeStamp(voteage_update_time));
+  const nowTimestamp = toBigNumber(getTimeStamp());
+  const time = nowTimestamp.minus(voteageUpdateTimestamp);
   if (!totalStakedAmount.isZero()) {
-    return totalVoteageAmount
-      .dividedBy(toBigNumber(totalStakedAmount))
-      .plus(time)
+    return totalVoteageAmount.dividedBy(toBigNumber(totalStakedAmount)).plus(time);
   } else {
-    return toBigNumber(0)
+    return toBigNumber(0);
   }
-}
+};
 
 // 是否是 object
 export const isObject = val => val != null && typeof val === 'object';
@@ -131,7 +129,7 @@ export const genTrConvertFunc = trName => {
       seq: tr.global_action_seq,
       time: tr.block_time,
       name: act.name,
-      from: act.authorization && act.authorization[0] && act.authorization[0].actor,
+      from: act.authorization && act.authorization[0] && act.authorization[0].actor
     };
   };
   return (
@@ -142,7 +140,7 @@ export const genTrConvertFunc = trName => {
           seq: tr.global_action_seq,
           time: tr.block_time,
           name: '创建用户',
-          from: act.authorization && act.authorization[0] && act.authorization[0].actor,
+          from: act.authorization && act.authorization[0] && act.authorization[0].actor
         };
       },
       vote: tr => {
@@ -153,7 +151,7 @@ export const genTrConvertFunc = trName => {
           name: '投票',
           from: act.data.voter,
           to: act.data.bpname,
-          change: act.data.change,
+          change: act.data.change
         };
       },
       transfer: tr => {
@@ -165,7 +163,7 @@ export const genTrConvertFunc = trName => {
           from: act.data.from,
           to: act.data.to,
           change: act.data.quantity,
-          memo: act.data.memo,
+          memo: act.data.memo
         };
       },
       claim: tr => {
@@ -175,7 +173,7 @@ export const genTrConvertFunc = trName => {
           time: tr.block_time,
           name: '提取分红',
           from: act.data.bpname,
-          to: act.data.voter,
+          to: act.data.voter
         };
       },
       unfreeze: tr => {
@@ -185,9 +183,9 @@ export const genTrConvertFunc = trName => {
           time: tr.block_time,
           name: '解冻',
           from: act.data.bpname,
-          to: act.data.voter,
+          to: act.data.voter
         };
-      },
+      }
     }[trName] || defaultFunc
   );
 };

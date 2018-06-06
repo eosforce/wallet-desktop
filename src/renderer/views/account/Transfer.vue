@@ -75,14 +75,14 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex'
+import { mapActions, mapState } from 'vuex';
 
-import Message from '@/components/Message'
-import ConfirmModal from '@/components/ConfirmModal'
-import { Actions, Getters } from '@/constants/types.constants'
-import { randomKey, privateToPublic } from '@/utils/util'
-import { isValidAccountName, isValidAmount } from '@/utils/rules'
-import { asset } from '@/utils/filter'
+import Message from '@/components/Message';
+import ConfirmModal from '@/components/ConfirmModal';
+import { Actions, Getters } from '@/constants/types.constants';
+import { randomKey, privateToPublic } from '@/utils/util';
+import { isValidAccountName, isValidAmount } from '@/utils/rules';
+import { asset } from '@/utils/filter';
 
 export default {
   name: 'AccountNew',
@@ -94,28 +94,28 @@ export default {
 
       password: '',
       showConfirm: false,
-    }
+    };
   },
   computed: {
     fromAccountName() {
-      return this.$route.params.accountName
+      return this.$route.params.accountName;
     },
     isValidToAccountName() {
-      return this.toAccountName && isValidAccountName(this.toAccountName)
+      return this.toAccountName && isValidAccountName(this.toAccountName);
     },
     isValidAmount() {
-      return this.amount && isValidAmount(this.amount)
+      return this.amount && isValidAmount(this.amount);
     },
     ...mapState(['app']),
   },
   methods: {
     confirmInfo() {
       if (this.isValidToAccountName && this.isValidAmount) {
-        this.showConfirm = true
+        this.showConfirm = true;
       }
     },
     submit() {
-      this.submitting = true
+      this.submitting = true;
       this.transfer({
         from: this.fromAccountName,
         to: this.toAccountName,
@@ -123,26 +123,26 @@ export default {
         password: this.password,
       })
         .then(result => {
-          Message.success('转账成功')
+          Message.success('转账成功');
         })
         .catch(err => {
           Message.error({
             title: `${err.code ? `code: ${err.code}` : '转账失败'}`,
             message: err.message,
-          })
-          this.submitting = false
-          return Promise.reject(err)
+          });
+          this.submitting = false;
+          return Promise.reject(err);
         })
         .then(() => {
-          this.getAccountInfo()
-          this.close()
-        })
+          this.getAccountInfo();
+          this.close();
+        });
     },
     close() {
-      this.$router.push({ name: 'accountDetail' })
+      this.$router.push({ name: 'accountDetail' });
     },
     toggle(key, val) {
-      return (this[key] = val === undefined ? !this[key] : val)
+      return (this[key] = val === undefined ? !this[key] : val);
     },
     ...mapActions({
       getAccountInfo: Actions.GET_ACCOUNT_INFO,
@@ -155,5 +155,5 @@ export default {
   components: {
     ConfirmModal,
   },
-}
+};
 </script>
