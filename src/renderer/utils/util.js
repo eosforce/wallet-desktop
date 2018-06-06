@@ -89,16 +89,15 @@ export const clacReward = (staked, stake_time, total_voteage, rewards_pool, tota
   const time = nowTimestamp.minus(stakeTimestamp)
   if (!totalVoteageAmount.isZero()) {
     return stakedAmount
-      .multipliedBy(10000)
       .multipliedBy(time)
       .multipliedBy(rewardsPoolAmount)
-      .dividedBy(totalVoteageAmount.plus(totalStakedAmount.multipliedBy(10000).multipliedBy(time)))
+      .dividedBy(totalVoteageAmount.plus(totalStakedAmount.multipliedBy(time)))
   } else {
     return toBigNumber(0)
   }
 }
 
-// 计算分红金额，返回 BigNumber
+//
 export const clacAverage = (total_voteage, total_staked, voteage_update_time) => {
   const totalStakedAmount = toBigNumber(total_staked)
   const voteageUpdateTimestamp = toBigNumber(getTimeStamp(voteage_update_time))
@@ -107,7 +106,6 @@ export const clacAverage = (total_voteage, total_staked, voteage_update_time) =>
   const time = nowTimestamp.minus(voteageUpdateTimestamp)
   if (!totalStakedAmount.isZero()) {
     return toBigNumber(totalVoteageAmount)
-      .dividedBy(10000)
       .dividedBy(toBigNumber(totalStakedAmount))
       .plus(time)
   } else {

@@ -6,7 +6,7 @@ import { decryptWif } from '@/utils/util'
 
 const initState = {
   walletIdList: [],
-  fee: '0.1 EOS',
+  fee: '0.01 EOS',
   nodeList: [],
   currentNodeValue: '',
   currentNodeInfo: null,
