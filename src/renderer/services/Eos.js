@@ -4,8 +4,7 @@ import { NODE_API_URL } from '@/constants/config.constants';
 import {
   toAsset,
   toBigNumber,
-  getTimeStamp,
-  isZero,
+  calcVoteExist,
   calcTotalAmount,
   clacReward,
   handleApiError,
@@ -183,7 +182,6 @@ export const getRewardsAndBpsTable = httpEndpoint => async (votesTable, accountN
     if (bpRow.name === accountName) {
       bpInfo = {
         bpname: bpRow,
-        average: toAsset(toBigNumber(bpRow.total_voteage) / toBigNumber(bpRow.total_staked)),
         ...bpRow,
       };
     }
@@ -191,13 +189,10 @@ export const getRewardsAndBpsTable = httpEndpoint => async (votesTable, accountN
     const { rewards_pool, total_voteage, total_staked, voteage_update_time } = bpRow;
     bpRow.bp_voteage = calcVoteage(total_voteage, total_staked, voteage_update_time);
     if (vote) {
-      const { bpname, staked, stake_time, unstaking, voteage } = vote;
+      const { bpname, staked, stake_time, unstaking } = vote;
       const me_voteage = calcVoteage(vote.voteage, vote.staked, vote.voteage_update_time);
       const reward = toAsset(clacReward(me_voteage, bpRow.bp_voteage, rewards_pool));
-      const average = toBigNumber(total_voteage)
-        .dividedBy(10000)
-        .dividedBy(toBigNumber(total_staked))
-        .toString();
+      const isMyVote = calcVoteExist(staked, reward, unstaking);
       const extraRow = {
         bpname,
         staked,
@@ -208,12 +203,16 @@ export const getRewardsAndBpsTable = httpEndpoint => async (votesTable, accountN
         total_staked,
         me_voteage,
         reward,
-        average,
+        isMyVote,
       };
       rewardsTable.push({ ...extraRow });
 
       bpRow.vote = { ...extraRow };
-      bpsHaveVoteTable.push(bpRow);
+      if (isMyVote) {
+        bpsHaveVoteTable.push(bpRow);
+      } else {
+        bpsNoVoteTable.push(bpRow);
+      }
     } else {
       bpsNoVoteTable.push(bpRow);
     }
