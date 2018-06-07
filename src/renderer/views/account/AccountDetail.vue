@@ -16,8 +16,10 @@
           交易记录
         </a>
       </div>
+
+        <span class="refresh fr" @click="refreshList()"><img src="@/assets/refresh.png"></span>
     </div>
-    <div :is="currentTab" keep-alive></div>
+    <div :is="currentTab" ref="cTab" keep-alive></div>
     <router-view name="modal"></router-view>
   </div>
 </template>
@@ -57,10 +59,21 @@ export default {
       fetchAccout: Actions.FETCH_ACCOUNT,
       fetchWallet: Actions.FETCH_WALLET,
       initApp: Actions.INIT_APP,
+      refreshTransferrecord: Actions.GET_TRANSFER_RECORD,
+      refreshBpsList: Actions.GET_BPS_TABLE,
     }),
     toggleTab: function(tab) {
       this.currentTab = tab; // tab 为当前触发标签页的组件名
     },
+    refreshList:function () {
+      console.log(this.currentTab);
+      if("TransferRecord" == this.currentTab){
+        this.refreshTransferrecord({ accountName: this.accountName });
+        this.$refs.cTab.initialPageNum();
+      }else if("BpList" == this.currentTab){
+        this.refreshBpsList();
+      }
+    }
   },
   beforeRouteUpdate(to, from, next) {
     if (to.params.accountName !== from.params.accountName) {
@@ -91,6 +104,13 @@ export default {
   overflow: auto;
   background: #EBEFF2;
   flex: 1;
+}
+  .refresh{
+    height: 40px;
+  }
+.refresh img{
+  width: 15px;
+  margin: 12px 20px;
 }
 </style>
 

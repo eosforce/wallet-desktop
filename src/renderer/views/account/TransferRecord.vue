@@ -27,18 +27,27 @@
         </tr>
       </tbody>
     </table>
+        <pagination :pageSize='pageSize' :currentPage='list_bCurrPage' :total='account.latestTransferNum'
+                    @pageChanged='list_bPageChanged' ref="pagination"></pagination>
   </div>
 </template>
 
 <script>
-import { mapState, mapGetters } from 'vuex';
+import {mapState, mapGetters, mapActions} from 'vuex';
 
 import { timestamp } from '@/utils/filter';
-import { Getters } from '@/constants/types.constants';
+import {Actions, Getters} from '@/constants/types.constants';
 import { genTrConvertFunc } from '@/utils/util';
-
+import Pagination from '@/views/account/pagination';
 export default {
   name: 'TransferRecord',
+    data() {
+      return {
+        data: [],
+        list_bCurrPage: 1,
+        pageSize: 20
+      }
+    },
   computed: {
     recordList() {
       if (!this.account.transferRecords || !this.account.transferRecords.length) return [];
@@ -47,11 +56,32 @@ export default {
       });
     },
     ...mapState(['account']),
+      accountName() {
+        return this.$route.params.accountName
+      },
   },
   filters: {
     timestamp,
   },
-  methods: {},
+    methods: {
+      list_bPageChanged: function (toPageStart, offset) {
+        //console.log("toPageStart: " + toPageStart);
+        //console.log("offset: " + offset);
+        this.fetchAccout({accountName: this.accountName, pos: toPageStart, offset: offset})
+      },
+      initialPageNum: function () {
+        //console.log("initialPageNum")
+        this.list_bCurrPage = 1;
+        this.pageSize = 20;
+        this.$refs.pagination.initialPageInation();
+      },
+      ...mapActions({
+        fetchAccout: Actions.GET_TRANSFER_RECORD,
+      }),
+    },
+    components: {
+      Pagination
+    }
 };
 </script>
 
