@@ -1,6 +1,7 @@
 import dayjs from 'dayjs';
 
 import { toBigNumber } from '@/utils/util';
+import BigNumber from 'bignumber.js';
 
 export const number = (value, p = 4) => {
   if (isNaN(value)) {
@@ -26,6 +27,15 @@ export const rate = value => {
       '%',
     ].join(' ');
   }
+};
+
+export const yearrate = value => {
+  return (
+    new BigNumber((9 * 20 * 60 * 24 * 365) / 23)
+      .dividedBy(toBigNumber(value))
+      .multipliedBy(100)
+      .toFixed(0) + '%'
+  );
 };
 
 export const voteage = (value, p = 1) => {
