@@ -14,8 +14,8 @@
           <th>排名</th>
           <th>用户名</th>
           <th>分红比例</th>
-          <th>年化利率</th>
           <th>总得票数</th>
+          <th>年化利率</th>
           <th>奖池金额</th>
           <th>我的投票</th>
           <th>待领分红</th>
@@ -28,11 +28,11 @@
           <td>{{bp.order}}</td>
           <td>{{bp.name}}</td>
           <td>{{10000 - bp.commission_rate | rate}}</td>
+          <td>{{bp.total_staked | number(0)}}</td>
           <td>
             <span v-show="bp.order >= 24">-</span>
             <span v-show="bp.order < 24">{{bp.total_staked | yearrate}}</span>
           </td>
-          <td>{{bp.total_staked | number(0)}}</td>
           <td>{{bp.rewards_pool | number}}</td>
           <td>{{(bp.vote && bp.vote.staked) | number}}</td>
           <td>
