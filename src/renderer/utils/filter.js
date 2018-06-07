@@ -29,9 +29,10 @@ export const rate = value => {
   }
 };
 
-export const yearrate = value => {
+export const yearrate = (value, rate) => {
   return (
     new BigNumber((9 * 20 * 60 * 24 * 365) / 23)
+      .multipliedBy(rate)
       .dividedBy(toBigNumber(value))
       .multipliedBy(100)
       .toFixed(0) + '%'
