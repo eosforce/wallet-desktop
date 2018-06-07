@@ -100,6 +100,11 @@ export const calcVoteage = (voteage, staked, voteage_update_time) => {
   return voteageAmount.plus(time.multipliedBy(stakedAmount));
 };
 
+// 计算是否有投票和分红和赎回金
+export const calcVoteExist = (me_voteage, reward, unstaking) => {
+  return !(toBigNumber(me_voteage).isZero() && toBigNumber(reward).isZero() && toBigNumber(unstaking).isZero());
+};
+
 // 是否是 object
 export const isObject = val => val != null && typeof val === 'object';
 
