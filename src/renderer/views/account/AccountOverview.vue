@@ -11,6 +11,9 @@
     <div class="publickey">
       公钥：{{walletData.publicKey}}
     </div>
+    <div class="overview-refresh">
+      <span class="refresh fr" @click="refreshOverview()"><img src="@/assets/refresh.png"></span>
+    </div>
 
     <div class="is-grouped" style="margin-top:16px;line-height:27px;text-align:left;height:27px;font-size:14px">
       <span style="width:25%;  display: inline-block;">总资产:<span class="cl">{{account.info.assetTotal | number}}</span></span>
@@ -33,9 +36,9 @@
 </template>
 
 <script>
-import { mapGetters, mapState } from 'vuex';
+import { mapGetters, mapState, mapActions } from 'vuex';
 
-import { Getters } from '@/constants/types.constants';
+import { Actions, Getters } from '@/constants/types.constants';
 import { timestamp, number, rate, voteage } from '@/utils/filter';
 
 export default {
@@ -53,6 +56,12 @@ export default {
     copyToClipboard(text) {
       this.$electron.clipboard.writeText(text);
     },
+    refreshOverview(){
+      this.refreshAccount();
+    },
+    ...mapActions({
+      refreshAccount: Actions.GET_ACCOUNT_OVERVIEW,
+    }),
   },
   filters: {
     voteage,
@@ -62,3 +71,14 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+  .refresh{
+    height: 40px;
+    margin-top:-28px;
+  }
+  .refresh img{
+    width: 15px;
+    margin: 12px 2px;
+  }
+</style>

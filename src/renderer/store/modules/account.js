@@ -104,6 +104,13 @@ const actions = {
       commit(Mutations.SET_BPS_TABLE, { bpsTable });
     });
   },
+
+  [Actions.GET_ACCOUNT_OVERVIEW]({ state, dispatch, commit, getters }) {
+    const accountName = getters[Getters.CURRENT_ACCOUNT_NAME];
+    return getAccountInfo(getters[Getters.CURRENT_NODE])(accountName).then(({ info }) => {
+      commit(Mutations.SET_ACCOUNT_INFO, { info });
+    });
+  },
 };
 var addStatus= (transferRecords , actionDetail) => {
     var out=[];
