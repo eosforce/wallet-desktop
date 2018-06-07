@@ -39,7 +39,7 @@ const actions = {
       initPromise = getNodeList()
         .then(data => {
           const syncPromise = syncNodeList();
-          return data ? data : syncPromise;
+          return data || syncPromise;
         })
         .then(data => {
           if (data && data.nodes) {
@@ -57,7 +57,7 @@ const actions = {
             commit(Mutations.SET_NODE_LIST, { nodeList });
             return dispatch(Actions.FETCH_NODE_INFO, { node: nodeList[0] && nodeList[0].value });
           } else {
-            return Promise.reject('获取节点列表错误');
+            return Promise.reject(new Error('获取节点列表错误'));
           }
         });
     }

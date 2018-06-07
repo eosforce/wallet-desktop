@@ -28,9 +28,9 @@
 </template>
 
 <script>
-import { mapGetters, mapState, mapActions } from 'vuex';
+import { mapState, mapActions } from 'vuex';
 
-import { Actions, Getters } from '@/constants/types.constants';
+import { Actions } from '@/constants/types.constants';
 import { timestamp, number, rate, voteage } from '@/utils/filter';
 
 export default {
@@ -48,7 +48,7 @@ export default {
     copyToClipboard(text) {
       this.$electron.clipboard.writeText(text);
     },
-    refreshOverview(){
+    refreshOverview() {
       this.refreshAccount();
     },
     ...mapActions({
@@ -65,12 +65,12 @@ export default {
 </script>
 
 <style scoped>
-  .refresh{
-    height: 40px;
-    margin-top:-28px;
-  }
-  .refresh img{
-    width: 15px;
-    margin: 12px 2px;
-  }
+.refresh {
+  height: 40px;
+  margin-top: -28px;
+}
+.refresh img {
+  width: 15px;
+  margin: 12px 2px;
+}
 </style>

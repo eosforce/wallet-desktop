@@ -2,7 +2,7 @@ import { Mutations, Actions, Getters } from '@/constants/types.constants';
 
 import Storage, { getWalletKeyFromId } from '@/services/Storage';
 import { newAccount, getAccounts, newAccountFromNode } from '@/services/Eos';
-import { decrypt, decryptWif } from '@/utils/util';
+import { decrypt } from '@/utils/util';
 
 const initState = {
   data: {},
@@ -56,7 +56,6 @@ const getters = {
     } catch (err) {
       return Promise.reject(new Error('密码错误'));
     }
-    return decrypt(password, state.data.crypto).privateKey;
   },
 };
 

@@ -27,8 +27,7 @@
 <script>
 import { mapState, mapActions } from 'vuex';
 
-import Message from '@/components/Message';
-import { Actions, Getters } from '@/constants/types.constants';
+import { Actions } from '@/constants/types.constants';
 import AccountOverview from '@/views/account/AccountOverview';
 import TransferRecord from '@/views/account/TransferRecord';
 import BpList from '@/views/account/BpList';
@@ -65,12 +64,11 @@ export default {
     toggleTab: function(tab) {
       this.currentTab = tab; // tab 为当前触发标签页的组件名
     },
-    refreshList:function () {
-      console.log(this.currentTab);
-      if("TransferRecord" == this.currentTab){
+    refreshList: function() {
+      if (this.currentTab === 'TransferRecord') {
         this.refreshTransferrecord({ accountName: this.accountName });
         this.$refs.cTab.initialPageNum();
-      }else if("BpList" == this.currentTab){
+      } else if (this.currentTab === 'BpList') {
         this.refreshBpsList();
       }
     }

@@ -59,9 +59,8 @@
 </template>
 
 <script>
-import { mapState, mapGetters } from 'vuex';
+import { mapState } from 'vuex';
 
-import { Getters } from '@/constants/types.constants';
 import { number, rate, voteage, yearrate } from '@/utils/filter';
 
 export default {

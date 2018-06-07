@@ -33,10 +33,6 @@ export const getNodeInfo = httpEndpoint => {
   return Eos.Localnet({ httpEndpoint }).getInfo({});
 };
 
-export const createLocalNet = ({ chain_id, http_endpoint }) => config => {
-  return Eos.Localnet({ httpEndpoint, chainId: chain_id, ...config });
-};
-
 // 根据公钥获取用户名数组
 export const getAccounts = httpEndpoint => publicKey => {
   return Eos.Localnet({ httpEndpoint })
@@ -53,10 +49,9 @@ export const getTransferRecord = httpEndpoint => ({ accountName, pos, offset }) 
 
 // 获取交易详情
 export const getTransAction = httpEndpoint => ({ tid }) => {
-  var act = Eos.Localnet({ httpEndpoint }).getTransaction({ id: tid});
-    //console.log(act)
-    return act
-}
+  var act = Eos.Localnet({ httpEndpoint }).getTransaction({ id: tid });
+  return act;
+};
 
 // 从节点创建用户
 export const newAccountFromNode = httpEndpoint => ({ accountName, publicKey }) => {
@@ -130,7 +125,7 @@ export const getVotesTable = httpEndpoint => accountName => {
 };
 
 // 根据 bp 和 vote 得到分红表，返回一个对象
-export const getRewardsAndBpsTable = httpEndpoint => async (votesTable, accountName) => {
+export const getRewardsAndBpsTable = httpEndpoint => async(votesTable, accountName) => {
   const bpsTable = await getBpsTable(httpEndpoint)();
   const bpsHaveVoteTable = [];
   const bpsNoVoteTable = [];

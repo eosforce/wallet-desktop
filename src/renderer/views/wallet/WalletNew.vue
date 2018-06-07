@@ -82,12 +82,12 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex';
+import { mapActions } from 'vuex';
 
 import Message from '@/components/Message';
 import ConfirmModal from '@/components/ConfirmModal';
 import PromptModal from '@/components/PromptModal';
-import { Actions, Getters } from '@/constants/types.constants';
+import { Actions } from '@/constants/types.constants';
 import { randomKey, privateToPublic } from '@/utils/util';
 import { isValidPassword, isValidPrivate, isValidAccountName } from '@/utils/rules';
 

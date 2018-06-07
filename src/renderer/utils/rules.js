@@ -16,7 +16,7 @@ export const isValidWalletName = name => {
 // https://github.com/EOSIO/eos/blob/dacc1b09d2c10cc3ca4cea7821c04ea2a47487fe/libraries/chain/name.cpp#L20
 export const isValidAccountName = name => {
   if (!name) return false;
-  return /^[\.12345abcdefghijklmnopqrstuvwxyz]{1,12}$/.test(name);
+  return /^[.12345abcdefghijklmnopqrstuvwxyz]{1,12}$/.test(name);
 };
 
 // 验证私钥 WIF 格式

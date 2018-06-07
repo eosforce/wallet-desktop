@@ -47,7 +47,7 @@ export const getTimeStamp = date => {
 };
 
 export const isZero = (str = '') => {
-  return /^0[0\.]*$/.test(String(str));
+  return /^0[0.]*$/.test(String(str));
 };
 
 // 'XXX EOS或 XXX 转化为 bignumber 格式'
@@ -56,7 +56,7 @@ export const toBigNumber = asset => {
     return asset;
   } else if (isNaN(asset)) {
     if (!asset) return new BigNumber('0');
-    const match = asset.match(/^([0-9\.]+) EOS$/);
+    const match = asset.match(/^([0-9.]+) EOS$/);
     const amount = match ? match[1] : '0';
     return new BigNumber(amount);
   } else {
@@ -79,10 +79,10 @@ export const calcTotalAmount = (rows = [], key) => {
 };
 
 // 计算分红
-export const clacReward = (me_voteage, bp_voteage, rewards_pool) => {
-  const meVoteageAmount = toBigNumber(me_voteage);
-  const bpVoteageAmount = toBigNumber(bp_voteage);
-  const rewardsPoolAmount = toBigNumber(rewards_pool);
+export const clacReward = (meVoteage, bpVoteage, rewardsPool) => {
+  const meVoteageAmount = toBigNumber(meVoteage);
+  const bpVoteageAmount = toBigNumber(bpVoteage);
+  const rewardsPoolAmount = toBigNumber(rewardsPool);
   if (!bpVoteageAmount.isZero()) {
     return meVoteageAmount.multipliedBy(rewardsPoolAmount).dividedBy(bpVoteageAmount);
   } else {
@@ -91,18 +91,18 @@ export const clacReward = (me_voteage, bp_voteage, rewards_pool) => {
 };
 
 // 计算票龄
-export const calcVoteage = (voteage, staked, voteage_update_time) => {
+export const calcVoteage = (voteage, staked, voteageUpdateTime) => {
   const stakedAmount = toBigNumber(staked);
   const voteageAmount = toBigNumber(voteage);
-  const voteageUpdateTimestamp = toBigNumber(getTimeStamp(voteage_update_time));
+  const voteageUpdateTimestamp = toBigNumber(getTimeStamp(voteageUpdateTime));
   const nowTimestamp = toBigNumber(getTimeStamp());
   const time = nowTimestamp.minus(voteageUpdateTimestamp);
   return voteageAmount.plus(time.multipliedBy(stakedAmount));
 };
 
 // 计算是否有投票和分红和赎回金
-export const calcVoteExist = (me_voteage, reward, unstaking) => {
-  return !(toBigNumber(me_voteage).isZero() && toBigNumber(reward).isZero() && toBigNumber(unstaking).isZero());
+export const calcVoteExist = (meVoteage, reward, unstaking) => {
+  return !(toBigNumber(meVoteage).isZero() && toBigNumber(reward).isZero() && toBigNumber(unstaking).isZero());
 };
 
 // 是否是 object
@@ -115,7 +115,6 @@ export const decryptWif = (password, data) => {
   } catch (err) {
     return Promise.reject(new Error('密码错误'));
   }
-  return decrypt(password, data).privateKey;
 };
 
 export const genTrConvertFunc = trName => {
@@ -126,7 +125,7 @@ export const genTrConvertFunc = trName => {
       time: tr.block_time,
       name: act.name,
       from: act.authorization && act.authorization[0] && act.authorization[0].actor,
-      status:checkStatus(tr.status),
+      status: checkStatus(tr.status),
     };
   };
   return (
@@ -138,7 +137,7 @@ export const genTrConvertFunc = trName => {
           time: tr.block_time,
           name: '创建用户',
           from: act.authorization && act.authorization[0] && act.authorization[0].actor,
-          status:checkStatus(tr.status),
+          status: checkStatus(tr.status),
         };
       },
       vote: tr => {
@@ -150,7 +149,7 @@ export const genTrConvertFunc = trName => {
           from: act.data.voter,
           to: act.data.bpname,
           change: act.data.change,
-          status:checkStatus(tr.status),
+          status: checkStatus(tr.status),
         };
       },
       transfer: tr => {
@@ -163,7 +162,7 @@ export const genTrConvertFunc = trName => {
           to: act.data.to,
           change: act.data.quantity,
           memo: act.data.memo,
-          status:checkStatus(tr.status),
+          status: checkStatus(tr.status),
         };
       },
       claim: tr => {
@@ -174,7 +173,7 @@ export const genTrConvertFunc = trName => {
           name: '提取分红',
           from: act.data.bpname,
           to: act.data.voter,
-          status:checkStatus(tr.status),
+          status: checkStatus(tr.status),
         };
       },
       unfreeze: tr => {
@@ -185,7 +184,7 @@ export const genTrConvertFunc = trName => {
           name: '解冻',
           from: act.data.bpname,
           to: act.data.voter,
-          status:checkStatus(tr.status),
+          status: checkStatus(tr.status),
         };
       },
     }[trName] || defaultFunc
@@ -193,11 +192,13 @@ export const genTrConvertFunc = trName => {
 };
 
 var checkStatus = status => {
-  switch(status){
-      case "executed" : return "已执行";break;
-      //case "": return "";break;
-      //case "": return "";break;
-      //case "": return "";break;
-      default : return status;
+  switch (status) {
+    case 'executed':
+      return '已执行';
+    // case "": return "";break;
+    // case "": return "";break;
+    // case "": return "";break;
+    default:
+      return status;
   }
-}
+};
