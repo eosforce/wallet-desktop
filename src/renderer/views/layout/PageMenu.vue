@@ -1,6 +1,6 @@
 <template>
   <div class="page-menu">
-    <div class="header-navbar">
+    <div class="header-navbar add-wallet">
       <router-link class="button is-small is-outlined" :to="{name: 'walletNew'}">创建钱包</router-link>
     </div>
     <div class="menu">
