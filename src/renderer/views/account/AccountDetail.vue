@@ -89,7 +89,7 @@ export default {
 .dashboard-body {
   padding: 24px;
   overflow: auto;
-  background: #1e2333;
+  background: #EBEFF2;
   flex: 1;
 }
 </style>

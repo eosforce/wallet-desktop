@@ -1,13 +1,5 @@
 <template>
   <div class="box">
-    <div class="img-box">
-      <img src="@/assets/border.png" class="lt"/>
-      <img src="@/assets/border.png" class="rt"/>
-      <img src="@/assets/border.png" class="lb"/>
-      <img src="@/assets/border.png" class="rb"/>
-      <img src="@/assets/lace.png" class="lt2"/>
-      <img src="@/assets/lace.png" class="rb2"/>
-    </div>
     <div class="publickey">
       公钥：{{walletData.publicKey}}
     </div>
