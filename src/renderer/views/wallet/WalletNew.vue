@@ -47,7 +47,7 @@
             <a tabindex="-1" class="button cancel-button" :disabled="submitting" @click="!submitting && close()">取消</a>
           </div>
           <div class="control">
-            <button type="submit" class="button is-link" :class="{'is-loading': submitting}" :disabled="submitting">确认</button>
+            <button type="submit" class="button is-link" :class="{'is-loading': submitting}" :disabled="submitting">下一步</button>
           </div>
         </div>
       </form>
@@ -61,6 +61,23 @@
         </ul>
       </div>
     </confirm-modal>
+    <prompt-modal ref="prompt" title="请妥善保存你的私钥" @confirm="prompt" :can-close="false" width="540px">
+      <div>
+        <div>
+          <div>你的私钥</div>
+          <div style="color: #f5ebff">{{privateKey}}</div>
+        </div>
+        <div style="margin-top: 16px;">
+          <div style="user-select: none">请手动输入：「我已保存私钥」</div>
+          <div>
+            <input class="input" v-model="confirmMsg" type="text" placeholder="请手动输入：「我已保存私钥」" />
+            <p class="help is-danger" v-show="isDirtyConfirm && !isValidConfirmMsg" style="user-select: none">
+              请输入：我已保存私钥
+            </p>
+          </div>
+        </div>
+      </div>
+    </prompt-modal>
   </div>
 </template>
 
@@ -69,6 +86,7 @@ import { mapActions, mapGetters } from 'vuex';
 
 import Message from '@/components/Message';
 import ConfirmModal from '@/components/ConfirmModal';
+import PromptModal from '@/components/PromptModal';
 import { Actions, Getters } from '@/constants/types.constants';
 import { randomKey, privateToPublic } from '@/utils/util';
 import { isValidPassword, isValidPrivate, isValidAccountName } from '@/utils/rules';
@@ -85,8 +103,12 @@ export default {
       isDisabledRandomKey: false,
       submitting: false,
 
+      randomPK: '',
+      confirmMsg: '',
+      isDirtyConfirm: false,
       walletId: '',
       showConfirm: false,
+      showConfirmPK: false,
       accountsList: [],
     };
   },
@@ -107,16 +129,28 @@ export default {
     isValidConfirmPassword() {
       return this.confirmPassword && this.password === this.confirmPassword;
     },
+    isValidConfirmMsg() {
+      return this.confirmMsg && this.confirmMsg === '我已保存私钥';
+    },
   },
   methods: {
     submit() {
       this.isSubmited = true;
       if (this.isValidPrivateKey && this.isValidPassword && this.isValidConfirmPassword && this.isAgreeTerm) {
-        this.submitting = true;
-        this.newWallet({
-          privateKey: this.privateKey,
-          password: this.password,
+        return new Promise((resolve, reject) => {
+          if (this.randomPK === this.privateKey) {
+            resolve(this.$refs.prompt.show());
+          } else {
+            resolve();
+          }
         })
+          .then(() => {
+            this.submitting = true;
+            return this.newWallet({
+              privateKey: this.privateKey,
+              password: this.password,
+            });
+          })
           .then(result => {
             this.submitting = false;
             this.walletId = result.publicKey;
@@ -146,11 +180,18 @@ export default {
         this.$router.push({ name: 'dashboard' });
       }
     },
+    prompt(resolve) {
+      this.isDirtyConfirm = true;
+      if (this.isValidConfirmMsg) {
+        resolve();
+      }
+    },
     randomKey() {
       if (this.isDisabledRandomKey) return Promise.reject();
       this.isDisabledRandomKey = true;
       return randomKey()
         .then(privateKey => {
+          this.randomPK = privateKey;
           this.privateKey = privateKey;
           this.isDisabledRandomKey = false;
         })
@@ -165,6 +206,7 @@ export default {
   },
   components: {
     ConfirmModal,
+    PromptModal,
   },
 };
 </script>
