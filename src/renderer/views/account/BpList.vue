@@ -4,7 +4,7 @@
       <thead>
         <tr>
           <th>排名</th>
-          <th>用户名</th>
+          <th>节点名</th>
           <th>佣金费率</th>
           <th>总得票数</th>
           <th>节点票龄</th>
