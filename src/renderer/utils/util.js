@@ -79,17 +79,12 @@ export const calcTotalAmount = (rows = [], key) => {
 };
 
 // 计算分红
-export const clacReward = (staked, me_voteage, total_staked, bp_voteage, rewards_pool) => {
-  const stakedAmount = toBigNumber(staked);
+export const clacReward = (me_voteage, bp_voteage, rewards_pool) => {
   const meVoteageAmount = toBigNumber(me_voteage);
-  const totalStakedAmount = toBigNumber(total_staked);
   const bpVoteageAmount = toBigNumber(bp_voteage);
   const rewardsPoolAmount = toBigNumber(rewards_pool);
-  if (!totalStakedAmount.isZero() && !bpVoteageAmount.isZero()) {
-    return stakedAmount
-      .multipliedBy(meVoteageAmount)
-      .multipliedBy(rewardsPoolAmount)
-      .dividedBy(totalStakedAmount.multipliedBy(bpVoteageAmount));
+  if (!bpVoteageAmount.isZero()) {
+    return meVoteageAmount.multipliedBy(rewardsPoolAmount).dividedBy(bpVoteageAmount);
   } else {
     return toBigNumber(0);
   }
@@ -97,16 +92,17 @@ export const clacReward = (staked, me_voteage, total_staked, bp_voteage, rewards
 
 // 计算票龄
 export const calcVoteage = (voteage, staked, voteage_update_time) => {
-  const totalStakedAmount = toBigNumber(staked);
-  const totalVoteageAmount = toBigNumber(voteage);
+  const stakedAmount = toBigNumber(staked);
+  const voteageAmount = toBigNumber(voteage);
   const voteageUpdateTimestamp = toBigNumber(getTimeStamp(voteage_update_time));
   const nowTimestamp = toBigNumber(getTimeStamp());
   const time = nowTimestamp.minus(voteageUpdateTimestamp);
-  if (!totalStakedAmount.isZero()) {
-    return totalVoteageAmount.dividedBy(toBigNumber(totalStakedAmount)).plus(time);
-  } else {
-    return toBigNumber(0);
-  }
+  return voteageAmount.plus(time.multipliedBy(stakedAmount));
+};
+
+// 计算是否有投票和分红和赎回金
+export const calcVoteExist = (me_voteage, reward, unstaking) => {
+  return !(toBigNumber(me_voteage).isZero() && toBigNumber(reward).isZero() && toBigNumber(unstaking).isZero());
 };
 
 // 是否是 object
