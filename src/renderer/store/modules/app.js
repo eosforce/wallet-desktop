@@ -1,7 +1,7 @@
 import { Mutations, Actions, Getters } from '@/constants/types.constants';
 
-import Storage, { getWalletIdFromKey, getWalletIdList, createWalletData, getWalletKeyFromId } from '@/services/Storage';
-import { createLocalNet, getNodeList, getAccounts, getNodeInfo } from '@/services/Eos';
+import Storage, { getWalletIdList, createWalletData, getWalletKeyFromId } from '@/services/Storage';
+import { syncNodeList, getNodeList, getAccounts, getNodeInfo } from '@/services/Eos';
 import { decryptWif } from '@/utils/util';
 
 const initState = {
@@ -36,21 +36,30 @@ let initPromise;
 const actions = {
   [Actions.INIT_APP]({ state, commit, dispatch }) {
     if (!initPromise) {
-      initPromise = getNodeList().then(_nodeList => {
-        const nodeList = _nodeList.reduce((result, node) => {
-          const r = {};
-          if (node.port_ssl) {
-            r.value = `https://${node.node_addr}:${node.port_ssl}`;
+      initPromise = getNodeList()
+        .then(data => {
+          const syncPromise = syncNodeList();
+          return data ? data : syncPromise;
+        })
+        .then(data => {
+          if (data && data.nodes) {
+            const nodeList = data.nodes.reduce((result, node) => {
+              const r = {};
+              if (node.port_ssl) {
+                r.value = `https://${node.node_addr}:${node.port_ssl}`;
+              } else {
+                r.value = `http://${node.node_addr}:${node.port_http}`;
+              }
+              r.name = `${node.node_name} ${node.location} ${r.value}`;
+              result.push(r);
+              return result;
+            }, []);
+            commit(Mutations.SET_NODE_LIST, { nodeList });
+            return dispatch(Actions.FETCH_NODE_INFO, { node: nodeList[0] && nodeList[0].value });
           } else {
-            r.value = `http://${node.node_addr}:${node.port_http}`;
+            return Promise.reject('获取节点列表错误');
           }
-          r.name = `${node.node_name} ${node.location} ${r.value}`;
-          result.push(r);
-          return result;
-        }, []);
-        commit(Mutations.SET_NODE_LIST, { nodeList });
-        return dispatch(Actions.FETCH_NODE_INFO, { node: nodeList[0] && nodeList[0].value });
-      });
+        });
     }
     return initPromise;
   },
