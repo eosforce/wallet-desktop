@@ -59,6 +59,10 @@
         }
       },
 
+      initialPageInation: function () {
+        //console.log("initialPageInation")
+        this.currentNum = 1;
+      },
     },
     computed: {
       //显示页码集合
@@ -89,7 +93,7 @@
       },
       //总页数
       totalPage() {
-        console.log(this.total + "->" + this.pageSize)
+        //console.log(this.total + "->" + this.pageSize)
         return this.totalPageNum = parseInt(this.total / this.pageSize) + (this.total % this.pageSize == 0 ? 0 : 1);
       },
     },

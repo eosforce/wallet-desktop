@@ -53,8 +53,6 @@ export default {
       return {
         data: [],
         list_bCurrPage: 1,
-                list_aTotal: 20,
-                size:30,
         pageSize: 20
       }
     },
@@ -75,14 +73,15 @@ export default {
   },
     methods: {
       list_bPageChanged: function (toPageStart, offset) {
-        console.log("toPageStart: " + toPageStart);
-        console.log("offset: " + offset);
+        //console.log("toPageStart: " + toPageStart);
+        //console.log("offset: " + offset);
         this.fetchAccout({accountName: this.accountName, pos: toPageStart, offset: offset})
       },
-            getTotal: function (transferRecords) {
-                console.log( "list_aTotal:" + this.list_aTotal)
-                this.list_aTotal = transferRecords.size;
-                return this.list_aTotal ;
+      initialPageNum: function () {
+        //console.log("initialPageNum")
+        this.list_bCurrPage = 1;
+        this.pageSize = 20;
+        this.$refs.pagination.initialPageInation();
       },
       ...mapActions({
         fetchAccout: Actions.GET_TRANSFER_RECORD,

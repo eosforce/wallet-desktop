@@ -58,7 +58,7 @@
             </div>
           </td>
           <td>
-            <routerlink class="button is-small is-outlined" :to="{name: 'vote', params: { bpname: bp.name }}">投票</routerlink>
+            <router-link class="button is-small is-outlined" :to="{name: 'vote', params: { bpname: bp.name }}">投票</router-link>
           </td>
         </tr>
       </tbody>
