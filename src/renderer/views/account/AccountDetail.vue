@@ -60,6 +60,7 @@ export default {
       fetchWallet: Actions.FETCH_WALLET,
       initApp: Actions.INIT_APP,
       refreshTransferrecord: Actions.GET_TRANSFER_RECORD,
+      refreshBpsList: Actions.GET_BPS_TABLE,
     }),
     toggleTab: function(tab) {
       this.currentTab = tab; // tab 为当前触发标签页的组件名
@@ -70,7 +71,7 @@ export default {
         this.refreshTransferrecord({ accountName: this.accountName });
         this.$refs.cTab.initialPageNum();
       }else if("BpList" == this.currentTab){
-
+        this.refreshBpsList();
       }
     }
   },

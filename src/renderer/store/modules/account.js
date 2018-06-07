@@ -98,6 +98,12 @@ const actions = {
             });
         });
     },
+  [Actions.GET_BPS_TABLE]({ state, dispatch, commit, getters }) {
+    const accountName = getters[Getters.CURRENT_ACCOUNT_NAME];
+    return getAccountInfo(getters[Getters.CURRENT_NODE])(accountName).then(({  bpsTable }) => {
+      commit(Mutations.SET_BPS_TABLE, { bpsTable });
+    });
+  },
 };
 var addStatus= (transferRecords , actionDetail) => {
     var out=[];
