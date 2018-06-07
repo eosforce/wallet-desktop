@@ -42,11 +42,10 @@ export default {
     walletData() {
       return this.wallet.data || {};
     },
-    ...mapState([ 'account', 'wallet']),
+    ...mapState(['account', 'wallet']),
   },
   methods: {
     copyToClipboard(text) {
-      dddsdf();
       this.$electron.clipboard.writeText(text);
     },
     refreshOverview() {
