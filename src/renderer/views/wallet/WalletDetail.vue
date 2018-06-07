@@ -4,14 +4,6 @@
     <router-view></router-view>
     <div class="dashboard-body" v-if="$route.name === 'walletDetail'">
       <div class="box">
-          <div class="img-box">
-            <img src="@/assets/border.png" class="lt"/>
-            <img src="@/assets/border.png" class="rt"/>
-            <img src="@/assets/border.png" class="lb"/>
-            <img src="@/assets/border.png" class="rb"/>
-            <img src="@/assets/lace.png" class="lt2"/>
-            <img src="@/assets/lace.png" class="rb2"/>
-          </div>
           <div class="publickey" style="line-height: 27px;">
             公钥：{{walletData.publicKey}}
             <span class="is-grouped">

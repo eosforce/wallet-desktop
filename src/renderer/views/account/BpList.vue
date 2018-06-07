@@ -1,18 +1,10 @@
 <template>
   <div class="box bplist-box">
-     <div class="img-box">
-       <img src="@/assets/border.png" class="lt"/>
-       <img src="@/assets/border.png" class="rt"/>
-       <img src="@/assets/border.png" class="lb"/>
-       <img src="@/assets/border.png" class="rb"/>
-       <img src="@/assets/lace.png" class="lt2"/>
-       <img src="@/assets/lace.png" class="rb2"/>
-    </div>
     <table class="table data-table">
       <thead>
         <tr>
           <th>排名</th>
-          <th>用户名</th>
+          <th>节点名</th>
           <th>分红比例</th>
           <th>总得票数</th>
           <th>年化利率</th>

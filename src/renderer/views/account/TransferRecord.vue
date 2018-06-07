@@ -1,13 +1,5 @@
 <template>
   <div class="box exchange-box">
-    <div class="img-box">
-      <img src="@/assets/border.png" class="lt"/>
-      <img src="@/assets/border.png" class="rt"/>
-      <img src="@/assets/border.png" class="lb"/>
-      <img src="@/assets/border.png" class="rb"/>
-      <img src="@/assets/lace.png" class="lt2"/>
-      <img src="@/assets/lace.png" class="rb2"/>
-    </div>
     <table class="table data-table">
       <thead>
         <tr>

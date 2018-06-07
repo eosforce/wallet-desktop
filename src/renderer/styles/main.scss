@@ -7,7 +7,9 @@
 }
 
 .cl {
-  color: #fff;
+  color:#000;
+  margin-left: 10px;
+  font-weight: 600;
 }
 
 .clearfix::after {
@@ -42,36 +44,57 @@ a:hover {
 }
 
 .page-menu {
-  background: #161b2b;
+  background: #233857;
   width: 160px;
+  position: relative;
+  .add-wallet{
+    position: absolute;
+    bottom: 0;
+    height: 60px;
+    line-height: 60px;
+    width:100%;
+    margin:0;
+    .button{
+      width: 100%;
+      height: 100%;
+      border-radius: 0;
+    }
+    .add-icon{
+       width: 30px;
+       font-size: 25px;
+    }
+  }
+}
+.page-header { 
+  background: #243E61
 }
 
 .header-navbar {
   text-align: center;
-  margin-top: 1rem;
   margin-left: 24px;
   margin-right: 24px;
   position: relative;
   .button {
-    color: #6fd8f1;
+    color: #fff;
     border: none;
-    background: rgba(50, 55, 70, 1);
+    background: #243E61;
     border-radius: 35px;
     padding: 1rem 2rem;
+    font-size:1rem
   }
   .select select {
-    background: #161b2b;
-    color: #ccc;
+    background: #fff;
+    color: #000;
     border: none;
     font-size: 14px;
   }
   .select:not(.is-multiple):not(.is-loading)::after {
-    border-color: #ccc;
+    border-color: #333;
     right: 1.125em;
     z-index: 4;
   }
   .block {
-    color: #ccc;
+    color: #fff;
     position: absolute;
     right: 0;
     font-size: 14px;
@@ -136,9 +159,8 @@ a:hover {
 }
 
 .box {
-  box-shadow: 0 0 30px #408ee1 inset;
-  background: transparent;
-  color: #999;
+  background: #fff;
+  color: #666;
   position: relative;
   .lt {
     position: absolute;
@@ -264,16 +286,16 @@ a:hover {
 
 .table {
   background: transparent;
-  color: #ccc;
+  color: #333;
 }
 
 .table td {
   font-size: 12px;
-  color: #fff !important;
+  color: #000 !important;
 }
 
 .table th {
-  color: #fff !important;
+  color: #000 !important;
   font-size: 14px;
   font-weight: normal;
   // width: 5%;
@@ -310,9 +332,9 @@ a:hover {
 }
 
 tr.is-vote {
-  background: rgba(0, 0, 0, 0.6);
+  background:#EBEFF2;
   td {
-    color: #408ee1 !important;
+    color: #000 !important;
   }
 }
 .table td,
@@ -351,12 +373,17 @@ tr.is-vote {
   border-radius: 10px;
   background: transparent;
 }
-.menu-list a {
-  color: #999;
+
+.dashboard-body{
+  background: #EBEFF2
 }
+.menu-list a {
+  color: #B3C0D3;
+}
+
 .menu-list a:hover {
   background: transparent;
-  color: #408ee1;
+  color: #fff;
 }
 
 .menu-list a.is-active::before {
@@ -364,7 +391,7 @@ tr.is-vote {
   display: inline-block;
   width: 2px;
   height: 20px;
-  background: #408ee1;
+  background: #fff;
   margin-right: 5px;
 }
 
@@ -385,7 +412,7 @@ tr.is-vote {
   display: block;
   a {
     padding-left: 0;
-    color: #ccc;
+    color: #333;
     img {
       margin-right: 10px;
     }
@@ -396,9 +423,10 @@ tr.is-vote {
 }
 .tab.is-active,
 .tab:hover {
-  border-bottom: 1px solid #408ee1 !important;
+  border-bottom: 1px solid #333 !important;
   a {
-    color: #408ee1;
+    color: #000;
+    font-weight: bold;
     border-bottom: none;
   }
   img.one {
