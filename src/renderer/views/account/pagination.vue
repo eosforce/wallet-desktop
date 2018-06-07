@@ -5,7 +5,7 @@
             <span v-for="idx in indexs" :key="idx" @click="gotoPage(idx)"
                   :class="currentNum == idx ? 'current-num' : 'num'">{{ idx }}</span>
             <span v-if="showNextText"><a @click="currentNum++">下一页</a></span>
-            <span class="show-for-pc total-warp">共{{ total }}条记录</span>
+            <span class="show-for-pc total-warp">共{{ totalPageNum }}页</span>
         </div>
     </div>
 </template>
@@ -117,5 +117,21 @@
 </script>
 
 <style scoped>
-
+.pagination-container{
+    width:100%;
+    text-align: center;
+}
+    .num-wrap{
+        margin:0 auto;
+    }
+    .current-num{
+        border-bottom: 1px solid #408EE1;
+        color:#408EE1;
+        margin:0 10px;
+    }
+    .num{
+        color:#CCCCCC;
+        margin:0 10px;
+        cursor: pointer;
+    }
 </style>
