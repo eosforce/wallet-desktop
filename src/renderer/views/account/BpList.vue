@@ -24,14 +24,14 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="bp in account.bpsTable" :key="bp.name" :class="{'is-vote': bp.vote}">
+        <tr v-for="bp in account.bpsTable" :key="bp.name" :class="{'is-vote': bp.vote && bp.vote.isMyVote}">
           <td>{{bp.order}}</td>
           <td>{{bp.name}}</td>
           <td>{{10000 - bp.commission_rate | rate}}</td>
           <td>{{bp.total_staked | number(0)}}</td>
           <td>
             <span v-show="bp.order >= 24">-</span>
-            <span v-show="bp.order < 24">{{bp.total_staked | yearrate}}</span>
+            <span v-show="bp.order < 24">{{bp.total_staked | yearrate(1 - bp.commission_rate / 10000)}}</span>
           </td>
           <td>{{bp.rewards_pool | number}}</td>
           <td>{{(bp.vote && bp.vote.staked) | number}}</td>
@@ -39,13 +39,13 @@
             <el-tooltip class="item" effect="dark" content="我的投票*我的投票时间/(总得票数*总投票时间)*奖励池" placement="top-end">
               <div>
                 <router-link
-                  v-show="bp.vote"
+                  v-show="bp.vote && bp.vote.isMyVote"
                   class="button is-small is-outlined"
                   :to="{ name: 'claim', params: { bpname: bp.name } }"
                 >
                   {{(bp.vote && bp.vote.reward) | number}}
                 </router-link>
-                <div v-show="!bp.vote">{{(bp.vote && bp.vote.reward) | number}}</div>
+                <div v-show="!(bp.vote && bp.vote.isMyVote)">{{(bp.vote && bp.vote.reward) | number}}</div>
               </div>
             </el-tooltip>
           </td>
