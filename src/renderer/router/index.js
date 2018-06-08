@@ -59,6 +59,13 @@ export default new Router({
                   components: {
                     modal: () => import('@/views/account/Claim')
                   }
+                },
+                {
+                  name: 'export',
+                  path: 'export',
+                  components: {
+                    modal: () => import('@/views/account/Export')
+                  }
                 }
               ]
             }
