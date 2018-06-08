@@ -1,6 +1,6 @@
 {
   "name": "eosforce",
-  "version": "0.6.4",
+  "version": "0.6.5",
   "author": "",
   "description": "eos wallet",
   "license": null,
@@ -19,8 +19,8 @@
     "postinstall": ""
   },
   "build": {
-    "productName": "eosforcewallet",
-    "appId": "",
+    "productName": "eosforce",
+    "appId": "com.electron.eosforce",
     "directories": {
       "output": "build"
     },
