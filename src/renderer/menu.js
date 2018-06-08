@@ -1,4 +1,5 @@
 import { remote } from 'electron';
+import { checkForUpdates } from '@/updater';
 
 const { Menu, shell, app } = remote;
 
@@ -43,6 +44,12 @@ export default () => {
           label: '反馈一个问题',
           click() {
             shell.openExternal('https://github.com/eosforce/wallet-desktop/issues/new');
+          },
+        },
+        {
+          label: '检查更新',
+          click(...arg) {
+            checkForUpdates(...arg);
           },
         },
       ],
