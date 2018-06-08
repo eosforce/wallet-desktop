@@ -4,6 +4,8 @@ import Storage, { getWalletIdList, createWalletData, getWalletKeyFromId } from '
 import { syncNodeList, getNodeList, getAccounts, getNodeInfo } from '@/services/Eos';
 import { decryptWif } from '@/utils/util';
 
+console.error('我们不一样');
+
 const initState = {
   walletIdList: [],
   fee: '0.01 EOS',
