@@ -29,7 +29,7 @@ module.exports = {
     // allow async-await
     'generator-star-spacing': 0,
     // console 警告
-    'no-console': ['error', { allow: ['warn'] }],
+    'no-console': ['error', { allow: ['warn', 'error'] }],
     // allow debugger during development
     'no-debugger': process.env.NODE_ENV === 'production' ? 2 : 0,
   },
