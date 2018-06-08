@@ -1,6 +1,8 @@
 import Eos from 'eosjs';
 
-import { NODE_API_URL } from '@/constants/config.constants';
+import Storage from '@/services/Storage';
+import { NODE_API_URL, NODE_LIST_KEY } from '@/constants/config.constants';
+
 import {
   toAsset,
   toBigNumber,
@@ -12,76 +14,23 @@ import {
 } from '@/utils/util';
 
 export const getNodeList = () => {
-  return Promise.resolve([
-    {
-      node_name: 'ali1',
-      location: '上海',
-      node_addr: '47.98.151.194',
-      port_http: '8888',
-      port_ssl: '',
-      port_p2p: '9876',
+  return new Storage(NODE_LIST_KEY).fetch();
+};
+
+export const syncNodeList = () => {
+  return fetch(NODE_API_URL, {
+    headers: {
+      Accept: 'application/vnd.github.raw+json',
     },
-    {
-      node_name: 'ali2',
-      location: '北京',
-      node_addr: '47.98.149.73',
-      port_http: '8888',
-      port_ssl: '',
-      port_p2p: '9876',
-    },
-    {
-      node_name: 'test1',
-      location: '日本',
-      node_addr: 'testnet1.bp.eosforce.io',
-      port_http: '8888',
-      port_ssl: '',
-      port_p2p: '9876',
-    },
-    {
-      node_name: 'test2',
-      location: '日本',
-      node_addr: 'testnet2.bp.eosforce.io',
-      port_http: '8888',
-      port_ssl: '',
-      port_p2p: '9876',
-    },
-    {
-      node_name: 'test3',
-      location: '日本',
-      node_addr: 'testnet3.bp.eosforce.io',
-      port_http: '8888',
-      port_ssl: '',
-      port_p2p: '9876',
-    },
-    {
-      node_name: 'test4',
-      location: '日本',
-      node_addr: 'testnet4.bp.eosforce.io',
-      port_http: '8888',
-      port_ssl: '',
-      port_p2p: '9876',
-    },
-  ]);
-  // return fetch(NODE_API_URL, {
-  //   headers: {
-  //     Accept: 'application/vnd.github.raw+json',
-  //   },
-  // })
-  //   .then(res => res.json())
-  //   .then(data => {
-  //     return data.nodes
-  //   })
-  //   .catch(err => {
-  //     return Promise.reject(new Error('获取节点列表失败！'))
-  //   })
+  })
+    .then(res => res.json())
+    .then(data => {
+      return new Storage(NODE_LIST_KEY).store(data);
+    });
 };
 
 export const getNodeInfo = httpEndpoint => {
   return Eos.Localnet({ httpEndpoint }).getInfo({});
-};
-
-export const createLocalNet = ({ chain_id, http_endpoint }) => config => {
-  return Eos.Localnet({ httpEndpoint, chainId: chain_id, ...config });
 };
 
 // 根据公钥获取用户名数组
@@ -96,6 +45,12 @@ export const getAccounts = httpEndpoint => publicKey => {
 // 获取交易记录
 export const getTransferRecord = httpEndpoint => ({ accountName, pos, offset }) => {
   return Eos.Localnet({ httpEndpoint }).getActions({ account_name: accountName, pos: pos, offset: offset, limit: 100 });
+};
+
+// 获取交易详情
+export const getTransAction = httpEndpoint => ({ tid }) => {
+  var act = Eos.Localnet({ httpEndpoint }).getTransaction({ id: tid });
+  return act;
 };
 
 // 从节点创建用户
@@ -170,7 +125,7 @@ export const getVotesTable = httpEndpoint => accountName => {
 };
 
 // 根据 bp 和 vote 得到分红表，返回一个对象
-export const getRewardsAndBpsTable = httpEndpoint => async (votesTable, accountName) => {
+export const getRewardsAndBpsTable = httpEndpoint => async(votesTable, accountName) => {
   const bpsTable = await getBpsTable(httpEndpoint)();
   const bpsHaveVoteTable = [];
   const bpsNoVoteTable = [];

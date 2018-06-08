@@ -10,8 +10,8 @@
         </select>
       </div>
       <div class="block">
-          最新高度:<span>{{nodeInfo.head_block_num}}</span>
           出块节点:<span>{{nodeInfo.head_block_producer}}</span>
+          最新高度:<span>{{nodeInfo.head_block_num}}</span>
           <span class="refresh" @click="refreshApp()"><img src="@/assets/refresh.png"></span>
       </div>
 
@@ -48,9 +48,13 @@ export default {
   created() {
     const loop = () => {
       setTimeout(() => {
-        this.fetchNodeInfo({ node: this.nodeValue }).then(() => {
-          loop();
-        });
+        this.fetchNodeInfo({ node: this.nodeValue })
+          .then(() => {
+            loop();
+          })
+          .catch(() => {
+            loop();
+          });
       }, 3000);
     };
 

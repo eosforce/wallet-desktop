@@ -4,13 +4,13 @@ export default {
   getConfig(defaultConfig, value) {
     return typeof value === 'string'
       ? {
-          ...defaultConfig,
-          title: value,
-        }
+        ...defaultConfig,
+        title: value,
+      }
       : {
-          ...defaultConfig,
-          ...value,
-        };
+        ...defaultConfig,
+        ...value,
+      };
   },
   warning(value) {
     return Notification(

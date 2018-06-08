@@ -19,6 +19,7 @@ export default {
         title: '初始化错误',
         message: '节点获取失败',
       });
+      return Promise.reject(err);
     });
   },
 };

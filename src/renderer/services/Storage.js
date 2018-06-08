@@ -1,6 +1,6 @@
 import uuidV4 from 'uuid/v4';
 
-import { isObject, privateToPublic, encrypt } from '@/utils/util';
+import { privateToPublic, encrypt } from '@/utils/util';
 import { EOSFORCE_WALLET_KEY } from '@/constants/config.constants';
 import { isValidPassword, isValidPrivate } from '@/utils/rules';
 
@@ -14,8 +14,7 @@ export default class Storage {
     return new Storage(storagePath);
   }
 
-  store(_data) {
-    const data = isObject(data) ? JSON.stringify(data) : _data;
+  store(data) {
     try {
       localStorage.setItem(this.storagePath, JSON.stringify(data));
       return Promise.resolve(data);

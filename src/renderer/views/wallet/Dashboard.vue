@@ -5,7 +5,7 @@
 <script>
 import { mapActions, mapState } from 'vuex';
 
-import { Actions, Getters } from '@/constants/types.constants';
+import { Actions } from '@/constants/types.constants';
 
 export default {
   name: 'dashboard',

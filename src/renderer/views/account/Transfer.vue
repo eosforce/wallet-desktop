@@ -79,8 +79,7 @@ import { mapActions, mapState } from 'vuex';
 
 import Message from '@/components/Message';
 import ConfirmModal from '@/components/ConfirmModal';
-import { Actions, Getters } from '@/constants/types.constants';
-import { randomKey, privateToPublic } from '@/utils/util';
+import { Actions } from '@/constants/types.constants';
 import { isValidAccountName, isValidAmount } from '@/utils/rules';
 import { asset } from '@/utils/filter';
 

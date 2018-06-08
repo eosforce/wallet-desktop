@@ -16,8 +16,10 @@
           交易记录
         </a>
       </div>
+
+        <span class="refresh fr" @click="refreshList()"><img src="@/assets/refresh.png"></span>
     </div>
-    <div :is="currentTab" keep-alive></div>
+    <div :is="currentTab" ref="cTab" keep-alive></div>
     <router-view name="modal"></router-view>
   </div>
 </template>
@@ -25,8 +27,7 @@
 <script>
 import { mapState, mapActions } from 'vuex';
 
-import Message from '@/components/Message';
-import { Actions, Getters } from '@/constants/types.constants';
+import { Actions } from '@/constants/types.constants';
 import AccountOverview from '@/views/account/AccountOverview';
 import TransferRecord from '@/views/account/TransferRecord';
 import BpList from '@/views/account/BpList';
@@ -57,10 +58,20 @@ export default {
       fetchAccout: Actions.FETCH_ACCOUNT,
       fetchWallet: Actions.FETCH_WALLET,
       initApp: Actions.INIT_APP,
+      refreshTransferrecord: Actions.GET_TRANSFER_RECORD,
+      refreshBpsList: Actions.GET_BPS_TABLE,
     }),
     toggleTab: function(tab) {
       this.currentTab = tab; // tab 为当前触发标签页的组件名
     },
+    refreshList: function() {
+      if (this.currentTab === 'TransferRecord') {
+        this.refreshTransferrecord({ accountName: this.accountName });
+        this.$refs.cTab.initialPageNum();
+      } else if (this.currentTab === 'BpList') {
+        this.refreshBpsList();
+      }
+    }
   },
   beforeRouteUpdate(to, from, next) {
     if (to.params.accountName !== from.params.accountName) {
@@ -89,8 +100,15 @@ export default {
 .dashboard-body {
   padding: 24px;
   overflow: auto;
-  background: #1e2333;
+  background: #EBEFF2;
   flex: 1;
+}
+  .refresh{
+    height: 40px;
+  }
+.refresh img{
+  width: 15px;
+  margin: 12px 20px;
 }
 </style>
 
