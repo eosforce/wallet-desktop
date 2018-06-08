@@ -1,6 +1,6 @@
 import { remote } from 'electron';
 
-const { Menu } = remote;
+const { Menu, shell, app } = remote;
 
 export default () => {
   const template = [
@@ -32,7 +32,55 @@ export default () => {
         { role: 'togglefullscreen' },
       ],
     },
+    {
+      role: 'window',
+      submenu: [{ role: 'minimize' }, { role: 'close' }],
+    },
+    {
+      role: 'help',
+      submenu: [
+        {
+          label: '反馈一个问题',
+          click() {
+            shell.openExternal('https://github.com/eosforce/wallet-desktop/issues/new');
+          },
+        },
+      ],
+    },
   ];
+
+  if (process.platform === 'darwin') {
+    template.unshift({
+      label: app.getName(),
+      submenu: [
+        { role: 'about' },
+        { type: 'separator' },
+        { role: 'services', submenu: [] },
+        { type: 'separator' },
+        { role: 'hide' },
+        { role: 'hideothers' },
+        { role: 'unhide' },
+        { type: 'separator' },
+        { role: 'quit' },
+      ],
+    });
+
+    template[1].submenu.push(
+      { type: 'separator' },
+      {
+        label: 'Speech',
+        submenu: [{ role: 'startspeaking' }, { role: 'stopspeaking' }],
+      }
+    );
+
+    template[3].submenu = [
+      { role: 'close' },
+      { role: 'minimize' },
+      { role: 'zoom' },
+      { type: 'separator' },
+      { role: 'front' },
+    ];
+  }
 
   Menu.setApplicationMenu(Menu.buildFromTemplate(template));
 };
