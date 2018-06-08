@@ -1,6 +1,6 @@
 {
   "name": "eosforce",
-  "version": "0.6.4",
+  "version": "0.6.10",
   "author": "",
   "description": "eos wallet",
   "license": null,
@@ -19,8 +19,8 @@
     "postinstall": ""
   },
   "build": {
-    "productName": "eosforcewallet",
-    "appId": "",
+    "productName": "eosforce",
+    "appId": "com.electron.eosforce",
     "directories": {
       "output": "build"
     },
@@ -61,6 +61,7 @@
     "bignumber.js": "^7.2.1",
     "bulma": "^0.7.1",
     "dayjs": "^1.6.4",
+    "electron-updater": "^2.21.10",
     "element-ui": "^2.3.8",
     "eosjs": "git+https://github.com/eosforce/eosjs.git#v0.6.0",
     "sjcl": "^1.0.7",
