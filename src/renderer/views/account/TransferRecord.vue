@@ -27,8 +27,7 @@
         </tr>
       </tbody>
     </table>
-        <pagination :pageSize='pageSize' :currentPage='list_bCurrPage' :total='account.latestTransferNum'
-                    @pageChanged='list_bPageChanged' ref="pagination"></pagination>
+      <pagination :pageSize='pageSize' :currentPage='list_bCurrPage' :total='account.latestTransferNum' @pageChanged='list_bPageChanged' ref="pagination"></pagination>
   </div>
 </template>
 
@@ -60,9 +59,6 @@ export default {
       return this.$route.params.accountName;
     },
   },
-  filters: {
-    timestamp,
-  },
   methods: {
     list_bPageChanged: function(toPageStart, offset) {
       // console.log("toPageStart: " + toPageStart);
@@ -78,6 +74,9 @@ export default {
     ...mapActions({
       fetchAccout: Actions.GET_TRANSFER_RECORD,
     }),
+  },
+  filters: {
+    timestamp,
   },
   components: {
     Pagination,
