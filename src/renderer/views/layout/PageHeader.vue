@@ -24,7 +24,7 @@
         <div class="ac-sub-title">2.公测名额奖：前1000公测用户可在eosforce微信社群中提交eosforcewallet的用户名，每人奖励20枚代币</div>
         <div class="ac-sub-title">3.投票分红排位赛：</div>
         <div class="ac-item">①资格：仅限初始测试币为666枚的用户；领取时间需要在6月11日12：00之后。</div>
-        <div class="ac-item">②参与方式：可在eosforcewallet钱包中投票获取分红，截止6月20日12：00根据用户总资产进行排名，排名奖励 细则</div>
+        <div class="ac-item">②参与方式：可在eosforcewallet钱包中投票获取分红，截止6月20日12：00根据用户总资产进行排名，排名奖励细则看下图。</div>
         <div class="ac-item">③注意：参与投票分红排位赛的账户不得进行转账操作，经发现总资产中有转入记录取消排位赛资格。</div>
         <div class="ac-sub-title">4..扫二维码加入微信社群，领取测试币。</div>
         <div class="ac-sub-title">5.公测期间，切勿导入eos私钥。</div>
