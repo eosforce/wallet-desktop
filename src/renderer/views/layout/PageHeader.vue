@@ -140,11 +140,13 @@ export default {
 
 .page-activity{
   position: absolute;
-  top: 10%;
-  height: 80%;
+  top: 0;
+  bottom: 0;
+  height: 660px;
   z-index: 999;
   right: 50px;
   left: 250px;
+  margin: auto;
 }
 
   .ac-head{
