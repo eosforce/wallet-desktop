@@ -6,18 +6,31 @@
         <a class="min-img">
           <img src="@/assets/node.png" class="two hide">
           <img src="@/assets/node_w.png" class="one">
-          节点列表
+          超级节点
+        </a>
+      </div>  
+      <div class="tab fl" @click="toggleTab('AlternateNode')" :class="{'is-active': currentTab === 'AlternateNode'}">
+        <a class="min-img">
+          <img src="@/assets/node.png" class="two hide">
+          <img src="@/assets/node_w.png" class="one">
+          候补节点
         </a>
       </div>
-       <div class="tab fl" @click="toggleTab('TransferRecord')" :class="{'is-active': currentTab === 'TransferRecord'}">
+      <div class="tab fl" @click="toggleTab('Myvote')" :class="{'is-active': currentTab === 'Myvote'}">
+        <a class="min-img">
+          <img src="@/assets/vote.png" class="two hide">
+          <img src="@/assets/vote_w.png" class="one">
+          我的投票
+        </a>
+      </div>
+      <div class="tab fl" @click="toggleTab('TransferRecord')" :class="{'is-active': currentTab === 'TransferRecord'}">
         <a class="min-img">
           <img src="@/assets/exchange.png" class="two hide">
           <img src="@/assets/exchange_w.png" class="one">
           交易记录
         </a>
       </div>
-
-        <span class="refresh fr" @click="refreshList()"><img src="@/assets/refresh.png"></span>
+        <span class="refresh fr el-icon-refresh" @click="refreshList()"></span>
     </div>
     <div :is="currentTab" ref="cTab" keep-alive></div>
     <router-view name="modal"></router-view>
@@ -31,6 +44,8 @@ import { Actions } from '@/constants/types.constants';
 import AccountOverview from '@/views/account/AccountOverview';
 import TransferRecord from '@/views/account/TransferRecord';
 import BpList from '@/views/account/BpList';
+import Myvote from '@/views/account/Myvote';
+import AlternateNode from '@/views/account/AlternateNode';
 
 export default {
   name: 'AccountDetail',
@@ -71,7 +86,7 @@ export default {
       } else if (this.currentTab === 'BpList') {
         this.refreshBpsList();
       }
-    }
+    },
   },
   beforeRouteUpdate(to, from, next) {
     if (to.params.accountName !== from.params.accountName) {
@@ -92,6 +107,8 @@ export default {
     AccountOverview,
     TransferRecord,
     BpList,
+    Myvote,
+    AlternateNode,
   },
 };
 </script>
@@ -100,13 +117,17 @@ export default {
 .dashboard-body {
   padding: 24px;
   overflow: auto;
-  background: #EBEFF2;
+  background: #ebeff2;
   flex: 1;
 }
-  .refresh{
-    height: 40px;
-  }
-.refresh img{
+.refresh {
+  height: 40px;
+  line-height: 40px;
+  margin-right: 15px;
+  font-size: 20px;
+  cursor: pointer;
+}
+.refresh img {
   width: 15px;
   margin: 12px 20px;
 }

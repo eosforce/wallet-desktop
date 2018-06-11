@@ -1,5 +1,5 @@
 <template>
-  <div class="box bplist-box">
+  <div class="box">
     <table class="table data-table">
       <thead>
         <tr>
@@ -16,7 +16,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="bp in account.bpsTable" :key="bp.name" :class="{'is-vote': bp.vote && bp.vote.isMyVote}" v-if='bp.order < 24'>
+        <tr v-for="bp in account.bpsTable" :key="bp.name" :class="{'is-vote': bp.vote && bp.vote.isMyVote}"  v-if='bp.order >= 24'>
           <td>{{bp.order}}</td>
           <td>{{bp.name}}</td>
           <td>{{10000 - bp.commission_rate | rate}}</td>
@@ -70,9 +70,6 @@ export default {
   },
   computed: {
     ...mapState(['account']),
-    capitalize: function(value) {
-      if (!value) return '';
-    },
   },
   filters: {
     number,
@@ -101,7 +98,7 @@ export default {
   white-space: nowrap;
   cursor: pointer;
 }
-.bplist-box tbody .is-vote {
+tbody .is-vote {
   display: none;
 }
 </style>

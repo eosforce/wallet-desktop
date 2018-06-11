@@ -125,7 +125,7 @@ export const getVotesTable = httpEndpoint => accountName => {
 };
 
 // 根据 bp 和 vote 得到分红表，返回一个对象
-export const getRewardsAndBpsTable = httpEndpoint => async(votesTable, accountName) => {
+export const getRewardsAndBpsTable = httpEndpoint => async (votesTable, accountName) => {
   const bpsTable = await getBpsTable(httpEndpoint)();
   const bpsHaveVoteTable = [];
   const bpsNoVoteTable = [];
@@ -144,7 +144,7 @@ export const getRewardsAndBpsTable = httpEndpoint => async(votesTable, accountNa
     const { rewards_pool, total_voteage, total_staked, voteage_update_time } = bpRow;
     bpRow.bp_voteage = calcVoteage(total_voteage, total_staked, voteage_update_time);
     if (vote) {
-      const { bpname, staked, stake_time, unstaking } = vote;
+      const { bpname, staked, stake_time, unstaking, unstake_time } = vote;
       const me_voteage = calcVoteage(vote.voteage, vote.staked, vote.voteage_update_time);
       const reward = toAsset(clacReward(me_voteage, bpRow.bp_voteage, rewards_pool));
       const isMyVote = calcVoteExist(staked, reward, unstaking);
@@ -158,6 +158,7 @@ export const getRewardsAndBpsTable = httpEndpoint => async(votesTable, accountNa
         total_staked,
         me_voteage,
         reward,
+        unstake_time,
         isMyVote,
       };
       rewardsTable.push({ ...extraRow });

@@ -48,11 +48,11 @@ a:hover {
   width: 160px;
   position: relative;
   .add-wallet{
-    position: absolute;
+    position: fixed;
     bottom: 0;
     height: 60px;
     line-height: 60px;
-    width:100%;
+    width:200px;
     margin:0;
     .button{
       width: 100%;
