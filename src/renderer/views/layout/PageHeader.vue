@@ -20,8 +20,8 @@
       <div class="ac-head"><span @click="hideActivity">X</span></div>
       <div class="ac-body">
         <div class="ac-title">公测奖励说明</div>
-        <div class="ac-sub-title">1.公测全额奖：前1000公测用户可在eosforce社群中提交eosforcewallet的公钥，每人奖励20枚主网代币 </div>
-        <div class="ac-sub-title">2.每日大奖：6月11日-15日期间，将从社群中提交的公钥用户中，每日抽取一等奖、二等奖、三等奖各一名；分别奖励1000枚、600枚、400枚主网代币</div>
+        <div class="ac-sub-title">1.公测全额奖：前1000公测用户在指定表单中提交eosforcewallet的公钥，可获奖励20枚主网代币 </div>
+        <div class="ac-sub-title">2.每日大奖：6月11日-15日期间，将从参与投票的用户中（用户需要在指定表单中提交公钥），每日抽取一等奖、二等奖、三等奖各一名；分别奖励1000枚、600枚、400枚主网代币</div>
         <div class="ac-sub-title">3.奖励代币来源：奖励代币均为eosforce启动的eos主网代币，来自于首周默认节点出块的奖励</div>
         <!--<div class="ac-item">①资格：仅限初始测试币为666枚的用户；领取时间需要在6月11日12：00之后。</div>
         <div class="ac-item">②参与方式：可在eosforcewallet钱包中投票获取分红，截止6月20日12：00根据用户总资产进行排名，排名奖励细则看下图。</div>
@@ -45,6 +45,7 @@
           <div class="ac-bonus"><span>10</span>第十名：200枚代币</div>
           <div class="ac-bonus"><span>11-50</span>100枚代币</div>
         </div>-->
+        <div class="qr-code"><img src="../../assets/eosforce-qrcode.png" height="114" width="114"/></div>
       </div>
     </div>
   </header>
@@ -238,4 +239,7 @@ export default {
 .ac-bonus:nth-child(11){
   width:503px;
 }
+  .qr-code{
+    padding-top:26px;
+  }
 </style>
