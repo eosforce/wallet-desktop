@@ -167,33 +167,33 @@ export default {
 }
 .ac-body {
   overflow: auto;
-    height: 500px;
-    background-color: #FAFBFD;
-    padding-left:28px;
-    padding-right:26px;
-    box-shadow:4px 0px 54px rgba(3,0,0,0.14);
-    border-bottom-left-radius: 15px;
-    border-bottom-right-radius: 15px;
-  }
-  .ac-title{
-    line-height:92px;
-    font-size: 26px;
-    color:#1F304A;
-  }
-  .ac-sub-title{
-    line-height:33px;
-    color:#5F6065;
-    font-size: 16px;
-  }
-  .ac-item{
-    color:#A8A9AC;
-    line-height:33px;
-  }
-  .ac-bonus-body{
-    margin-bottom: 50px;
-  }
-.ac-bonus{
-  height:33px;
+  height: 500px;
+  background-color: #fafbfd;
+  padding-left: 28px;
+  padding-right: 26px;
+  box-shadow: 4px 0px 54px rgba(3, 0, 0, 0.14);
+  border-bottom-left-radius: 15px;
+  border-bottom-right-radius: 15px;
+}
+.ac-title {
+  line-height: 92px;
+  font-size: 26px;
+  color: #1f304a;
+}
+.ac-sub-title {
+  line-height: 33px;
+  color: #5f6065;
+  font-size: 16px;
+}
+.ac-item {
+  color: #a8a9ac;
+  line-height: 33px;
+}
+.ac-bonus-body {
+  margin-bottom: 50px;
+}
+.ac-bonus {
+  height: 33px;
   line-height: 33px;
   font-size: 16px;
   color: #ffffff;
@@ -239,7 +239,7 @@ export default {
 .ac-bonus:nth-child(11) {
   width: 503px;
 }
-  .qr-code{
-    padding-top:26px;
-  }
+.qr-code {
+  padding-top: 26px;
+}
 </style>
