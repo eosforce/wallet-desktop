@@ -101,7 +101,7 @@ export default {
   white-space: nowrap;
   cursor: pointer;
 }
-.bplist-box tbody .is-vote {
+tbody .is-vote {
   display: none;
 }
 </style>
