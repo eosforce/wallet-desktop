@@ -10,9 +10,9 @@
         </select>
       </div>
       <div class="block">
-          出块节点:<span>{{nodeInfo.head_block_producer}}</span>
-          最新高度:<span>{{nodeInfo.head_block_num}}</span>
-          <span class="refresh" @click="refreshApp()"><img src="@/assets/refresh.png"></span>
+        出块节点:<span>{{nodeInfo.head_block_producer}}</span>
+        最新高度:<span>{{nodeInfo.head_block_num}}</span>
+        <span class="refresh" @click="refreshApp()"><img src="@/assets/refresh.png"></span>
         <span class="refresh" @click="showActivity">活动</span>
       </div>
     </div>
@@ -20,7 +20,7 @@
       <div class="ac-head"><span @click="hideActivity">X</span></div>
       <div class="ac-body">
         <div class="ac-title">公测奖励说明</div>
-        <div class="ac-sub-title">1.公测全额奖：前1000公测用户在指定表单中提交eosforcewallet的公钥，可获奖励20枚主网代币 </div>
+        <div class="ac-sub-title">1.公测全额奖：前1000公测用户在指定表单中提交eosforcewallet的公钥，可获奖励20枚主网代币</div>
         <div class="ac-sub-title">2.每日大奖：6月11日-15日期间，将从参与投票的用户中（用户需要在指定表单中提交公钥），每日抽取一等奖、二等奖、三等奖各一名；分别奖励1000枚、600枚、400枚主网代币</div>
         <div class="ac-sub-title">3.奖励代币来源：奖励代币均为eosforce启动的eos主网代币，来自于首周默认节点出块的奖励</div>
         <!--<div class="ac-item">①资格：仅限初始测试币为666枚的用户；领取时间需要在6月11日12：00之后。</div>
@@ -45,201 +45,221 @@
           <div class="ac-bonus"><span>10</span>第十名：200枚代币</div>
           <div class="ac-bonus"><span>11-50</span>100枚代币</div>
         </div>-->
-        <div class="qr-code"><img src="../../assets/eosforce-qrcode.png" height="114" width="114"/></div>
+        <div class="qr-code"><img src="@/assets/eosforce-qrcode.png" height="114" width="114"/></div>
       </div>
     </div>
   </header>
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex';
+  import {mapState, mapActions} from 'vuex';
 
-import { Actions } from '@/constants/types.constants';
+  import {Actions} from '@/constants/types.constants';
 
-export default {
-  name: 'PageHeader',
-  data() {
-    return {
-      showWalletNew: false,
-      showActivityPage: true,
-    };
-  },
-  computed: {
-    nodeInfo() {
-      return this.app.currentNodeInfo || {};
+  export default {
+    name: 'PageHeader',
+    data() {
+      return {
+        showWalletNew: false,
+        showActivityPage: true,
+      };
     },
-    nodeValue: {
-      get() {
-        return this.app.currentNodeValue;
+    computed: {
+      nodeInfo() {
+        return this.app.currentNodeInfo || {};
       },
-      set(value) {
-        this.fetchNodeInfo({ node: value });
+      nodeValue: {
+        get() {
+          return this.app.currentNodeValue;
+        },
+        set(value) {
+          this.fetchNodeInfo({node: value});
+        },
       },
+      ...mapState(['app']),
     },
-    ...mapState(['app']),
-  },
-  created() {
-    const loop = () => {
-      setTimeout(() => {
-        this.fetchNodeInfo({ node: this.nodeValue })
-          .then(() => {
-            loop();
-          })
-          .catch(() => {
-            loop();
-          });
-      }, 3000);
-    };
+    created() {
+      const loop = () => {
+        setTimeout(() => {
+          this.fetchNodeInfo({node: this.nodeValue})
+            .then(() => {
+              loop();
+            })
+            .catch(() => {
+              loop();
+            });
+        }, 3000);
+      };
 
-    loop();
-  },
-  methods: {
-    hideActivity() {
-      this.showActivityPage = false;
+      loop();
     },
-    showActivity() {
-      this.showActivityPage = true;
+    methods: {
+      hideActivity() {
+        this.showActivityPage = false;
+      },
+      showActivity() {
+        this.showActivityPage = true;
+      },
+      ...mapActions({
+        fetchNodeInfo: Actions.FETCH_NODE_INFO,
+        refreshApp: Actions.REFRESH_APP,
+      }),
     },
-    ...mapActions({
-      fetchNodeInfo: Actions.FETCH_NODE_INFO,
-      refreshApp: Actions.REFRESH_APP,
-    }),
-  },
-};
+  };
 </script>
 
 <style scoped>
-.page-header {
-  display: flex;
-}
+  .page-header {
+    display: flex;
+  }
 
-.brand {
-  width: 200px;
-  display: flex;
-  align-items: center;
-  height: 49px;
-  font-size: 24px;
-  padding-left: 16px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
-}
+  .brand {
+    width: 200px;
+    display: flex;
+    align-items: center;
+    height: 49px;
+    font-size: 24px;
+    padding-left: 16px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+  }
 
-.brand__link {
-  color: inherit;
-  text-decoration: none;
-}
+  .brand__link {
+    color: inherit;
+    text-decoration: none;
+  }
 
-.header-navbar {
-  display: flex;
-  align-items: center;
-  flex: 1;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
-}
+  .header-navbar {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+  }
 
-.refresh {
-  cursor: pointer;
-}
+  .refresh {
+    cursor: pointer;
+  }
 
-.page-activity {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  height: 560px;
-  z-index: 999;
-  right: 50px;
-  left: 250px;
-  margin: auto;
-}
+  .page-activity {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    height: 560px;
+    z-index: 999;
+    right: 50px;
+    left: 250px;
+    margin: auto;
+  }
 
-.ac-head {
-  width: 100%;
-  height: 60px;
-  line-height: 60px;
-  color: #ffffff;
-  /* float: right; */
-  text-align: right;
-  background-color: #243e61;
-  border-top-left-radius: 15px;
-  border-top-right-radius: 15px;
-}
-.ac-head span {
-  padding: 0 30px;
-  cursor: pointer;
-}
-.ac-body {
-  overflow: auto;
-  height: 500px;
-  background-color: #fafbfd;
-  padding-left: 28px;
-  padding-right: 26px;
-  box-shadow: 4px 0px 54px rgba(3, 0, 0, 0.14);
-  border-bottom-left-radius: 15px;
-  border-bottom-right-radius: 15px;
-}
-.ac-title {
-  line-height: 92px;
-  font-size: 26px;
-  color: #1f304a;
-}
-.ac-sub-title {
-  line-height: 33px;
-  color: #5f6065;
-  font-size: 16px;
-}
-.ac-item {
-  color: #a8a9ac;
-  line-height: 33px;
-}
-.ac-bonus-body {
-  margin-bottom: 50px;
-}
-.ac-bonus {
-  height: 33px;
-  line-height: 33px;
-  font-size: 16px;
-  color: #ffffff;
-  background-color: rgba(35, 56, 87, 0.28);
-  margin: 5px 0;
-}
-.ac-bonus span {
-  padding: 0 13px;
-}
-.ac-bonus:nth-child(1) {
-  width: 203px;
-  background-color: rgba(35, 56, 87, 0.8);
-}
-.ac-bonus:nth-child(2) {
-  width: 263px;
-  background-color: rgba(35, 56, 87, 0.6);
-}
-.ac-bonus:nth-child(3) {
-  width: 323px;
-  background-color: rgba(35, 56, 87, 0.4);
-}
-.ac-bonus:nth-child(4) {
-  width: 383px;
-}
-.ac-bonus:nth-child(5) {
-  width: 383px;
-}
-.ac-bonus:nth-child(6) {
-  width: 383px;
-}
-.ac-bonus:nth-child(7) {
-  width: 443px;
-}
-.ac-bonus:nth-child(8) {
-  width: 443px;
-}
-.ac-bonus:nth-child(9) {
-  width: 443px;
-}
-.ac-bonus:nth-child(10) {
-  width: 443px;
-}
-.ac-bonus:nth-child(11) {
-  width: 503px;
-}
-.qr-code {
-  padding-top: 26px;
-}
+  .ac-head {
+    width: 100%;
+    height: 60px;
+    line-height: 60px;
+    color: #ffffff;
+    /* float: right; */
+    text-align: right;
+    background-color: #243e61;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+  }
+
+  .ac-head span {
+    padding: 0 30px;
+    cursor: pointer;
+  }
+
+  .ac-body {
+    overflow: auto;
+    height: 500px;
+    background-color: #FAFBFD;
+    padding-left: 28px;
+    padding-right: 26px;
+    box-shadow: 4px 0px 54px rgba(3, 0, 0, 0.14);
+    border-bottom-left-radius: 15px;
+    border-bottom-right-radius: 15px;
+  }
+
+  .ac-title {
+    line-height: 92px;
+    font-size: 26px;
+    color: #1F304A;
+  }
+
+  .ac-sub-title {
+    line-height: 33px;
+    color: #5F6065;
+    font-size: 16px;
+  }
+
+  .ac-item {
+    color: #A8A9AC;
+    line-height: 33px;
+  }
+
+  .ac-bonus-body {
+    margin-bottom: 50px;
+  }
+
+  .ac-bonus {
+    height: 33px;
+    line-height: 33px;
+    font-size: 16px;
+    color: #ffffff;
+    background-color: rgba(35, 56, 87, 0.28);
+    margin: 5px 0;
+  }
+
+  .ac-bonus span {
+    padding: 0 13px;
+  }
+
+  .ac-bonus:nth-child(1) {
+    width: 203px;
+    background-color: rgba(35, 56, 87, 0.8);
+  }
+
+  .ac-bonus:nth-child(2) {
+    width: 263px;
+    background-color: rgba(35, 56, 87, 0.6);
+  }
+
+  .ac-bonus:nth-child(3) {
+    width: 323px;
+    background-color: rgba(35, 56, 87, 0.4);
+  }
+
+  .ac-bonus:nth-child(4) {
+    width: 383px;
+  }
+
+  .ac-bonus:nth-child(5) {
+    width: 383px;
+  }
+
+  .ac-bonus:nth-child(6) {
+    width: 383px;
+  }
+
+  .ac-bonus:nth-child(7) {
+    width: 443px;
+  }
+
+  .ac-bonus:nth-child(8) {
+    width: 443px;
+  }
+
+  .ac-bonus:nth-child(9) {
+    width: 443px;
+  }
+
+  .ac-bonus:nth-child(10) {
+    width: 443px;
+  }
+
+  .ac-bonus:nth-child(11) {
+    width: 503px;
+  }
+
+  .qr-code {
+    padding-top: 26px;
+  }
 </style>
