@@ -20,16 +20,16 @@
       <div class="ac-head"><span @click="hideActivity">X</span></div>
       <div class="ac-body">
         <div class="ac-title">公测奖励说明</div>
-        <div class="ac-sub-title">1.奖励代币：奖励代币均为eosforce启动的eos主网代币，来自于首周默认节点出块的奖励。</div>
-        <div class="ac-sub-title">2.公测名额奖：前1000公测用户可在eosforce微信社群中提交eosforcewallet的用户名，每人奖励20枚代币</div>
-        <div class="ac-sub-title">3.投票分红排位赛：</div>
-        <div class="ac-item">①资格：仅限初始测试币为666枚的用户；领取时间需要在6月11日12：00之后。</div>
+        <div class="ac-sub-title">1.公测全额奖：前1000公测用户在指定表单中提交eosforcewallet的公钥，可获奖励20枚主网代币 </div>
+        <div class="ac-sub-title">2.每日大奖：6月11日-15日期间，将从参与投票的用户中（用户需要在指定表单中提交公钥），每日抽取一等奖、二等奖、三等奖各一名；分别奖励1000枚、600枚、400枚主网代币</div>
+        <div class="ac-sub-title">3.奖励代币来源：奖励代币均为eosforce启动的eos主网代币，来自于首周默认节点出块的奖励</div>
+        <!--<div class="ac-item">①资格：仅限初始测试币为666枚的用户；领取时间需要在6月11日12：00之后。</div>
         <div class="ac-item">②参与方式：可在eosforcewallet钱包中投票获取分红，截止6月20日12：00根据用户总资产进行排名，排名奖励细则看下图。</div>
-        <div class="ac-item">③注意：参与投票分红排位赛的账户不得进行转账操作，经发现总资产中有转入记录取消排位赛资格。</div>
-        <div class="ac-sub-title">4..扫二维码加入微信社群，领取测试币。</div>
-        <div class="ac-sub-title">5.公测期间，切勿导入eos私钥。</div>
-        <div class="ac-sub-title">6.此次活动最终解释权归eosforce.io所有。</div>
-        <div class="ac-title">公测奖励</div>
+        <div class="ac-item">③注意：参与投票分红排位赛的账户不得进行转账操作，经发现总资产中有转入记录取消排位赛资格。</div>-->
+        <div class="ac-sub-title">4.扫二维码加入微信社群，领取测试币</div>
+        <div class="ac-sub-title">5.公测期间，切勿导入eos私钥</div>
+        <div class="ac-sub-title">6.此次活动最终解释权归eosforce.io所有</div>
+        <!--<div class="ac-title">公测奖励</div>
         <div class="ac-sub-title">公测全额奖：前1000名奖励20枚代币</div>
         <div class="ac-sub-title">投票分红排位赛：</div>
         <div class="ac-bonus-body">
@@ -44,7 +44,8 @@
           <div class="ac-bonus"><span>9</span>第九名：200枚代币</div>
           <div class="ac-bonus"><span>10</span>第十名：200枚代币</div>
           <div class="ac-bonus"><span>11-50</span>100枚代币</div>
-        </div>
+        </div>-->
+        <div class="qr-code"><img src="../../assets/eosforce-qrcode.png" height="114" width="114"/></div>
       </div>
     </div>
   </header>
@@ -142,7 +143,7 @@ export default {
   position: absolute;
   top: 0;
   bottom: 0;
-  height: 660px;
+  height: 560px;
   z-index: 999;
   right: 50px;
   left: 250px;
@@ -166,30 +167,33 @@ export default {
 }
 .ac-body {
   overflow: auto;
-  height: 600px;
-  background-color: #fafbfd;
-  padding-left: 28px;
-  box-shadow: 4px 0px 54px rgba(3, 0, 0, 0.14);
-}
-.ac-title {
-  line-height: 92px;
-  font-size: 26px;
-  color: #1f304a;
-}
-.ac-sub-title {
-  line-height: 33px;
-  color: #5f6065;
-  font-size: 16px;
-}
-.ac-item {
-  color: #a8a9ac;
-  line-height: 33px;
-}
-.ac-bonus-body {
-  margin-bottom: 50px;
-}
-.ac-bonus {
-  height: 33px;
+    height: 500px;
+    background-color: #FAFBFD;
+    padding-left:28px;
+    padding-right:26px;
+    box-shadow:4px 0px 54px rgba(3,0,0,0.14);
+    border-bottom-left-radius: 15px;
+    border-bottom-right-radius: 15px;
+  }
+  .ac-title{
+    line-height:92px;
+    font-size: 26px;
+    color:#1F304A;
+  }
+  .ac-sub-title{
+    line-height:33px;
+    color:#5F6065;
+    font-size: 16px;
+  }
+  .ac-item{
+    color:#A8A9AC;
+    line-height:33px;
+  }
+  .ac-bonus-body{
+    margin-bottom: 50px;
+  }
+.ac-bonus{
+  height:33px;
   line-height: 33px;
   font-size: 16px;
   color: #ffffff;
@@ -235,4 +239,7 @@ export default {
 .ac-bonus:nth-child(11) {
   width: 503px;
 }
+  .qr-code{
+    padding-top:26px;
+  }
 </style>
