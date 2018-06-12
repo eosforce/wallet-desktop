@@ -98,7 +98,7 @@ export default {
   white-space: nowrap;
   cursor: pointer;
 }
-tbody .is-vote {
+/* tbody .is-vote {
   display: none;
-}
+} */
 </style>

@@ -13,7 +13,7 @@
         <a class="min-img">
           <img src="@/assets/node.png" class="two hide">
           <img src="@/assets/node_w.png" class="one">
-          候补节点
+          候选节点
         </a>
       </div>
       <div class="tab fl" @click="toggleTab('Myvote')" :class="{'is-active': currentTab === 'Myvote'}">

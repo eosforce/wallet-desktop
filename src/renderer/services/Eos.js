@@ -174,15 +174,9 @@ export const getRewardsAndBpsTable = httpEndpoint => async (votesTable, accountN
     }
   }
 
-  bpsHaveVoteTable.sort((val1, val2) => {
-    return toBigNumber(val2.vote.staked)
-      .minus(toBigNumber(val1.vote.staked))
-      .toNumber();
-  });
-
   return {
     rewardsTable,
-    bpsTable: bpsHaveVoteTable.concat(bpsNoVoteTable),
+    bpsTable,
     bpInfo,
   };
 };

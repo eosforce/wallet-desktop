@@ -70,9 +70,9 @@ export default {
   },
   computed: {
     ...mapState(['account']),
-    capitalize: function(value) {
-      if (!value) return '';
-    },
+    capitalize: function (value) {
+      if (!value) return ''
+    }
   },
   filters: {
     number,
@@ -101,7 +101,7 @@ export default {
   white-space: nowrap;
   cursor: pointer;
 }
-tbody .is-vote {
+/* .bplist-box tbody .is-vote{
   display: none;
-}
+} */
 </style>
