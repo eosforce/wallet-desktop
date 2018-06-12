@@ -38,49 +38,50 @@
 </template>
 
 <script>
-  import { mapState } from 'vuex';
+import { mapState } from 'vuex';
 
-  import Message from '@/components/Message';
-  import { exportWif, export_raw } from '@/utils/util';
-  export default {
-    name: "Export",
-    data() {
-      return {
-        privateKey: '',
-        password: '',
-        exportSuccess: false,
-      };
+import Message from '@/components/Message';
+import { exportWif, export_raw } from '@/utils/util';
+export default {
+  name: 'Export',
+  data() {
+    return {
+      privateKey: '',
+      password: '',
+      exportSuccess: false,
+    };
+  },
+  computed: {
+    walletData() {
+      return this.wallet.data || {};
     },
-    computed: {
-      walletData() {
-        return this.wallet.data || {};
-      },
-      ...mapState(['wallet']),
-    },
-    methods: {
-      submit() {
-        let that = this;
-        this.privateKey = exportWif(this.password, this.walletData.crypto).then(function (pk) {
+    ...mapState(['wallet']),
+  },
+  methods: {
+    submit() {
+      let that = this;
+      this.privateKey = exportWif(this.password, this.walletData.crypto)
+        .then(function(pk) {
           export_raw(pk + '.eosforce', pk);
           Message.success({
-            title: `${ '导出成功'}`,
+            title: `${'导出成功'}`,
             message: '请妥善保存您的私钥',
           });
           that.close();
-        }).catch(err => {
+        })
+        .catch(err => {
           Message.error({
             title: `${err.code ? `code: ${err.code}` : '导出失败'}`,
             message: err.message,
           });
         });
-      },
-      close() {
-        this.$router.push({ name: 'accountDetail' });
-      },
     },
-  };
+    close() {
+      this.$router.push({ name: 'accountDetail' });
+    },
+  },
+};
 </script>
 
 <style scoped>
-
 </style>

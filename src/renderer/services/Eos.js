@@ -1,6 +1,7 @@
 import Eos from 'eosjs';
 
 import { NODE_API_URL } from '@/constants/config.constants';
+import Store from '@/store';
 
 import {
   toAsset,
@@ -13,11 +14,26 @@ import {
 } from '@/utils/util';
 
 export const getNodeList = () => {
-  return fetch(NODE_API_URL, {
-    headers: {
-      Accept: 'application/vnd.github.raw+json',
-    },
-  }).then(res => res.json());
+  if (Store.state.app.chainNet === '0.7') {
+    return Promise.resolve({
+      nodes: [
+        {
+          node_name: '本地',
+          location: '本地',
+          node_addr: '192.168.0.15',
+          port_http: '8888',
+          port_ssl: '',
+          port_p2p: '9876',
+        },
+      ],
+    });
+  } else {
+    return fetch(NODE_API_URL, {
+      headers: {
+        Accept: 'application/vnd.github.raw+json',
+      },
+    }).then(res => res.json());
+  }
 };
 
 // 获取节点信息

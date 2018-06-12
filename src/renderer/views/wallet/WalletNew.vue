@@ -210,9 +210,9 @@ export default {
       var selectedFile = this.$refs.file.files[0];
       var reader = new FileReader();
       reader.readAsText(selectedFile);
-      reader.onload = function () {
+      reader.onload = function() {
         that.privateKey = this.result;
-      }
+      };
     },
     ...mapActions({
       newWallet: Actions.NEW_WALLET,
