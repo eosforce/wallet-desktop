@@ -1,34 +1,26 @@
 import Eos from 'eosjs';
 
-import Storage from '@/services/Storage';
-import { NODE_API_URL, NODE_LIST_KEY } from '@/constants/config.constants';
+import { NODE_API_URL } from '@/constants/config.constants';
 
 import {
   toAsset,
   toBigNumber,
   calcVoteExist,
   calcTotalAmount,
-  clacReward,
   handleApiError,
   calcVoteage,
+  clacReward,
 } from '@/utils/util';
 
 export const getNodeList = () => {
-  return new Storage(NODE_LIST_KEY).fetch();
-};
-
-export const syncNodeList = () => {
   return fetch(NODE_API_URL, {
     headers: {
       Accept: 'application/vnd.github.raw+json',
     },
-  })
-    .then(res => res.json())
-    .then(data => {
-      return new Storage(NODE_LIST_KEY).store(data);
-    });
+  }).then(res => res.json());
 };
 
+// 获取节点信息
 export const getNodeInfo = httpEndpoint => {
   return Eos.Localnet({ httpEndpoint }).getInfo({});
 };
@@ -106,7 +98,7 @@ export const getAvailable = httpEndpoint => accountName => {
 // 获取 bp 表
 export const getBpsTable = httpEndpoint => () => {
   return Eos.Localnet({ httpEndpoint })
-    .getTableRows({ scope: 'eosio', code: 'eosio', table: 'bps', json: true, limit: 1000000 })
+    .getTableRows({ scope: 'eosio', code: 'eosio', table: 'bps', json: true, limit: 1000 })
     .then(data => data.rows)
     .then(data => {
       return data.sort((val1, val2) => {
@@ -120,13 +112,15 @@ export const getBpsTable = httpEndpoint => () => {
 // 获取 vote 表
 export const getVotesTable = httpEndpoint => accountName => {
   return Eos.Localnet({ httpEndpoint, chain_id: 'dc85ad2842e7d62c699d952b26fa7abe11fe90c00004b9d6b0eac55a44e3bbe1' })
-    .getTableRows({ scope: accountName, code: 'eosio', table: 'votes', json: true, limit: 1000000 })
+    .getTableRows({ scope: accountName, code: 'eosio', table: 'votes', json: true, limit: 1000 })
     .then(data => data.rows);
 };
 
 // 根据 bp 和 vote 得到分红表，返回一个对象
-export const getRewardsAndBpsTable = httpEndpoint => async(votesTable, accountName) => {
+export const getRewardsAndBpsTable = httpEndpoint => async (votesTable, accountName) => {
   const bpsTable = await getBpsTable(httpEndpoint)();
+  const { head_block_num: currentHeight } = await getNodeInfo(httpEndpoint);
+
   const bpsHaveVoteTable = [];
   const bpsNoVoteTable = [];
   const rewardsTable = [];
@@ -141,29 +135,28 @@ export const getRewardsAndBpsTable = httpEndpoint => async(votesTable, accountNa
       };
     }
 
-    const { rewards_pool, total_voteage, total_staked, voteage_update_time } = bpRow;
-    bpRow.bp_voteage = calcVoteage(total_voteage, total_staked, voteage_update_time);
+    const bpVoteage = calcVoteage([
+      bpRow.total_voteage,
+      bpRow.total_staked,
+      currentHeight,
+      bpRow.voteage_update_height,
+    ]);
+    bpRow.bpVoteage = bpVoteage;
+
     if (vote) {
-      const { bpname, staked, stake_time, unstaking } = vote;
-      const me_voteage = calcVoteage(vote.voteage, vote.staked, vote.voteage_update_time);
-      const reward = toAsset(clacReward(me_voteage, bpRow.bp_voteage, rewards_pool));
-      const isMyVote = calcVoteExist(staked, reward, unstaking);
-      const extraRow = {
-        bpname,
-        staked,
-        unstaking,
-        stake_time,
-        rewards_pool,
-        total_voteage,
-        total_staked,
-        me_voteage,
-        reward,
-        isMyVote,
-      };
+      // 我的最新票龄
+      const myVoteage = calcVoteage([vote.voteage, vote.staked, currentHeight, vote.voteage_update_height]);
+      // 节点最新票龄
+      // 我的分红
+      const reward = clacReward([myVoteage, bpVoteage, bpRow.rewards_pool]);
+
+      const extraRow = { bpname: vote.bpname, reward, ...vote };
+
       rewardsTable.push({ ...extraRow });
 
       bpRow.vote = { ...extraRow };
-      if (isMyVote) {
+      bpRow.hasVote = calcVoteExist(vote.staked, vote.reward, vote.unstaking);
+      if (bpRow.hasVote) {
         bpsHaveVoteTable.push(bpRow);
       } else {
         bpsNoVoteTable.push(bpRow);

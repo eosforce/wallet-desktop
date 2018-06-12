@@ -86,7 +86,6 @@ const actions = {
   [Actions.GET_TRANS_ACTION]({ commit, getters }, { transferRecords }) {
     return transferRecords.forEach(function(record) {
       getTransAction(getters[Getters.CURRENT_NODE])({ tid: record.action_trace.trx_id }).then(result => {
-        // console.log(result);
         if (result.trx) {
           commit(Mutations.SET_ACTION_STATUS, { actionDetail: result });
         }

@@ -3,6 +3,7 @@ import uuidV4 from 'uuid/v4';
 import { privateToPublic, encrypt } from '@/utils/util';
 import { EOSFORCE_WALLET_KEY } from '@/constants/config.constants';
 import { isValidPassword, isValidPrivate } from '@/utils/rules';
+import Store from '@/store';
 
 export default class Storage {
   constructor(storagePath) {
@@ -34,7 +35,7 @@ export default class Storage {
 }
 
 export const getWalletIdFromKey = (key = '') => {
-  const reg = new RegExp(`^${EOSFORCE_WALLET_KEY}:(.*)$`);
+  const reg = new RegExp(`^${EOSFORCE_WALLET_KEY}/(.*)#${Store.state.app.chainNet}`);
   const matchResult = key.match(reg);
   return matchResult && matchResult[1] ? matchResult[1] : null;
 };
@@ -46,7 +47,7 @@ export const getWalletIdList = () => {
 };
 
 export const getWalletKeyFromId = id => {
-  return `${EOSFORCE_WALLET_KEY}:${id}`;
+  return `${EOSFORCE_WALLET_KEY}/${id}#${Store.state.app.chainNet}`;
 };
 
 export const createWalletData = ({ privateKey, password }) => {

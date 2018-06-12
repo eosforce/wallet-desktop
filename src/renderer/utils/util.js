@@ -20,6 +20,23 @@ export const handleApiError = err => {
   });
 };
 
+// 计算最新票龄
+// 票龄 + 投票金额 * （当前高度 - 票龄更新高度）
+export const calcVoteage = args => {
+  const [voteage, staked, currentHeight, updateHeight] = args.map(toBigNumber);
+  return voteage.plus(staked.multipliedBy(currentHeight.minus(updateHeight)));
+};
+
+// 计算分红
+export const clacReward = args => {
+  const [myVoteage, bpVoteage, rewardsPool] = args.map(toBigNumber);
+  if (!bpVoteage.isZero()) {
+    return myVoteage.multipliedBy(rewardsPool).dividedBy(bpVoteage);
+  } else {
+    return toBigNumber(0);
+  }
+};
+
 // 返回随机私钥
 export const randomKey = (...args) => ecc.randomKey(...args);
 
@@ -76,28 +93,6 @@ export const calcTotalAmount = (rows = [], key) => {
     const value = toBigNumber(key ? row[key] : row);
     return result.plus(value);
   }, new BigNumber('0'));
-};
-
-// 计算分红
-export const clacReward = (meVoteage, bpVoteage, rewardsPool) => {
-  const meVoteageAmount = toBigNumber(meVoteage);
-  const bpVoteageAmount = toBigNumber(bpVoteage);
-  const rewardsPoolAmount = toBigNumber(rewardsPool);
-  if (!bpVoteageAmount.isZero()) {
-    return meVoteageAmount.multipliedBy(rewardsPoolAmount).dividedBy(bpVoteageAmount);
-  } else {
-    return toBigNumber(0);
-  }
-};
-
-// 计算票龄
-export const calcVoteage = (voteage, staked, voteageUpdateTime) => {
-  const stakedAmount = toBigNumber(staked);
-  const voteageAmount = toBigNumber(voteage);
-  const voteageUpdateTimestamp = toBigNumber(getTimeStamp(voteageUpdateTime));
-  const nowTimestamp = toBigNumber(getTimeStamp());
-  const time = nowTimestamp.minus(voteageUpdateTimestamp);
-  return voteageAmount.plus(time.multipliedBy(stakedAmount));
 };
 
 // 计算是否有投票和分红和赎回金
