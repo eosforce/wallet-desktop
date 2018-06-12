@@ -7,7 +7,7 @@
 }
 
 .cl {
-  color:#000;
+  color: #000;
   margin-left: 10px;
   font-weight: 600;
 }
@@ -47,26 +47,26 @@ a:hover {
   background: #233857;
   width: 160px;
   position: relative;
-  .add-wallet{
+  .add-wallet {
     position: fixed;
     bottom: 0;
     height: 60px;
     line-height: 60px;
-    width:200px;
-    margin:0;
-    .button{
+    width: 200px;
+    margin: 0;
+    .button {
       width: 100%;
       height: 100%;
       border-radius: 0;
     }
-    .add-icon{
-       width: 30px;
-       font-size: 25px;
+    .add-icon {
+      width: 30px;
+      font-size: 25px;
     }
   }
 }
-.page-header { 
-  background: #243E61
+.page-header {
+  background: #243e61;
 }
 
 .header-navbar {
@@ -77,10 +77,10 @@ a:hover {
   .button {
     color: #fff;
     border: none;
-    background: #243E61;
+    background: #243e61;
     border-radius: 35px;
     padding: 1rem 2rem;
-    font-size:1rem
+    font-size: 1rem;
   }
   .select select {
     background: #fff;
@@ -373,11 +373,11 @@ tr.is-vote {
   background: transparent;
 }
 
-.dashboard-body{
-  background: #EBEFF2
+.dashboard-body {
+  background: #ebeff2;
 }
 .menu-list a {
-  color: #B3C0D3;
+  color: #b3c0d3;
 }
 
 .menu-list a:hover {

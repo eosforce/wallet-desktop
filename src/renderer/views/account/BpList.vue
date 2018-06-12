@@ -70,9 +70,6 @@ export default {
   },
   computed: {
     ...mapState(['account']),
-    capitalize: function (value) {
-      if (!value) return ''
-    }
   },
   filters: {
     number,

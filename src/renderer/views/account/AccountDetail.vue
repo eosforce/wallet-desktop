@@ -11,8 +11,8 @@
       </div>  
       <div class="tab fl" @click="toggleTab('AlternateNode')" :class="{'is-active': currentTab === 'AlternateNode'}">
         <a class="min-img">
-          <img src="@/assets/node.png" class="two hide">
-          <img src="@/assets/node_w.png" class="one">
+          <img src="@/assets/laternode.png" class="two hide">
+          <img src="@/assets/laternode_w.png" class="one">
           候选节点
         </a>
       </div>
