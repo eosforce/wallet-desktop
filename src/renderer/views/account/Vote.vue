@@ -15,6 +15,11 @@
             </div>
           </div>
           <div class="field">
+            <div class="static-label">
+              可用投票金额<span class="static-text">{{account.info.available | number}}</span>
+            </div>
+          </div>
+          <div class="field">
             <label class="label">
               投票金额（整数）
             </label>
