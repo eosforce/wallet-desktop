@@ -1,8 +1,10 @@
 import { Mutations, Actions, Getters } from '@/constants/types.constants';
 
 import Storage, { getWalletIdList, createWalletData, getWalletKeyFromId } from '@/services/Storage';
-import { syncNodeList, getNodeList, getAccounts, getNodeInfo } from '@/services/Eos';
+import { getNodeList, getAccounts, getNodeInfo } from '@/services/Eos';
 import { decryptWif } from '@/utils/util';
+
+import { NODE_LIST_KEY, CHAIN_NETS, CHAIN_NET_KEY } from '@/constants/config.constants';
 
 const initState = {
   walletIdList: [],
@@ -11,6 +13,7 @@ const initState = {
   currentNodeValue: '',
   currentNodeInfo: null,
   walletList: [],
+  chainNet: '',
 };
 
 const mutations = {
@@ -19,6 +22,10 @@ const mutations = {
   },
   [Mutations.SET_NODE_LIST](state, { nodeList }) {
     state.nodeList = nodeList;
+  },
+  [Mutations.SET_CHAIN_NET](state, { chainNet }) {
+    document.title = `EOSForce钱包 测试网 ${chainNet}`;
+    state.chainNet = chainNet;
   },
   [Mutations.SET_WALLET_LIST](state, { walletList }) {
     state.walletList = walletList;
@@ -36,9 +43,9 @@ let initPromise;
 const actions = {
   [Actions.INIT_APP]({ state, commit, dispatch }) {
     if (!initPromise) {
-      initPromise = getNodeList()
+      initPromise = dispatch(Actions.FETCH_NODE_LIST)
         .then(data => {
-          const syncPromise = syncNodeList();
+          const syncPromise = dispatch(Actions.SYNC_NODE_LIST);
           return data || syncPromise;
         })
         .then(data => {
@@ -89,6 +96,31 @@ const actions = {
       commit(Mutations.SET_CURRENT_NODE_INFO, {
         currentNodeInfo: { http_endpoint: state.currentNodeValue, ...result },
       });
+    });
+  },
+  [Actions.FETCH_NODE_LIST]({ commit, dispatch, state }) {
+    return new Storage(CHAIN_NET_KEY)
+      .fetch()
+      .then(data => {
+        if (!data) return Object.keys(CHAIN_NETS)[0];
+        return data.key;
+      })
+      .then(key => {
+        return new Storage(CHAIN_NET_KEY).store({ key }).then(data => data.key);
+      })
+      .then(key => {
+        commit(Mutations.SET_CHAIN_NET, { chainNet: key });
+        return new Storage(`${NODE_LIST_KEY}#${state.chainNet}`).fetch();
+      });
+  },
+  [Actions.SYNC_NODE_LIST]({ state }) {
+    return getNodeList().then(data => {
+      return new Storage(`${NODE_LIST_KEY}#${state.chainNet}`).store(data);
+    });
+  },
+  [Actions.SWITCH_CHAIN_NET]({ state }, { chainNet }) {
+    return new Storage(CHAIN_NET_KEY).store({ key: chainNet }).then(() => {
+      location.reload();
     });
   },
 };
