@@ -10,4 +10,5 @@ export const NODE_API_URL = 'https://api.github.com/repos/eosforce/testnet-main/
 export const CHAIN_NETS = {
   '0.6': '测试网 0.6',
   '0.7': '测试网 0.7',
+  '0.71': '测试网 0.71',
 };
