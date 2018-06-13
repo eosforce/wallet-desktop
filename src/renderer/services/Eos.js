@@ -20,7 +20,7 @@ export const getNodeList = () => {
         {
           node_name: '本地',
           location: '本地',
-          node_addr: '192.168.0.15',
+          node_addr: '192.168.1.7',
           port_http: '8888',
           port_ssl: '',
           port_p2p: '9876',
