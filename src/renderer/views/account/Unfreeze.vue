@@ -14,6 +14,10 @@
         <div class="row__content">{{voter}}</div>
       </div>
       <div class="row">
+        <div class="row__title">赎回时间</div>
+        <div class="row__content">{{unstakingTime | timestamp}}</div>
+      </div>
+      <div class="row">
         <div class="row__title">可赎回金额</div>
         <div class="row__content">{{unstakingAmount}}</div>
       </div>
@@ -37,6 +41,7 @@ import { mapActions, mapState } from 'vuex';
 import Message from '@/components/Message';
 import ConfirmModal from '@/components/ConfirmModal';
 import { Actions } from '@/constants/types.constants';
+import { timestamp } from '@/utils/filter';
 
 export default {
   name: 'unfreeze',
@@ -60,6 +65,18 @@ export default {
           return bp.vote.unstaking;
         } else {
           return '0 EOS';
+        }
+      } else {
+        return null;
+      }
+    },
+    unstakingTime() {
+      const bp = this.account.bpsTable && this.account.bpsTable.find(bp => this.bpname === bp.name);
+      if (bp) {
+        if (bp.vote) {
+          return bp.vote.unstake_time;
+        } else {
+          return null;
         }
       } else {
         return null;
@@ -101,6 +118,9 @@ export default {
   },
   components: {
     ConfirmModal,
+  },
+  filters: {
+    timestamp,
   },
 };
 </script>

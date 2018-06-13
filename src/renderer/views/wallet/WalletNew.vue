@@ -3,12 +3,14 @@
     <div class="cover-page__content">
       <div class="cover-page__title">创建钱包</div>
       <form class="cover-page__form" @submit.prevent="!submitting && submit()">
+        <input type="file"  class="hide" ref="file" @change="fileImport">
         <div class="field">
           <label class="label">
             明文私钥（警告：请勿导入真实的主网映射私钥！）
             <a class="button is-small is-outlined" style="font-size:14px;color:red;margin-bottom:8px;" :disabled="isDisabledRandomKey" @click="randomKey()">
               请点击生成随机密钥并保存
             </a>
+            <a tabindex="-1" class="button " @click="importKey">导入</a>
           </label>
           <div class="control">
             <input v-model="privateKey" class="input" type="text" placeholder="请输入明文私钥" required />
@@ -198,6 +200,19 @@ export default {
         .catch(() => {
           this.isDisabledRandomKey = false;
         });
+    },
+
+    importKey() {
+      this.$refs.file.click();
+    },
+    fileImport() {
+      let that = this;
+      var selectedFile = this.$refs.file.files[0];
+      var reader = new FileReader();
+      reader.readAsText(selectedFile);
+      reader.onload = function() {
+        that.privateKey = this.result;
+      };
     },
     ...mapActions({
       newWallet: Actions.NEW_WALLET,

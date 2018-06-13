@@ -13,7 +13,6 @@ import { Actions } from '@/constants/types.constants';
 export default {
   name: 'eosforcewallet',
   beforeCreate() {
-    document.title = `EOSForce钱包 测试网 ${this.$electron.remote.app.getVersion()}`;
     this.$store.dispatch(Actions.INIT_APP).catch(err => {
       Message.error({
         title: '初始化错误',

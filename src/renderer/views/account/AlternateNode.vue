@@ -1,5 +1,5 @@
 <template>
-  <div class="box bplist-box">
+  <div class="box">
     <table class="table data-table">
       <thead>
         <tr>
@@ -16,7 +16,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="bp in account.bpsTable" :key="bp.name" :class="{'is-vote': bp.hasVote}" v-if='bp.order < 24'>
+        <tr v-for="bp in account.bpsTable" :key="bp.name" :class="{'is-vote': bp.vote && bp.vote.isMyVote}"  v-if='bp.order >= 24'>
           <td>{{bp.order}}</td>
           <td>{{bp.name}}</td>
           <td>{{10000 - bp.commission_rate | rate}}</td>
@@ -26,28 +26,28 @@
             <span v-show="bp.order < 24">{{bp.total_staked | yearrate(1 - bp.commission_rate / 10000)}}</span>
           </td>
           <td>{{bp.rewards_pool | number}}</td>
+          <td>{{(bp.vote && bp.vote.staked) | number}}</td>
           <td>
-            <span v-show="!bp.hasVote">-</span>
-            <span v-show="bp.hasVote">{{ bp.vote && bp.vote.staked | number(0)}}</span>
-          </td>
-          <td>
-            <div v-show="!bp.hasVote">-</div>
-            <el-tooltip v-show="bp.hasVote" class="item" effect="dark" content="我的投票*我的投票时间/(总得票数*总投票时间)*奖励池" placement="top-end">
+            <el-tooltip class="item" effect="dark" content="我的投票*我的投票时间/(总得票数*总投票时间)*奖励池" placement="top-end">
               <div>
                 <router-link
+                  v-show="bp.vote && bp.vote.isMyVote"
                   class="button is-small is-outlined"
                   :to="{ name: 'claim', params: { bpname: bp.name } }"
                 >
                   {{(bp.vote && bp.vote.reward) | number}}
                 </router-link>
+                <div v-show="!(bp.vote && bp.vote.isMyVote)">{{(bp.vote && bp.vote.reward) | number}}</div>
               </div>
             </el-tooltip>
           </td>
           <td>
-            <div v-show="!(bp.hasVote && bp.vote.unstaking !== '0.0000 EOS')">-</div>
-            <router-link v-show="bp.hasVote && bp.vote.unstaking !== '0.0000 EOS'" class="button is-small is-outlined" :to="{name: 'unfreeze', params: { bpname: bp.name }}">
+            <router-link v-show="bp.vote && bp.vote.unstaking !== '0.0000 EOS'" class="button is-small is-outlined" :to="{name: 'unfreeze', params: { bpname: bp.name }}">
               {{(bp.vote && bp.vote.unstaking) | number}}
             </router-link>
+            <div v-show="!(bp.vote && bp.vote.unstaking !== '0.0000 EOS')">
+              {{(bp.vote && bp.vote.unstaking) | number}}
+            </div>
           </td>
           <td>
             <router-link class="button is-small is-outlined" :to="{name: 'vote', params: { bpname: bp.name }}">投票</router-link>
@@ -98,7 +98,7 @@ export default {
   white-space: nowrap;
   cursor: pointer;
 }
-/* .bplist-box tbody .is-vote{
+/* tbody .is-vote {
   display: none;
 } */
 </style>
