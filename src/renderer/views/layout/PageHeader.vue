@@ -48,7 +48,7 @@ export default {
   data() {
     return {
       showWalletNew: false,
-      showActivityPage: true,
+      showActivityPage: false,
       chainNets: CHAIN_NETS,
     };
   },
@@ -75,21 +75,16 @@ export default {
     ...mapState(['app']),
   },
   created() {
-    const loop = () => {
-      setTimeout(() => {
-        this.fetchNodeInfo({ node: this.nodeValue })
-          .then(() => {
-            loop();
-          })
-          .catch(() => {
-            loop();
-          });
-      }, 3000);
-    };
-
-    loop();
+    this.loop();
   },
   methods: {
+    loop() {
+      setTimeout(() => {
+        this.fetchNodeInfo({ node: this.nodeValue })
+          .then(() => this.loop())
+          .catch(() => this.loop());
+      }, 3000);
+    },
     hideActivity() {
       this.showActivityPage = false;
     },

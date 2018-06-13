@@ -85,7 +85,7 @@ import Message from '@/components/Message';
 import ConfirmModal from '@/components/ConfirmModal';
 import { Actions } from '@/constants/types.constants';
 import { isValidAmount } from '@/utils/rules';
-import { asset } from '@/utils/filter';
+import { asset, number } from '@/utils/filter';
 
 export default {
   name: 'vote',
@@ -121,6 +121,9 @@ export default {
       return this.amount && isValidAmount(this.amount);
     },
     ...mapState(['app', 'account']),
+  },
+  created() {
+    this.amount = parseInt(this.stakedAmount);
   },
   methods: {
     confirmInfo() {
@@ -165,6 +168,7 @@ export default {
   },
   filters: {
     asset,
+    number,
   },
   components: {
     ConfirmModal,

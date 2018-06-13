@@ -61,12 +61,9 @@ export default {
   },
   methods: {
     list_bPageChanged: function(toPageStart, offset) {
-      // console.log("toPageStart: " + toPageStart);
-      // console.log("offset: " + offset);
       this.fetchAccout({ accountName: this.accountName, pos: toPageStart, offset: offset });
     },
     initialPageNum: function() {
-      // console.log("initialPageNum")
       this.list_bCurrPage = 1;
       this.pageSize = 20;
       this.$refs.pagination.initialPageInation();
