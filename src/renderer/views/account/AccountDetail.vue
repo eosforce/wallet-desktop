@@ -29,6 +29,13 @@
           <img src="@/assets/exchange_w.png" class="one">
           交易记录
         </a>
+      </div>  
+      <div class="tab fl" @click="toggleTab('RateInstructions')" :class="{'is-active': currentTab === 'RateInstructions'}">
+        <a class="min-img">
+          <img src="@/assets/assets.png" class="two hide">
+          <img src="@/assets/assets_w.png" class="one">
+          资产说明
+        </a>
       </div>
         <span class="refresh fr el-icon-refresh" @click="refreshList()"></span>
     </div>
@@ -46,6 +53,7 @@ import TransferRecord from '@/views/account/TransferRecord';
 import BpList from '@/views/account/BpList';
 import Myvote from '@/views/account/Myvote';
 import AlternateNode from '@/views/account/AlternateNode';
+import RateInstructions from '@/views/account/RateInstructions';
 
 export default {
   name: 'AccountDetail',
@@ -109,6 +117,7 @@ export default {
     BpList,
     Myvote,
     AlternateNode,
+    RateInstructions,
   },
 };
 </script>

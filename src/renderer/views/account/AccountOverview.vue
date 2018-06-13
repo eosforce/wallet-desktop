@@ -17,12 +17,12 @@
     <div class="desc-box clearfix">
       <ul>
         <li>总投票金额:<span class="cl">{{account.info.stakedTotal | number}}</span></li>
-        <li>总待领取分红:<span class="cl">{{account.info.rewardTotal | number}}</span></li>
+        <li>总待领分红:<span class="cl">{{account.info.rewardTotal | number}}</span></li>
         <li>总赎回金额:<span class="cl">{{account.info.unstakingTotal | number}}</span></li>
         <li v-if="bpInfo">手续费率:<span class="cl">{{bpInfo.commission_rate | rate}}</span></li>
-        <li v-if="bpInfo">总得票金额:<span class="cl">{{bpInfo.total_staked | number}}</span></li>
+        <!-- <li v-if="bpInfo">总得票金额:<span class="cl">{{bpInfo.total_staked | number}}</span></li>
         <li v-if="bpInfo">节点票龄:<span class="cl">{{bpInfo.average | voteage}}</span></li>
-        <li v-if="bpInfo">票龄更新时间:<span class="cl">{{bpInfo.voteage_update_time | timestamp}}</span></li>
+        <li v-if="bpInfo">票龄更新时间:<span class="cl">{{bpInfo.voteage_update_time | timestamp}}</span></li> -->
       </ul>
     </div>
   </div>

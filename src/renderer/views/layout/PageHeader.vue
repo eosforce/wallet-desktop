@@ -128,7 +128,7 @@ export default {
   display: flex;
   align-items: center;
   flex: 1;
-  margin-left:0;
+  margin-left: 0;
   border-bottom: 1px solid rgba(0, 0, 0, 0.12);
 }
 
@@ -260,7 +260,7 @@ export default {
   padding-top: 26px;
 }
 
-.active{
+.active {
   border: 1px solid #fff;
   border-radius: 3px;
   text-align: center;
