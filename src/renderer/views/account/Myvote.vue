@@ -1,5 +1,5 @@
 <template>
-  <div class="box">
+  <div class="box bplist-box">
     <table class="table data-table">
       <thead>
         <tr>
