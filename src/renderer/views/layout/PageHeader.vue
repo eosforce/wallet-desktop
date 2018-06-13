@@ -17,8 +17,7 @@
       <div class="block">
         出块节点:<span>{{nodeInfo.head_block_producer}}</span>
         最新高度:<span>{{nodeInfo.head_block_num}}</span>
-        <span class="refresh" @click="refreshApp()"><img src="@/assets/refresh.png"></span>
-        <span class="refresh" @click="showActivity">活动</span>
+        <span class="active" @click="showActivity">活动</span>
       </div>
     </div>
     <div class="page-activity" v-show="showActivityPage">
@@ -258,5 +257,13 @@ export default {
 
 .qr-code {
   padding-top: 26px;
+}
+
+.active{
+  border: 1px solid #fff;
+  border-radius: 3px;
+  text-align: center;
+  padding: 0 10px;
+  cursor: pointer;
 }
 </style>

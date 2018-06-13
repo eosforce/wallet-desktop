@@ -4,7 +4,7 @@
       公钥：{{walletData.publicKey}}
     </div>
     <div class="overview-refresh">
-      <span class="refresh fr" @click="refreshOverview()"><img src="@/assets/refresh.png"></span>
+      <span class="refresh fr el-icon-refresh" @click="refreshOverview()"></span>
     </div>
 
     <div class="is-grouped" style="margin-top:16px;line-height:27px;text-align:left;height:27px;font-size:14px">
@@ -69,6 +69,8 @@ export default {
 .refresh {
   height: 40px;
   margin-top: -28px;
+  font-size: 20px;
+  cursor: pointer;
 }
 .refresh img {
   width: 15px;
