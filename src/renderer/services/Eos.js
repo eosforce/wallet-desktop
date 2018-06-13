@@ -133,7 +133,7 @@ export const getVotesTable = httpEndpoint => accountName => {
 };
 
 // 根据 bp 和 vote 得到分红表，返回一个对象
-export const getRewardsAndBpsTable = httpEndpoint => async (votesTable, accountName) => {
+export const getRewardsAndBpsTable = httpEndpoint => async(votesTable, accountName) => {
   const bpsTable = await getBpsTable(httpEndpoint)();
   const { head_block_num: currentHeight } = await getNodeInfo(httpEndpoint);
 
