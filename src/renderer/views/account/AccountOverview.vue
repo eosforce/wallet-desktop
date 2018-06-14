@@ -19,8 +19,8 @@
     <div class="desc-box clearfix">
       <ul>
         <li>投票总额:<span class="cl">{{account.info.stakedTotal | number}}</span></li>
-        <li>待领分红总额:<span class="cl">{{account.info.rewardTotal | number}}</span></li>
         <li>赎回总额:<span class="cl">{{account.info.unstakingTotal | number}}</span></li>
+        <li>待领分红总额:<span class="cl">{{account.info.rewardTotal | number}}</span></li>
         <li v-if="bpInfo">佣金费率:<span class="cl">{{bpInfo.commission_rate | rate}}</span></li>
         <!-- <li v-if="bpInfo">总得票金额:<span class="cl">{{bpInfo.total_staked | number}}</span></li>
         <li v-if="bpInfo">节点票龄:<span class="cl">{{bpInfo.average | voteage}}</span></li>
