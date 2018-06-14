@@ -21,10 +21,10 @@
           </div>
           <div class="field">
             <label class="label">
-              投票金额（整数）
+              新投票金额（整数）
             </label>
             <div class="control">
-              <input v-model="amount" min="0" class="input" type="number" step="1" placeholder="单位 EOS" required />
+              <input v-model="amount" min="0" class="input" type="number" step="1" placeholder="单位 EOS"  required />
               <p class="help is-danger" v-show="amount && !isValidAmount">
                 金额必须为整数
               </p>
@@ -60,7 +60,7 @@
           <div class="row__content">{{voter}}</div>
         </div>
         <div class="row">
-          <div class="row__title">投票变动金额</div>
+          <div class="row__title">新投票金额</div>
           <div class="row__content">{{amount | asset}}</div>
         </div>
         <div class="row">

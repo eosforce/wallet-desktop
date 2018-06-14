@@ -10,7 +10,7 @@
           <label class="label">
             明文私钥（警告：请勿导入真实的主网映射私钥！）
             <a class="button is-small is-outlined" style="font-size:14px;color:red;margin-bottom:8px;" :disabled="isDisabledRandomKey" @click="randomKey()">
-              请点击生成随机密钥并保存
+            生成随机密钥
             </a>
           </label>
           <div class="control">
@@ -40,7 +40,7 @@
           </div>
         </div>
         <div class="field">
-          <p class="help tips">* 私钥请做好备份！</p>
+          <p class="help tips" style="color:red">* 私钥请做好备份！</p>
         </div>
         <div class="field" style="color:#fff">
           <input type="checkbox" required tabindex="-1" v-model="isAgreeTerm" /> 我已经阅读并同意<a href="#" tabindex="-1">服务及隐私条款</a>

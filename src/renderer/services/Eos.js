@@ -1,6 +1,6 @@
 import Eos from 'eosjs';
 
-import { NODE_API_URL } from '@/constants/config.constants';
+import { NODE_API_URL, NODE_TEST_NET_URL } from '@/constants/config.constants';
 import Store from '@/store';
 
 import {
@@ -14,39 +14,15 @@ import {
 } from '@/utils/util';
 
 export const getNodeList = () => {
-  if (Store.state.app.chainNet === '0.71') {
-    return Promise.resolve({
-      nodes: [
-        {
-          node_name: '本地',
-          location: '本地',
-          node_addr: '192.168.1.10',
-          port_http: '8888',
-          port_ssl: '',
-          port_p2p: '9876',
-        },
-      ],
-    });
-  } else if (Store.state.app.chainNet === '0.7') {
-    return Promise.resolve({
-      nodes: [
-        {
-          node_name: '本地1',
-          location: '本地1',
-          node_addr: '192.168.1.7',
-          port_http: '8888',
-          port_ssl: '',
-          port_p2p: '9876',
-        },
-      ],
-    });
-  } else {
-    return fetch(NODE_API_URL, {
-      headers: {
-        Accept: 'application/vnd.github.raw+json',
-      },
-    }).then(res => res.json());
-  }
+  const map = {
+    '0.6': NODE_API_URL,
+    '0.7': NODE_TEST_NET_URL,
+  };
+  return fetch(map[Store.state.app.chainNet], {
+    headers: {
+      Accept: 'application/vnd.github.raw+json',
+    },
+  }).then(res => res.json());
 };
 
 // 获取节点信息
@@ -213,11 +189,11 @@ export const getAccountInfo = httpEndpoint => async accountName => {
   const assetTotal = calcTotalAmount([available, stakedTotal, unstakingTotal, rewardTotal]);
 
   const info = {
-    assetTotal: toAsset(assetTotal), // 总资产
+    assetTotal: toAsset(assetTotal), // 资产总额
     available: toAsset(available), // 可用余额
-    stakedTotal: toAsset(stakedTotal), // 总投票金额
-    unstakingTotal: toAsset(unstakingTotal), // 总赎回金额
-    rewardTotal: toAsset(rewardTotal), // 总待领取分红
+    stakedTotal: toAsset(stakedTotal), // 投票总额
+    unstakingTotal: toAsset(unstakingTotal), // 赎回总额
+    rewardTotal: toAsset(rewardTotal), // 待领分红总额
   };
 
   if (bpInfo) {
