@@ -203,3 +203,7 @@ export const exportWif = (password, data) => {
     return Promise.reject(new Error('密码错误'));
   }
 };
+
+export const getToken = asset => {
+  return asset && asset.split(' ')[1];
+};

@@ -4,6 +4,7 @@ import { NODE_API_URL, NODE_TEST_NET_URL } from '@/constants/config.constants';
 import Store from '@/store';
 
 import {
+  getToken,
   toAsset,
   toBigNumber,
   calcVoteExist,
@@ -96,6 +97,39 @@ export const getAvailable = httpEndpoint => accountName => {
         return toBigNumber(account.available);
       } else {
         return toBigNumber(0);
+      }
+    });
+};
+
+// 获取 token list
+export const getTokenList = httpEndpoint => accountName => {
+  return Eos.Localnet({ httpEndpoint })
+    .getTableRows({ scope: accountName, code: 'eosio.token', table: 'accounts', json: true, limit: 1000 })
+    .then(data => {
+      if (data.rows.length) {
+        return Promise.all(
+          data.rows.map(row => {
+            const balance = row.balance;
+            const token = getToken(balance);
+            return Eos.Localnet({ httpEndpoint })
+              .getTableRows({
+                scope: token,
+                code: 'eosio.token',
+                table: 'stat',
+                json: true,
+                limit: 1000,
+              })
+              .then(result => {
+                return {
+                  token,
+                  balance,
+                  ...result.rows[0],
+                };
+              });
+          })
+        );
+      } else {
+        return Promise.resolve();
       }
     });
 };
@@ -208,6 +242,13 @@ export const getAccountInfo = httpEndpoint => async accountName => {
 
 export const transfer = config => {
   return ({ from, to, amount } = {}) => {
+    // return Eos.Localnet(config).contract('eosio.token')
+    //   .then(token => {
+    //     token.transfer({ from, to, quantity: '1 BTC', memo: '' })
+    //       .catch(err => {
+    //         return handleApiError(err);
+    //       });
+    //   })
     return Eos.Localnet(config)
       .transfer({ from, to, quantity: toAsset(amount), memo: '' })
       .catch(err => {

@@ -7,6 +7,7 @@ import {
   vote,
   unfreeze,
   claim,
+  getTokenList,
 } from '@/services/Eos';
 
 const initState = {
@@ -14,6 +15,7 @@ const initState = {
   info: {},
   bpsTable: [],
   transferRecords: [],
+  tokenList: [],
   latestTransferNum: 0,
 };
 
@@ -36,6 +38,9 @@ const mutations = {
   [Mutations.SET_ACTION_STATUS](state, { actionDetail = [] } = {}) {
     state.transferRecords = addStatus(state.transferRecords, actionDetail);
   },
+  [Mutations.SET_TOKEN_LIST](state, { tokenList = [] } = {}) {
+    state.tokenList = tokenList;
+  },
 };
 
 const actions = {
@@ -46,9 +51,9 @@ const actions = {
     commit(Mutations.SET_ACCOUNT_NAME, { accountName });
     dispatch(Actions.GET_ACCOUNT_INFO);
   },
-  [Actions.TRANSFER]({ state, dispatch, getters }, { from, to, amount, password }) {
+  [Actions.TRANSFER]({ state, dispatch, getters }, { from, to, amount, memo, password }) {
     return getters[Getters.GET_TRANSE_CONFIG](password, from).then(config => {
-      return transfer(config)({ from, to, amount });
+      return transfer(config)({ from, to, amount, memo });
     });
   },
   [Actions.VOTE]({ state, dispatch, getters }, { voter, bpname, amount, password }) {
@@ -68,11 +73,17 @@ const actions = {
   },
   [Actions.GET_ACCOUNT_INFO]({ state, dispatch, commit, getters }) {
     const accountName = getters[Getters.CURRENT_ACCOUNT_NAME];
-    return getAccountInfo(getters[Getters.CURRENT_NODE])(accountName).then(({ info, bpsTable }) => {
-      commit(Mutations.SET_ACCOUNT_INFO, { info });
-      commit(Mutations.SET_BPS_TABLE, { bpsTable });
-      return dispatch(Actions.GET_TRANSFER_RECORD, { accountName });
-    });
+    return getAccountInfo(getters[Getters.CURRENT_NODE])(accountName)
+      .then(({ info, bpsTable }) => {
+        commit(Mutations.SET_ACCOUNT_INFO, { info });
+        commit(Mutations.SET_BPS_TABLE, { bpsTable });
+      })
+      .then(() => {
+        return dispatch(Actions.GET_TRANSFER_RECORD, { accountName });
+      })
+      .then(() => {
+        return dispatch(Actions.GET_TOKEN_LIST, { accountName });
+      });
   },
   [Actions.GET_TRANSFER_RECORD]({ dispatch, commit, getters }, { accountName, pos, offset }) {
     return getTransferRecord(getters[Getters.CURRENT_NODE])({ accountName, pos, offset }).then(result => {
@@ -81,6 +92,11 @@ const actions = {
         commit(Mutations.SET_LATEST_TRANSFER_NUM, { transferRecords: result.actions });
       }
       dispatch(Actions.GET_TRANS_ACTION, { transferRecords: result.actions });
+    });
+  },
+  [Actions.GET_TOKEN_LIST]({ dispatch, commit, getters }, { accountName }) {
+    return getTokenList(getters[Getters.CURRENT_NODE])(accountName).then(result => {
+      commit(Mutations.SET_TOKEN_LIST, { tokenList: result });
     });
   },
   [Actions.GET_TRANS_ACTION]({ commit, getters }, { transferRecords }) {

@@ -27,6 +27,14 @@
             </div>
           </div>
           <div class="field">
+            <label class="label">
+              备注
+            </label>
+            <div class="control">
+              <input v-model="memo" min="0" class="input" type="text" placeholder="备注" max-length="255"/>
+            </div>
+          </div>
+          <div class="field">
             <p class="help tips">* 手续费 {{app.fee}}</p>
           </div>
           <div class="field is-grouped is-grouped-right">
@@ -90,6 +98,7 @@ export default {
       toAccountName: '',
       amount: '',
       submitting: false,
+      memo: '',
 
       password: '',
       showConfirm: false,
@@ -118,6 +127,7 @@ export default {
       this.transfer({
         from: this.fromAccountName,
         to: this.toAccountName,
+        memo: this.memo,
         amount: this.amount,
         password: this.password,
       })

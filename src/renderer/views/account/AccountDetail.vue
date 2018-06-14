@@ -2,42 +2,19 @@
   <div class="dashboard-body">
     <account-overview />
     <div class="tabs">
-      <div class="tab fl" @click="toggleTab('BpList')" :class="{'is-active': currentTab === 'BpList'}">
+      <div
+        class="tab fl"
+        @click="toggleTab(tab.tabKey)"
+        :class="{'is-active': currentTab === tab.tabKey}"
+        v-for="tab in tabMap"
+        :key="tab.tabKey">
         <a class="min-img">
-          <img src="@/assets/node.png" class="two hide">
-          <img src="@/assets/node_w.png" class="one">
-          超级节点
-        </a>
-      </div>  
-      <div class="tab fl" @click="toggleTab('AlternateNode')" :class="{'is-active': currentTab === 'AlternateNode'}">
-        <a class="min-img">
-          <img src="@/assets/laternode.png" class="two hide">
-          <img src="@/assets/laternode_w.png" class="one">
-          候选节点
+          <img :src="require(`@/assets/${tab.img1}`)" class="two hide">
+          <img :src="require(`@/assets/${tab.img2}`)" class="one">
+          {{tab.tabName}}
         </a>
       </div>
-      <div class="tab fl" @click="toggleTab('Myvote')" :class="{'is-active': currentTab === 'Myvote'}">
-        <a class="min-img">
-          <img src="@/assets/vote.png" class="two hide">
-          <img src="@/assets/vote_w.png" class="one">
-          我的投票
-        </a>
-      </div>
-      <div class="tab fl" @click="toggleTab('TransferRecord')" :class="{'is-active': currentTab === 'TransferRecord'}">
-        <a class="min-img">
-          <img src="@/assets/exchange.png" class="two hide">
-          <img src="@/assets/exchange_w.png" class="one">
-          交易记录
-        </a>
-      </div>  
-      <div class="tab fl" @click="toggleTab('RateInstructions')" :class="{'is-active': currentTab === 'RateInstructions'}">
-        <a class="min-img">
-          <img src="@/assets/assets.png" class="two hide">
-          <img src="@/assets/assets_w.png" class="one">
-          资产说明
-        </a>
-      </div>
-        <span class="refresh fr el-icon-refresh" @click="refreshList()"></span>
+      <span class="refresh fr el-icon-refresh" @click="refreshList()"></span>
     </div>
     <div :is="currentTab" ref="cTab" keep-alive></div>
     <router-view name="modal"></router-view>
@@ -54,11 +31,20 @@ import BpList from '@/views/account/BpList';
 import Myvote from '@/views/account/Myvote';
 import AlternateNode from '@/views/account/AlternateNode';
 import RateInstructions from '@/views/account/RateInstructions';
+import TokenList from '@/views/account/TokenList';
 
 export default {
   name: 'AccountDetail',
   data() {
     return {
+      tabMap: [
+        { tabName: '超级节点', tabKey: 'BpList', img1: 'node.png', img2: 'node_w.png' },
+        { tabName: '候选节点', tabKey: 'AlternateNode', img1: 'laternode.png', img2: 'laternode_w.png' },
+        { tabName: '我的投票', tabKey: 'Myvote', img1: 'vote.png', img2: 'vote_w.png' },
+        { tabName: '我的 Token', tabKey: 'TokenList', img1: 'vote.png', img2: 'vote_w.png' },
+        { tabName: '交易记录', tabKey: 'TransferRecord', img1: 'exchange.png', img2: 'exchange_w.png' },
+        { tabName: '资产说明', tabKey: 'RateInstructions', img1: 'assets.png', img2: 'assets_w.png' },
+      ],
       currentTab: 'BpList', // currentTab 用于标识当前触发的子组件,
     };
   },
@@ -118,6 +104,7 @@ export default {
     Myvote,
     AlternateNode,
     RateInstructions,
+    TokenList,
   },
 };
 </script>
