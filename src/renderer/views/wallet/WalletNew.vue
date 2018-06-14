@@ -8,7 +8,7 @@
           <label class="label">
             明文私钥（警告：请勿导入真实的主网映射私钥！）
             <a class="button is-small is-outlined" style="font-size:14px;color:red;margin-bottom:8px;" :disabled="isDisabledRandomKey" @click="randomKey()">
-              请点击生成随机密钥并保存
+            生成随机密钥
             </a>
             <a tabindex="-1" class="button " @click="importKey">导入</a>
           </label>

@@ -2,6 +2,9 @@
   <div class="box">
     <div class="publickey">
       公钥：{{walletData.publicKey}}
+      <span class="is-grouped" style="margin-top:16px;line-height:27px;text-align:left;height:27px;font-size:14px">
+        <router-link style="margin-left:15px" class="button is-small is-outlined" :to="{name: 'export'}" >导出钱包</router-link>
+      </span>
     </div>
     <div class="overview-refresh">
       <span class="refresh fr el-icon-refresh" @click="refreshOverview()"></span>
@@ -12,7 +15,6 @@
       <span style="width:25%;  display: inline-block;">可用余额:<span class="cl">{{account.info.available | number}}</span></span>
       <router-link class="button is-small is-outlined" :to="{name: 'transfer'}">转账</router-link>
       <router-link style="margin-left:15px" class="button is-small is-outlined" :to="{name: 'accountNew'}">创建用户</router-link>
-      <router-link style="margin-left:15px" class="button is-small is-outlined" :to="{name: 'export'}" >导出钱包</router-link>
     </div>
     <div class="desc-box clearfix">
       <ul>

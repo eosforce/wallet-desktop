@@ -28,7 +28,10 @@
             <span v-show="bp.order < 24">{{bp.total_staked | yearrate(1 - bp.commission_rate / 10000)}}</span>
           </td>
           <td>{{bp.rewards_pool | number}}</td>
-          <td>{{(bp.vote && bp.vote.staked) | number}}</td>
+          <td>
+            <span v-show="!bp.hasVote">-</span>
+            <span v-show="bp.hasVote">{{ bp.vote && bp.vote.staked | number(0)}}</span>
+          </td>
           <td>
             <router-link class="button is-small is-outlined" :to="{name: 'vote', params: { bpname: bp.name }}">投票</router-link>
           </td>

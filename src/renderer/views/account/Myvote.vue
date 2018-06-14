@@ -46,7 +46,7 @@
           <td> 
             <div v-show="!(bp.hasVote && bp.vote.unstaking !== '0.0000 EOS')">-</div>
             <router-link v-show="bp.hasVote && bp.vote.unstaking !== '0.0000 EOS'" class="button is-small is-outlined" :to="{name: 'unfreeze', params: { bpname: bp.name }}">
-              {{(bp.vote && bp.vote.unstaking) | number}}
+              {{ bp.vote && bp.vote.unstaking | number(0) }}
             </router-link>
           </td>
           <td>           
