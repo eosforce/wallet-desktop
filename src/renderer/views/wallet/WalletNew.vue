@@ -3,7 +3,7 @@
     <div class="cover-page__content">
       <div class="cover-page__title">
         创建钱包
-        <router-link :to="{ name: 'walletImport' }" style="margin-left:20px;">导入钱包文件</router-link>
+        <router-link :to="{ name: 'walletImport' }" style="margin-left:20px;color：#aaa">导入钱包文件</router-link>
       </div>
       <form class="cover-page__form" @submit.prevent="!submitting && submit()">
         <div class="field">
