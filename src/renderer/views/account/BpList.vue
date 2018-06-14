@@ -19,7 +19,7 @@
         <tr v-for="bp in account.bpsTable" :key="bp.name" :class="{'is-vote': bp.hasVote}" v-if='bp.order < 24'>
           <td>{{bp.order}}</td>
           <td>{{bp.name}}</td>
-          <td>-</td>
+          <td>{{bp.url}}</td>
           <td>-</td>
           <td>{{10000 - bp.commission_rate | rate}}</td>
           <td>{{bp.total_staked | number(0)}}</td>
