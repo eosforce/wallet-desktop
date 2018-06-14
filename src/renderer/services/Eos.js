@@ -213,11 +213,11 @@ export const getAccountInfo = httpEndpoint => async accountName => {
   const assetTotal = calcTotalAmount([available, stakedTotal, unstakingTotal, rewardTotal]);
 
   const info = {
-    assetTotal: toAsset(assetTotal), // 总资产
+    assetTotal: toAsset(assetTotal), // 资产总额
     available: toAsset(available), // 可用余额
-    stakedTotal: toAsset(stakedTotal), // 总投票金额
-    unstakingTotal: toAsset(unstakingTotal), // 总赎回金额
-    rewardTotal: toAsset(rewardTotal), // 总待领取分红
+    stakedTotal: toAsset(stakedTotal), // 投票总额
+    unstakingTotal: toAsset(unstakingTotal), // 赎回总额
+    rewardTotal: toAsset(rewardTotal), // 待领分红总额
   };
 
   if (bpInfo) {

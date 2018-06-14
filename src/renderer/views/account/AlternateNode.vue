@@ -1,17 +1,17 @@
 <template>
-  <div class="box">
+  <div class="box bplist-box">
     <table class="table data-table">
       <thead>
         <tr>
           <th>排名</th>
           <th>节点名</th>
+          <th>官网</th>
+          <th>本届出块数</th>
           <th>分红比例</th>
           <th>总得票数</th>
           <th>年化利率</th>
           <th>奖池金额</th>
           <th>我的投票</th>
-          <th>待领分红</th>
-          <th>赎回金额</th>
           <th>操作</th>
         </tr>
       </thead>
@@ -19,6 +19,8 @@
         <tr v-for="bp in account.bpsTable" :key="bp.name" :class="{'is-vote': bp.vote && bp.vote.isMyVote}"  v-if='bp.order >= 24'>
           <td>{{bp.order}}</td>
           <td>{{bp.name}}</td>
+          <td>-</td>
+          <td>-</td>
           <td>{{10000 - bp.commission_rate | rate}}</td>
           <td>{{bp.total_staked | number(0)}}</td>
           <td>
@@ -26,28 +28,9 @@
             <span v-show="bp.order < 24">{{bp.total_staked | yearrate(1 - bp.commission_rate / 10000)}}</span>
           </td>
           <td>{{bp.rewards_pool | number}}</td>
-          <td>{{(bp.vote && bp.vote.staked) | number}}</td>
           <td>
-            <el-tooltip class="item" effect="dark" content="我的投票*我的投票时间/(总得票数*总投票时间)*奖励池" placement="top-end">
-              <div>
-                <router-link
-                  v-show="bp.vote && bp.vote.isMyVote"
-                  class="button is-small is-outlined"
-                  :to="{ name: 'claim', params: { bpname: bp.name } }"
-                >
-                  {{(bp.vote && bp.vote.reward) | number}}
-                </router-link>
-                <div v-show="!(bp.vote && bp.vote.isMyVote)">{{(bp.vote && bp.vote.reward) | number}}</div>
-              </div>
-            </el-tooltip>
-          </td>
-          <td>
-            <router-link v-show="bp.vote && bp.vote.unstaking !== '0.0000 EOS'" class="button is-small is-outlined" :to="{name: 'unfreeze', params: { bpname: bp.name }}">
-              {{(bp.vote && bp.vote.unstaking) | number}}
-            </router-link>
-            <div v-show="!(bp.vote && bp.vote.unstaking !== '0.0000 EOS')">
-              {{(bp.vote && bp.vote.unstaking) | number}}
-            </div>
+            <span v-show="!bp.hasVote">-</span>
+            <span v-show="bp.hasVote">{{ bp.vote && bp.vote.staked | number(0)}}</span>
           </td>
           <td>
             <router-link class="button is-small is-outlined" :to="{name: 'vote', params: { bpname: bp.name }}">投票</router-link>

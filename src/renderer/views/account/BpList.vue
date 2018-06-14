@@ -5,13 +5,13 @@
         <tr>
           <th>排名</th>
           <th>节点名</th>
+          <th>官网</th>
+          <th>本届出块数</th>
           <th>分红比例</th>
           <th>总得票数</th>
           <th>年化利率</th>
           <th>奖池金额</th>
           <th>我的投票</th>
-          <th>待领分红</th>
-          <th>赎回金额</th>
           <th>操作</th>
         </tr>
       </thead>
@@ -19,6 +19,8 @@
         <tr v-for="bp in account.bpsTable" :key="bp.name" :class="{'is-vote': bp.hasVote}" v-if='bp.order < 24'>
           <td>{{bp.order}}</td>
           <td>{{bp.name}}</td>
+          <td>-</td>
+          <td>-</td>
           <td>{{10000 - bp.commission_rate | rate}}</td>
           <td>{{bp.total_staked | number(0)}}</td>
           <td>
@@ -29,25 +31,6 @@
           <td>
             <span v-show="!bp.hasVote">-</span>
             <span v-show="bp.hasVote">{{ bp.vote && bp.vote.staked | number(0)}}</span>
-          </td>
-          <td>
-            <div v-show="!bp.hasVote">-</div>
-            <el-tooltip v-show="bp.hasVote" class="item" effect="dark" content="我的投票*我的投票时间/(总得票数*总投票时间)*奖励池" placement="top-end">
-              <div>
-                <router-link
-                  class="button is-small is-outlined"
-                  :to="{ name: 'claim', params: { bpname: bp.name } }"
-                >
-                  {{(bp.vote && bp.vote.reward) | number}}
-                </router-link>
-              </div>
-            </el-tooltip>
-          </td>
-          <td>
-            <div v-show="!(bp.hasVote && bp.vote.unstaking !== '0.0000 EOS')">-</div>
-            <router-link v-show="bp.hasVote && bp.vote.unstaking !== '0.0000 EOS'" class="button is-small is-outlined" :to="{name: 'unfreeze', params: { bpname: bp.name }}">
-              {{(bp.vote && bp.vote.unstaking) | number}}
-            </router-link>
           </td>
           <td>
             <router-link class="button is-small is-outlined" :to="{name: 'vote', params: { bpname: bp.name }}">投票</router-link>

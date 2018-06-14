@@ -5,20 +5,19 @@
     </div>
     <div class="header-navbar">
       <div class="select">
-        <select v-model="nodeValue">
-          <option :value="node.value" v-for="node in app.nodeList" :key="node.value">{{node.name}}</option>
+        <select v-model="chainNet">
+          <option :value="k" v-for="(value, k) in chainNets" :key="k">{{value}}</option>
         </select>
       </div>
       <div class="select" style="margin-left:10px;">
-        <select v-model="chainNet">
-          <option :value="k" v-for="(value, k) in chainNets" :key="k">{{value}}</option>
+        <select v-model="nodeValue">
+          <option :value="node.value" v-for="node in app.nodeList" :key="node.value">{{node.name}}</option>
         </select>
       </div>
       <div class="block">
         出块节点:<span>{{nodeInfo.head_block_producer}}</span>
         最新高度:<span>{{nodeInfo.head_block_num}}</span>
-        <span class="refresh" @click="refreshApp()"><img src="@/assets/refresh.png"></span>
-        <span class="refresh" @click="showActivity">活动</span>
+        <span class="active" @click="showActivity">查看活动</span>
       </div>
     </div>
     <div class="page-activity" v-show="showActivityPage">
@@ -124,6 +123,7 @@ export default {
   display: flex;
   align-items: center;
   flex: 1;
+  margin-left: 0;
   border-bottom: 1px solid rgba(0, 0, 0, 0.12);
 }
 
@@ -253,5 +253,13 @@ export default {
 
 .qr-code {
   padding-top: 26px;
+}
+
+.active {
+  border: 1px solid #fff;
+  border-radius: 3px;
+  text-align: center;
+  padding: 0 10px;
+  cursor: pointer;
 }
 </style>
