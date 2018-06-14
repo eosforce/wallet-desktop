@@ -3,7 +3,7 @@
     <div class="publickey">
       公钥：{{walletData.publicKey}}
       <span class="is-grouped" style="margin-top:16px;line-height:27px;text-align:left;height:27px;font-size:14px;margin-left: 40px;">
-        <router-link style="margin-left:15px" class="button is-small is-outlined" :to="{name: 'export'}" >导出钱包</router-link>
+        <a style="margin-left:15px" class="button is-small is-outlined" @click="exportWallet()">导出钱包</a>
       </span>
     </div>
     <div class="overview-refresh">
@@ -54,8 +54,20 @@ export default {
     refreshOverview() {
       this.refreshAccount();
     },
+    // 导出钱包存储文件
+    exportWallet() {
+      this.fetchWallet({ id: this.$route.params.walletId, mutation: false }).then(data => {
+        const filename = `UTC--${new Date().toISOString()}--${data.publicKey}`;
+        const file = new File([JSON.stringify(data)], filename, { type: 'application/json' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(file);
+        a.download = filename;
+        a.click();
+      });
+    },
     ...mapActions({
       refreshAccount: Actions.GET_ACCOUNT_OVERVIEW,
+      fetchWallet: Actions.FETCH_WALLET,
     }),
   },
   filters: {

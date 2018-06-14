@@ -99,29 +99,33 @@ const actions = {
     });
   },
   [Actions.FETCH_NODE_LIST]({ commit, dispatch, state }) {
-    return new Storage(CHAIN_NET_KEY)
+    return Storage.setPath(CHAIN_NET_KEY)
       .fetch()
       .then(data => {
         if (!data) return Object.keys(CHAIN_NETS)[0];
         return data.key;
       })
       .then(key => {
-        return new Storage(CHAIN_NET_KEY).store({ key }).then(data => data.key);
+        return Storage.setPath(CHAIN_NET_KEY)
+          .store({ key })
+          .then(data => data.key);
       })
       .then(key => {
         commit(Mutations.SET_CHAIN_NET, { chainNet: key });
-        return new Storage(`${NODE_LIST_KEY}#${state.chainNet}`).fetch();
+        return Storage.setPath(`${NODE_LIST_KEY}#${state.chainNet}`).fetch();
       });
   },
   [Actions.SYNC_NODE_LIST]({ state }) {
     return getNodeList().then(data => {
-      return new Storage(`${NODE_LIST_KEY}#${state.chainNet}`).store(data);
+      return Storage.setPath(`${NODE_LIST_KEY}#${state.chainNet}`).store(data);
     });
   },
   [Actions.SWITCH_CHAIN_NET]({ state }, { chainNet }) {
-    return new Storage(CHAIN_NET_KEY).store({ key: chainNet }).then(() => {
-      location.reload();
-    });
+    return Storage.setPath(CHAIN_NET_KEY)
+      .store({ key: chainNet })
+      .then(() => {
+        location.reload();
+      });
   },
 };
 

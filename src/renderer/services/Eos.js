@@ -14,12 +14,25 @@ import {
 } from '@/utils/util';
 
 export const getNodeList = () => {
-  if (Store.state.app.chainNet === '0.7') {
+  if (Store.state.app.chainNet === '0.71') {
     return Promise.resolve({
       nodes: [
         {
           node_name: '本地',
           location: '本地',
+          node_addr: '192.168.1.10',
+          port_http: '8888',
+          port_ssl: '',
+          port_p2p: '9876',
+        },
+      ],
+    });
+  } else if (Store.state.app.chainNet === '0.7') {
+    return Promise.resolve({
+      nodes: [
+        {
+          node_name: '本地1',
+          location: '本地1',
           node_addr: '192.168.1.7',
           port_http: '8888',
           port_ssl: '',
