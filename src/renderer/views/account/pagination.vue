@@ -5,7 +5,7 @@
             <span v-for="idx in indexs" :key="idx" @click="gotoPage(idx)"
                   :class="currentNum === idx ? 'current-num' : 'num'">{{ idx }}</span>
             <span v-if="showNextText"><a @click="currentNum++">下一页</a></span>
-            <span class="show-for-pc total-warp">共{{ totalPageNum }}页</span>
+            <span class="show-for-pc total-warp">共 {{ totalPageNum }} 页</span>
         </div>
     </div>
 </template>

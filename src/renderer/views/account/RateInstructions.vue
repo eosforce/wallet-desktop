@@ -1,9 +1,9 @@
 <template>
   <div class="box bplist-box">
     <div class="rate">
-      <span><b>总资产:</b></span>
+      <span><b>资产总额:</b></span>
       <p class="dec">
-       总资产 = 可用余额 + 总投票金额 + 总待领分红 + 总赎回金额 <br>
+       资产总额 = 可用余额 + 投票总额 + 待领分红总额 + 赎回总额 <br>
       </p>
     </div>
     <div class="rate">
