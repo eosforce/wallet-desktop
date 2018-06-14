@@ -10,7 +10,7 @@
             :class="{'is-active': currentWalletId === wallet.publicKey}"
             :to="{name: 'walletDetail', params: { walletId: wallet.publicKey }}"
           >
-            <div class="menu-item-title">{{wallet.publicKey.substr(0,6) + '......' + wallet.publicKey.substr(wallet.publicKey.length-6,wallet.publicKey.length)}}</div>
+            <div class="menu-item-title">{{wallet.publicKey.substr(0,7) + '...' + wallet.publicKey.substr(wallet.publicKey.length-6,wallet.publicKey.length)}}</div>
           </router-link>
           <ul>
             <li  v-for="name in wallet.accounts" :key="name">
