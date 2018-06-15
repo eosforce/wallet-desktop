@@ -9,6 +9,5 @@ export const NODE_API_URL = 'https://raw.githubusercontent.com/eosforce/testnet-
 export const NODE_TEST_NET_URL = 'https://raw.githubusercontent.com/eosforce/testnet-main/master/node-list/test-net.json';
 
 export const CHAIN_NETS = {
-  '0.6': '测试网 0.6',
-  '0.7': '测试网 0.7',
+  '0.7': '公测网 0.7',
 };
