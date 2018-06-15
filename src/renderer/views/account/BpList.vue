@@ -19,10 +19,10 @@
         <tr v-for="bp in table" :key="bp.name" :class="{'is-vote': bp.hasVote}">
           <td>{{bp.order}}</td>
           <td>{{bp.name}}</td>
-          <td>-</td>
+          <td>{{bp.url}}</td>
           <td>{{bp.amount}}</td>
           <td>{{10000 - bp.commission_rate | rate}}</td>
-          <td>{{bp.total_staked | number(0)}}</td>
+          <td>{{bp.total_staked | number(0) | intPartFormat(0)}}</td>
           <td>
             <span v-show="bp.order >= 24">-</span>
             <span v-show="bp.order < 24 && bp.total_staked == 0">0%</span>
@@ -31,7 +31,7 @@
           <td>{{bp.rewards_pool | number}}</td>
           <td>
             <span v-show="!bp.hasVote">-</span>
-            <span v-show="bp.hasVote">{{ bp.vote && bp.vote.staked | number(0)}}</span>
+            <span v-show="bp.hasVote">{{ bp.vote && bp.vote.staked | number(0) | intPartFormat(0)}}</span>
           </td>
           <td>
             <router-link class="button is-small is-outlined" :to="{name: 'vote', params: { bpname: bp.name }}">投票</router-link>
@@ -45,7 +45,7 @@
 <script>
 import { mapState } from 'vuex';
 
-import { number, rate, voteage, yearrate } from '@/utils/filter';
+import { number, rate, voteage, yearrate, intPartFormat } from '@/utils/filter';
 
 export default {
   name: 'BpList',
@@ -60,6 +60,7 @@ export default {
     rate,
     yearrate,
     voteage,
+    intPartFormat,
   },
 };
 </script>
