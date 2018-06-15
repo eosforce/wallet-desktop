@@ -16,7 +16,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="bp in account.bpsTable" :key="bp.name" :class="{'is-vote': bp.hasVote}" v-show="bp.hasVote">
+        <tr v-for="bp in table" :key="bp.name" :class="{'is-vote': bp.hasVote}">
           <td>{{bp.order}}</td>
           <td>{{bp.name}}</td>
           <td>{{10000 - bp.commission_rate | rate}}</td>
@@ -44,13 +44,13 @@
               </div>
             </el-tooltip>
           </td>
-          <td> 
+          <td>
             <div v-show="!(bp.hasVote && bp.vote.unstaking !== '0.0000 EOS')">-</div>
             <router-link v-show="bp.hasVote && bp.vote.unstaking !== '0.0000 EOS'" class="button is-small is-outlined" :to="{name: 'unfreeze', params: { bpname: bp.name }}">
               {{ bp.vote && bp.vote.unstaking | number(0) }}
             </router-link>
           </td>
-          <td>           
+          <td>
             <router-link class="button is-small is-outlined" :to="{name: 'vote', params: { bpname: bp.name }}">投票</router-link>
           </td>
         </tr>
@@ -66,10 +66,12 @@ import { number, rate, voteage, yearrate, intPartFormat } from '@/utils/filter';
 
 export default {
   name: 'TransferRecord',
-  data() {
-    return {};
-  },
   computed: {
+    table() {
+      return this.account.bpsTable.filter(bp => bp.hasVote).sort((bp1, bp2) => {
+        return bp2.vote.staked.split(' ')[0] - bp1.vote.staked.split(' ')[0];
+      });
+    },
     ...mapState(['account']),
   },
   filters: {

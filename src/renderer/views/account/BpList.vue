@@ -16,11 +16,11 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="bp in account.bpsTable" :key="bp.name" :class="{'is-vote': bp.hasVote}" v-if='bp.order < 24'>
+        <tr v-for="bp in table" :key="bp.name" :class="{'is-vote': bp.hasVote}">
           <td>{{bp.order}}</td>
           <td>{{bp.name}}</td>
           <td>{{bp.url}}</td>
-          <td>-</td>
+          <td>{{bp.amount}}</td>
           <td>{{10000 - bp.commission_rate | rate}}</td>
           <td>{{bp.total_staked | number(0) | intPartFormat(0)}}</td>
           <td>
@@ -48,11 +48,11 @@ import { mapState } from 'vuex';
 import { number, rate, voteage, yearrate, intPartFormat } from '@/utils/filter';
 
 export default {
-  name: 'TransferRecord',
-  data() {
-    return {};
-  },
+  name: 'BpList',
   computed: {
+    table() {
+      return this.account.bpsTable.filter(bp => bp.isSuperBp);
+    },
     ...mapState(['account']),
   },
   filters: {

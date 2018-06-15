@@ -31,6 +31,11 @@ export const getNodeInfo = httpEndpoint => {
   return Eos.Localnet({ httpEndpoint }).getInfo({});
 };
 
+// 查询块信息
+export const getBlock = httpEndpoint => block_num_or_id => {
+  return Eos.Localnet({ httpEndpoint }).getBlock({ block_num_or_id });
+};
+
 // 根据公钥获取用户名数组
 export const getAccounts = httpEndpoint => publicKey => {
   return Eos.Localnet({ httpEndpoint })
@@ -110,10 +115,10 @@ export const getTokenList = httpEndpoint => accountName => {
         return Promise.all(
           data.rows.map(row => {
             const balance = row.balance;
-            const token = getToken(balance);
+            const symbol = getToken(balance);
             return Eos.Localnet({ httpEndpoint })
               .getTableRows({
-                scope: token,
+                scope: symbol,
                 code: 'eosio.token',
                 table: 'stat',
                 json: true,
@@ -121,7 +126,7 @@ export const getTokenList = httpEndpoint => accountName => {
               })
               .then(result => {
                 return {
-                  token,
+                  symbol,
                   balance,
                   ...result.rows[0],
                 };
@@ -138,35 +143,52 @@ export const getTokenList = httpEndpoint => accountName => {
 export const getBpsTable = httpEndpoint => () => {
   return Eos.Localnet({ httpEndpoint })
     .getTableRows({ scope: 'eosio', code: 'eosio', table: 'bps', json: true, limit: 1000 })
-    .then(data => data.rows)
-    .then(data => {
-      return data.sort((val1, val2) => {
-        return toBigNumber(val2.total_staked)
-          .minus(toBigNumber(val1.total_staked))
-          .toNumber();
-      });
-    });
+    .then(data => data.rows);
 };
 
 // 获取 vote 表
 export const getVotesTable = httpEndpoint => accountName => {
-  return Eos.Localnet({ httpEndpoint, chain_id: 'dc85ad2842e7d62c699d952b26fa7abe11fe90c00004b9d6b0eac55a44e3bbe1' })
+  return Eos.Localnet({ httpEndpoint })
     .getTableRows({ scope: accountName, code: 'eosio', table: 'votes', json: true, limit: 1000 })
     .then(data => data.rows);
+};
+
+// table
+export const getTable = httpEndpoint => params => {
+  return Eos.Localnet({ httpEndpoint }).getTableRows({ ...params, json: true, limit: 1000 });
 };
 
 // 根据 bp 和 vote 得到分红表，返回一个对象
 export const getRewardsAndBpsTable = httpEndpoint => async (votesTable, accountName) => {
   const bpsTable = await getBpsTable(httpEndpoint)();
   const { head_block_num: currentHeight } = await getNodeInfo(httpEndpoint);
+  const { schedule_version } = await getBlock(httpEndpoint)(currentHeight);
+  const superBpsAmountTable = await getTable(httpEndpoint)({
+    scope: 'eosio',
+    code: 'eosio',
+    table: 'schedules',
+    table_key: schedule_version,
+  }).then(result => {
+    return result.rows && result.rows[0] && result.rows[0].producers;
+  });
 
-  const bpsHaveVoteTable = [];
-  const bpsNoVoteTable = [];
   const rewardsTable = [];
+  const superBpTable = [];
+  const commonBpTable = [];
   let bpInfo;
-  for (const [index, bpRow] of bpsTable.entries()) {
-    bpRow.order = index + 1;
+
+  for (const bpRow of bpsTable) {
+    for (let i = 0; i < superBpsAmountTable.length; i++) {
+      if (superBpsAmountTable[i].bpname === bpRow.name) {
+        bpRow.isSuperBp = true;
+        bpRow.superBpIndex = i;
+        bpRow.amount = superBpsAmountTable[i].amount;
+        break;
+      }
+    }
+
     const vote = votesTable.find(row => row.bpname === bpRow.name);
+
     if (bpRow.name === accountName) {
       bpInfo = {
         bpname: bpRow,
@@ -195,19 +217,29 @@ export const getRewardsAndBpsTable = httpEndpoint => async (votesTable, accountN
 
       bpRow.vote = { ...extraRow };
       bpRow.hasVote = calcVoteExist(vote.staked, vote.reward, vote.unstaking);
-      if (bpRow.hasVote) {
-        bpsHaveVoteTable.push(bpRow);
-      } else {
-        bpsNoVoteTable.push(bpRow);
-      }
+    }
+
+    if (bpRow.isSuperBp) {
+      superBpTable.push(bpRow);
     } else {
-      bpsNoVoteTable.push(bpRow);
+      commonBpTable.push(bpRow);
     }
   }
 
   return {
     rewardsTable,
-    bpsTable,
+    bpsTable: superBpTable
+      .sort((bp1, bp2) => bp1.superBpIndex - bp2.superBpIndex)
+      .map((bp, index) => {
+        bp.order = index + 1;
+        return bp;
+      })
+      .concat(
+        commonBpTable.sort((bp1, bp2) => bp1.total_staked - bp2.total_staked).map((bp, index) => {
+          bp.order = index + 24;
+          return bp;
+        })
+      ),
     bpInfo,
   };
 };
@@ -241,16 +273,19 @@ export const getAccountInfo = httpEndpoint => async accountName => {
 };
 
 export const transfer = config => {
-  return ({ from, to, amount } = {}) => {
-    // return Eos.Localnet(config).contract('eosio.token')
-    //   .then(token => {
-    //     token.transfer({ from, to, quantity: '1 BTC', memo: '' })
-    //       .catch(err => {
-    //         return handleApiError(err);
-    //       });
-    //   })
-    return Eos.Localnet(config)
-      .transfer({ from, to, quantity: toAsset(amount), memo: '' })
+  return ({ from, to, amount, memo = '', tokenSymbol = 'EOS' } = {}) => {
+    Promise.resolve()
+      .then(() => {
+        if (tokenSymbol === 'EOS') {
+          return Eos.Localnet(config).transfer({ from, to, quantity: toAsset(amount, tokenSymbol), memo });
+        } else {
+          return Eos.Localnet(config)
+            .contract('eosio.token')
+            .then(token => {
+              token.transfer({ from, to, quantity: toAsset(amount, tokenSymbol), memo });
+            });
+        }
+      })
       .catch(err => {
         return handleApiError(err);
       });
