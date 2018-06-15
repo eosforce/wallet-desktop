@@ -253,6 +253,7 @@ export default {
 
 .qr-code {
   padding-top: 26px;
+  text-align: center;
 }
 
 .active {

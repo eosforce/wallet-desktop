@@ -290,7 +290,7 @@ a:hover {
 }
 
 .table td {
-  font-size: 12px;
+  font-size: 14px;
   color: #000 !important;
 }
 
@@ -303,8 +303,17 @@ a:hover {
 }
 
 .bplist-box .table td:nth-child(1),
-.bplist-box .table th:nth-child(1) {
+.bplist-box .table th:nth-child(1),
+.bplist-box .table td:nth-child(4),
+.bplist-box .table th:nth-child(4)  {
   text-align: center;
+}
+
+.bplist-box .table td:nth-child(2),
+.bplist-box .table th:nth-child(2),
+.bplist-box .table td:nth-child(3),
+.bplist-box .table th:nth-child(3) {
+  text-align: left;
 }
 .bplist-box .table td,
 .bplist-box .table th {
