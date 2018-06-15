@@ -1,6 +1,6 @@
 import Eos from 'eosjs';
 
-import { NODE_API_URL, NODE_TEST_NET_URL } from '@/constants/config.constants';
+import { NODE_API_URL } from '@/constants/config.constants';
 import Store from '@/store';
 
 import {
@@ -16,8 +16,8 @@ import {
 
 export const getNodeList = () => {
   const map = {
-    '0.6': NODE_API_URL,
-    '0.7': NODE_TEST_NET_URL,
+    // '0.6': NODE_API_URL,
+    '0.7': NODE_API_URL,
   };
   return fetch(map[Store.state.app.chainNet], {
     headers: {
