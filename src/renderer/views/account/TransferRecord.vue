@@ -29,7 +29,7 @@
       <el-pagination
         @current-change="getMaterial"
         :pageSize="offset"
-        layout="prev, pager, next, jumper"
+        layout="prev, next, jumper"
         :total="10000">
       </el-pagination>
   </div>
