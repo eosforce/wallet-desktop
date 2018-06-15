@@ -56,12 +56,7 @@ export default {
       return this.account.transferRecords ? this.account.transferRecords.offset : 20;
     },
     recordList() {
-      if (
-        !this.account.transferRecords ||
-        !this.account.transferRecords.list ||
-        !this.account.transferRecords.list.length
-      )
-        return [];
+      if (!this.account.transferRecords.list || !this.account.transferRecords.list.length) return [];
       return this.account.transferRecords.list.map(tr => {
         return genTrConvertFunc(tr.action_trace.act.name)(tr);
       });

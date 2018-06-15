@@ -3,7 +3,6 @@ import {
   getAccountInfo,
   transfer,
   getTransferRecord,
-  getTransAction,
   vote,
   unfreeze,
   claim,
