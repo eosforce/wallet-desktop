@@ -50,7 +50,7 @@ export default {
   },
   computed: {
     version() {
-      return this.account.bpsTable[0].version;
+      return this.account.bpsTable[0] && this.account.bpsTable[0].version;
     },
     accountName() {
       return this.$route.params.accountName;
