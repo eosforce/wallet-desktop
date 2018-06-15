@@ -6,9 +6,9 @@
           <th>排名</th>
           <th>节点名</th>
           <th>官网</th>
-          <th>本届出块数</th>
+          <th>本届出块</th>
           <th>分红比例</th>
-          <th>总得票数</th>
+          <th>得票总数</th>
           <th>年化利率</th>
           <th>奖池金额</th>
           <th>我的投票</th>
@@ -19,8 +19,8 @@
         <tr v-for="bp in table" :key="bp.name" :class="{'is-vote': bp.vote && bp.vote.isMyVote}">
           <td>{{bp.order}}</td>
           <td>{{bp.name}}</td>
-          <td>{{bp.url}}</td>
-          <td>-</td>
+          <td><a :href="bp.url" target="_blank">{{bp.url.replace(/^(http|https):\/\/(www\.)?/,'')}}</a></td>
+          <td>{{bp.amount}}</td>
           <td>{{10000 - bp.commission_rate | rate}}</td>
           <td>{{bp.total_staked | number(0) | intPartFormat(0)}}</td>
           <td>
