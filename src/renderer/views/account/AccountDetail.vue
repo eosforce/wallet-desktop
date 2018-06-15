@@ -11,7 +11,7 @@
         <a class="min-img">
           <img :src="require(`@/assets/${tab.img1}`)" class="two hide">
           <img :src="require(`@/assets/${tab.img2}`)" class="one">
-          {{tab.tabName}}
+          {{tab.tabName}}<span v-show="tab.tabKey === 'BpList'">(第{{version}}届)</span>
         </a>
       </div>
       <span class="refresh fr el-icon-refresh" @click="refreshList()"></span>
@@ -38,7 +38,7 @@ export default {
   data() {
     return {
       tabMap: [
-        { tabName: '超级节点', tabKey: 'BpList', img1: 'node.png', img2: 'node_w.png' },
+        { tabName: `超级节点`, tabKey: 'BpList', img1: 'node.png', img2: 'node_w.png' },
         { tabName: '候选节点', tabKey: 'AlternateNode', img1: 'laternode.png', img2: 'laternode_w.png' },
         { tabName: '我的投票', tabKey: 'Myvote', img1: 'vote.png', img2: 'vote_w.png' },
         { tabName: '我的 Token', tabKey: 'TokenList', img1: 'vote.png', img2: 'vote_w.png' },
@@ -49,13 +49,16 @@ export default {
     };
   },
   computed: {
+    version() {
+      return this.account.bpsTable[0].version;
+    },
     accountName() {
       return this.$route.params.accountName;
     },
     walletData() {
       return this.wallet.data || {};
     },
-    ...mapState(['wallet']),
+    ...mapState(['wallet', 'account']),
   },
   methods: {
     initAccount() {

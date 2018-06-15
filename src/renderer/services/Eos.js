@@ -163,12 +163,14 @@ export const getRewardsAndBpsTable = httpEndpoint => async (votesTable, accountN
   const bpsTable = await getBpsTable(httpEndpoint)();
   const { head_block_num: currentHeight } = await getNodeInfo(httpEndpoint);
   const { schedule_version } = await getBlock(httpEndpoint)(currentHeight);
+  let version;
   const superBpsAmountTable = await getTable(httpEndpoint)({
     scope: 'eosio',
     code: 'eosio',
     table: 'schedules',
     table_key: schedule_version,
   }).then(result => {
+    version = result.rows && result.rows[0] && result.rows[0].version;
     return result.rows && result.rows[0] && result.rows[0].producers;
   });
 
@@ -182,6 +184,7 @@ export const getRewardsAndBpsTable = httpEndpoint => async (votesTable, accountN
       if (superBpsAmountTable[i].bpname === bpRow.name) {
         bpRow.isSuperBp = true;
         bpRow.superBpIndex = i;
+        bpRow.version = version;
         bpRow.amount = superBpsAmountTable[i].amount;
         break;
       }
