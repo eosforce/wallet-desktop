@@ -14,7 +14,7 @@
       <span style="width:25%;  display: inline-block;">资产总额:<span class="cl">{{account.info.assetTotal | number}}</span></span>
       <span style="width:25%;  display: inline-block;">可用余额:<span class="cl">{{account.info.available | number}}</span></span>
       <router-link class="button is-small is-outlined" :to="{name: 'transfer'}">转账</router-link>
-      <router-link style="margin-left:15px" class="button is-small is-outlined" :to="{name: 'accountNew'}">创建用户</router-link>
+      <router-link style="margin-left:15px" class="button is-small is-outlined" :to="{name: 'accountCreateAccount'}">创建用户</router-link>
     </div>
     <div class="desc-box clearfix">
       <ul>

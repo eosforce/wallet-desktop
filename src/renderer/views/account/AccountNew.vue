@@ -4,7 +4,7 @@
       <div class="cover-page__content">
         <div class="cover-page__title">创建用户</div>
         <form class="cover-page__form" @submit.prevent="!submitting && confirmInfo()">
-          <div class="field">
+          <div class="field" v-if="!creatorAccountName">
             <label class="label">选择创建人</label>
             <div class="control">
               <div class="select">
@@ -13,6 +13,11 @@
                   <option :value="node" v-for="node in nodeList" :key="node.value">{{node.name}}</option>
                 </select>
               </div>
+            </div>
+          </div>
+          <div class="field" v-if="creatorAccountName">
+            <div class="static-label">
+              创建人<span class="static-text">{{creatorAccountName}}</span>
             </div>
           </div>
           <div class="field">
@@ -48,7 +53,7 @@
       </div>
       <a class="modal-close is-large cover-page-close" @click="close"></a>
     </div>
-    <confirm-modal :show="showConfirm" :submitting="modalSubmitting" @confirm="submit('creator')" @close="toggle('showConfirm', false)">
+    <confirm-modal :show="showConfirm" :submitting="modalSubmitting" @confirm="submit()" @close="toggle('showConfirm', false)">
       <div>
         <div class="row">
           <div class="row__title">交易名称</div>
@@ -109,50 +114,41 @@ export default {
     isValidPublicKey() {
       return this.publicKey && isValidPublic(this.publicKey);
     },
+    creatorAccountName() {
+      return this.$route.params.accountName;
+    },
     nodeList() {
-      return this.app.nodeList.concat(
-        this.app.walletList.reduce((result, wallet) => {
-          return result.concat(
-            wallet.accounts.map(name => {
-              return {
-                name: `本地用户：${name}`,
-                account: name,
-                publicKey: wallet.publicKey,
-              };
-            })
-          );
-        }, [])
-      );
+      return this.app.nodeList;
     },
     ...mapState(['app']),
   },
   methods: {
     confirmInfo() {
-      if (this.isValidAccountName && this.isValidPublicKey && this.accountCreator) {
-        if (this.accountCreator.account) {
+      if (this.isValidAccountName && this.isValidPublicKey && (this.accountCreator || this.creatorAccountName)) {
+        if (this.creatorAccountName) {
           this.showConfirm = true;
         } else {
-          this.submit('node');
+          this.submit();
         }
       }
     },
-    submit(type) {
+    submit() {
       Promise.resolve()
         .then(() => {
-          if (type === 'node') {
+          if (!this.creatorAccountName) {
             this.submitting = true;
             return this.newAccountFromNode({
               publicKey: this.publicKey,
               accountName: this.accountName,
               node: this.accountCreator.value,
             });
-          } else if (type === 'creator') {
+          } else {
             this.modalSubmitting = true;
             return this.newAccount({
               password: this.password,
               publicKey: this.publicKey,
               accountName: this.accountName,
-              creator: this.accountCreator.account,
+              creator: this.creatorAccountName,
             });
           }
         })
@@ -174,7 +170,7 @@ export default {
         });
     },
     close() {
-      this.$router.push({ name: 'walletDetail' });
+      history.length ? this.$router.go(-1) : this.$router.push({ name: 'walletDetail' });
     },
     toggle(key, val) {
       return (this[key] = val === undefined ? !this[key] : val);
@@ -184,9 +180,6 @@ export default {
       newAccountFromNode: Actions.NEW_ACCOUNT_FROM_NODE,
       fetchWalletList: Actions.FETCH_WALLET_LIST,
     }),
-  },
-  created() {
-    this.publicKey = this.$route.params.walletId;
   },
   components: {
     ConfirmModal,

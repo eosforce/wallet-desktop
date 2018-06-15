@@ -3,7 +3,6 @@ import {
   getAccountInfo,
   transfer,
   getTransferRecord,
-  getTransAction,
   vote,
   unfreeze,
   claim,
@@ -14,9 +13,12 @@ const initState = {
   accountName: '',
   info: {},
   bpsTable: [],
-  transferRecords: [],
+  transferRecords: {
+    offset: 20,
+    pos: 0,
+    list: [],
+  },
   tokenList: [],
-  latestTransferNum: 0,
 };
 
 const mutations = {
@@ -29,14 +31,8 @@ const mutations = {
   [Mutations.SET_BPS_TABLE](state, { bpsTable = [] } = {}) {
     state.bpsTable = bpsTable;
   },
-  [Mutations.SET_TRANSFER_RECORDS](state, { transferRecords = [] } = {}) {
+  [Mutations.SET_TRANSFER_RECORDS](state, { transferRecords = {} } = {}) {
     state.transferRecords = transferRecords;
-  },
-  [Mutations.SET_LATEST_TRANSFER_NUM](state, { transferRecords = [] } = {}) {
-    state.latestTransferNum = getLatestNum(transferRecords);
-  },
-  [Mutations.SET_ACTION_STATUS](state, { actionDetail = [] } = {}) {
-    state.transferRecords = addStatus(state.transferRecords, actionDetail);
   },
   [Mutations.SET_TOKEN_LIST](state, { tokenList = [] } = {}) {
     state.tokenList = tokenList;
@@ -85,27 +81,16 @@ const actions = {
         return dispatch(Actions.GET_TOKEN_LIST, { accountName });
       });
   },
-  [Actions.GET_TRANSFER_RECORD]({ dispatch, commit, getters }, { accountName, pos, offset }) {
+  [Actions.GET_TRANSFER_RECORD]({ state, commit, getters }, { accountName, pos, offset }) {
+    pos = pos === undefined ? state.transferRecords.pos : pos;
+    offset = offset || state.transferRecords.offset;
     return getTransferRecord(getters[Getters.CURRENT_NODE])({ accountName, pos, offset }).then(result => {
-      commit(Mutations.SET_TRANSFER_RECORDS, { transferRecords: result.actions });
-      if (pos === undefined) {
-        commit(Mutations.SET_LATEST_TRANSFER_NUM, { transferRecords: result.actions });
-      }
-      dispatch(Actions.GET_TRANS_ACTION, { transferRecords: result.actions });
+      commit(Mutations.SET_TRANSFER_RECORDS, { transferRecords: { list: result.actions, pos, offset } });
     });
   },
   [Actions.GET_TOKEN_LIST]({ dispatch, commit, getters }, { accountName }) {
     return getTokenList(getters[Getters.CURRENT_NODE])(accountName).then(result => {
       commit(Mutations.SET_TOKEN_LIST, { tokenList: result });
-    });
-  },
-  [Actions.GET_TRANS_ACTION]({ commit, getters }, { transferRecords }) {
-    return transferRecords.forEach(function(record) {
-      getTransAction(getters[Getters.CURRENT_NODE])({ tid: record.action_trace.trx_id }).then(result => {
-        if (result.trx) {
-          commit(Mutations.SET_ACTION_STATUS, { actionDetail: result });
-        }
-      });
     });
   },
   [Actions.GET_BPS_TABLE]({ state, dispatch, commit, getters }) {
@@ -121,26 +106,6 @@ const actions = {
       commit(Mutations.SET_ACCOUNT_INFO, { info });
     });
   },
-};
-var addStatus = (transferRecords, actionDetail) => {
-  var out = [];
-  transferRecords.forEach(function(record) {
-    if (record.action_trace.trx_id === actionDetail.id) {
-      record.status = actionDetail.trx.receipt.status;
-    }
-    out.push(record);
-  });
-  return out;
-};
-
-var getLatestNum = transferRecords => {
-  let latestNum = 0;
-  transferRecords.forEach(function(record) {
-    if (record.account_action_seq > latestNum) {
-      latestNum = record.account_action_seq;
-    }
-  });
-  return latestNum;
 };
 
 const getters = {

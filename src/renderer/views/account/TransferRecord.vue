@@ -9,7 +9,7 @@
           <th>接收方</th>
           <th>金额</th>
           <th>备注</th>
-          <th>状态</th>
+          <!-- <th>状态</th> -->
         </tr>
       </thead>
       <tbody>
@@ -20,14 +20,18 @@
           <td>{{record.to}}</td>
           <td>{{record.change}}</td>
           <td>{{record.memo}}</td>
-          <td>{{record.status}}</td>
         </tr>
         <tr v-show="!recordList.length">
           <td colspan="7" class="empty">暂无交易记录</td>
         </tr>
       </tbody>
     </table>
-      <pagination :pageSize='pageSize' :currentPage='list_bCurrPage' :total='account.latestTransferNum' @pageChanged='list_bPageChanged' ref="pagination"></pagination>
+      <el-pagination
+        @current-change="getMaterial"
+        :pageSize="offset"
+        layout="prev, pager, next, jumper"
+        :total="10000">
+      </el-pagination>
   </div>
 </template>
 
@@ -37,7 +41,7 @@ import { mapState, mapActions } from 'vuex';
 import { timestamp } from '@/utils/filter';
 import { Actions } from '@/constants/types.constants';
 import { genTrConvertFunc } from '@/utils/util';
-import Pagination from '@/views/account/pagination';
+
 export default {
   name: 'TransferRecord',
   data() {
@@ -48,35 +52,30 @@ export default {
     };
   },
   computed: {
+    offset() {
+      return this.account.transferRecords ? this.account.transferRecords.offset : 20;
+    },
     recordList() {
-      if (!this.account.transferRecords || !this.account.transferRecords.length) return [];
-      return this.account.transferRecords.map(tr => {
+      if (!this.account.transferRecords.list || !this.account.transferRecords.list.length) return [];
+      return this.account.transferRecords.list.map(tr => {
         return genTrConvertFunc(tr.action_trace.act.name)(tr);
       });
     },
-    ...mapState(['account']),
     accountName() {
       return this.$route.params.accountName;
     },
+    ...mapState(['account', 'app']),
   },
   methods: {
-    list_bPageChanged: function(toPageStart, offset) {
-      this.fetchAccout({ accountName: this.accountName, pos: toPageStart, offset: offset });
-    },
-    initialPageNum: function() {
-      this.list_bCurrPage = 1;
-      this.pageSize = 20;
-      this.$refs.pagination.initialPageInation();
+    getMaterial(val = 1) {
+      this.getTransferRecord({ accountName: this.accountName, pos: this.offset * (val - 1) });
     },
     ...mapActions({
-      fetchAccout: Actions.GET_TRANSFER_RECORD,
+      getTransferRecord: Actions.GET_TRANSFER_RECORD,
     }),
   },
   filters: {
     timestamp,
-  },
-  components: {
-    Pagination,
   },
 };
 </script>
