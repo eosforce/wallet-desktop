@@ -40,6 +40,13 @@ export default new Router({
                   },
                 },
                 {
+                  name: 'tokenTransfer',
+                  path: ':symbol/transfer',
+                  components: {
+                    modal: () => import('@/views/account/Transfer'),
+                  },
+                },
+                {
                   name: 'vote',
                   path: ':bpname/vote',
                   components: {

@@ -11,9 +11,9 @@ export const number = (value, p = 4) => {
   }
 };
 
-export const asset = value => {
+export const asset = (value, symbol = 'EOS') => {
   if (isNaN(value)) return value;
-  return [value, 'EOS'].join(' ');
+  return [value, symbol].join(' ');
 };
 
 export const rate = value => {

@@ -16,7 +16,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="bp in account.bpsTable" :key="bp.name" :class="{'is-vote': bp.vote && bp.vote.isMyVote}"  v-if='bp.order >= 24'>
+        <tr v-for="bp in table" :key="bp.name" :class="{'is-vote': bp.vote && bp.vote.isMyVote}">
           <td>{{bp.order}}</td>
           <td>{{bp.name}}</td>
           <td>-</td>
@@ -48,10 +48,10 @@ import { number, rate, voteage, yearrate } from '@/utils/filter';
 
 export default {
   name: 'TransferRecord',
-  data() {
-    return {};
-  },
   computed: {
+    table() {
+      return this.account.bpsTable.filter(bp => !bp.isSuperBp);
+    },
     ...mapState(['account']),
   },
   filters: {

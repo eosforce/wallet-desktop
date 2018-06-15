@@ -2,7 +2,7 @@
   <div class="modal is-active">
     <div class="cover-page">
       <div class="cover-page__content">
-        <div class="cover-page__title">转账</div>
+        <div class="cover-page__title">{{tokenSymbol}} 转账</div>
         <form class="cover-page__form" @submit.prevent="confirmInfo()">
           <div class="field">
             <label class="label">
@@ -20,10 +20,18 @@
               转账金额
             </label>
             <div class="control">
-              <input v-model="amount" min="0" class="input" type="number" step="0.0001" placeholder="单位 EOS" required />
+              <input v-model="amount" min="0" class="input" type="number" step="0.0001" :placeholder="`单位 ${tokenSymbol}`" required />
               <p class="help is-danger" v-show="amount && !isValidAmount">
                 金额必须为数字，且最多 4 位小数
               </p>
+            </div>
+          </div>
+          <div class="field">
+            <label class="label">
+              备注
+            </label>
+            <div class="control">
+              <input v-model="memo" min="0" class="input" type="text" placeholder="备注" max-length="255"/>
             </div>
           </div>
           <div class="field">
@@ -57,7 +65,7 @@
         </div>
         <div class="row">
           <div class="row__title">转账金额</div>
-          <div class="row__content">{{amount | asset}}</div>
+          <div class="row__content">{{amount | asset(tokenSymbol)}}</div>
         </div>
         <div class="row">
           <div class="row__title">手续费</div>
@@ -90,6 +98,7 @@ export default {
       toAccountName: '',
       amount: '',
       submitting: false,
+      memo: '',
 
       password: '',
       showConfirm: false,
@@ -98,6 +107,9 @@ export default {
   computed: {
     fromAccountName() {
       return this.$route.params.accountName;
+    },
+    tokenSymbol() {
+      return this.$route.params.symbol || 'EOS';
     },
     isValidToAccountName() {
       return this.toAccountName && isValidAccountName(this.toAccountName);
@@ -118,8 +130,10 @@ export default {
       this.transfer({
         from: this.fromAccountName,
         to: this.toAccountName,
+        memo: this.memo,
         amount: this.amount,
         password: this.password,
+        tokenSymbol: this.tokenSymbol,
       })
         .then(result => {
           Message.success('转账成功');

@@ -82,9 +82,9 @@ export const toBigNumber = asset => {
 };
 
 // '字符串或数字或 bignumber 格式转化为 XXX EOS 格式'
-export const toAsset = _amount => {
+export const toAsset = (_amount, symbol = 'EOS') => {
   const amount = toBigNumber(_amount).toFixed(4);
-  return [amount, 'EOS'].join(' ');
+  return [amount, symbol].join(' ');
 };
 
 // 累加金额，返回 BigNumber
@@ -202,4 +202,8 @@ export const exportWif = (password, data) => {
   } catch (err) {
     return Promise.reject(new Error('密码错误'));
   }
+};
+
+export const getToken = asset => {
+  return asset && asset.split(' ')[1];
 };
