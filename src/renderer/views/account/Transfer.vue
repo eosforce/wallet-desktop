@@ -65,7 +65,7 @@
         </div>
         <div class="row">
           <div class="row__title">转账金额</div>
-          <div class="row__content">{{amount | asset}}</div>
+          <div class="row__content">{{amount | asset(tokenSymbol)}}</div>
         </div>
         <div class="row">
           <div class="row__title">手续费</div>
