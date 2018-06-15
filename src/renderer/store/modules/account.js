@@ -51,9 +51,9 @@ const actions = {
     commit(Mutations.SET_ACCOUNT_NAME, { accountName });
     dispatch(Actions.GET_ACCOUNT_INFO);
   },
-  [Actions.TRANSFER]({ state, dispatch, getters }, { from, to, amount, memo, password }) {
+  [Actions.TRANSFER]({ state, dispatch, getters }, { from, to, amount, memo, password, tokenSymbol }) {
     return getters[Getters.GET_TRANSE_CONFIG](password, from).then(config => {
-      return transfer(config)({ from, to, amount, memo });
+      return transfer(config)({ from, to, amount, memo, tokenSymbol });
     });
   },
   [Actions.VOTE]({ state, dispatch, getters }, { voter, bpname, amount, password }) {

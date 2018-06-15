@@ -110,10 +110,10 @@ export const getTokenList = httpEndpoint => accountName => {
         return Promise.all(
           data.rows.map(row => {
             const balance = row.balance;
-            const token = getToken(balance);
+            const symbol = getToken(balance);
             return Eos.Localnet({ httpEndpoint })
               .getTableRows({
-                scope: token,
+                scope: symbol,
                 code: 'eosio.token',
                 table: 'stat',
                 json: true,
@@ -121,7 +121,7 @@ export const getTokenList = httpEndpoint => accountName => {
               })
               .then(result => {
                 return {
-                  token,
+                  symbol,
                   balance,
                   ...result.rows[0],
                 };
@@ -241,16 +241,19 @@ export const getAccountInfo = httpEndpoint => async accountName => {
 };
 
 export const transfer = config => {
-  return ({ from, to, amount } = {}) => {
-    // return Eos.Localnet(config).contract('eosio.token')
-    //   .then(token => {
-    //     token.transfer({ from, to, quantity: '1 BTC', memo: '' })
-    //       .catch(err => {
-    //         return handleApiError(err);
-    //       });
-    //   })
-    return Eos.Localnet(config)
-      .transfer({ from, to, quantity: toAsset(amount), memo: '' })
+  return ({ from, to, amount, memo = '', tokenSymbol = 'EOS' } = {}) => {
+    Promise.resolve()
+      .then(() => {
+        if (tokenSymbol === 'EOS') {
+          return Eos.Localnet(config).transfer({ from, to, quantity: toAsset(amount, tokenSymbol), memo });
+        } else {
+          return Eos.Localnet(config)
+            .contract('eosio.token')
+            .then(token => {
+              token.transfer({ from, to, quantity: toAsset(amount, tokenSymbol), memo });
+            });
+        }
+      })
       .catch(err => {
         return handleApiError(err);
       });

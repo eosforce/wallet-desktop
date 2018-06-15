@@ -9,16 +9,20 @@
           <th>目前发行量</th>
           <th>最大发行量</th>
           <th>我的余额</th>
+          <th>操作</th>
         </tr>
       </thead>
       <tbody>
         <tr v-for="(token, index) in account.tokenList" :key="token.token">
           <td>{{index + 1}}</td>
-          <td>{{token.token}}</td>
+          <td>{{token.symbol}}</td>
           <td>{{token.issuer}}</td>
           <td>{{token.supply}}</td>
           <td>{{token.max_supply}}</td>
           <td>{{token.balance}}</td>
+          <td>
+            <router-link class="button is-small is-outlined" :to="{name: 'tokenTransfer', params: { symbol: token.symbol }}">转账</router-link>
+          </td>
         </tr>
       </tbody>
     </table>
