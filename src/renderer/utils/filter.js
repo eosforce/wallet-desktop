@@ -11,6 +11,16 @@ export const number = (value, p = 4) => {
   }
 };
 
+export const intPartFormat = (value, p = 4) => {
+  if (isNaN(value)) {
+    return toBigNumber(value).toFixed(p);
+  } else {
+    const intPart = Number(value).toFixed(p);
+    const intPartFormat = intPart.toString().replace(/(\d)(?=(?:\d{3})+$)/g, '$1,');
+    return intPartFormat;
+  }
+};
+
 export const asset = (value, symbol = 'EOS') => {
   if (isNaN(value)) return value;
   return [value, symbol].join(' ');

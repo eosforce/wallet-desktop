@@ -20,7 +20,7 @@
           <td>{{bp.order}}</td>
           <td>{{bp.name}}</td>
           <td>{{10000 - bp.commission_rate | rate}}</td>
-          <td>{{bp.total_staked | number(0)}}</td>
+          <td>{{bp.total_staked | number(0) | intPartFormat(0)}}</td>
           <td>
             <span v-show="bp.order >= 24">-</span>
             <span v-show="bp.order < 24 && bp.total_staked == 0">0%</span>
@@ -29,7 +29,7 @@
           <td>{{bp.rewards_pool | number}}</td>
           <td>
             <span v-show="!bp.hasVote">-</span>
-            <span v-show="bp.hasVote">{{ bp.vote && bp.vote.staked | number(0)}}</span>
+            <span v-show="bp.hasVote">{{ bp.vote && bp.vote.staked | number(0) | intPartFormat(0)}}</span>
           </td>
           <td>
             <div v-show="!bp.hasVote">-</div>
@@ -39,7 +39,7 @@
                   class="button is-small is-outlined"
                   :to="{ name: 'claim', params: { bpname: bp.name } }"
                 >
-                  {{(bp.vote && bp.vote.reward) | number}}
+                  {{bp.vote && bp.vote.reward | number}}
                 </router-link>
               </div>
             </el-tooltip>
@@ -62,7 +62,7 @@
 <script>
 import { mapState } from 'vuex';
 
-import { number, rate, voteage, yearrate } from '@/utils/filter';
+import { number, rate, voteage, yearrate, intPartFormat } from '@/utils/filter';
 
 export default {
   name: 'TransferRecord',
@@ -79,6 +79,7 @@ export default {
     rate,
     yearrate,
     voteage,
+    intPartFormat,
   },
 };
 </script>
