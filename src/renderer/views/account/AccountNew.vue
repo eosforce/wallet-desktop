@@ -122,6 +122,11 @@ export default {
     },
     ...mapState(['app']),
   },
+  created() {
+    if (!this.creatorAccountName) {
+      this.publicKey = this.$route.params.walletId;
+    }
+  },
   methods: {
     confirmInfo() {
       if (this.isValidAccountName && this.isValidPublicKey && (this.accountCreator || this.creatorAccountName)) {
