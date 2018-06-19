@@ -17,7 +17,7 @@
     </div>
     <div class="desc-box clearfix">
       <ul>
-        <li><span>投票总额:</span><span class="cl">{{account.info.stakedTotal | number}}</span></li>
+        <li><span>投票总额:</span><span class="cl">{{account.info.stakedTotal | number(0)}}</span></li>
         <li><span>赎回总额:</span><span class="cl">{{account.info.unstakingTotal | number}}</span></li>
         <li><span>待领分红总额:</span><span class="cl">{{account.info.rewardTotal | number}}</span></li>
         <li v-if="bpInfo"><span>佣金费率:</span><span class="cl">{{bpInfo.commission_rate | rate}}</span></li>

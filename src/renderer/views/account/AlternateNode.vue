@@ -19,7 +19,10 @@
         <tr v-for="bp in table" :key="bp.name" :class="{'is-vote': bp.vote && bp.vote.isMyVote}">
           <td>{{bp.order}}</td>
           <td>{{bp.name}}</td>
-          <td><a :href="bp.url" target="_blank">{{bp.url.replace(/^(http|https):\/\/(www\.)?/,'')}}</a></td>
+          <td>
+            <span v-show="!bp.url">-</span>
+            <span v-show="bp.url"><a :href="bp.url" target="_blank">{{bp.url.replace(/^(http|https):\/\/(www\.)?/,'')}}</a></span>
+          </td>
           <td>
             <span v-show="bp.order >= 24">-</span>
             <span v-show="bp.order < 24">{{bp.amount}}</span>
