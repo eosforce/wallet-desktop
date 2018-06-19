@@ -43,7 +43,20 @@
           </div>
         </div>
         <div class="field" style="color:#fff">
-          <input type="checkbox" required tabindex="-1" v-model="isAgreeTerm" /> 我已经阅读并同意<a href="#" tabindex="-1">服务及隐私条款</a>
+          <input type="checkbox" required tabindex="-1" v-model="isAgreeTerm" /> 我已经阅读并同意<a href="#" tabindex="-1"  @click="showTerms">服务及隐私条款</a>
+        </div>
+        <div class="page-terms" v-show="showTermsPage">
+          <div class="ac-head"><span @click="hideTerms">X</span></div>
+          <div class="ac-body">
+            <div class="ac-title">服务及隐私条款</div>
+            <div class="ac-sub-title">1.公测全额奖：前1000公测用户在指定表单中提交eosforcewallet的公钥，可获奖励20枚主网代币</div>
+            <div class="ac-sub-title">2.每日大奖：6月11日-15日期间，将从参与投票的用户中（用户需要在指定表单中提交公钥），每日抽取一等奖、二等奖、三等奖各一名；分别奖励1000枚、600枚、400枚主网代币</div>
+            <div class="ac-sub-title">3.奖励代币来源：奖励代币均为eosforce启动的eos主网代币，来自于首周默认节点出块的奖励</div>
+            <div class="ac-sub-title">4.扫二维码加入微信社群，领取测试币</div>
+            <div class="ac-sub-title">5.公测期间，切勿导入eos私钥</div>
+            <div class="ac-sub-title">6.此次活动最终解释权归eosforce.io所有</div>
+            <div class="qr-code"><img src="@/assets/eosforce-qrcode.png" height="114" width="114"/></div>
+          </div>
         </div>
         <div class="field is-grouped is-grouped-right">
           <div class="control">
@@ -113,6 +126,7 @@ export default {
       showConfirm: false,
       showConfirmPK: false,
       accountsList: [],
+      showTermsPage: false,
     };
   },
   computed: {
@@ -203,6 +217,12 @@ export default {
           this.isDisabledRandomKey = false;
         });
     },
+    hideTerms() {
+      this.showTermsPage = false;
+    },
+    showTerms() {
+      this.showTermsPage = true;
+    },
     ...mapActions({
       newWallet: Actions.NEW_WALLET,
       fetchAccountList: Actions.FETCH_ACCOUNT_LIST,
@@ -227,4 +247,124 @@ export default {
   color: #fff;
   border: none;
 }
+.page-terms {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  height: 560px;
+  z-index: 999;
+  right: 150px;
+  left: 150px;
+  margin: auto;
+}
+
+.ac-head {
+  width: 100%;
+  height: 60px;
+  line-height: 60px;
+  color: #ffffff;
+  /* float: right; */
+  text-align: right;
+  background-color: #243e61;
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+}
+
+.ac-head span {
+  padding: 0 30px;
+  cursor: pointer;
+}
+
+.ac-body {
+  overflow: auto;
+  height: 500px;
+  background-color: #fafbfd;
+  padding-left: 28px;
+  padding-right: 26px;
+  box-shadow: 4px 0px 54px rgba(3, 0, 0, 0.14);
+  border-bottom-left-radius: 15px;
+  border-bottom-right-radius: 15px;
+}
+
+.ac-title {
+  line-height: 92px;
+  font-size: 26px;
+  color: #1f304a;
+}
+
+.ac-sub-title {
+  line-height: 33px;
+  color: #5f6065;
+  font-size: 16px;
+}
+
+.ac-item {
+  color: #a8a9ac;
+  line-height: 33px;
+}
+
+.ac-bonus-body {
+  margin-bottom: 50px;
+}
+
+.ac-bonus {
+  height: 33px;
+  line-height: 33px;
+  font-size: 16px;
+  color: #ffffff;
+  background-color: rgba(35, 56, 87, 0.28);
+  margin: 5px 0;
+}
+
+.ac-bonus span {
+  padding: 0 13px;
+}
+
+.ac-bonus:nth-child(1) {
+  width: 203px;
+  background-color: rgba(35, 56, 87, 0.8);
+}
+
+.ac-bonus:nth-child(2) {
+  width: 263px;
+  background-color: rgba(35, 56, 87, 0.6);
+}
+
+.ac-bonus:nth-child(3) {
+  width: 323px;
+  background-color: rgba(35, 56, 87, 0.4);
+}
+
+.ac-bonus:nth-child(4) {
+  width: 383px;
+}
+
+.ac-bonus:nth-child(5) {
+  width: 383px;
+}
+
+.ac-bonus:nth-child(6) {
+  width: 383px;
+}
+
+.ac-bonus:nth-child(7) {
+  width: 443px;
+}
+
+.ac-bonus:nth-child(8) {
+  width: 443px;
+}
+
+.ac-bonus:nth-child(9) {
+  width: 443px;
+}
+
+.ac-bonus:nth-child(10) {
+  width: 443px;
+}
+
+.ac-bonus:nth-child(11) {
+  width: 503px;
+}
+
 </style> 
