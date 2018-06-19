@@ -11,17 +11,17 @@
     </div>
 
     <div class="is-grouped" style="margin-top:16px;line-height:27px;text-align:left;height:27px;font-size:14px">
-      <span style="width:25%;  display: inline-block;">资产总额:<span class="cl">{{account.info.assetTotal | number}}</span></span>
-      <span style="width:25%;  display: inline-block;">可用余额:<span class="cl">{{account.info.available | number}}</span></span>
+      <span style="width:25%;  display: inline-block;">资产总额:<span class="cl">{{account.info.assetTotal | number | NumFormat}}</span></span>
+      <span style="width:25%;  display: inline-block;">可用余额:<span class="cl">{{account.info.available | number | NumFormat}}</span></span>
       <router-link class="button is-small is-outlined" :to="{name: 'transfer'}">转账</router-link>
       <router-link style="margin-left:15px" class="button is-small is-outlined" :to="{name: 'accountCreateAccount'}">创建用户</router-link>
     </div>
     <div class="desc-box clearfix">
       <ul>
-        <li>投票总额:<span class="cl">{{account.info.stakedTotal | number}}</span></li>
-        <li>赎回总额:<span class="cl">{{account.info.unstakingTotal | number}}</span></li>
-        <li>待领分红总额:<span class="cl">{{account.info.rewardTotal | number}}</span></li>
-        <li v-if="bpInfo">佣金费率:<span class="cl">{{bpInfo.commission_rate | rate}}</span></li>
+        <li><span>投票总额:</span><span class="cl">{{account.info.stakedTotal | number}}</span></li>
+        <li><span>赎回总额:</span><span class="cl">{{account.info.unstakingTotal | number}}</span></li>
+        <li><span>待领分红总额:</span><span class="cl">{{account.info.rewardTotal | number}}</span></li>
+        <li v-if="bpInfo"><span>佣金费率:</span><span class="cl">{{bpInfo.commission_rate | rate}}</span></li>
         <!-- <li v-if="bpInfo">得票总额:<span class="cl">{{bpInfo.total_staked | number}}</span></li>
         <li v-if="bpInfo">节点票龄:<span class="cl">{{bpInfo.average | voteage}}</span></li>
         <li v-if="bpInfo">票龄更新时间:<span class="cl">{{bpInfo.voteage_update_time | timestamp}}</span></li> -->
@@ -40,7 +40,7 @@
 import { mapState, mapActions } from 'vuex';
 
 import { Actions } from '@/constants/types.constants';
-import { timestamp, number, rate, voteage } from '@/utils/filter';
+import { timestamp, number, rate, voteage, NumFormat } from '@/utils/filter';
 
 export default {
   name: 'AccountOverview',
@@ -81,6 +81,7 @@ export default {
     rate,
     timestamp,
     number,
+    NumFormat,
   },
 };
 </script>
@@ -98,8 +99,8 @@ export default {
   margin: 12px 2px;
 }
 
-.dec{
-  margin-top:20px;
+.dec {
+  margin-top: 20px;
   font-size: 14px;
 }
 </style>
