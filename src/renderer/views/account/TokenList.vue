@@ -7,7 +7,7 @@
           <th>符号</th>
           <th>发行人</th>
           <th>目前发行量</th>
-          <th>最大发行量</th>
+          <th class="t_l">最大发行量</th>
           <th>我的余额</th>
           <th>操作</th>
         </tr>
@@ -18,7 +18,7 @@
           <td>{{token.symbol}}</td>
           <td>{{token.issuer}}</td>
           <td>{{token.supply}}</td>
-          <td>{{token.max_supply}}</td>
+          <td  class="t_l">{{token.max_supply}}</td>
           <td>{{token.balance}}</td>
           <td>
             <router-link class="button is-small is-outlined" :to="{name: 'tokenTransfer', params: { symbol: token.symbol }}">转账</router-link>
@@ -64,4 +64,7 @@ export default {
 /* .bplist-box tbody .is-vote{
   display: none;
 } */
+.t_l {
+  text-align: right !important;
+}
 </style>

@@ -14,8 +14,8 @@
         <div class="row__content">{{voter}}</div>
       </div>
       <div class="row">
-        <div class="row__title">赎回时间</div>
-        <div class="row__content">{{unstakingTime | timestamp}}</div>
+        <div class="row__title">赎回块高度</div>
+        <div class="row__content">{{unstakeHeight + 20}}</div>
       </div>
       <div class="row">
         <div class="row__title">可赎回金额</div>
@@ -70,11 +70,11 @@ export default {
         return null;
       }
     },
-    unstakingTime() {
+    unstakeHeight() {
       const bp = this.account.bpsTable && this.account.bpsTable.find(bp => this.bpname === bp.name);
       if (bp) {
         if (bp.vote) {
-          return bp.vote.unstake_time;
+          return bp.vote.unstake_height;
         } else {
           return null;
         }
