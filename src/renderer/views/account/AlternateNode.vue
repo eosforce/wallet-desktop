@@ -30,8 +30,7 @@
           <td>{{10000 - bp.commission_rate | rate}}</td>
           <td>{{bp.total_staked | number(0) | intPartFormat(0)}}</td>
           <td>
-            <span v-show="bp.order >= 24">-</span>
-            <span v-show="bp.order < 24">{{bp.total_staked | yearrate(1 - bp.commission_rate / 10000)}}</span>
+            {{bp.total_staked | yearrate(1 - bp.commission_rate / 10000)}}
           </td>
           <td>{{bp.rewards_pool | number}}</td>
           <td>
