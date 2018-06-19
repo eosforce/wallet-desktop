@@ -17,9 +17,9 @@
     </div>
     <div class="desc-box clearfix">
       <ul>
-        <li><span>投票总额:</span><span class="cl">{{account.info.stakedTotal | number(0)}}</span></li>
-        <li><span>赎回总额:</span><span class="cl">{{account.info.unstakingTotal | number}}</span></li>
-        <li><span>待领分红总额:</span><span class="cl">{{account.info.rewardTotal | number}}</span></li>
+        <li><span>投票总额:</span><span class="cl">{{account.info.stakedTotal | number(0) | intPartFormat(0)}}</span></li>
+        <li><span>赎回总额:</span><span class="cl">{{account.info.unstakingTotal | number(0) | intPartFormat(0)}}</span></li>
+        <li><span>待领分红总额:</span><span class="cl">{{account.info.rewardTotal | number | NumFormat}}</span></li>
         <li v-if="bpInfo"><span>佣金费率:</span><span class="cl">{{bpInfo.commission_rate | rate}}</span></li>
       </ul>
     </div>
@@ -30,7 +30,7 @@
 import { mapState, mapActions } from 'vuex';
 
 import { Actions } from '@/constants/types.constants';
-import { timestamp, number, rate, voteage, NumFormat } from '@/utils/filter';
+import { timestamp, number, rate, voteage, NumFormat, intPartFormat } from '@/utils/filter';
 
 export default {
   name: 'AccountOverview',
@@ -74,6 +74,7 @@ export default {
     timestamp,
     number,
     NumFormat,
+    intPartFormat,
   },
 };
 </script>

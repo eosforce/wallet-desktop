@@ -77,11 +77,8 @@ export default {
       this.currentTab = tab; // tab 为当前触发标签页的组件名
     },
     refreshList: function() {
-      if (this.currentTab === 'TransferRecord') {
-        this.refreshTransferrecord({ accountName: this.accountName });
-      } else if (this.currentTab === 'BpList') {
-        this.refreshBpsList();
-      }
+      this.refreshTransferrecord({ accountName: this.accountName });
+      this.refreshBpsList();
     },
   },
   beforeRouteUpdate(to, from, next) {

@@ -7,7 +7,7 @@
           <th>节点名</th>
           <th>分红比例</th>
           <th>得票总数</th>
-          <th>当选后年化利率</th>
+          <th>年化利率</th>
           <th>奖池金额</th>
           <th>我的投票</th>
           <th>待领分红</th>
@@ -26,7 +26,7 @@
             <span v-show="bp.order < 24 && bp.total_staked == 0">0%</span>
             <span v-show="bp.order < 24 && bp.total_staked !== 0">{{bp.total_staked | yearrate(1 - bp.commission_rate / 10000)}}</span>
           </td>
-          <td>{{bp.rewards_pool | number}}</td>
+          <td>{{bp.rewards_pool | number | NumFormat}}</td>
           <td>
             <span v-show="!bp.hasVote">-</span>
             <span v-show="bp.hasVote">{{ bp.vote && bp.vote.staked | number(0) | intPartFormat(0)}}</span>
@@ -62,7 +62,7 @@
 <script>
 import { mapState } from 'vuex';
 
-import { number, rate, voteage, yearrate, intPartFormat } from '@/utils/filter';
+import { number, rate, voteage, yearrate, intPartFormat, NumFormat } from '@/utils/filter';
 
 export default {
   name: 'TransferRecord',
@@ -80,6 +80,7 @@ export default {
     yearrate,
     voteage,
     intPartFormat,
+    NumFormat,
   },
 };
 </script>
