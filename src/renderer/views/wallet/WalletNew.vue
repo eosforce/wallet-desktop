@@ -3,14 +3,14 @@
     <div class="cover-page__content">
       <div class="cover-page__title">
         创建钱包
-        <router-link :to="{ name: 'walletImport' }" style="margin-left:20px;">导入钱包文件</router-link>
+        <router-link :to="{ name: 'walletImport' }" style="margin-left:20px;color:#aaa">导入钱包文件</router-link>
       </div>
       <form class="cover-page__form" @submit.prevent="!submitting && submit()">
         <div class="field">
           <label class="label">
             明文私钥（警告：请勿导入真实的主网映射私钥！）
-            <a class="button is-small is-outlined" style="font-size:14px;color:red;margin-bottom:8px;" :disabled="isDisabledRandomKey" @click="randomKey()">
-            生成随机密钥
+            <a class="button is-small is-link is-import" :disabled="isDisabledRandomKey" @click="randomKey()">
+            随机生成密钥
             </a>
           </label>
           <div class="control">
@@ -20,6 +20,9 @@
               无效的私钥
             </p>
           </div>
+        </div>
+        <div class="field">
+          <p class="help tips" style="color:red">* 私钥请做好备份！</p>
         </div>
         <div class="field">
           <label class="label">设置密码</label>
@@ -38,9 +41,6 @@
               密码不匹配
             </p>
           </div>
-        </div>
-        <div class="field">
-          <p class="help tips" style="color:red">* 私钥请做好备份！</p>
         </div>
         <div class="field" style="color:#fff">
           <input type="checkbox" required tabindex="-1" v-model="isAgreeTerm" /> 我已经阅读并同意<a href="#" tabindex="-1">服务及隐私条款</a>
@@ -218,4 +218,13 @@ export default {
 .link-button {
   font-size: 12px;
 }
-</style>
+.is-import{
+  font-size:14px;
+  margin-bottom:8px;
+  float:right;
+  width: 110px;
+  background: #408ee1;
+  color: #fff;
+  border: none;
+}
+</style> 

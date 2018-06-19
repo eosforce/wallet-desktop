@@ -2,7 +2,7 @@
   <div class="cover-page">
     <div class="cover-page__content">
       <div class="cover-page__title">
-        <router-link :to="{ name: 'walletNew' }" style="margin-right:20px;">创建钱包</router-link>
+        <router-link :to="{ name: 'walletNew' }" style="margin-right:20px;color:#aaa">创建钱包</router-link>
         导入钱包文件
       </div>
       <form class="cover-page__form" @submit.prevent="!submitting && submit()">
