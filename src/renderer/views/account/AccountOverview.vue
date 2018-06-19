@@ -5,7 +5,7 @@
       <span class="is-grouped" style="line-height:27px;text-align:left;height:27px;font-size:14px;width:25%;float:right">
         <a class="button is-small is-outlined" @click="exportWallet()">导出钱包</a>
         <span class="refresh fr el-icon-refresh" @click="refreshOverview()"></span>
-      </span>    
+      </span>
     </div>
     <div class="is-grouped desc-box clearfix" style="margin-top:16px;line-height:27px;text-align:left;height:27px;font-size:14px">
       <ul>
@@ -21,16 +21,7 @@
         <li><span>赎回总额:</span><span class="cl">{{account.info.unstakingTotal | number}}</span></li>
         <li><span>待领分红总额:</span><span class="cl">{{account.info.rewardTotal | number}}</span></li>
         <li v-if="bpInfo"><span>佣金费率:</span><span class="cl">{{bpInfo.commission_rate | rate}}</span></li>
-        <!-- <li v-if="bpInfo">得票总额:<span class="cl">{{bpInfo.total_staked | number}}</span></li>
-        <li v-if="bpInfo">节点票龄:<span class="cl">{{bpInfo.average | voteage}}</span></li>
-        <li v-if="bpInfo">票龄更新时间:<span class="cl">{{bpInfo.voteage_update_time | timestamp}}</span></li> -->
       </ul>
-    </div>
-    <div class="dec">
-      <p><span style="color:#f00">*特别提醒*：</span></p>
-      <p>1. 本钱包只提供创建公私钥服务，您需要进一步创建用户名才能做链上操作。</p>
-      <p>2. 请向已经拥有链上用户名的第三方提出创建申请，向其提供您的公钥(EOS...) 和期望的用户名，切勿提供您的私钥（5...）。</p>
-      <p>3. 创建用户名交易需要花费第三方0.1个EOS，创建交易成功后，用户名会自动显示在左侧。</p>
     </div>
   </div>
 </template>
