@@ -43,20 +43,7 @@
           </div>
         </div>
         <div class="field" style="color:#fff">
-          <input type="checkbox" required tabindex="-1" v-model="isAgreeTerm" /> 我已经阅读并同意<a href="#" tabindex="-1"  @click="showTerms">服务及隐私条款</a>
-        </div>
-        <div class="page-terms" v-show="showTermsPage">
-          <div class="ac-head"><span @click="hideTerms">X</span></div>
-          <div class="ac-body">
-            <div class="ac-title">服务及隐私条款</div>
-            <div class="ac-sub-title">1.公测全额奖：前1000公测用户在指定表单中提交eosforcewallet的公钥，可获奖励20枚主网代币</div>
-            <div class="ac-sub-title">2.每日大奖：6月11日-15日期间，将从参与投票的用户中（用户需要在指定表单中提交公钥），每日抽取一等奖、二等奖、三等奖各一名；分别奖励1000枚、600枚、400枚主网代币</div>
-            <div class="ac-sub-title">3.奖励代币来源：奖励代币均为eosforce启动的eos主网代币，来自于首周默认节点出块的奖励</div>
-            <div class="ac-sub-title">4.扫二维码加入微信社群，领取测试币</div>
-            <div class="ac-sub-title">5.公测期间，切勿导入eos私钥</div>
-            <div class="ac-sub-title">6.此次活动最终解释权归eosforce.io所有</div>
-            <div class="qr-code"><img src="@/assets/eosforce-qrcode.png" height="114" width="114"/></div>
-          </div>
+          <input type="checkbox" required tabindex="-1" v-model="isAgreeTerm" /> 我已经阅读并同意<a href="#" tabindex="-1">服务及隐私条款</a>
         </div>
         <div class="field is-grouped is-grouped-right">
           <div class="control">
@@ -126,7 +113,6 @@ export default {
       showConfirm: false,
       showConfirmPK: false,
       accountsList: [],
-      showTermsPage: false,
     };
   },
   computed: {
@@ -217,12 +203,6 @@ export default {
           this.isDisabledRandomKey = false;
         });
     },
-    hideTerms() {
-      this.showTermsPage = false;
-    },
-    showTerms() {
-      this.showTermsPage = true;
-    },
     ...mapActions({
       newWallet: Actions.NEW_WALLET,
       fetchAccountList: Actions.FETCH_ACCOUNT_LIST,
@@ -238,10 +218,10 @@ export default {
 .link-button {
   font-size: 12px;
 }
-.is-import{
-  font-size:14px;
-  margin-bottom:8px;
-  float:right;
+.is-import {
+  font-size: 14px;
+  margin-bottom: 8px;
+  float: right;
   width: 110px;
   background: #408ee1;
   color: #fff;
@@ -366,5 +346,4 @@ export default {
 .ac-bonus:nth-child(11) {
   width: 503px;
 }
-
 </style> 
