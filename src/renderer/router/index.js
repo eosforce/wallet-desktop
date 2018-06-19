@@ -21,13 +21,6 @@ export default new Router({
           component: () => import('@/views/wallet/WalletDetail'),
           children: [
             {
-              name: 'accountNew',
-              path: 'accounts/new',
-              components: {
-                modal: () => import('@/views/account/AccountNew'),
-              },
-            },
-            {
               name: 'accountDetail',
               path: 'accounts/:accountName',
               component: () => import('@/views/account/AccountDetail'),

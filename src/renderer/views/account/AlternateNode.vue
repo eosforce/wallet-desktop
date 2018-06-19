@@ -30,10 +30,9 @@
           <td>{{10000 - bp.commission_rate | rate}}</td>
           <td>{{bp.total_staked | number(0) | intPartFormat(0)}}</td>
           <td>
-            <span v-show="bp.order >= 24">-</span>
-            <span v-show="bp.order < 24">{{bp.total_staked | yearrate(1 - bp.commission_rate / 10000)}}</span>
+            {{bp.total_staked | yearrate(1 - bp.commission_rate / 10000)}}
           </td>
-          <td>{{bp.rewards_pool | number}}</td>
+          <td>{{bp.rewards_pool | number | NumFormat}}</td>
           <td>
             <span v-show="!bp.hasVote">-</span>
             <span v-show="bp.hasVote">{{ bp.vote && bp.vote.staked | number(0) |  intPartFormat(0)}}</span>
@@ -50,7 +49,7 @@
 <script>
 import { mapState } from 'vuex';
 
-import { number, rate, voteage, yearrate, intPartFormat } from '@/utils/filter';
+import { number, rate, voteage, yearrate, intPartFormat, NumFormat } from '@/utils/filter';
 
 export default {
   name: 'TransferRecord',
@@ -66,6 +65,7 @@ export default {
     yearrate,
     voteage,
     intPartFormat,
+    NumFormat,
   },
 };
 </script>

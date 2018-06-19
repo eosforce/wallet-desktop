@@ -24,6 +24,7 @@ export const Actions = {
   SYNC_NODE_LIST: 'SYNC_NODE_LIST',
   SWITCH_CHAIN_NET: 'SWITCH_CHAIN_NET',
   GET_TOKEN_LIST: 'GET_TOKEN_LIST',
+  REFRESH_WALLET: 'REFRESH_WALLET',
 };
 
 export const Getters = {

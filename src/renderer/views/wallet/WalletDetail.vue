@@ -7,10 +7,9 @@
           <div class="publickey" style="line-height: 27px;">
             公钥：{{walletData.publicKey}}
             <span class="is-grouped">
-              <router-link style="margin-left:15px" class="button is-small is-outlined" :to="{name: 'accountNew'}">创建用户</router-link>
               <a style="margin-left:15px" class="button is-small is-outlined" @click="exportWallet()">导出钱包</a>
             </span>
-            <span class="refresh fr el-icon-refresh"></span>
+            <span class="refresh fr el-icon-refresh" @click="refresh()"></span>
           </div>
           <div class="dec">
             <p><span style="color:#f00">*特别提醒*：</span></p>
@@ -49,6 +48,9 @@ export default {
         return Promise.reject(err);
       });
     },
+    refresh() {
+      this.refreshWallet();
+    },
     // 导出钱包存储文件
     exportWallet() {
       this.fetchWallet({ id: this.$route.params.walletId, mutation: false }).then(data => {
@@ -62,6 +64,7 @@ export default {
     },
     ...mapActions({
       fetchWallet: Actions.FETCH_WALLET,
+      refreshWallet: Actions.REFRESH_WALLET,
     }),
   },
   beforeRouteUpdate(to, from, next) {

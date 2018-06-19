@@ -22,6 +22,9 @@ const actions = {
   [Actions.REFRESH_APP]({ state, commit, dispatch }) {
     dispatch(Actions.FETCH_WALLET, { id: state.data.publicKey });
   },
+  [Actions.REFRESH_WALLET]({ state, commit, dispatch }) {
+    dispatch(Actions.FETCH_WALLET_LIST, { id: state.data.publicKey });
+  },
   [Actions.FETCH_WALLET]({ commit, dispatch }, { id, mutation = true }) {
     return Storage.setPath(getWalletKeyFromId(id))
       .fetch()

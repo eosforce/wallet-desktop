@@ -4,18 +4,7 @@
       <div class="cover-page__content">
         <div class="cover-page__title">创建用户</div>
         <form class="cover-page__form" @submit.prevent="!submitting && confirmInfo()">
-          <div class="field" v-if="!creatorAccountName">
-            <label class="label">选择创建人</label>
-            <div class="control">
-              <div class="select">
-                <select v-model="accountCreator" required>
-                  <option disabled value="">请选择创建人</option>
-                  <option :value="node" v-for="node in nodeList" :key="node.value">{{node.name}}</option>
-                </select>
-              </div>
-            </div>
-          </div>
-          <div class="field" v-if="creatorAccountName">
+          <div class="field">
             <div class="static-label">
               创建人<span class="static-text">{{creatorAccountName}}</span>
             </div>
@@ -122,40 +111,24 @@ export default {
     },
     ...mapState(['app']),
   },
-  created() {
-    if (!this.creatorAccountName) {
-      this.publicKey = this.$route.params.walletId;
-    }
-  },
   methods: {
     confirmInfo() {
       if (this.isValidAccountName && this.isValidPublicKey && (this.accountCreator || this.creatorAccountName)) {
         if (this.creatorAccountName) {
           this.showConfirm = true;
-        } else {
-          this.submit();
         }
       }
     },
     submit() {
       Promise.resolve()
         .then(() => {
-          if (!this.creatorAccountName) {
-            this.submitting = true;
-            return this.newAccountFromNode({
-              publicKey: this.publicKey,
-              accountName: this.accountName,
-              node: this.accountCreator.value,
-            });
-          } else {
-            this.modalSubmitting = true;
-            return this.newAccount({
-              password: this.password,
-              publicKey: this.publicKey,
-              accountName: this.accountName,
-              creator: this.creatorAccountName,
-            });
-          }
+          this.modalSubmitting = true;
+          return this.newAccount({
+            password: this.password,
+            publicKey: this.publicKey,
+            accountName: this.accountName,
+            creator: this.creatorAccountName,
+          });
         })
         .then(result => {
           Message.success('用户创建成功');
