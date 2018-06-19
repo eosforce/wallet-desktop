@@ -78,8 +78,8 @@ export default {
   },
   methods: {
     loop() {
-      setTimeout(() => {
-        this.fetchNodeInfo({ node: this.nodeValue })
+      this.loopId = setTimeout(() => {
+        this.fetchNodeInfo()
           .then(() => this.loop())
           .catch(() => this.loop());
       }, 3000);

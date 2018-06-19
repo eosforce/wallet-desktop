@@ -277,7 +277,7 @@ export const getAccountInfo = httpEndpoint => async accountName => {
 
 export const transfer = config => {
   return ({ from, to, amount, memo = '', tokenSymbol = 'EOS' } = {}) => {
-    Promise.resolve()
+    return Promise.resolve()
       .then(() => {
         if (tokenSymbol === 'EOS') {
           return Eos.Localnet(config).transfer({ from, to, quantity: toAsset(amount, tokenSymbol), memo });
@@ -285,7 +285,7 @@ export const transfer = config => {
           return Eos.Localnet(config)
             .contract('eosio.token')
             .then(token => {
-              token.transfer({ from, to, quantity: toAsset(amount, tokenSymbol), memo });
+              return token.transfer({ from, to, quantity: toAsset(amount, tokenSymbol), memo });
             });
         }
       })

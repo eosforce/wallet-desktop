@@ -88,4 +88,7 @@ export default {
   font-size: 20px;
   font-weight: normal;
 }
+.el-pagination {
+  text-align: center;
+}
 </style>

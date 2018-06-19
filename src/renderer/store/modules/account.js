@@ -1,13 +1,5 @@
 import { Mutations, Actions, Getters } from '@/constants/types.constants';
-import {
-  getAccountInfo,
-  transfer,
-  getTransferRecord,
-  vote,
-  unfreeze,
-  claim,
-  getTokenList,
-} from '@/services/Eos';
+import { getAccountInfo, transfer, getTransferRecord, vote, unfreeze, claim, getTokenList } from '@/services/Eos';
 
 const initState = {
   accountName: '',

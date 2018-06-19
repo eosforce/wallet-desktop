@@ -79,7 +79,6 @@ export default {
     refreshList: function() {
       if (this.currentTab === 'TransferRecord') {
         this.refreshTransferrecord({ accountName: this.accountName });
-        this.$refs.cTab.initialPageNum();
       } else if (this.currentTab === 'BpList') {
         this.refreshBpsList();
       }
