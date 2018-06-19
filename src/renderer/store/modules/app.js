@@ -72,7 +72,7 @@ const actions = {
   },
   [Actions.REFRESH_APP]({ state, commit, dispatch }) {
     dispatch(Actions.FETCH_WALLET_LIST);
-    dispatch(Actions.FETCH_NODE_INFO, { node: state.currentNodeValue });
+    dispatch(Actions.FETCH_NODE_INFO);
   },
   [Actions.FETCH_WALLET_LIST]({ state, commit, getters }) {
     commit(Mutations.SET_WALLET_ID_LIST, { walletIdList: getWalletIdList() });
@@ -90,9 +90,12 @@ const actions = {
   [Actions.NEW_WALLET]({ dispatch }, { privateKey, password }) {
     return createWalletData({ privateKey, password });
   },
-  [Actions.FETCH_NODE_INFO]({ commit, state }, { node }) {
-    return getNodeInfo(node).then(result => {
-      commit(Mutations.SET_CUREENT_NODE, { currentNodeValue: node });
+  [Actions.FETCH_NODE_INFO]({ commit, state }, { node } = {}) {
+    return getNodeInfo(node || state.currentNodeValue).then(result => {
+      // node 为空使用当前节点值，这个时候不设置节点的值，避免定时刷新任务和其他请求交错，然后程序出错。
+      if (node) {
+        commit(Mutations.SET_CUREENT_NODE, { currentNodeValue: node });
+      }
       commit(Mutations.SET_CURRENT_NODE_INFO, {
         currentNodeInfo: { http_endpoint: state.currentNodeValue, ...result },
       });
