@@ -27,6 +27,12 @@
         <li v-if="bpInfo">票龄更新时间:<span class="cl">{{bpInfo.voteage_update_time | timestamp}}</span></li> -->
       </ul>
     </div>
+    <div class="dec">
+      <p><span style="color:#f00">*特别提醒*：</span></p>
+      <p>1. 本钱包只提供创建公私钥服务，您需要进一步创建用户名才能做链上操作。</p>
+      <p>2. 请向已经拥有链上用户名的第三方提出创建申请，向其提供您的公钥(EOS...) 和期望的用户名，切勿提供您的私钥（5...）。</p>
+      <p>3. 创建用户名交易需要花费第三方0.1个EOS，创建交易成功后，用户名会自动显示在左侧。</p>
+    </div>
   </div>
 </template>
 
@@ -86,8 +92,14 @@ export default {
   font-size: 20px;
   cursor: pointer;
 }
+
 .refresh img {
   width: 15px;
   margin: 12px 2px;
+}
+
+.dec{
+  margin-top:20px;
+  font-size: 14px;
 }
 </style>
