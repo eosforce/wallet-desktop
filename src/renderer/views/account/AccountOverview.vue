@@ -2,19 +2,18 @@
   <div class="box">
     <div class="publickey">
       公钥：{{walletData.publicKey}}
-      <span class="is-grouped" style="margin-top:16px;line-height:27px;text-align:left;height:27px;font-size:14px;margin-left: 40px;">
-        <a style="margin-left:15px" class="button is-small is-outlined" @click="exportWallet()">导出钱包</a>
-      </span>
+      <span class="is-grouped" style="line-height:27px;text-align:left;height:27px;font-size:14px;width:25%;float:right">
+        <a class="button is-small is-outlined" @click="exportWallet()">导出钱包</a>
+        <span class="refresh fr el-icon-refresh" @click="refreshOverview()"></span>
+      </span>    
     </div>
-    <div class="overview-refresh">
-      <span class="refresh fr el-icon-refresh" @click="refreshOverview()"></span>
-    </div>
-
-    <div class="is-grouped" style="margin-top:16px;line-height:27px;text-align:left;height:27px;font-size:14px">
-      <span style="width:25%;  display: inline-block;">资产总额:<span class="cl">{{account.info.assetTotal | number | NumFormat}}</span></span>
-      <span style="width:25%;  display: inline-block;">可用余额:<span class="cl">{{account.info.available | number | NumFormat}}</span></span>
-      <router-link class="button is-small is-outlined" :to="{name: 'transfer'}">转账</router-link>
-      <router-link style="margin-left:15px" class="button is-small is-outlined" :to="{name: 'accountCreateAccount'}">创建用户</router-link>
+    <div class="is-grouped desc-box clearfix" style="margin-top:16px;line-height:27px;text-align:left;height:27px;font-size:14px">
+      <ul>
+        <li>资产总额:<span class="cl">{{account.info.assetTotal | number | NumFormat}}</span></li>
+        <li>可用余额:<span class="cl">{{account.info.available | number | NumFormat}}</span></li>
+        <li><router-link class="button is-small is-outlined" :to="{name: 'transfer'}">转账</router-link></li>
+        <li><router-link class="button is-small is-outlined" :to="{name: 'accountCreateAccount'}">创建用户</router-link></li>
+      </ul>
     </div>
     <div class="desc-box clearfix">
       <ul>
@@ -89,7 +88,6 @@ export default {
 <style scoped>
 .refresh {
   height: 40px;
-  margin-top: -28px;
   font-size: 20px;
   cursor: pointer;
 }
