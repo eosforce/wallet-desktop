@@ -49,6 +49,7 @@ export default {
     },
     refreshOverview() {
       this.refreshAccount();
+      this.refreshWallet();
     },
     // 导出钱包存储文件
     exportWallet() {
@@ -63,6 +64,7 @@ export default {
     },
     ...mapActions({
       refreshAccount: Actions.GET_ACCOUNT_OVERVIEW,
+      refreshWallet: Actions.REFRESH_WALLET,
       fetchWallet: Actions.FETCH_WALLET,
     }),
   },
