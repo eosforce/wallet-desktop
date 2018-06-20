@@ -2,7 +2,8 @@
   <div class="box">
     <div class="publickey">
       <span class="pk">公钥：{{walletData.publicKey}}</span>
-      <span class="is-grouped " style="line-height:27px;text-align:left;height:27px;font-size:14px;width:15%;">
+      <span class="is-grouped " style="line-height:27px;text-align:left;height:27px;font-size:14px;width:15%;
+      ">
         <a class="button is-small is-link" @click="exportWallet()">导出钱包</a>
         <span class="refresh fr el-icon-refresh" @click="refreshOverview()"></span>
       </span>
