@@ -238,7 +238,7 @@ export const getRewardsAndBpsTable = httpEndpoint => async (votesTable, accountN
         return bp;
       })
       .concat(
-        commonBpTable.sort((bp1, bp2) => bp1.total_staked - bp2.total_staked).map((bp, index) => {
+        commonBpTable.sort((bp1, bp2) => bp2.total_staked - bp1.total_staked).map((bp, index) => {
           bp.order = index + 24;
           return bp;
         })
