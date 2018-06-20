@@ -19,7 +19,10 @@
         <tr v-for="bp in table" :key="bp.name" :class="{'is-vote': bp.hasVote}">
           <td>{{bp.order}}</td>
           <td>{{bp.name}}</td>
-          <td><a :href="bp.url" target="_blank">{{bp.url.replace(/^(http|https):\/\/(www\.)?/,'')}}</a></td>
+          <td>
+            <span v-show="!bp.url">-</span>
+            <span v-show="bp.url"><a :href="bp.url" target="_blank">{{bp.url.replace(/^(http|https):\/\/(www\.)?/,'')}}</a></span>
+          </td>
           <td>{{bp.amount}}</td>
           <td>{{10000 - bp.commission_rate | rate}}</td>
           <td>{{bp.total_staked | number(0) | intPartFormat(0)}}</td>

@@ -1,9 +1,10 @@
 <template>
   <div class="box">
     <div class="publickey">
-      公钥：{{walletData.publicKey}}
-      <span class="is-grouped" style="line-height:27px;text-align:left;height:27px;font-size:14px;width:25%;float:right">
-        <a class="button is-small is-outlined" @click="exportWallet()">导出钱包</a>
+      <span class="pk">公钥：{{walletData.publicKey}}</span>
+      <span class="is-grouped " style="line-height:27px;text-align:left;height:27px;font-size:14px;width:15%;
+      ">
+        <a class="button is-small is-link" @click="exportWallet()">导出钱包</a>
         <span class="refresh fr el-icon-refresh" @click="refreshOverview()"></span>
       </span>
     </div>
@@ -11,8 +12,8 @@
       <ul>
         <li>资产总额:<span class="cl">{{account.info.assetTotal | number | NumFormat}}</span></li>
         <li>可用余额:<span class="cl">{{account.info.available | number | NumFormat}}</span></li>
-        <li><router-link class="button is-small is-outlined" :to="{name: 'transfer'}">转账</router-link></li>
-        <li><router-link class="button is-small is-outlined" :to="{name: 'accountCreateAccount'}">创建用户</router-link></li>
+        <li class="lw"><router-link class="button is-small is-link" :to="{name: 'transfer'}">转账</router-link></li>
+        <li><router-link class="button is-small is-link" :to="{name: 'accountCreateAccount'}">创建用户</router-link></li>
       </ul>
     </div>
     <div class="desc-box clearfix">
@@ -94,5 +95,13 @@ export default {
 .dec {
   margin-top: 20px;
   font-size: 14px;
+}
+
+.pk {
+  display: inline-block;
+  width: 65%;
+}
+.lw {
+  width: 15% !important;
 }
 </style>
