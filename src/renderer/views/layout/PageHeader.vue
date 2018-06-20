@@ -17,20 +17,6 @@
       <div class="block">
         出块节点:<span>{{nodeInfo.head_block_producer}}</span>
         最新高度:<span>{{nodeInfo.head_block_num}}</span>
-        <span class="active" @click="showActivity">查看活动</span>
-      </div>
-    </div>
-    <div class="page-activity" v-show="showActivityPage">
-      <div class="ac-head"><span @click="hideActivity">X</span></div>
-      <div class="ac-body">
-        <div class="ac-title">公测奖励说明</div>
-        <div class="ac-sub-title">1.公测全额奖：前1000公测用户在指定表单中提交eosforcewallet的公钥，可获奖励20枚主网代币</div>
-        <div class="ac-sub-title">2.每日大奖：6月11日-15日期间，将从参与投票的用户中（用户需要在指定表单中提交公钥），每日抽取一等奖、二等奖、三等奖各一名；分别奖励1000枚、600枚、400枚主网代币</div>
-        <div class="ac-sub-title">3.奖励代币来源：奖励代币均为eosforce启动的eos主网代币，来自于首周默认节点出块的奖励</div>
-        <div class="ac-sub-title">4.扫二维码加入微信社群，领取测试币</div>
-        <div class="ac-sub-title">5.公测期间，切勿导入eos私钥</div>
-        <div class="ac-sub-title">6.此次活动最终解释权归eosforce.io所有</div>
-        <div class="qr-code"><img src="@/assets/eosforce-qrcode.png" height="114" width="114"/></div>
       </div>
     </div>
   </header>
@@ -47,7 +33,6 @@ export default {
   data() {
     return {
       showWalletNew: false,
-      showActivityPage: false,
       chainNets: CHAIN_NETS,
     };
   },
@@ -83,12 +68,6 @@ export default {
           .then(() => this.loop())
           .catch(() => this.loop());
       }, 3000);
-    },
-    hideActivity() {
-      this.showActivityPage = false;
-    },
-    showActivity() {
-      this.showActivityPage = true;
     },
     ...mapActions({
       fetchNodeInfo: Actions.FETCH_NODE_INFO,
