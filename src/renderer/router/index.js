@@ -41,7 +41,7 @@ export default new Router({
                 },
                 {
                   name: 'tokenTransfer',
-                  path: ':symbol/transfer',
+                  path: ':symbol/transfer?precision',
                   components: {
                     modal: () => import('@/views/account/Transfer'),
                   },
