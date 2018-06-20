@@ -11,12 +11,12 @@
           </div>
           <div class="field">
             <div class="static-label">
-              当前投票金额<span class="static-text">{{stakedAmount}}</span>
+              当前投票金额<span class="static-text">{{stakedAmount | number(0) | intPartFormat(0)}}</span>
             </div>
           </div>
           <div class="field">
             <div class="static-label">
-              可用投票金额<span class="static-text">{{account.info.available | number}}</span>
+              可用投票金额<span class="static-text">{{account.info.available | number | NumFormat}}</span>
             </div>
           </div>
           <div class="field">
@@ -85,7 +85,7 @@ import Message from '@/components/Message';
 import ConfirmModal from '@/components/ConfirmModal';
 import { Actions } from '@/constants/types.constants';
 import { isValidAmount } from '@/utils/rules';
-import { asset, number } from '@/utils/filter';
+import { asset, number, NumFormat, intPartFormat } from '@/utils/filter';
 
 export default {
   name: 'vote',
@@ -169,6 +169,8 @@ export default {
   filters: {
     asset,
     number,
+    NumFormat,
+    intPartFormat,
   },
   components: {
     ConfirmModal,
