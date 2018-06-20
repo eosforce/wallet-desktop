@@ -17,9 +17,9 @@
           <td>{{index + 1}}</td>
           <td>{{token.symbol}}</td>
           <td>{{token.issuer}}</td>
-          <td class="t_l">{{token.max_supply | intPartFormat(0)}}</td>
-          <td class="t_l">{{token.supply | intPartFormat(0)}}</td>
-          <td>{{token.balance | intPartFormat(0)}}</td>
+          <td class="t_l">{{token.max_supply}}</td>
+          <td class="t_l">{{token.supply}}</td>
+          <td>{{token.balance}}</td>
           <td>
             <router-link class="button is-small is-outlined" :to="{name: 'tokenTransfer', params: { symbol: token.symbol }}">转账</router-link>
           </td>

@@ -306,7 +306,7 @@ a:hover {
 .bplist-box .table td:nth-child(1),
 .bplist-box .table th:nth-child(1),
 .bplist-box .table td:nth-child(4),
-.bplist-box .table th:nth-child(4)  {
+.bplist-box .table th:nth-child(4) {
   text-align: center;
 }
 
@@ -355,11 +355,11 @@ tr.is-vote {
     color: #fff;
     border: none;
   }
-  .button.is-small:hover{
+  .button.is-small:hover {
     background-color: #276cda;
     border-color: transparent;
     color: #fff;
-}
+  }
 }
 
 .exchange-box .table td,
