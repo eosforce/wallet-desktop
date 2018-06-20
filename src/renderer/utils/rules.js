@@ -25,11 +25,11 @@ export const isValidPrivate = (...args) => ecc.isValidPrivate(...args);
 export const isValidPublic = (...args) => ecc.isValidPublic(...args);
 
 // 验证金额格式
-export const isValidAmount = value => {
+export const isValidAmount = (value, { precision = 4 } = {}) => {
   if (isNaN(value)) return false;
   const decimal = `${value}`.split('.')[1];
   if (decimal) {
-    if (decimal.length > 4) return false;
+    if (decimal.length > precision) return false;
   }
   return true;
 };

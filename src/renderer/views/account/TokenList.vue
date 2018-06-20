@@ -6,8 +6,8 @@
           <th>序号</th>
           <th>符号</th>
           <th>发行人</th>
-          <th class="t_l">目前发行量</th>
           <th class="t_l">最大发行量</th>
+          <th class="t_l">目前发行量</th>
           <th>我的余额</th>
           <th>操作</th>
         </tr>
@@ -15,13 +15,13 @@
       <tbody>
         <tr v-for="(token, index) in account.tokenList" :key="token.token">
           <td>{{index + 1}}</td>
-          <td>{{token.symbol}}</td>
+          <td>({{token.symbol}}, {{token.precision}})</td>
           <td>{{token.issuer}}</td>
-          <td class="t_l">{{token.supply}}</td>
           <td class="t_l">{{token.max_supply}}</td>
+          <td class="t_l">{{token.supply}}</td>
           <td>{{token.balance}}</td>
           <td>
-            <router-link class="button is-small is-outlined" :to="{name: 'tokenTransfer', params: { symbol: token.symbol }}">转账</router-link>
+            <router-link class="button is-small is-outlined" :to="{name: 'tokenTransfer', params: { symbol: token.symbol, precision: token.precision }}">转账</router-link>
           </td>
         </tr>
       </tbody>
@@ -31,6 +31,7 @@
 
 <script>
 import { mapState } from 'vuex';
+import { number, NumFormat } from '@/utils/filter';
 
 export default {
   name: 'TransferList',
@@ -39,6 +40,10 @@ export default {
   },
   computed: {
     ...mapState(['account']),
+  },
+  filters: {
+    number,
+    NumFormat,
   },
 };
 </script>

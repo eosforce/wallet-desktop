@@ -20,9 +20,9 @@
               转账金额
             </label>
             <div class="control">
-              <input v-model="amount" min="0" class="input" type="number" step="0.0001" :placeholder="`单位 ${tokenSymbol}`" required />
+              <input v-model="amount" min="0" class="input" type="number" :step="`${0.1 ** precision}`" :placeholder="`单位 ${tokenSymbol}`" required />
               <p class="help is-danger" v-show="amount && !isValidAmount">
-                金额必须为数字，且最多 4 位小数
+                金额必须为数字，且最多 {{precision}} 位小数
               </p>
             </div>
           </div>
@@ -111,11 +111,14 @@ export default {
     tokenSymbol() {
       return this.$route.params.symbol || 'EOS';
     },
+    precision() {
+      return this.$route.params.precision !== undefined ? this.$route.params.precision : '4';
+    },
     isValidToAccountName() {
       return this.toAccountName && isValidAccountName(this.toAccountName);
     },
     isValidAmount() {
-      return this.amount && isValidAmount(this.amount);
+      return this.amount && isValidAmount(this.amount, { precision: this.precision });
     },
     ...mapState(['app']),
   },
@@ -134,6 +137,7 @@ export default {
         amount: this.amount,
         password: this.password,
         tokenSymbol: this.tokenSymbol,
+        precision: this.precision,
       })
         .then(result => {
           Message.success('转账成功');

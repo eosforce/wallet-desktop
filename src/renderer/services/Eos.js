@@ -28,17 +28,17 @@ export const getNodeList = () => {
 
 // 获取节点信息
 export const getNodeInfo = httpEndpoint => {
-  return Eos.Localnet({ httpEndpoint }).getInfo({});
+  return Eos({ httpEndpoint }).getInfo({});
 };
 
 // 查询块信息
 export const getBlock = httpEndpoint => block_num_or_id => {
-  return Eos.Localnet({ httpEndpoint }).getBlock({ block_num_or_id });
+  return Eos({ httpEndpoint }).getBlock({ block_num_or_id });
 };
 
 // 根据公钥获取用户名数组
 export const getAccounts = httpEndpoint => publicKey => {
-  return Eos.Localnet({ httpEndpoint })
+  return Eos({ httpEndpoint })
     .getKeyAccounts({ public_key: publicKey })
     .then(result => {
       return result.account_names || [];
@@ -47,18 +47,18 @@ export const getAccounts = httpEndpoint => publicKey => {
 
 // 获取交易记录
 export const getTransferRecord = httpEndpoint => ({ accountName, pos, offset }) => {
-  return Eos.Localnet({ httpEndpoint }).getActions({ account_name: accountName, pos: pos, offset: offset, limit: 100 });
+  return Eos({ httpEndpoint }).getActions({ account_name: accountName, pos: pos, offset: offset, limit: 100 });
 };
 
 // 获取交易详情
 export const getTransAction = httpEndpoint => ({ tid }) => {
-  var act = Eos.Localnet({ httpEndpoint }).getTransaction({ id: tid });
+  var act = Eos({ httpEndpoint }).getTransaction({ id: tid });
   return act;
 };
 
 // 从节点创建用户
 export const newAccountFromNode = httpEndpoint => ({ accountName, publicKey }) => {
-  return Eos.Localnet({ httpEndpoint })
+  return Eos({ httpEndpoint })
     .createAccount({
       account: accountName,
       keys: {
@@ -73,13 +73,8 @@ export const newAccountFromNode = httpEndpoint => ({ accountName, publicKey }) =
 
 // 创建用户
 export const newAccount = config => ({ creator, accountName, publicKey }) => {
-  return Eos.Localnet(config)
-    .newaccount({
-      creator: creator,
-      name: accountName,
-      owner: publicKey,
-      active: publicKey,
-    })
+  return Eos(config)
+    .newaccount(creator, accountName, publicKey, publicKey)
     .catch(err => {
       return handleApiError(err);
     });
@@ -87,7 +82,7 @@ export const newAccount = config => ({ creator, accountName, publicKey }) => {
 
 // 获取指定账户可用余额
 export const getAvailable = httpEndpoint => accountName => {
-  return Eos.Localnet({ httpEndpoint })
+  return Eos({ httpEndpoint })
     .getTableRows({
       scope: 'eosio',
       code: 'eosio',
@@ -108,7 +103,7 @@ export const getAvailable = httpEndpoint => accountName => {
 
 // 获取 token list
 export const getTokenList = httpEndpoint => accountName => {
-  return Eos.Localnet({ httpEndpoint })
+  return Eos({ httpEndpoint })
     .getTableRows({ scope: accountName, code: 'eosio.token', table: 'accounts', json: true, limit: 1000 })
     .then(data => {
       if (data.rows.length) {
@@ -116,7 +111,7 @@ export const getTokenList = httpEndpoint => accountName => {
           data.rows.map(row => {
             const balance = row.balance;
             const symbol = getToken(balance);
-            return Eos.Localnet({ httpEndpoint })
+            return Eos({ httpEndpoint })
               .getTableRows({
                 scope: symbol,
                 code: 'eosio.token',
@@ -125,8 +120,11 @@ export const getTokenList = httpEndpoint => accountName => {
                 limit: 1000,
               })
               .then(result => {
+                const match = balance && balance.match(/\.(\d*)/);
+                const precision = match && match[1] ? match[1].length : 0;
                 return {
                   symbol,
+                  precision,
                   balance,
                   ...result.rows[0],
                 };
@@ -141,21 +139,21 @@ export const getTokenList = httpEndpoint => accountName => {
 
 // 获取 bp 表
 export const getBpsTable = httpEndpoint => () => {
-  return Eos.Localnet({ httpEndpoint })
+  return Eos({ httpEndpoint })
     .getTableRows({ scope: 'eosio', code: 'eosio', table: 'bps', json: true, limit: 1000 })
     .then(data => data.rows);
 };
 
 // 获取 vote 表
 export const getVotesTable = httpEndpoint => accountName => {
-  return Eos.Localnet({ httpEndpoint })
+  return Eos({ httpEndpoint })
     .getTableRows({ scope: accountName, code: 'eosio', table: 'votes', json: true, limit: 1000 })
     .then(data => data.rows);
 };
 
 // table
 export const getTable = httpEndpoint => params => {
-  return Eos.Localnet({ httpEndpoint }).getTableRows({ ...params, json: true, limit: 1000 });
+  return Eos({ httpEndpoint }).getTableRows({ ...params, json: true, limit: 1000 });
 };
 
 // 根据 bp 和 vote 得到分红表，返回一个对象
@@ -238,7 +236,7 @@ export const getRewardsAndBpsTable = httpEndpoint => async (votesTable, accountN
         return bp;
       })
       .concat(
-        commonBpTable.sort((bp1, bp2) => bp1.total_staked - bp2.total_staked).map((bp, index) => {
+        commonBpTable.sort((bp1, bp2) => bp2.total_staked - bp1.total_staked).map((bp, index) => {
           bp.order = index + 24;
           return bp;
         })
@@ -276,18 +274,14 @@ export const getAccountInfo = httpEndpoint => async accountName => {
 };
 
 export const transfer = config => {
-  return ({ from, to, amount, memo = '', tokenSymbol = 'EOS' } = {}) => {
+  return ({ from, to, amount, memo = '', tokenSymbol = 'EOS', precision = '4' } = {}) => {
     return Promise.resolve()
       .then(() => {
-        if (tokenSymbol === 'EOS') {
-          return Eos.Localnet(config).transfer({ from, to, quantity: toAsset(amount, tokenSymbol), memo });
-        } else {
-          return Eos.Localnet(config)
-            .contract('eosio.token')
-            .then(token => {
-              return token.transfer({ from, to, quantity: toAsset(amount, tokenSymbol), memo });
-            });
-        }
+        return Eos(config)
+          .contract(tokenSymbol === 'EOS' ? 'eosio' : 'eosio.token')
+          .then(token => {
+            return token.transfer(from, to, toAsset(amount, tokenSymbol, { precision }), memo);
+          });
       })
       .catch(err => {
         return handleApiError(err);
@@ -297,8 +291,8 @@ export const transfer = config => {
 
 export const vote = config => {
   return ({ voter, bpname, amount } = {}) => {
-    return Eos.Localnet(config)
-      .vote({ voter, bpname, stake: toAsset(amount) })
+    return Eos(config)
+      .vote(voter, bpname, toAsset(amount))
       .catch(err => {
         return handleApiError(err);
       });
@@ -307,8 +301,8 @@ export const vote = config => {
 
 export const unfreeze = config => {
   return ({ voter, bpname } = {}) => {
-    return Eos.Localnet(config)
-      .unfreeze({ voter, bpname })
+    return Eos(config)
+      .unfreeze(voter, bpname)
       .catch(err => {
         return handleApiError(err);
       });
@@ -317,8 +311,8 @@ export const unfreeze = config => {
 
 export const claim = config => {
   return ({ voter, bpname } = {}) => {
-    return Eos.Localnet(config)
-      .claim({ voter, bpname })
+    return Eos(config)
+      .claim(voter, bpname)
       .catch(err => {
         return handleApiError(err);
       });
