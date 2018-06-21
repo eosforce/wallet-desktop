@@ -150,7 +150,7 @@ export const genTrConvertFunc = trName => {
           name: '投票',
           from: act.data.voter,
           to: act.data.bpname,
-          change: act.data.change,
+          change: act.data.stake,
           status: checkStatus(tr.status),
         };
       },
