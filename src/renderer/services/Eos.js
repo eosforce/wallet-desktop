@@ -81,6 +81,27 @@ export const newAccount = config => ({ creator, accountName, publicKey }) => {
     });
 };
 
+// 查询账号是否存在
+export const queryAccount = httpEndpoint => accountName => {
+  return Eos({ httpEndpoint })
+    .getTableRows({
+      scope: 'eosio',
+      code: 'eosio',
+      table: 'accounts',
+      table_key: accountName,
+      limit: 10000,
+      json: true,
+    })
+    .then(result => {
+      const account = result.rows.find(acc => acc.name === accountName);
+      if (account) {
+        return true;
+      } else {
+        return false;
+      }
+    });
+};
+
 // 获取指定账户可用余额
 export const getAvailable = httpEndpoint => accountName => {
   return Eos({ httpEndpoint })

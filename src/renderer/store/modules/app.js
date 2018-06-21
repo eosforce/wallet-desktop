@@ -62,7 +62,8 @@ const actions = {
               return result;
             }, []);
             commit(Mutations.SET_NODE_LIST, { nodeList });
-            return dispatch(Actions.FETCH_NODE_INFO, { node: nodeList[0] && nodeList[0].value });
+            const randomIndex = Math.floor(Math.random() * nodeList.length);
+            return dispatch(Actions.FETCH_NODE_INFO, { node: nodeList[randomIndex] && nodeList[randomIndex].value });
           } else {
             return Promise.reject(new Error('获取节点列表错误'));
           }

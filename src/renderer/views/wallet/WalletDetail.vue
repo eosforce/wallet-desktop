@@ -18,6 +18,11 @@
             <p>2. 请向已经拥有链上用户名的第三方提出创建申请，向其提供您的公钥(EOS...) 和期望的用户名，切勿提供您的私钥（5...）。</p>
             <p>3. 创建用户名交易需要花费第三方0.1个EOS，创建交易成功后，请点击刷新，用户名会自动显示在左侧。</p>
           </div>
+          <div style="margin-top: 16px;">
+            <span style="position: relative;top: 5px;">查询用户名是否存在：</span>
+            <input class="input" style="width:300px;background: #fff;" palcaholder="需要查询的用户名" type="text" v-model="queryAccountName">
+            <a class="button is-outlined" @click="query">查询</a>
+          </div>
       </div>
     </div>
     <confirm-modal title="删除钱包" :show="showDeleteWallet" @confirm="decryptAndDeleteWallet" @close="toggle('showDeleteWallet', false)">
@@ -43,6 +48,7 @@ import ConfirmModal from '@/components/ConfirmModal';
 import Message from '@/components/Message';
 import { Getters, Actions } from '@/constants/types.constants';
 import { decryptWif } from '@/utils/util';
+import { queryAccount } from '@/services/Eos';
 
 export default {
   name: 'WalletDetail',
@@ -50,6 +56,7 @@ export default {
     return {
       password: '',
       showDeleteWallet: false,
+      queryAccountName: '',
     };
   },
   computed: {
@@ -59,13 +66,23 @@ export default {
     walletData() {
       return this.wallet.data || {};
     },
-    ...mapState(['account', 'wallet']),
+    ...mapState(['account', 'wallet', 'app']),
   },
   methods: {
     initWallet(id) {
       this.fetchWallet({ id: id || this.$route.params.walletId }).catch(err => {
         Message.error(`账户列表加载失败： ${err && err.message}`);
         return Promise.reject(err);
+      });
+    },
+    query() {
+      return queryAccount(this.app.currentNodeValue)(this.queryAccountName).then(result => {
+        if (result) {
+          Message.success(`「${this.queryAccountName}」已存在`);
+        } else {
+          Message.error(`「${this.queryAccountName}」不存在`);
+        }
+        this.queryAccountName = '';
       });
     },
     refresh() {
