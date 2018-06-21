@@ -8,7 +8,7 @@
       <form class="cover-page__form" @submit.prevent="!submitting && submit()">
         <div class="field">
           <label class="label">
-            明文私钥（警告：请勿导入真实的主网映射私钥！）
+            明文私钥
             <a class="button is-small is-link is-import" :disabled="isDisabledRandomKey" @click="randomKey()">
             随机生成密钥
             </a>
@@ -221,7 +221,6 @@ export default {
 .is-import {
   font-size: 14px;
   margin-bottom: 8px;
-  float: right;
   width: 110px;
   background: #408ee1;
   color: #fff;
