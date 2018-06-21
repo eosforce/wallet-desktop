@@ -50,7 +50,7 @@
         </div>
         <div class="row">
           <div class="row__title">创建人</div>
-          <div class="row__content">{{accountCreator.account}}</div>
+          <div class="row__content">{{creatorAccountName}}</div>
         </div>
         <div class="row">
           <div class="row__title">用户公钥</div>
@@ -62,7 +62,7 @@
         </div>
         <div class="row">
           <div class="row__title">手续费</div>
-          <div class="row__content">{{app.fee}}</div>
+          <div class="row__content">0.1 EOS</div>
         </div>
         <div class="row">
           <div class="row__title">输入密码</div>
