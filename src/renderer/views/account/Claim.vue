@@ -15,7 +15,7 @@
       </div>
       <div class="row">
         <div class="row__title">可提取金额</div>
-        <div class="row__content">{{rewardAmount}}</div>
+        <div class="row__content">{{rewardAmount | formatNumber({p: 4, showSymbol: true})}}</div>
       </div>
       <div class="row">
         <div class="row__title">手续费</div>
@@ -39,7 +39,7 @@ import ConfirmModal from '@/components/ConfirmModal';
 import { Actions } from '@/constants/types.constants';
 
 export default {
-  name: 'unfreeze',
+  name: 'Claim',
   data() {
     return {
       password: '',

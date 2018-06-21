@@ -44,41 +44,6 @@ export const asset = (value, symbol = 'EOS') => {
   return [value, symbol].join(' ');
 };
 
-export const rate = value => {
-  if (isNaN(value)) {
-    return rate;
-  } else {
-    return [
-      toBigNumber(value)
-        .dividedBy(100)
-        .toFixed(2),
-      '%',
-    ].join(' ');
-  }
-};
-
-export const yearrate = (value, rate) => {
-  return (
-    new BigNumber((9 * 20 * 60 * 24 * 365) / 23)
-      .multipliedBy(rate)
-      .dividedBy(toBigNumber(value))
-      .multipliedBy(100)
-      .toFixed(0) + '%'
-  );
-};
-
-export const voteage = (value, p = 1) => {
-  if (isNaN(value)) {
-    return toBigNumber(value).toFixed(p) + '小时';
-  } else {
-    return (
-      toBigNumber(value)
-        .dividedBy(3600)
-        .toFixed(p) + '小时'
-    );
-  }
-};
-
 export const timestamp = (value, format = 'YYYY-MM-DD HH:mm:ss') => {
   value = value + 'Z';
   const date = dayjs(value);
@@ -89,12 +54,50 @@ export const timestamp = (value, format = 'YYYY-MM-DD HH:mm:ss') => {
   }
 };
 
-export const sTom = (value, p = 1) => {
-  if (isNaN(value)) {
-    return toBigNumber(value).toFixed(p);
-  } else {
-    return toBigNumber(value)
-      .dividedBy(60)
-      .toFixed(p);
+// p 精度
+// showSymbol 是否显示货币符号，默认不显示
+// symbol 货币符号，默认为 EOS 或自动获取
+// separator 是否使用逗号分隔数字，默认为真
+// sign 数字后单位，默认空
+// percentage 数字的倍率
+export const formatNumber = (value, { p, showSymbol, symbol = 'EOS', separator = true, sign, percentage } = {}) => {
+  if (BigNumber.isBigNumber(value)) {
+    value = value.toNumber();
   }
+  if (isNaN(value) && typeof value === 'string' && /^[0-9.-]+\s([A-Z]+)$/.test(value)) {
+    [value, symbol] = value.split(' ');
+  }
+  if (typeof value === 'string' && !isNaN(value)) {
+    if (p === undefined) {
+      const match = value.match(/\.(\d*)/);
+      if (match && match[1]) {
+        p = match[1].length;
+      } else {
+        p = 0;
+      }
+    }
+    value = Number(value);
+  } else if (typeof value !== 'number') {
+    return value;
+  }
+  if (percentage) {
+    value = value * percentage;
+  }
+  if (!isNaN(p)) {
+    value = value.toFixed(p);
+  } else {
+    value = String(value);
+  }
+  if (sign) {
+    return value + sign;
+  }
+  if (separator) {
+    const parts = value.split('.');
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    value = parts.join('.');
+  }
+  if (showSymbol) {
+    return [value, symbol].join(' ');
+  }
+  return value;
 };

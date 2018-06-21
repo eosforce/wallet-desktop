@@ -24,17 +24,13 @@
             <span v-show="bp.url"><a :href="bp.url" target="_blank">{{bp.url.replace(/^(http|https):\/\/(www\.)?/,'')}}</a></span>
           </td>
           <td>{{bp.amount}}</td>
-          <td>{{10000 - bp.commission_rate | rate}}</td>
-          <td>{{bp.total_staked | number(0) | intPartFormat(0)}}</td>
-          <td>
-            <span v-show="bp.order >= 24">-</span>
-            <span v-show="bp.order < 24 && bp.total_staked == 0">0%</span>
-            <span v-show="bp.order < 24 && bp.total_staked !== 0">{{bp.total_staked | yearrate(1 - bp.commission_rate / 10000)}}</span>
-          </td>
-          <td>{{bp.rewards_pool | number | NumFormat}}</td>
+          <td>{{(10000 - bp.commission_rate) | formatNumber({p: 2, sign: '%', percentage: 0.01})}}</td>
+          <td>{{bp.total_staked | formatNumber({p: 0})}}</td>
+          <td>{{bp.adr | formatNumber({p: 0, sign: '%', percentage: 100})}}</td>
+          <td>{{bp.rewards_pool | formatNumber({p: 4})}}</td>
           <td>
             <span v-show="!bp.hasVote">-</span>
-            <span v-show="bp.hasVote">{{ bp.vote && bp.vote.staked | number(0) | intPartFormat(0)}}</span>
+            <span v-show="bp.hasVote">{{ bp.vote && bp.vote.staked | formatNumber({p: 0})}}</span>
           </td>
           <td>
             <router-link class="button is-small is-outlined" :to="{name: 'vote', params: { bpname: bp.name }}">投票</router-link>
@@ -48,8 +44,6 @@
 <script>
 import { mapState } from 'vuex';
 
-import { number, rate, voteage, yearrate, intPartFormat, NumFormat } from '@/utils/filter';
-
 export default {
   name: 'BpList',
   computed: {
@@ -57,14 +51,6 @@ export default {
       return this.account.bpsTable.filter(bp => bp.isSuperBp);
     },
     ...mapState(['account']),
-  },
-  filters: {
-    number,
-    rate,
-    yearrate,
-    voteage,
-    intPartFormat,
-    NumFormat,
   },
 };
 </script>
@@ -87,7 +73,4 @@ export default {
   white-space: nowrap;
   cursor: pointer;
 }
-/* .bplist-box tbody .is-vote{
-  display: none;
-} */
 </style>

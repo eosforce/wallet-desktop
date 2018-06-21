@@ -42,24 +42,8 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
-
-import { number, rate, voteage, yearrate } from '@/utils/filter';
-
 export default {
-  name: 'TransferRecord',
-  data() {
-    return {};
-  },
-  computed: {
-    ...mapState(['account']),
-  },
-  filters: {
-    number,
-    rate,
-    yearrate,
-    voteage,
-  },
+  name: 'RateInstructions',
 };
 </script>
 

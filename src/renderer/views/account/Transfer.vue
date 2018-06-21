@@ -65,7 +65,7 @@
         </div>
         <div class="row">
           <div class="row__title">转账金额</div>
-          <div class="row__content">{{amount | asset(tokenSymbol)}}</div>
+          <div class="row__content">{{amount | formatNumber({p: precision, showSymbol: true, symbol: tokenSymbol})}}</div>
         </div>
         <div class="row">
           <div class="row__title">手续费</div>
@@ -89,10 +89,9 @@ import Message from '@/components/Message';
 import ConfirmModal from '@/components/ConfirmModal';
 import { Actions } from '@/constants/types.constants';
 import { isValidAccountName, isValidAmount } from '@/utils/rules';
-import { asset } from '@/utils/filter';
 
 export default {
-  name: 'AccountNew',
+  name: 'Transfer',
   data() {
     return {
       toAccountName: '',
@@ -165,9 +164,6 @@ export default {
       getAccountInfo: Actions.GET_ACCOUNT_INFO,
       transfer: Actions.TRANSFER,
     }),
-  },
-  filters: {
-    asset,
   },
   components: {
     ConfirmModal,

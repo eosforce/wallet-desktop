@@ -19,7 +19,7 @@
       </div>
       <div class="row">
         <div class="row__title">可赎回金额</div>
-        <div class="row__content">{{unstakingAmount}}</div>
+        <div class="row__content">{{unstakingAmount | formatNumber({p: 4, showSymbol: true})}}</div>
       </div>
       <div class="row">
         <div class="row__title">手续费</div>
@@ -41,7 +41,6 @@ import { mapActions, mapState } from 'vuex';
 import Message from '@/components/Message';
 import ConfirmModal from '@/components/ConfirmModal';
 import { Actions } from '@/constants/types.constants';
-import { timestamp } from '@/utils/filter';
 
 export default {
   name: 'unfreeze',
@@ -118,9 +117,6 @@ export default {
   },
   components: {
     ConfirmModal,
-  },
-  filters: {
-    timestamp,
   },
 };
 </script>

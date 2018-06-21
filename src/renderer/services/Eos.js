@@ -11,7 +11,8 @@ import {
   calcTotalAmount,
   handleApiError,
   calcVoteage,
-  clacReward,
+  calcReward,
+  calcApr,
 } from '@/utils/util';
 
 export const getNodeList = () => {
@@ -197,6 +198,9 @@ export const getRewardsAndBpsTable = httpEndpoint => async (votesTable, accountN
       };
     }
 
+    // 年化利率
+    bpRow.adr = calcApr(bpRow.total_staked, bpRow.commission_rate);
+
     const bpVoteage = calcVoteage([
       bpRow.total_voteage,
       bpRow.total_staked,
@@ -210,7 +214,7 @@ export const getRewardsAndBpsTable = httpEndpoint => async (votesTable, accountN
       const myVoteage = calcVoteage([vote.voteage, vote.staked, currentHeight, vote.voteage_update_height]);
       // 节点最新票龄
       // 我的分红
-      const reward = clacReward([myVoteage, bpVoteage, bpRow.rewards_pool]);
+      const reward = calcReward([myVoteage, bpVoteage, bpRow.rewards_pool]);
 
       const extraRow = { bpname: vote.bpname, reward, ...vote };
 

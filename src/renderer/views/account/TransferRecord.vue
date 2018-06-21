@@ -38,7 +38,6 @@
 <script>
 import { mapState, mapActions } from 'vuex';
 
-import { timestamp } from '@/utils/filter';
 import { Actions } from '@/constants/types.constants';
 import { genTrConvertFunc } from '@/utils/util';
 
@@ -73,9 +72,6 @@ export default {
     ...mapActions({
       getTransferRecord: Actions.GET_TRANSFER_RECORD,
     }),
-  },
-  filters: {
-    timestamp,
   },
 };
 </script>

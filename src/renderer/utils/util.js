@@ -28,7 +28,7 @@ export const calcVoteage = args => {
 };
 
 // 计算分红
-export const clacReward = args => {
+export const calcReward = args => {
   const [myVoteage, bpVoteage, rewardsPool] = args.map(toBigNumber);
   if (!bpVoteage.isZero()) {
     return myVoteage.multipliedBy(rewardsPool).dividedBy(bpVoteage);
@@ -98,6 +98,13 @@ export const calcTotalAmount = (rows = [], key) => {
 // 计算是否有投票和分红和赎回金
 export const calcVoteExist = (meVoteage, reward, unstaking) => {
   return !(toBigNumber(meVoteage).isZero() && toBigNumber(reward).isZero() && toBigNumber(unstaking).isZero());
+};
+
+// 计算年化利率
+export const calcApr = (totalStaked, commissionRate) => {
+  if (!totalStaked) return 0;
+  const n1 = (9 * 20 * 60 * 24 * 365) / 23;
+  return (n1 * (1 - commissionRate / 10000)) / totalStaked;
 };
 
 // 是否是 object
