@@ -1,48 +1,6 @@
 import dayjs from 'dayjs';
 
-import { toBigNumber } from '@/utils/util';
 import BigNumber from 'bignumber.js';
-
-export const number = (value, p = 4) => {
-  if (isNaN(value)) {
-    return toBigNumber(value).toFixed(p);
-  } else {
-    return Number(value).toFixed(p);
-  }
-};
-
-export const intPartFormat = (value, p = 4) => {
-  if (isNaN(value)) {
-    return toBigNumber(value).toFixed(p);
-  } else {
-    const intPart = Number(value).toFixed(p);
-    const intPartFormat = intPart.toString().replace(/(\d)(?=(?:\d{3})+$)/g, '$1,');
-    return intPartFormat;
-  }
-};
-
-export const NumFormat = (value, p = 4) => {
-  if (!value) return '0.0000';
-  const intPart = Number(value).toFixed(0);
-  const intPartFormat = intPart.toString().replace(/(\d)(?=(?:\d{3})+$)/g, '$1,');
-  var floatPart = '.0000';
-  var value2Array = value.split('.');
-  if (value2Array.length === 2) {
-    floatPart = value2Array[1].toString();
-    if (floatPart.length === 1) {
-      return intPartFormat + '.' + floatPart + '0';
-    } else {
-      return intPartFormat + '.' + floatPart;
-    }
-  } else {
-    return intPartFormat + floatPart;
-  }
-};
-
-export const asset = (value, symbol = 'EOS') => {
-  if (isNaN(value)) return value;
-  return [value, symbol].join(' ');
-};
 
 export const timestamp = (value, format = 'YYYY-MM-DD HH:mm:ss') => {
   value = value + 'Z';
