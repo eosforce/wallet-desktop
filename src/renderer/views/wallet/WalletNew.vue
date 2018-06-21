@@ -9,8 +9,8 @@
         <div class="field">
           <label class="label">
             明文私钥
-            <a class="button is-small is-link is-import" :disabled="isDisabledRandomKey" @click="randomKey()">
-            随机生成密钥
+            <a style="position: relative;margin-left: 8px;top: -4px;margin-bottom: 4px;" class="button is-small is-link is-import" :disabled="isDisabledRandomKey" @click="randomKey()">
+            随机生成私钥
             </a>
           </label>
           <div class="control">
@@ -226,4 +226,4 @@ export default {
   color: #fff;
   border: none;
 }
-</style> 
+</style>

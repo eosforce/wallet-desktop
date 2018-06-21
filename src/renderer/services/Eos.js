@@ -182,7 +182,6 @@ export const getRewardsAndBpsTable = httpEndpoint => async (votesTable, accountN
     for (let i = 0; i < superBpsAmountTable.length; i++) {
       if (superBpsAmountTable[i].bpname === bpRow.name) {
         bpRow.isSuperBp = true;
-        bpRow.superBpIndex = i;
         bpRow.version = version;
         bpRow.amount = superBpsAmountTable[i].amount;
         break;
@@ -234,7 +233,7 @@ export const getRewardsAndBpsTable = httpEndpoint => async (votesTable, accountN
   return {
     rewardsTable,
     bpsTable: superBpTable
-      .sort((bp1, bp2) => bp1.superBpIndex - bp2.superBpIndex)
+      .sort((bp1, bp2) => bp2.total_staked - bp1.total_staked)
       .map((bp, index) => {
         bp.order = index + 1;
         return bp;
