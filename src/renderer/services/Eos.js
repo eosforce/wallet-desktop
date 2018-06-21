@@ -11,13 +11,14 @@ import {
   calcTotalAmount,
   handleApiError,
   calcVoteage,
-  clacReward,
+  calcReward,
+  calcApr,
 } from '@/utils/util';
 
 export const getNodeList = () => {
   const map = {
-    // '0.6': NODE_API_URL,
-    '0.7': NODE_API_URL,
+    '1.0': NODE_API_URL,
+    // '0.7': NODE_TEST_NET_URL,
   };
   return fetch(map[Store.state.app.chainNet], {
     headers: {
@@ -77,6 +78,27 @@ export const newAccount = config => ({ creator, accountName, publicKey }) => {
     .newaccount(creator, accountName, publicKey, publicKey)
     .catch(err => {
       return handleApiError(err);
+    });
+};
+
+// 查询账号是否存在
+export const queryAccount = httpEndpoint => accountName => {
+  return Eos({ httpEndpoint })
+    .getTableRows({
+      scope: 'eosio',
+      code: 'eosio',
+      table: 'accounts',
+      table_key: accountName,
+      limit: 10000,
+      json: true,
+    })
+    .then(result => {
+      const account = result.rows.find(acc => acc.name === accountName);
+      if (account) {
+        return true;
+      } else {
+        return false;
+      }
     });
 };
 
@@ -181,7 +203,6 @@ export const getRewardsAndBpsTable = httpEndpoint => async (votesTable, accountN
     for (let i = 0; i < superBpsAmountTable.length; i++) {
       if (superBpsAmountTable[i].bpname === bpRow.name) {
         bpRow.isSuperBp = true;
-        bpRow.superBpIndex = i;
         bpRow.version = version;
         bpRow.amount = superBpsAmountTable[i].amount;
         break;
@@ -197,6 +218,9 @@ export const getRewardsAndBpsTable = httpEndpoint => async (votesTable, accountN
       };
     }
 
+    // 年化利率
+    bpRow.adr = calcApr(bpRow.total_staked, bpRow.commission_rate);
+
     const bpVoteage = calcVoteage([
       bpRow.total_voteage,
       bpRow.total_staked,
@@ -210,7 +234,7 @@ export const getRewardsAndBpsTable = httpEndpoint => async (votesTable, accountN
       const myVoteage = calcVoteage([vote.voteage, vote.staked, currentHeight, vote.voteage_update_height]);
       // 节点最新票龄
       // 我的分红
-      const reward = clacReward([myVoteage, bpVoteage, bpRow.rewards_pool]);
+      const reward = calcReward([myVoteage, bpVoteage, bpRow.rewards_pool]);
 
       const extraRow = { bpname: vote.bpname, reward, ...vote };
 
@@ -230,7 +254,7 @@ export const getRewardsAndBpsTable = httpEndpoint => async (votesTable, accountN
   return {
     rewardsTable,
     bpsTable: superBpTable
-      .sort((bp1, bp2) => bp1.superBpIndex - bp2.superBpIndex)
+      .sort((bp1, bp2) => bp2.total_staked - bp1.total_staked)
       .map((bp, index) => {
         bp.order = index + 1;
         return bp;

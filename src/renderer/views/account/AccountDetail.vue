@@ -72,13 +72,18 @@ export default {
       initApp: Actions.INIT_APP,
       refreshTransferrecord: Actions.GET_TRANSFER_RECORD,
       refreshBpsList: Actions.GET_BPS_TABLE,
+      getTokenList: Actions.GET_TOKEN_LIST,
     }),
     toggleTab: function(tab) {
       this.currentTab = tab; // tab 为当前触发标签页的组件名
     },
     refreshList: function() {
-      this.refreshTransferrecord({ accountName: this.accountName });
-      this.refreshBpsList();
+      if (this.currentTab === 'TokenList') {
+        this.getTokenList({ accountName: this.accountName });
+      } else {
+        this.refreshTransferrecord({ accountName: this.accountName });
+        this.refreshBpsList();
+      }
     },
   },
   beforeRouteUpdate(to, from, next) {

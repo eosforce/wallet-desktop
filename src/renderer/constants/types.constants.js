@@ -25,6 +25,7 @@ export const Actions = {
   SWITCH_CHAIN_NET: 'SWITCH_CHAIN_NET',
   GET_TOKEN_LIST: 'GET_TOKEN_LIST',
   REFRESH_WALLET: 'REFRESH_WALLET',
+  DELETE_WALLET: 'DELETE_WALLET',
 };
 
 export const Getters = {

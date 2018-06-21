@@ -11,12 +11,12 @@
           </div>
           <div class="field">
             <div class="static-label">
-              当前投票金额<span class="static-text">{{stakedAmount | number(0) | intPartFormat(0)}}</span>
+              当前投票金额<span class="static-text">{{stakedAmount | formatNumber({p: 0, showSymbol: true})}}</span>
             </div>
           </div>
           <div class="field">
             <div class="static-label">
-              可用投票金额<span class="static-text">{{account.info.available | number | NumFormat}}</span>
+              可用投票金额<span class="static-text">{{account.info.available | formatNumber({p: 4, showSymbol: true})}}</span>
             </div>
           </div>
           <div class="field">
@@ -61,7 +61,7 @@
         </div>
         <div class="row">
           <div class="row__title">新投票金额</div>
-          <div class="row__content">{{amount | asset}}</div>
+          <div class="row__content">{{amount | formatNumber({p: 0, showSymbol: true})}}</div>
         </div>
         <div class="row">
           <div class="row__title">手续费</div>
@@ -85,7 +85,6 @@ import Message from '@/components/Message';
 import ConfirmModal from '@/components/ConfirmModal';
 import { Actions } from '@/constants/types.constants';
 import { isValidAmount } from '@/utils/rules';
-import { asset, number, NumFormat, intPartFormat } from '@/utils/filter';
 
 export default {
   name: 'vote',
@@ -165,12 +164,6 @@ export default {
       getAccountInfo: Actions.GET_ACCOUNT_INFO,
       vote: Actions.VOTE,
     }),
-  },
-  filters: {
-    asset,
-    number,
-    NumFormat,
-    intPartFormat,
   },
   components: {
     ConfirmModal,

@@ -1,6 +1,6 @@
 import { Mutations, Actions, Getters } from '@/constants/types.constants';
 
-import Storage, { getWalletIdList, createWalletData, getWalletKeyFromId } from '@/services/Storage';
+import Storage, { getWalletIdList, createWalletData, getWalletKeyFromId, deleteWalletData } from '@/services/Storage';
 import { getNodeList, getAccounts, getNodeInfo } from '@/services/Eos';
 import { decryptWif } from '@/utils/util';
 
@@ -62,7 +62,8 @@ const actions = {
               return result;
             }, []);
             commit(Mutations.SET_NODE_LIST, { nodeList });
-            return dispatch(Actions.FETCH_NODE_INFO, { node: nodeList[0] && nodeList[0].value });
+            const randomIndex = Math.floor(Math.random() * nodeList.length);
+            return dispatch(Actions.FETCH_NODE_INFO, { node: nodeList[randomIndex] && nodeList[randomIndex].value });
           } else {
             return Promise.reject(new Error('获取节点列表错误'));
           }
@@ -89,6 +90,9 @@ const actions = {
   },
   [Actions.NEW_WALLET]({ dispatch }, { privateKey, password }) {
     return createWalletData({ privateKey, password });
+  },
+  [Actions.DELETE_WALLET]({ state, getters, dispatch }, { publicKey }) {
+    return deleteWalletData({ publicKey });
   },
   [Actions.FETCH_NODE_INFO]({ commit, state }, { node } = {}) {
     return getNodeInfo(node || state.currentNodeValue).then(result => {

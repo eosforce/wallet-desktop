@@ -4,24 +4,23 @@
       <span class="pk">公钥：{{walletData.publicKey}}</span>
       <span class="is-grouped " style="line-height:27px;text-align:left;height:27px;font-size:14px;width:15%;
       ">
-        <a class="button is-small is-link" @click="exportWallet()">导出钱包</a>
         <span class="refresh fr el-icon-refresh" @click="refreshOverview()"></span>
       </span>
     </div>
     <div class="is-grouped desc-box clearfix" style="margin-top:16px;line-height:27px;text-align:left;height:27px;font-size:14px">
       <ul>
-        <li>资产总额:<span class="cl">{{account.info.assetTotal | number | NumFormat}}</span></li>
-        <li>可用余额:<span class="cl">{{account.info.available | number | NumFormat}}</span></li>
+        <li>资产总额:<span class="cl">{{account.info.assetTotal | formatNumber({p: 4})}}</span></li>
+        <li>可用余额:<span class="cl">{{account.info.available | formatNumber({p: 4})}}</span></li>
         <li class="lw"><router-link class="button is-small is-link" :to="{name: 'transfer'}">转账</router-link></li>
         <li><router-link class="button is-small is-link" :to="{name: 'accountCreateAccount'}">创建用户</router-link></li>
       </ul>
     </div>
     <div class="desc-box clearfix">
       <ul>
-        <li><span>投票总额:</span><span class="cl">{{account.info.stakedTotal | number(0) | intPartFormat(0)}}</span></li>
-        <li><span>赎回总额:</span><span class="cl">{{account.info.unstakingTotal | number(0) | intPartFormat(0)}}</span></li>
-        <li><span>待领分红总额:</span><span class="cl">{{account.info.rewardTotal | number | NumFormat}}</span></li>
-        <li v-if="bpInfo"><span>佣金费率:</span><span class="cl">{{bpInfo.commission_rate | rate}}</span></li>
+        <li><span>投票总额:</span><span class="cl">{{account.info.stakedTotal | formatNumber({p: 0})}}</span></li>
+        <li><span>赎回总额:</span><span class="cl">{{account.info.unstakingTotal | formatNumber({p: 0})}}</span></li>
+        <li><span>待领分红总额:</span><span class="cl">{{account.info.rewardTotal | formatNumber({p: 4})}}</span></li>
+        <li v-if="bpInfo"><span>佣金费率:</span><span class="cl">{{bpInfo.commission_rate | formatNumber({p: 2, sign: '%', percentage: 0.01})}}</span></li>
       </ul>
     </div>
   </div>
@@ -31,7 +30,6 @@
 import { mapState, mapActions } from 'vuex';
 
 import { Actions } from '@/constants/types.constants';
-import { timestamp, number, rate, voteage, NumFormat, intPartFormat } from '@/utils/filter';
 
 export default {
   name: 'AccountOverview',
@@ -68,14 +66,6 @@ export default {
       refreshWallet: Actions.REFRESH_WALLET,
       fetchWallet: Actions.FETCH_WALLET,
     }),
-  },
-  filters: {
-    voteage,
-    rate,
-    timestamp,
-    number,
-    NumFormat,
-    intPartFormat,
   },
 };
 </script>

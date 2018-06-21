@@ -17,9 +17,9 @@
           <td>{{index + 1}}</td>
           <td>({{token.symbol}}, {{token.precision}})</td>
           <td>{{token.issuer}}</td>
-          <td class="t_l">{{token.max_supply}}</td>
-          <td class="t_l">{{token.supply}}</td>
-          <td>{{token.balance}}</td>
+          <td class="t_l">{{token.max_supply | formatNumber({showSymbol: true})}}</td>
+          <td class="t_l">{{token.supply | formatNumber({showSymbol: true})}}</td>
+          <td>{{token.balance | formatNumber({showSymbol: true})}}</td>
           <td>
             <router-link class="button is-small is-outlined" :to="{name: 'tokenTransfer', params: { symbol: token.symbol, precision: token.precision }}">转账</router-link>
           </td>
@@ -31,19 +31,11 @@
 
 <script>
 import { mapState } from 'vuex';
-import { number, NumFormat } from '@/utils/filter';
 
 export default {
-  name: 'TransferList',
-  data() {
-    return {};
-  },
+  name: 'TokenList',
   computed: {
     ...mapState(['account']),
-  },
-  filters: {
-    number,
-    NumFormat,
   },
 };
 </script>

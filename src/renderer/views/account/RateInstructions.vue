@@ -3,22 +3,23 @@
     <div class="rate">
       <span><b>资产总额:</b></span>
       <p class="dec">
-       资产总额 = 可用余额 + 投票总额 + 待领分红总额 + 赎回总额 <br>
-      </p>
-    </div>
-    <div class="rate">
-      <span><b>年化利率:</b></span>
-      <p class="dec">
-        每 3s 一个块，每个块奖励 9 EOS <br>
-        链每天增发 = 9 * 20 * 60 * 24 = 259,200 EOS <br>
-        链每年增发 =  链每天增发 * 365 = 94,608,000 EOS <br>
-        投票年化利率 = （链每年增发 / 23 * 分红比率） / 总得票数 * 100%
+       资产总额 = 可用余额 + 投票总额  + 赎回总额 + 待领分红总额 <br>
       </p>
     </div>
     <div class="rate">
       <span><b>分红比例:</b></span>
       <p class="dec">
         分红比例 = 100% - 佣金比例<br>
+      </p>
+    </div>
+    <div class="rate">
+      <span><b>年化利率:</b></span>
+      <p class="dec">
+        链初始发行量为 10 亿 EOS<br>
+        每 3s 一个块，每个块为超级节点奖励 9 EOS <br>
+        超级节点每日奖励 = 9 * 20 * 60 * 24 = 259,200 EOS <br>
+        超级节点每年奖励 =  超级节点每日奖励 * 365 = 94,608,000 EOS <br>
+        投票年化利率 = （超级节点每年奖励 / 23 * 分红比例） / 所投节点总得票数 * 100%
       </p>
     </div>
     <div class="rate">
@@ -29,28 +30,20 @@
         待领分红金额 = （我的最新票龄 / 节点最新票龄） * 奖池金额
       </p>
     </div>
+    <div class="rate">
+      <span><b>BlockOne 解锁：</b></span>
+      <p class="dec">
+        每 3s 一个块，每个块为BlockOne解锁 1 EOS <br>
+        BlockOne每年解锁 =  1 * 20 * 60 * 24 * 365 = 10,512,000 EOS<br>
+        每10年解锁约 1 亿 EOS，10年以后继续解锁，永不间断
+      </p>
+    </div>
   </div>
 </template>
 
 <script>
-import { mapState } from 'vuex';
-
-import { number, rate, voteage, yearrate } from '@/utils/filter';
-
 export default {
-  name: 'TransferRecord',
-  data() {
-    return {};
-  },
-  computed: {
-    ...mapState(['account']),
-  },
-  filters: {
-    number,
-    rate,
-    yearrate,
-    voteage,
-  },
+  name: 'RateInstructions',
 };
 </script>
 

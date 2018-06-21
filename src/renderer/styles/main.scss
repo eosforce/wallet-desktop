@@ -292,8 +292,7 @@ a:hover {
 .table td {
   font-size: 14px;
   color: #000 !important;
-  font-family: 'Microsoft YaHei', BlinkMacSystemFont, -apple-system, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu',
-  'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', 'Helvetica', sans-serif, Consolas, Monaco, monospace;
+  font-family: 'Microsoft YaHei', BlinkMacSystemFont, -apple-system, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', 'Helvetica', sans-serif, Consolas, Monaco, monospace;
 }
 
 .table th {
@@ -307,7 +306,7 @@ a:hover {
 .bplist-box .table td:nth-child(1),
 .bplist-box .table th:nth-child(1),
 .bplist-box .table td:nth-child(4),
-.bplist-box .table th:nth-child(4)  {
+.bplist-box .table th:nth-child(4) {
   text-align: center;
 }
 
@@ -356,11 +355,11 @@ tr.is-vote {
     color: #fff;
     border: none;
   }
-  .button.is-small:hover{
+  .button.is-small:hover {
     background-color: #276cda;
     border-color: transparent;
     color: #fff;
-}
+  }
 }
 
 .exchange-box .table td,
