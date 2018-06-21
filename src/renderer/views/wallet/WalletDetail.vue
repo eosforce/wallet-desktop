@@ -8,6 +8,7 @@
             公钥：{{walletData.publicKey}}
             <span class="is-grouped">
               <a style="margin-left:15px" class="button is-small is-outlined" @click="exportWallet()">导出钱包</a>
+              <a style="margin-left:15px" class="button is-small is-outlined" @click="toggle('showDeleteWallet', true)">删除钱包</a>
             </span>
             <span class="refresh fr el-icon-refresh" @click="refresh()"></span>
           </div>
@@ -19,6 +20,17 @@
           </div>
       </div>
     </div>
+    <confirm-modal title="删除钱包" :show="showDeleteWallet" @confirm="decryptAndDeleteWallet" @close="toggle('showDeleteWallet', false)">
+      <div>
+        <p class="help is-danger" style="font-size:14px;">您正在进行删除钱包操作，如对该钱包还有需要，请确保您已经导出钱包并妥善保管，一经删除您的账户将无法恢复，对应资产将无法找回，请谨慎操作。</p>
+        <div class="row" style="margin-top:16px;">
+          <div class="row__title">钱包密码</div>
+          <div class="row__content">
+            <input class="input" v-model="password" type="password" placeholder="请输入钱包密码" required />
+          </div>
+        </div>
+      </div>
+    </confirm-modal>
     <router-view name="modal"></router-view>
   </div>
 </template>
@@ -27,11 +39,19 @@
 import PageMenu from '@/views/layout/PageMenu';
 import { mapGetters, mapActions, mapState } from 'vuex';
 
+import ConfirmModal from '@/components/ConfirmModal';
 import Message from '@/components/Message';
 import { Getters, Actions } from '@/constants/types.constants';
+import { decryptWif } from '@/utils/util';
 
 export default {
   name: 'WalletDetail',
+  data() {
+    return {
+      password: '',
+      showDeleteWallet: false,
+    };
+  },
   computed: {
     ...mapGetters({
       accountList: Getters.ACCOUNT_LIST,
@@ -51,6 +71,25 @@ export default {
     refresh() {
       this.refreshWallet();
     },
+    toggle(key, val) {
+      return (this[key] = val === undefined ? !this[key] : val);
+    },
+    // 删除钱包
+    decryptAndDeleteWallet() {
+      return decryptWif(this.password, this.walletData.crypto)
+        .catch(err => {
+          Message.error(err && err.message);
+          return Promise.reject(err);
+        })
+        .then(data => {
+          return this.deleteWallet({ publicKey: this.walletData.publicKey });
+        })
+        .then(result => {
+          this.toggle('showDeleteWallet', false);
+          location.reload();
+          Message.success('删除成功');
+        });
+    },
     // 导出钱包存储文件
     exportWallet() {
       this.fetchWallet({ id: this.$route.params.walletId, mutation: false }).then(data => {
@@ -65,6 +104,7 @@ export default {
     ...mapActions({
       fetchWallet: Actions.FETCH_WALLET,
       refreshWallet: Actions.REFRESH_WALLET,
+      deleteWallet: Actions.DELETE_WALLET,
     }),
   },
   beforeRouteUpdate(to, from, next) {
@@ -80,6 +120,7 @@ export default {
   },
   components: {
     PageMenu,
+    ConfirmModal,
   },
 };
 </script>

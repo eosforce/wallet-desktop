@@ -32,6 +32,10 @@ export default class Storage {
       return Promise.resolve(err);
     }
   }
+
+  remove() {
+    return Promise.resolve(localStorage.removeItem(this.storagePath));
+  }
 }
 
 export const getWalletIdFromKey = (key = '') => {
@@ -65,4 +69,8 @@ export const createWalletData = ({ privateKey, password }) => {
   } else {
     return Promise.reject(new Error('数据格式错误'));
   }
+};
+
+export const deleteWalletData = ({ publicKey }) => {
+  return Storage.setPath(getWalletKeyFromId(publicKey)).remove();
 };

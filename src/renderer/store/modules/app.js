@@ -1,6 +1,6 @@
 import { Mutations, Actions, Getters } from '@/constants/types.constants';
 
-import Storage, { getWalletIdList, createWalletData, getWalletKeyFromId } from '@/services/Storage';
+import Storage, { getWalletIdList, createWalletData, getWalletKeyFromId, deleteWalletData } from '@/services/Storage';
 import { getNodeList, getAccounts, getNodeInfo } from '@/services/Eos';
 import { decryptWif } from '@/utils/util';
 
@@ -89,6 +89,9 @@ const actions = {
   },
   [Actions.NEW_WALLET]({ dispatch }, { privateKey, password }) {
     return createWalletData({ privateKey, password });
+  },
+  [Actions.DELETE_WALLET]({ state, getters, dispatch }, { publicKey }) {
+    return deleteWalletData({ publicKey });
   },
   [Actions.FETCH_NODE_INFO]({ commit, state }, { node } = {}) {
     return getNodeInfo(node || state.currentNodeValue).then(result => {
