@@ -43,7 +43,7 @@
           </div>
         </div>
         <div class="field" style="color:#fff">
-          <input type="checkbox" required tabindex="-1" v-model="isAgreeTerm" /> 我已经阅读并同意<a href="#" tabindex="-1">服务及隐私条款</a>
+          <input type="checkbox" required tabindex="-1" v-model="isAgreeTerm" /> 我已经阅读并同意<a href="static/term.html" target="_blank" tabindex="-1">服务及隐私条款</a>
         </div>
         <div class="field is-grouped is-grouped-right">
           <div class="control">
