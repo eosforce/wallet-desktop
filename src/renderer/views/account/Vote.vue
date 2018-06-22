@@ -31,7 +31,7 @@
             </div>
           </div>
           <div class="field">
-            <p class="help tips">* 手续费 {{app.fee}}</p>
+            <p class="help tips">* 手续费 0.05 EOS</p>
           </div>
           <div class="field is-grouped is-grouped-right">
             <div class="control">
