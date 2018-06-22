@@ -1,5 +1,6 @@
 import Eos from 'eosjs';
 
+// import { NODE_API_URL, NODE_TEST_NET_URL } from '@/constants/config.constants';
 import { NODE_API_URL } from '@/constants/config.constants';
 import Store from '@/store';
 
@@ -55,30 +56,6 @@ export const getTransferRecord = httpEndpoint => ({ accountName, pos, offset }) 
 export const getTransAction = httpEndpoint => ({ tid }) => {
   var act = Eos({ httpEndpoint }).getTransaction({ id: tid });
   return act;
-};
-
-// 从节点创建用户
-export const newAccountFromNode = httpEndpoint => ({ accountName, publicKey }) => {
-  return Eos({ httpEndpoint })
-    .createAccount({
-      account: accountName,
-      keys: {
-        owner: publicKey,
-        active: publicKey,
-      },
-    })
-    .catch(err => {
-      return handleApiError(err);
-    });
-};
-
-// 创建用户
-export const newAccount = config => ({ creator, accountName, publicKey }) => {
-  return Eos(config)
-    .newaccount(creator, accountName, publicKey, publicKey)
-    .catch(err => {
-      return handleApiError(err);
-    });
 };
 
 // 查询账号是否存在
@@ -295,6 +272,15 @@ export const getAccountInfo = httpEndpoint => async accountName => {
     info,
     bpsTable,
   };
+};
+
+// 创建用户
+export const newAccount = config => ({ creator, accountName, publicKey }) => {
+  return Eos(config)
+    .newaccount(creator, accountName, publicKey, publicKey)
+    .catch(err => {
+      return handleApiError(err);
+    });
 };
 
 export const transfer = config => {

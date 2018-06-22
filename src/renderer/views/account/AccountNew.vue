@@ -155,7 +155,6 @@ export default {
     },
     ...mapActions({
       newAccount: Actions.NEW_ACCOUNT,
-      newAccountFromNode: Actions.NEW_ACCOUNT_FROM_NODE,
       fetchWalletList: Actions.FETCH_WALLET_LIST,
     }),
   },

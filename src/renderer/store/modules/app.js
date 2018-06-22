@@ -13,6 +13,7 @@ const initState = {
   currentNodeValue: '',
   currentNodeInfo: null,
   walletList: [],
+  writeNodeList: [],
   chainNet: '',
 };
 
@@ -22,6 +23,9 @@ const mutations = {
   },
   [Mutations.SET_NODE_LIST](state, { nodeList }) {
     state.nodeList = nodeList;
+  },
+  [Mutations.SET_WRITE_NODE_LIST](state, { writeNodeList }) {
+    state.writeNodeList = writeNodeList;
   },
   [Mutations.SET_CHAIN_NET](state, { chainNet }) {
     document.title = `EOSForce钱包 ${CHAIN_NETS[chainNet]}`;
@@ -50,7 +54,7 @@ const actions = {
         })
         .then(data => {
           if (data && data.nodes) {
-            const nodeList = data.nodes.reduce((result, node) => {
+            const allNodeList = data.nodes.reduce((result, node) => {
               const r = {};
               if (node.port_ssl) {
                 r.value = `https://${node.node_addr}:${node.port_ssl}`;
@@ -58,10 +62,16 @@ const actions = {
                 r.value = `http://${node.node_addr}:${node.port_http}`;
               }
               r.name = `${node.node_name} ${node.location} ${r.value}`;
+              if (node.type) {
+                r.type = node.type;
+              }
               result.push(r);
               return result;
             }, []);
+            const nodeList = allNodeList.filter(n => n.type === '10');
+            const writeNodeList = allNodeList.filter(n => n.type === '20');
             commit(Mutations.SET_NODE_LIST, { nodeList });
+            commit(Mutations.SET_WRITE_NODE_LIST, { writeNodeList });
             const randomIndex = Math.floor(Math.random() * nodeList.length);
             return dispatch(Actions.FETCH_NODE_INFO, { node: nodeList[randomIndex] && nodeList[randomIndex].value });
           } else {
@@ -155,6 +165,7 @@ const getters = {
   },
   [Getters.GET_TRANSE_CONFIG]: (state, getters) => (password, name) => {
     const walletId = getters[Getters.ACCOUT_MAP][name];
+    const httpEndpoint = state.writeNodeList[Math.floor(Math.random() * state.writeNodeList.length)].value;
     return Storage.setPath(getWalletKeyFromId(walletId))
       .fetch()
       .then(walletData => {
@@ -163,7 +174,7 @@ const getters = {
       .then(wif => {
         return {
           keyProvider: wif,
-          httpEndpoint: state.currentNodeInfo.http_endpoint,
+          httpEndpoint: httpEndpoint,
           chainId: state.currentNodeInfo.chain_id,
         };
       });
