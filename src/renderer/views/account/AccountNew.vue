@@ -144,7 +144,7 @@ export default {
         })
         .then(() => {
           this.fetchWalletList();
-          this.$router.push({ name: 'accountDetail', params: { accountName: this.accountName } });
+          this.$router.push({ name: 'accountDetail', params: { accountName: this.creatorAccountName } });
         });
     },
     close() {
