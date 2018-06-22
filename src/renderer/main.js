@@ -8,7 +8,7 @@ import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 
 import setMenu from '@/menu';
-import { formatNumber, timestamp } from '@/utils/filter';
+import { formatNumber, timestamp, hostname } from '@/utils/filter';
 
 Vue.use(ElementUI);
 setMenu();
@@ -18,6 +18,7 @@ Vue.config.productionTip = false;
 
 Vue.filter('formatNumber', formatNumber);
 Vue.filter('timestamp', timestamp);
+Vue.filter('hostname', hostname);
 
 /* eslint-disable no-new */
 new Vue({
