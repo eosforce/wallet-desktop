@@ -28,7 +28,6 @@ const mutations = {
     state.writeNodeList = writeNodeList;
   },
   [Mutations.SET_CHAIN_NET](state, { chainNet }) {
-    document.title = `EOSForce钱包 ${CHAIN_NETS[chainNet]}`;
     state.chainNet = chainNet;
   },
   [Mutations.SET_WALLET_LIST](state, { walletList }) {
