@@ -2,6 +2,14 @@ import dayjs from 'dayjs';
 
 import BigNumber from 'bignumber.js';
 
+export const hostname = value => {
+  try {
+    return new URL(value).hostname;
+  } catch (err) {
+    return value;
+  }
+};
+
 export const timestamp = (value, format = 'YYYY-MM-DD HH:mm:ss') => {
   value = value + 'Z';
   const date = dayjs(value);
