@@ -65,7 +65,7 @@
         </div>
         <div class="row">
           <div class="row__title">手续费</div>
-          <div class="row__content">{{app.fee}}</div>
+          <div class="row__content">0.05 EOS</div>
         </div>
         <div class="row">
           <div class="row__title">输入密码</div>
