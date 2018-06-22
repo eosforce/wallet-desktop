@@ -14,8 +14,8 @@
         <div class="row__content">{{voter}}</div>
       </div>
       <div class="row">
-        <div class="row__title">锁定三天，解锁块高度</div>
-        <div class="row__content">{{unstakeHeight + 86400}}</div>
+        <div class="row__title" style="color:#ff3d00">锁定三天，解锁块高度</div>
+        <div class="row__content" style="color:#ff3d00">{{unstakeHeight + 86400}}</div>
       </div>
       <div class="row">
         <div class="row__title">可赎回金额</div>
