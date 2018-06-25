@@ -21,7 +21,7 @@
           <td>{{bp.name}}</td>
           <td>
             <span v-show="!bp.url">-</span>
-            <span v-show="bp.url"><a :href="bp.url" target="_blank">{{bp.url | hostname}}</a></span>
+            <span v-show="bp.url"><a :href="bp.url" target="_blank" class="bpurl">{{bp.url | hostname}}</a></span>
           </td>
           <td>{{bp.amount}}</td>
           <td>{{(10000 - bp.commission_rate) | formatNumber({p: 2, sign: '%', percentage: 0.01})}}</td>
@@ -72,5 +72,9 @@ export default {
   text-align: center;
   white-space: nowrap;
   cursor: pointer;
+}
+
+.bpurl{
+  color:#276cda
 }
 </style>
