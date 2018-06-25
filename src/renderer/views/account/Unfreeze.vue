@@ -3,7 +3,7 @@
     <div>
       <div class="row">
         <div class="row__title">交易名称</div>
-        <div class="row__content">解除冻结</div>
+        <div class="row__content">赎回</div>
       </div>
       <div class="row">
         <div class="row__title">超级节点名称</div>
@@ -92,11 +92,11 @@ export default {
         password: this.password,
       })
         .then(result => {
-          Message.success('解除冻结成功');
+          Message.success('赎回成功');
         })
         .catch(err => {
           Message.error({
-            title: `${err.code ? `code: ${err.code}` : '解除冻结失败'}`,
+            title: `${err.code ? `code: ${err.code}` : '赎回失败'}`,
             message: err.message,
           });
           this.submitting = false;
