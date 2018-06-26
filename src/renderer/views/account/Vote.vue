@@ -85,9 +85,6 @@
             <label>投票金额</label>
           </div>
         </div>
-        <div>
-          <p>投票成功后EOS将进入投票账户,撤销投票后约3天可赎回到余额账户</p>
-        </div>
         <div class="row">
           <div class="row__title">交易名称</div>
           <div class="row__content">超级节点投票</div>
