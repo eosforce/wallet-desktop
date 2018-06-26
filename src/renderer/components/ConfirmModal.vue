@@ -13,7 +13,7 @@
       </div>
       <div class="modal-footer">
         <a tabindex="-1" v-if="canClose" class="button cancel-button" :disabled="submitting" @click="close">取消</a>
-        <a class="button is-link" :class="{'is-loading': submitting}" :disabled="submitting" @click="confirm">确定</a>
+        <a class="button is-link" v-show="showConfirm" :class="{'is-loading': submitting}" :disabled="submitting" @click="confirm">确定</a>
       </div>
     </div>
   </div>
@@ -29,6 +29,11 @@ export default {
     show: {
       type: Boolean,
       required: true,
+    },
+    showConfirm: {
+      type: Boolean,
+      required: false,
+      default: true,
     },
     submitting: {
       type: Boolean,

@@ -1,5 +1,5 @@
 <template>
-  <confirm-modal :show="true" :submitting="submitting" @confirm="submit()" @close="close">
+  <confirm-modal :showConfirm="remainHeight <= 0" :show="true" :submitting="submitting" @confirm="submit()" @close="close">
     <div>
       <div class="graphic">
         <div class="graphic-item" :style="{order: this.selectType === '0' ? 1 : 3}">
@@ -16,7 +16,6 @@
         </div>
       </div>
       <div>
-        <p v-if="remainHeight > 0" style="color: #ff3d00;">冻结中，将在块高度{{unstakeHeight + 86400}}解除冻结后可执行赎回操作</p>
         <p v-if="remainHeight <= 0" style="color: #ff3d00;">赎回成功后EOS将进入余额账户，即时到账</p>
       </div>
       <div class="row">
