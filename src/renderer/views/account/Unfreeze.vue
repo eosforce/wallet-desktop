@@ -2,15 +2,15 @@
   <confirm-modal :showConfirm="remainHeight <= 0" :show="true" :submitting="submitting" @confirm="submit()" @close="close">
     <div>
       <div class="graphic">
-        <div class="graphic-item" :style="{order: this.selectType === '0' ? 1 : 3}">
+        <div class="graphic-item">
           <img src="@/assets/vote/avaliable.png">
           <label>可用余额</label>
         </div>
-        <div class="graphic-item" style="order:2">
+        <div class="graphic-item">
           <img style="width: 50px;margin-left:50px;margin-right:50px;" src="@/assets/vote/transform.png">
           <label></label>
         </div>
-        <div class="graphic-item" :style="{order: this.selectType === '0' ? 3 : 1}">
+        <div class="graphic-item">
           <img src="@/assets/vote/vote.png">
           <label>投票总额</label>
         </div>
@@ -34,7 +34,7 @@
         <div class="row__title" style="color:#ff3d00">锁定三天，解锁块高度</div>
         <div class="row__content" style="color:#ff3d00">{{unstakeHeight + 86400}}</div>
       </div>
-      <div class="row" v-if="remainHeight > 0">
+      <div class="row">
         <div class="row__title" style="color:#ff3d00">可赎回时间</div>
         <div class="row__content" style="color:#ff3d00">{{lockTime}}</div>
       </div>
@@ -74,9 +74,6 @@ export default {
     };
   },
   computed: {
-    remainHeight() {
-      return this.unstakeHeight + 86400 - this.app.currentNodeInfo.head_block_num;
-    },
     lockTime() {
       return dayjs(this.date + this.remainHeight * 3000).format('YYYY-MM-DD HH:mm:ss');
     },
@@ -149,6 +146,7 @@ export default {
     }),
   },
   created() {
+    this.remainHeight = this.unstakeHeight + 86400 - this.app.currentNodeInfo.head_block_num;
     this.date = +new Date();
   },
   components: {
