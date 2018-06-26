@@ -73,8 +73,10 @@
       <div>
         <div class="graphic">
           <div class="graphic-item" :style="{order: this.selectType === '0' ? 1 : 3}">
-            <img src="@/assets/vote/avaliable.png">
-            <label>可用余额</label>
+            <img v-if="this.selectType === '0'" src="@/assets/vote/avaliable.png">
+            <label v-if="this.selectType === '0'">可用余额</label>
+            <img v-if="this.selectType === '1'" src="@/assets/vote/redeem.png">
+            <label v-if="this.selectType === '1'">赎回金额</label>
           </div>
           <div class="graphic-item" style="order:2">
             <img style="width: 50px;margin-left:50px;margin-right:50px;" src="@/assets/vote/transform.png">
