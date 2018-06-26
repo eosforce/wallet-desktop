@@ -82,7 +82,7 @@
           </div>
           <div class="graphic-item" :style="{order: this.selectType === '0' ? 3 : 1}">
             <img src="@/assets/vote/vote.png">
-            <label>投票总额</label>
+            <label>投票金额</label>
           </div>
         </div>
         <div>
