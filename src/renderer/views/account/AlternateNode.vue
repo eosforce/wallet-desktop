@@ -33,7 +33,9 @@
             <span v-show="bp.hasVote">{{ bp.vote && bp.vote.staked | formatNumber({p: 0})}}</span>
           </td>
           <td>
-            <router-link class="button is-small is-outlined" :to="{name: 'vote', params: { bpname: bp.name }}">投票</router-link>
+            <router-link class="button is-small is-outlined" :to="{name: 'vote', params: { bpname: bp.name }}">
+              {{bp.hasVote ? '修改投票' : '开始投票'}}
+            </router-link>
           </td>
         </tr>
       </tbody>
@@ -73,7 +75,4 @@ export default {
   white-space: nowrap;
   cursor: pointer;
 }
-/* tbody .is-vote {
-  display: none;
-} */
 </style>
