@@ -10,5 +10,5 @@ export const NODE_TEST_NET_URL = 'https://raw.githubusercontent.com/eosforce/tes
 
 export const CHAIN_NETS = {
   '1.0': '主网 1.0',
-  // '0.7': '公测网 0.7',
+  '0.7': '公测网 0.7',
 };

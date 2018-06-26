@@ -46,7 +46,9 @@
             </router-link>
           </td>
           <td>
-            <router-link class="button is-small is-outlined" :to="{name: 'vote', params: { bpname: bp.name }}">投票</router-link>
+            <router-link class="button is-small is-outlined is-modify" :to="{name: 'vote', params: { bpname: bp.name }}">
+              修改投票
+            </router-link>
           </td>
         </tr>
       </tbody>
@@ -87,5 +89,11 @@ export default {
   text-align: center;
   white-space: nowrap;
   cursor: pointer;
+}
+
+.table td .button.is-small.is-modify{
+    background: transparent;
+    color: #408ee1;
+    border: 1px solid #408ee1;
 }
 </style>

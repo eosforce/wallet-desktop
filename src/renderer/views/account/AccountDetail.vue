@@ -123,7 +123,7 @@ export default {
 .refresh {
   height: 40px;
   line-height: 40px;
-  margin-right: 15px;
+  margin-right: 25px;
   font-size: 20px;
   cursor: pointer;
 }

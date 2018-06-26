@@ -19,19 +19,43 @@
               可用投票金额<span class="static-text">{{account.info.available | formatNumber({p: 4, showSymbol: true})}}</span>
             </div>
           </div>
-          <div class="field">
+          <div class="field is-horizontal">
             <label class="label">
-              新投票金额（整数）
+              投票类型
             </label>
-            <div class="control">
-              <input v-model="amount" min="0" class="input" type="number" step="1" placeholder="单位 EOS"  required />
+            <div class="control" style="margin-left:16px;color:#fff;">
+              <label class="radio">
+                <input type="radio" v-model="selectType" value="0" :disabled="selectMap['0'].disabled">
+                新增投票
+              </label>
+              <label class="radio">
+                <input type="radio" v-model="selectType" value="1" :disabled="selectMap['1'].disabled">
+                赎回投票
+              </label>
               <p class="help is-danger" v-show="amount && !isValidAmount">
                 金额必须为整数
               </p>
             </div>
           </div>
           <div class="field">
-            <p class="help tips">* 手续费 0.05 EOS</p>
+            <label class="label">
+              {{selectInfo.title}}
+            </label>
+            <div class="control">
+              <input v-model="amount" min="0" :max="selectInfo.max" class="input" type="number" step="1" placeholder="单位 EOS"  required />
+              <p class="help is-danger" v-show="amount && !isValidAmount">
+                金额必须为整数
+              </p>
+              <p class="help tips">{{selectInfo.tip}}，手续费 {{fee}} EOS</p>
+              <p class="help is-danger" v-show="amount > selectInfo.max">
+                {{selectInfo.maxTip}}
+              </p>
+            </div>
+          </div>
+          <div class="field">
+            <div class="static-label">
+              修改后投票金额<span class="static-text">{{newStakedAmount | formatNumber({p: 0, showSymbol: true})}}</span>
+            </div>
           </div>
           <div class="field is-grouped is-grouped-right">
             <div class="control">
@@ -47,6 +71,22 @@
     </div>
     <confirm-modal :show="showConfirm" :submitting="submitting" @confirm="submit()" @close="toggle('showConfirm', false)">
       <div>
+        <div class="graphic">
+          <div class="graphic-item" :style="{order: this.selectType === '0' ? 1 : 3}">
+            <img v-if="this.selectType === '0'" src="@/assets/vote/avaliable.png">
+            <label v-if="this.selectType === '0'">可用余额</label>
+            <img v-if="this.selectType === '1'" src="@/assets/vote/redeem.png">
+            <label v-if="this.selectType === '1'">赎回金额</label>
+          </div>
+          <div class="graphic-item" style="order:2">
+            <img style="width: 50px;margin-left:50px;margin-right:50px;" src="@/assets/vote/transform.png">
+            <label></label>
+          </div>
+          <div class="graphic-item" :style="{order: this.selectType === '0' ? 3 : 1}">
+            <img src="@/assets/vote/vote.png">
+            <label>投票金额</label>
+          </div>
+        </div>
         <div class="row">
           <div class="row__title">交易名称</div>
           <div class="row__content">超级节点投票</div>
@@ -60,12 +100,16 @@
           <div class="row__content">{{voter}}</div>
         </div>
         <div class="row">
-          <div class="row__title">新投票金额</div>
+          <div class="row__title">{{selectInfo.confirm}}</div>
           <div class="row__content">{{amount | formatNumber({p: 0, showSymbol: true})}}</div>
         </div>
         <div class="row">
+          <div class="row__title">修改后投票金额</div>
+          <div class="row__content">{{newStakedAmount | formatNumber({p: 0, showSymbol: true})}}</div>
+        </div>
+        <div class="row">
           <div class="row__title">手续费</div>
-          <div class="row__content">0.05 EOS</div>
+          <div class="row__content">{{fee}} EOS</div>
         </div>
         <div class="row">
           <div class="row__title">输入密码</div>
@@ -85,6 +129,7 @@ import Message from '@/components/Message';
 import ConfirmModal from '@/components/ConfirmModal';
 import { Actions } from '@/constants/types.constants';
 import { isValidAmount } from '@/utils/rules';
+import { toNumber } from '@/utils/util';
 
 export default {
   name: 'vote',
@@ -95,9 +140,43 @@ export default {
 
       showConfirm: false,
       submitting: false,
+      fee: 0.05,
+      selectType: '0',
     };
   },
   computed: {
+    selectMap() {
+      return {
+        '0': {
+          title: '新增金额（整数）',
+          confirm: '新增金额',
+          tip: '* 立即生效',
+          max: toNumber(this.account.info.available) - this.fee,
+          maxTip: '超过可用投票金额！',
+          disabled: false,
+        },
+        '1': {
+          title: '赎回金额（整数）',
+          confirm: '赎回金额',
+          tip: '* 赎回锁定期三天，三天后需手动解锁',
+          max: toNumber(this.stakedAmount),
+          maxTip: '超过当前投票金额！',
+          disabled: toNumber(this.stakedAmount) <= 0,
+        },
+      };
+    },
+    newStakedAmount() {
+      if (this.selectType === '0') {
+        return toNumber(this.stakedAmount) + toNumber(this.amount);
+      } else if (this.selectType === '1') {
+        return toNumber(this.stakedAmount) - toNumber(this.amount);
+      } else {
+        return undefined;
+      }
+    },
+    selectInfo() {
+      return this.selectMap[this.selectType];
+    },
     voter() {
       return this.$route.params.accountName;
     },
@@ -121,19 +200,16 @@ export default {
     },
     ...mapState(['app', 'account']),
   },
-  created() {
-    this.amount = parseInt(this.stakedAmount);
-  },
   methods: {
     confirmInfo() {
-      if (this.isValidAmount) {
+      if (this.isValidAmount && this.newStakedAmount !== undefined) {
         this.showConfirm = true;
       }
     },
     submit() {
       this.submitting = true;
       this.vote({
-        amount: this.amount,
+        amount: this.newStakedAmount,
         bpname: this.bpname,
         password: this.password,
         voter: this.voter,
@@ -170,3 +246,23 @@ export default {
   },
 };
 </script>
+
+<style>
+.radio:hover {
+  color: #fff;
+}
+.graphic {
+  margin-bottom: 32px;
+  display: flex;
+  justify-content: center;
+}
+.graphic-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.graphic img {
+  width: 60px;
+}
+</style>

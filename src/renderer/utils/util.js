@@ -81,6 +81,20 @@ export const toBigNumber = asset => {
   }
 };
 
+export const toNumber = value => {
+  if (!value) return 0;
+  if (BigNumber.isBigNumber(value)) {
+    return value.toNumber();
+  }
+  if (!isNaN(value)) {
+    return Number(value);
+  }
+  if (isNaN(value) && typeof value === 'string' && /^[0-9.-]+\s([A-Z]+)$/.test(value)) {
+    return Number(value.split(' ')[0]);
+  }
+  return value;
+};
+
 // '字符串或数字或 bignumber 格式转化为 XXX EOS 格式'
 export const toAsset = (_amount, symbol = 'EOS', { precision = '4' } = {}) => {
   const amount = toBigNumber(_amount).toFixed(Number(precision));
