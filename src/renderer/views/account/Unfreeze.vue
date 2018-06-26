@@ -170,7 +170,7 @@ export default {
   justify-content: center;
 }
 .graphic img {
-  width: 100px;
+  width: 60px;
 }
 </style>
 
