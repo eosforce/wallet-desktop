@@ -21,7 +21,7 @@
           <td>{{bp.name}}</td>
           <td>
             <span v-show="!bp.url">-</span>
-            <span v-show="bp.url"><a :href="bp.url" target="_blank">{{bp.url | hostname}}</a></span>
+            <span v-show="bp.url"><a :href="bp.url" target="_blank" class="bpurl">{{bp.url | hostname}}</a></span>
           </td>
           <td>-</td>
           <td>{{10000 - bp.commission_rate | formatNumber({p: 2, sign: '%', percentage: 0.01})}}</td>
@@ -33,7 +33,7 @@
             <span v-show="bp.hasVote">{{ bp.vote && bp.vote.staked | formatNumber({p: 0})}}</span>
           </td>
           <td>
-            <router-link class="button is-small is-outlined" :to="{name: 'vote', params: { bpname: bp.name }}">
+            <router-link class="button is-small is-outlined" :class="{'is-modify': bp.hasVote}" :to="{name: 'vote', params: { bpname: bp.name }}">
               {{bp.hasVote ? '修改投票' : '开始投票'}}
             </router-link>
           </td>
@@ -74,5 +74,19 @@ export default {
   text-align: center;
   white-space: nowrap;
   cursor: pointer;
+}
+
+/* tbody .is-vote {
+  display: none;
+} */
+
+.bpurl{
+  color:#276cda
+}
+
+.table td .button.is-small.is-modify{
+    background: transparent;
+    color: #408ee1;
+    border: 1px solid #408ee1;
 }
 </style>
