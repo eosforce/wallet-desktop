@@ -82,11 +82,8 @@
           </div>
           <div class="graphic-item" :style="{order: this.selectType === '0' ? 3 : 1}">
             <img src="@/assets/vote/vote.png">
-            <label>投票总额</label>
+            <label>投票金额</label>
           </div>
-        </div>
-        <div>
-          <p>投票成功后EOS将进入投票账户,撤销投票后约3天可赎回到余额账户</p>
         </div>
         <div class="row">
           <div class="row__title">交易名称</div>
@@ -264,6 +261,6 @@ export default {
   justify-content: center;
 }
 .graphic img {
-  width: 100px;
+  width: 60px;
 }
 </style>

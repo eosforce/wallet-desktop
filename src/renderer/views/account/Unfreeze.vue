@@ -11,8 +11,8 @@
           <label></label>
         </div>
         <div class="graphic-item" :style="{order: this.selectType === '0' ? 3 : 1}">
-          <img src="@/assets/vote/vote.png">
-          <label>投票总额</label>
+          <img src="@/assets/vote/redeem.png">
+          <label>赎回金额</label>
         </div>
       </div>
       <div>
@@ -170,7 +170,7 @@ export default {
   justify-content: center;
 }
 .graphic img {
-  width: 100px;
+  width: 60px;
 }
 </style>
 
