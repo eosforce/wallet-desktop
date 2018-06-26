@@ -15,9 +15,6 @@
           <label>可用余额</label>
         </div>
       </div>
-      <div>
-        <p v-if="remainHeight <= 0" style="color: #ff3d00;">赎回成功后EOS将进入余额账户，即时到账</p>
-      </div>
       <div class="row">
         <div class="row__title">交易名称</div>
         <div class="row__content">赎回</div>
@@ -31,12 +28,12 @@
         <div class="row__content">{{voter}}</div>
       </div>
       <div class="row">
-        <div class="row__title" style="color:#ff3d00">锁定三天，解锁块高度</div>
-        <div class="row__content" style="color:#ff3d00">{{unstakeHeight + 86400}}</div>
+        <div class="row__title" :class="{red: remainHeight > 0}">锁定三天，解锁块高度</div>
+        <div class="row__content" :class="{red: remainHeight > 0}">{{unstakeHeight + 86400}}</div>
       </div>
       <div class="row">
-        <div class="row__title" style="color:#ff3d00">可赎回时间</div>
-        <div class="row__content" style="color:#ff3d00">{{lockTime}}</div>
+        <div class="row__title" :class="{red: remainHeight > 0}">可赎回时间</div>
+        <div class="row__content" :class="{red: remainHeight > 0}">{{lockTime}}</div>
       </div>
       <div class="row">
         <div class="row__title">可赎回金额</div>
@@ -169,6 +166,9 @@ export default {
 }
 .graphic img {
   width: 60px;
+}
+.red {
+  color: #ff3d00;
 }
 </style>
 
