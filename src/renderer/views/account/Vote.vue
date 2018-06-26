@@ -172,7 +172,7 @@ export default {
       } else if (this.selectType === '1') {
         return toNumber(this.stakedAmount) - toNumber(this.amount);
       } else {
-        return;
+        return undefined;
       }
     },
     selectInfo() {
