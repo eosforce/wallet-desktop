@@ -17,12 +17,12 @@
             </tr>
           </thead>
           <tbody>
-            <tr>
+            <tr :value="node.value" v-for="node in app.nodeList" :key="node.value">
               <td>-</td>
-              <td>-</td>
-              <td>-</td>
-              <td>-</td>
-              <td>-</td>
+              <td>{{node.name.substr(0,4)}}</td>
+              <td>{{node.value}}</td>
+              <td>{{node.value.split(":")[2]}}</td>
+              <td>{{nodeInfo.head_block_num}}</td>
               <td>-</td>
               <td>-</td>
             </tr>
@@ -49,6 +49,17 @@ export default {
     };
   },
   computed: {
+    nodeInfo() {
+      return this.app.currentNodeInfo || {};
+    },
+    nodeValue: {
+      get() {
+        return this.app.currentNodeValue;
+      },
+      set(value) {
+        this.fetchNodeInfo({ node: value });
+      },
+    },
     ...mapGetters({
       accountList: Getters.ACCOUNT_LIST,
     }),

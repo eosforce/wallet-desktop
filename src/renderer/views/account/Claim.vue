@@ -1,6 +1,20 @@
 <template>
   <confirm-modal :show="true" :submitting="submitting" @confirm="submit()" @close="close">
     <div>
+      <div class="graphic">
+        <div class="graphic-item">
+          <img src="@/assets/vote/reward.png">
+          <label>待领分红</label>
+        </div>
+        <div class="graphic-item">
+          <img style="width: 50px;margin-left:50px;margin-right:50px;" src="@/assets/vote/transform.png">
+          <label></label>
+        </div>
+        <div class="graphic-item">
+          <img src="@/assets/vote/avaliable.png">
+          <label>可用余额</label>
+        </div>
+      </div>
       <div class="row">
         <div class="row__title">交易名称</div>
         <div class="row__content">提取分红</div>
@@ -104,4 +118,24 @@ export default {
   },
 };
 </script>
+
+<style>
+
+.graphic {
+  margin-bottom: 32px;
+  display: flex;
+  justify-content: center;
+}
+.graphic-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.graphic img {
+  width: 60px;
+}
+
+</style>
+
 
