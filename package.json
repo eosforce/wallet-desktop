@@ -1,6 +1,6 @@
 {
   "name": "eosforce",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "author": "",
   "description": "eos wallet",
   "license": null,
@@ -43,10 +43,7 @@
       ]
     },
     "mac": {
-      "icon": "build/icons/icon.icns",
-      "target": [
-        "dmg"
-      ]
+      "icon": "build/icons/icon.icns"
     },
     "win": {
       "icon": "build/icons/icon.ico",
