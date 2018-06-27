@@ -43,18 +43,22 @@
       ]
     },
     "mac": {
-      "icon": "build/icons/icon.icns"
+      "icon": "build/icons/icon.icns",
+      "target": [
+        "dmg"
+      ]
     },
     "win": {
       "icon": "build/icons/icon.ico",
       "target": [
-        "nsis",
-        "portable",
-        "zip"
+        "nsis"
       ]
     },
     "linux": {
-      "icon": "build/icons"
+      "icon": "build/icons",
+      "target": [
+        "AppImage"
+      ]
     }
   },
   "dependencies": {
