@@ -14,6 +14,9 @@
           <option :value="node.value" v-for="node in app.nodeList" :key="node.value">{{node.name}}</option>
         </select>
       </div>
+      <div class="nodedetail">
+         <router-link :to="{name: 'NodeDetail'}">查看详情</router-link>
+      </div>
       <div class="block">
         出块节点:<span>{{nodeInfo.head_block_producer}}</span>
         最新高度:<span>{{nodeInfo.head_block_num}}</span>
@@ -241,5 +244,12 @@ export default {
   text-align: center;
   padding: 0 10px;
   cursor: pointer;
+}
+
+.nodedetail a{
+  border: 1px solid #fff;
+  color: #fff;
+  padding: 0 10px;
+  margin-left:10px;
 }
 </style>

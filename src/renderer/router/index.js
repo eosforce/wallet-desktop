@@ -16,6 +16,11 @@ export default new Router({
       },
       children: [
         {
+          name: 'NodeDetail',
+          path: 'wallets/:NodeDetail',
+          component: () => import('@/views/wallet/NodeDetail'),
+        },
+        {
           name: 'walletDetail',
           path: 'wallets/:walletId',
           component: () => import('@/views/wallet/WalletDetail'),
