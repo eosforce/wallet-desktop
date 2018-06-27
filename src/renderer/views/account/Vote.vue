@@ -26,7 +26,7 @@
             <div class="control" style="margin-left:16px;color:#fff;">
               <label class="radio">
                 <input type="radio" v-model="selectType" value="0" :disabled="selectMap['0'].disabled">
-                新增投票
+                追加投票
               </label>
               <label class="radio">
                 <input type="radio" v-model="selectType" value="1" :disabled="selectMap['1'].disabled">
