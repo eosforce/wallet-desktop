@@ -1,6 +1,6 @@
 {
   "name": "eosforce",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "author": "",
   "description": "eos wallet",
   "license": null,
@@ -48,13 +48,14 @@
     "win": {
       "icon": "build/icons/icon.ico",
       "target": [
-        "nsis",
-        "portable",
-        "zip"
+        "nsis"
       ]
     },
     "linux": {
-      "icon": "build/icons"
+      "icon": "build/icons",
+      "target": [
+        "AppImage"
+      ]
     }
   },
   "dependencies": {
