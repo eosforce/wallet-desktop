@@ -3,6 +3,7 @@
     <page-menu />
     <router-view></router-view>
     <div class="dashboard-body" v-if="$route.name === 'NodeDetail'">
+      <div><span>节点列表</span></div>
       <div class="box">
         <table class="table data-table">
           <thead>
@@ -28,6 +29,10 @@
             </tr>
           </tbody>
         </table>
+      </div>
+      <div>
+        <span class="el-icon-circle-plus-outline"></span>
+        <router-link :to="{name: 'AddnodeDetail'}">可增加节点</router-link>
       </div>
     </div>
     <router-view name="modal"></router-view>

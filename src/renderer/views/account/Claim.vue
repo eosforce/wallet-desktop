@@ -120,7 +120,6 @@ export default {
 </script>
 
 <style>
-
 .graphic {
   margin-bottom: 32px;
   display: flex;
@@ -135,7 +134,6 @@ export default {
 .graphic img {
   width: 60px;
 }
-
 </style>
 
 

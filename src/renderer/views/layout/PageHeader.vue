@@ -251,5 +251,6 @@ export default {
   color: #fff;
   padding: 0 10px;
   margin-left:10px;
+  font-size: 14px;
 }
 </style>
