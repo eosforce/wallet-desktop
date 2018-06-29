@@ -203,6 +203,24 @@ export default {
   methods: {
     confirmInfo() {
       if (this.isValidAmount && this.newStakedAmount !== undefined) {
+        if (this.selectType === '0') {
+          const isOver = toNumber(this.account.info.available) - toNumber(this.amount) - 0.1 - this.fee;
+          if (isOver < 0.00001) {
+            return this.$confirm(
+              '您的可用余额将降低到0.1以下，可能不够缴纳后续交易的手续费，请注意预留一部分的可用资金。',
+              '提示',
+              {
+                confirmButtonText: '继续发送',
+                cancelButtonText: '取消发送',
+                type: 'warning',
+              }
+            ).then(() => {
+              this.showConfirm = true;
+            }).catch(() => {
+              this.showConfirm = false;
+            });
+          }
+        }
         this.showConfirm = true;
       }
     },

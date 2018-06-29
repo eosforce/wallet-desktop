@@ -89,6 +89,7 @@ import Message from '@/components/Message';
 import ConfirmModal from '@/components/ConfirmModal';
 import { Actions } from '@/constants/types.constants';
 import { isValidAccountName, isValidAmount } from '@/utils/rules';
+import { toNumber } from '@/utils/util';
 
 export default {
   name: 'Transfer',
@@ -99,6 +100,7 @@ export default {
       submitting: false,
       memo: '',
 
+      fee: 0.01,
       password: '',
       showConfirm: false,
     };
@@ -119,11 +121,33 @@ export default {
     isValidAmount() {
       return this.amount && isValidAmount(this.amount, { precision: this.precision });
     },
-    ...mapState(['app']),
+    ...mapState(['app', 'account']),
   },
   methods: {
     confirmInfo() {
       if (this.isValidToAccountName && this.isValidAmount) {
+        const isOver =
+          this.tokenSymbol === 'EOS'
+            ? toNumber(this.account.info.available) - toNumber(this.amount) - 0.1 - this.fee
+            : toNumber(this.account.info.available) - 0.1 - this.fee;
+
+        if (isOver < 0.00001) {
+          return this.$confirm(
+            '您的可用余额将降低到0.1以下，可能不够缴纳后续交易的手续费，请注意预留一部分的可用资金。',
+            '提示',
+            {
+              confirmButtonText: '继续发送',
+              cancelButtonText: '取消发送',
+              type: 'warning',
+            }
+          )
+            .then(() => {
+              this.showConfirm = true;
+            })
+            .catch(() => {
+              this.showConfirm = false;
+            });
+        }
         this.showConfirm = true;
       }
     },
