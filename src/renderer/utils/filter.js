@@ -4,7 +4,13 @@ import BigNumber from 'bignumber.js';
 
 export const hostname = value => {
   try {
-    return new URL(value).hostname;
+    const hostname = new URL(value).hostname;
+    const pathname = new URL(value).pathname;
+    if (pathname === '/') {
+      return hostname;
+    } else {
+      return hostname + pathname;
+    }
   } catch (err) {
     return value;
   }
