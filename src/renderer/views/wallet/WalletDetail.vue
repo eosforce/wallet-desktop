@@ -22,8 +22,11 @@
           <div style="margin-top: 16px;">
             <span style="position: relative;top: 5px;">查询用户名是否存在：</span>
             <input class="input" style="width:300px;background: #fff;" palcaholder="需要查询的用户名" type="text" v-model="queryAccountName">
-            <a class="button is-outlined" @click="query">查询</a>
+            <a class="button is-outlined" :disabled="queryAccountName && !isValidAccountName" @click="query">查询</a>
           </div>
+          <p class="help is-danger" v-show="!isValidAccountName">
+            用户名只能包含 .12345abcdefghijklmnopqrstuvwxy，并且在 12 位以内
+          </p>
       </div>
     </div>
     <confirm-modal title="删除钱包" :show="showDeleteWallet" @confirm="decryptAndDeleteWallet" @close="toggle('showDeleteWallet', false)">
@@ -44,6 +47,7 @@
 <script>
 import PageMenu from '@/views/layout/PageMenu';
 import { mapGetters, mapActions, mapState } from 'vuex';
+import { isValidAccountName } from '@/utils/rules';
 
 import ConfirmModal from '@/components/ConfirmModal';
 import Message from '@/components/Message';
@@ -64,6 +68,9 @@ export default {
     ...mapGetters({
       accountList: Getters.ACCOUNT_LIST,
     }),
+    isValidAccountName() {
+      return this.queryAccountName && isValidAccountName(this.queryAccountName);
+    },
     walletData() {
       return this.wallet.data || {};
     },
@@ -77,6 +84,7 @@ export default {
       });
     },
     query() {
+      if (!isValidAccountName) return;
       return queryAccount(this.app.currentNodeValue)(this.queryAccountName).then(result => {
         if (result) {
           Message.success(`「${this.queryAccountName}」已存在`);
