@@ -17,7 +17,12 @@
       </thead>
       <tbody>
         <tr v-for="bp in table" :key="bp.name" :class="{'is-vote': bp.hasVote}">
-          <td>{{bp.order}}</td>
+          <td>
+            <el-tooltip content="正在出块" placement="left" v-show="app.currentNodeInfo.head_block_producer === bp.name">
+              <img src="@/assets/loader/producing.svg" width="20">
+            </el-tooltip>
+            <div v-if="app.currentNodeInfo.head_block_producer !== bp.name">{{bp.order}}</div>
+          </td>
           <td>{{bp.name}}</td>
           <td>{{10000 - bp.commission_rate | formatNumber({p: 2, sign: '%', percentage: 0.01})}}</td>
           <td>{{bp.total_staked | formatNumber({p: 0})}}</td>
@@ -67,7 +72,7 @@ export default {
         return bp2.vote.staked.split(' ')[0] - bp1.vote.staked.split(' ')[0];
       });
     },
-    ...mapState(['account']),
+    ...mapState(['account', 'app']),
   },
 };
 </script>

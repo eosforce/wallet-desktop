@@ -17,7 +17,12 @@
       </thead>
       <tbody>
         <tr v-for="bp in table" :key="bp.name" :class="{'is-vote': bp.hasVote}">
-          <td>{{bp.order}}</td>
+          <td>
+            <el-tooltip content="正在出块" placement="left" v-show="app.currentNodeInfo.head_block_producer === bp.name">
+              <img src="@/assets/loader/producing.svg" width="20">
+            </el-tooltip>
+            <div v-if="app.currentNodeInfo.head_block_producer !== bp.name">{{bp.order}}</div>
+          </td>
           <td>{{bp.name}}</td>
           <td>
             <span v-show="!bp.url">-</span>
@@ -52,7 +57,7 @@ export default {
     table() {
       return this.account.bpsTable.filter(bp => bp.isSuperBp);
     },
-    ...mapState(['account']),
+    ...mapState(['account', 'app']),
   },
 };
 </script>
@@ -76,13 +81,13 @@ export default {
   cursor: pointer;
 }
 
-.bpurl{
-  color:#276cda
+.bpurl {
+  color: #276cda;
 }
 
-.table td .button.is-small.is-modify{
-    background: transparent;
-    color: #408ee1;
-    border: 1px solid #408ee1;
+.table td .button.is-small.is-modify {
+  background: transparent;
+  color: #408ee1;
+  border: 1px solid #408ee1;
 }
 </style>
