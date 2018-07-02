@@ -218,7 +218,7 @@ export const getRewardsAndBpsTable = httpEndpoint => async (votesTable, accountN
       rewardsTable.push({ ...extraRow });
 
       bpRow.vote = { ...extraRow };
-      bpRow.hasVote = calcVoteExist(vote.staked, vote.reward, vote.unstaking);
+      bpRow.hasVote = calcVoteExist(vote.staked, reward, vote.unstaking);
     }
 
     if (bpRow.isSuperBp) {
