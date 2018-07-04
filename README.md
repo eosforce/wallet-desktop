@@ -2,6 +2,10 @@
 
 > eosforce 桌面钱包
 
+## Changelog
+
+版本更新日志: https://github.com/eosforce/wallet-desktop/blob/master/CHANGELOG.md
+
 ## 下载
 
 下载地址 https://github.com/eosforce/wallet-desktop/releases ，支持 macOS windows，linux
