@@ -13,13 +13,13 @@
             <span class="refresh fr el-icon-refresh" @click="refresh()"></span>
           </div>
           <div class="dec" style="display:flex;">
-            <div style="flex:1">
+            <div style="margin-right:24px;">
               <p><span style="color:#f00">*特别提醒*：</span></p>
               <p>1. 本钱包只提供创建公私钥服务，您需要进一步创建用户名才能做链上操作。</p>
               <p>2. 请向本钱包内的其他用户，或已经拥有用户名的钱包外第三方用户提出创建申请。</p>
               <p>3. 需向创建者提供您的公钥(EOS...) 和期望的用户名，切勿提供您的私钥（5...）。</p>
               <p>4. 创建用户名交易需要花费第三方0.1个EOS，创建交易成功后，请点击刷新，用户名会自动显示在左侧。</p>
-              <p>5.添加客服微信，由官方免费创建用户名，仅限新用户，每人一个。</p>
+              <p>5. 还可以扫描右侧二维码加群，找客服免费创建用户名，仅限新用户，每人一个。</p>
             </div>
             <div><img src="@/assets/kefu.png" width="160"></div>
           </div>
@@ -29,7 +29,7 @@
             <a class="button is-outlined" :disabled="queryAccountName && !isValidAccountName" @click="query">查询</a>
           </div>
           <p class="help is-danger" v-show="queryAccountName && !isValidAccountName">
-            用户名只能包含 .12345abcdefghijklmnopqrstuvwxy，并且在 12 位以内
+            用户名只能包含 .12345abcdefghijklmnopqrstuvwxyz，并且在 12 位以内
           </p>
       </div>
     </div>

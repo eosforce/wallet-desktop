@@ -11,7 +11,7 @@
             <div class="control">
               <input v-model="toAccountName" class="input" type="text" placeholder="请输入收款用户名" required />
               <p class="help is-danger" v-show="toAccountName && !isValidToAccountName">
-                用户名只能包含 .12345abcdefghijklmnopqrstuvwxy，并且在 12 位以内
+                用户名只能包含 .12345abcdefghijklmnopqrstuvwxyz，并且在 12 位以内
               </p>
             </div>
           </div>
