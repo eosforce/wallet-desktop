@@ -49,7 +49,7 @@ const actions = {
       initPromise = dispatch(Actions.FETCH_NODE_LIST)
         .then(data => {
           const syncPromise = dispatch(Actions.SYNC_NODE_LIST);
-          return data || syncPromise;
+          return syncPromise;
         })
         .then(data => {
           if (data && data.nodes) {

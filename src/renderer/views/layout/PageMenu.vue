@@ -51,6 +51,9 @@ export default {
   border-right: 1px solid rgba(0, 0, 0, 0.12);
   overflow: auto;
 }
+.menu-list {
+  margin-bottom: 100px;
+}
 .menu-list a {
   display: flex;
   align-items: center;

@@ -21,11 +21,7 @@ export const getNodeList = () => {
     '1.0': NODE_API_URL,
     // '0.7': NODE_TEST_NET_URL,
   };
-  return fetch(map[Store.state.app.chainNet], {
-    headers: {
-      Accept: 'application/vnd.github.raw+json',
-    },
-  }).then(res => res.json());
+  return fetch(map[Store.state.app.chainNet]).then(res => res.json());
 };
 
 // 获取节点信息
@@ -218,7 +214,7 @@ export const getRewardsAndBpsTable = httpEndpoint => async (votesTable, accountN
       rewardsTable.push({ ...extraRow });
 
       bpRow.vote = { ...extraRow };
-      bpRow.hasVote = calcVoteExist(vote.staked, vote.reward, vote.unstaking);
+      bpRow.hasVote = calcVoteExist(vote.staked, reward, vote.unstaking);
     }
 
     if (bpRow.isSuperBp) {
