@@ -46,7 +46,7 @@
           </td>
           <td>
             <div v-show="bp.vote.unstaking === '0.0000 EOS'">-</div>
-            <router-link v-show="bp.vote.unstaking !== '0.0000 EOS'" class="button is-small is-outlined" :to="{name: 'unfreeze', params: { bpname: bp.name }}">
+            <router-link v-show="bp.vote.unstaking !== '0.0000 EOS'" class="button is-small is-outlined" :class="{'grey-button': isLock(bp.vote.unstake_height)}" :to="{name: 'unfreeze', params: { bpname: bp.name }}">
               {{ bp.vote && bp.vote.unstaking | formatNumber({p: 0}) }}
             </router-link>
           </td>
@@ -74,10 +74,20 @@ export default {
     },
     ...mapState(['account', 'app']),
   },
+  methods: {
+    isLock(unstakeHeight) {
+      if (unstakeHeight === undefined) return false;
+      return unstakeHeight + 86400 - this.app.currentNodeInfo.head_block_num > 0;
+    },
+  },
 };
 </script>
 
 <style scoped>
+.table td .button.grey-button {
+  background: #ddd;
+  color: #363636;
+}
 .button {
   padding-left: calc(0.625em - 1px);
   padding-right: calc(0.625em - 1px);
@@ -96,9 +106,9 @@ export default {
   cursor: pointer;
 }
 
-.table td .button.is-small.is-modify{
-    background: transparent;
-    color: #408ee1;
-    border: 1px solid #408ee1;
+.table td .button.is-small.is-modify {
+  background: transparent;
+  color: #408ee1;
+  border: 1px solid #408ee1;
 }
 </style>
