@@ -3,7 +3,6 @@
   "version": "1.0.3",
   "author": "",
   "description": "eos wallet",
-  "license": null,
   "main": "./dist/electron/main.js",
   "scripts": {
     "build": "node .electron-vue/build.js && electron-builder",
