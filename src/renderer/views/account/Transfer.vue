@@ -39,10 +39,10 @@
           </div>
           <div class="field is-grouped is-grouped-right">
             <div class="control">
-              <a tabindex="-1" class="button cancel-button" @click="close">取消</a>
+              <a tabindex="-1" class="button cancel-button" @click="close">{{$t('取消')}}</a>
             </div>
             <div class="control">
-              <button type="submit" class="button is-link">下一步</button>
+              <button type="submit" class="button is-link">{{$t('下一步')}}</button>
             </div>
           </div>
         </form>

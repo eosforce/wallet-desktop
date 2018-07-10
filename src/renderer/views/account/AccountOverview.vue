@@ -1,7 +1,7 @@
 <template>
   <div class="box">
     <div class="publickey">
-      <span class="pk">公钥：{{walletData.publicKey}}</span>
+      <span class="pk">{{$t('公钥')}}：{{walletData.publicKey}}</span>
       <span class="is-grouped " style="line-height:27px;text-align:left;height:27px;font-size:14px;width:15%;
       ">
         <span class="refresh fr el-icon-refresh" @click="refreshOverview()"></span>
@@ -9,18 +9,18 @@
     </div>
     <div class="is-grouped desc-box clearfix" style="margin-top:16px;line-height:27px;text-align:left;height:27px;font-size:14px">
       <ul>
-        <li>资产总额:<span class="cl">{{account.info.assetTotal | formatNumber({p: 4})}}</span></li>
-        <li>可用余额:<span class="cl">{{account.info.available | formatNumber({p: 4})}}</span></li>
-        <li class="lw"><router-link class="button is-small is-link" :to="{name: 'transfer'}">转账</router-link></li>
-        <li><router-link class="button is-small is-link" :to="{name: 'accountCreateAccount'}">创建用户</router-link></li>
+        <li>{{$t('资产总额')}}:<span class="cl">{{account.info.assetTotal | formatNumber({p: 4})}}</span></li>
+        <li>{{$t('可用余额')}}:<span class="cl">{{account.info.available | formatNumber({p: 4})}}</span></li>
+        <li class="lw"><router-link class="button is-small is-link" :to="{name: 'transfer'}">{{$t('转账')}}</router-link></li>
+        <li><router-link class="button is-small is-link" :to="{name: 'accountCreateAccount'}">{{$t('创建用户')}}</router-link></li>
       </ul>
     </div>
     <div class="desc-box clearfix">
       <ul>
-        <li><span>投票总额:</span><span class="cl">{{account.info.stakedTotal | formatNumber({p: 0})}}</span></li>
-        <li><span>赎回总额:</span><span class="cl">{{account.info.unstakingTotal | formatNumber({p: 0})}}</span></li>
-        <li><span>待领分红总额:</span><span class="cl">{{account.info.rewardTotal | formatNumber({p: 4})}}</span></li>
-        <li v-if="bpInfo"><span>佣金费率:</span><span class="cl">{{bpInfo.commission_rate | formatNumber({p: 2, sign: '%', percentage: 0.01})}}</span></li>
+        <li><span>{{$t('投票总额')}}:</span><span class="cl">{{account.info.stakedTotal | formatNumber({p: 0})}}</span></li>
+        <li><span>{{$t('赎回总额')}}:</span><span class="cl">{{account.info.unstakingTotal | formatNumber({p: 0})}}</span></li>
+        <li><span>{{$t('待领分红总额')}}:</span><span class="cl">{{account.info.rewardTotal | formatNumber({p: 4})}}</span></li>
+        <li v-if="bpInfo"><span>{{$t('佣金费率')}}:</span><span class="cl">{{bpInfo.commission_rate | formatNumber({p: 2, sign: '%', percentage: 0.01})}}</span></li>
       </ul>
     </div>
   </div>

@@ -4,7 +4,7 @@
       <div class="graphic">
         <div class="graphic-item">
           <img src="@/assets/vote/reward.png">
-          <label>待领分红</label>
+          <label>{{$t('待领分红')}}</label>
         </div>
         <div class="graphic-item">
           <img style="width: 50px;margin-left:50px;margin-right:50px;" src="@/assets/vote/transform.png">

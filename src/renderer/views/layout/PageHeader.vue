@@ -15,8 +15,8 @@
         </select>
       </div>
       <div class="block">
-        出块节点:<span>{{nodeInfo.head_block_producer}}</span>
-        最新高度:<span>{{nodeInfo.head_block_num}}</span>
+        {{$t('出块节点')}}:<span>{{nodeInfo.head_block_producer}}</span>
+        {{$t('最新高度')}}:<span>{{nodeInfo.head_block_num}}</span>
       </div>
     </div>
   </header>

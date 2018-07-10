@@ -59,10 +59,10 @@
           </div>
           <div class="field is-grouped is-grouped-right">
             <div class="control">
-              <a tabindex="-1" class="button cancel-button" @click="close">取消</a>
+              <a tabindex="-1" class="button cancel-button" @click="close">{{$t('取消')}}</a>
             </div>
             <div class="control">
-              <button type="submit" class="button is-link">下一步</button>
+              <button type="submit" class="button is-link">{{$t('下一步')}}</button>
             </div>
           </div>
         </form>
@@ -76,7 +76,7 @@
             <img v-if="this.selectType === '0'" src="@/assets/vote/avaliable.png">
             <label v-if="this.selectType === '0'">可用余额</label>
             <img v-if="this.selectType === '1'" src="@/assets/vote/redeem.png">
-            <label v-if="this.selectType === '1'">赎回金额</label>
+            <label v-if="this.selectType === '1'">{{$t('赎回金额')}}</label>
           </div>
           <div class="graphic-item" style="order:2">
             <img style="width: 50px;margin-left:50px;margin-right:50px;" src="@/assets/vote/transform.png">

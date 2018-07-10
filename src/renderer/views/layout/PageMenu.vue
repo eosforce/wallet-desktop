@@ -1,7 +1,7 @@
 <template>
   <div class="page-menu">
     <div class="header-navbar add-wallet">
-      <router-link class="button is-small is-outlined" :to="{name: 'walletNew'}"><i class="add-icon el-icon-plus"></i>创建钱包</router-link>
+      <router-link class="button is-small is-outlined" :to="{name: 'walletNew'}"><i class="add-icon el-icon-plus"></i>{{$t('创建钱包')}}</router-link>
     </div>
     <div class="menu">
       <ul class="menu-list">

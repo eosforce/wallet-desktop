@@ -4,7 +4,7 @@
       <div class="graphic">
         <div class="graphic-item">
           <img src="@/assets/vote/redeem.png">
-          <label>赎回金额</label>
+          <label>{{$t('赎回金额')}}</label>
         </div>
         <div class="graphic-item">
           <img style="width: 50px;margin-left:50px;margin-right:50px;" src="@/assets/vote/transform.png">

@@ -5,7 +5,7 @@
     <div class="dashboard-body" v-if="$route.name === 'walletDetail'">
       <div class="box">
           <div class="publickey" style="line-height: 27px;">
-            公钥：{{walletData.publicKey}}
+            {{$t('公钥')}}：{{walletData.publicKey}}
             <span class="is-grouped">
               <a style="margin-left:15px" class="button is-small is-outlined" @click="exportWallet()">导出钱包</a>
               <a style="margin-left:15px" class="button is-small is-outlined" @click="toggle('showDeleteWallet', true)">删除钱包</a>

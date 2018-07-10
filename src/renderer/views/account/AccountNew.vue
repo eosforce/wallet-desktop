@@ -32,7 +32,7 @@
           </div>
           <div class="field is-grouped is-grouped-right">
             <div class="control">
-              <a tabindex="-1" class="button cancel-button" :disabled="submitting" @click="!submitting && close()">取消</a>
+              <a tabindex="-1" class="button cancel-button" :disabled="submitting" @click="!submitting && close()">{{$t('取消')}}</a>
             </div>
             <div class="control">
               <button type="submit" class="button is-link" :class="{'is-loading': this.accountCreator && this.accountCreator.account && submitting}" :disabled="submitting">确认</button>
