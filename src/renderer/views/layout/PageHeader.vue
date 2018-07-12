@@ -14,9 +14,16 @@
           <option :value="node.value" v-for="node in app.nodeList" :key="node.value">{{node.name}}</option>
         </select>
       </div>
-      <div class="block">
-        {{$t('出块节点')}}:<span>{{nodeInfo.head_block_producer}}</span>
-        {{$t('最新高度')}}:<span>{{nodeInfo.head_block_num}}</span>
+      <div class="block" style="display:flex;align-items:center;">
+        <div>
+          {{$t('出块节点')}}:<span>{{nodeInfo.head_block_producer}}</span>
+          {{$t('最新高度')}}:<span>{{nodeInfo.head_block_num}}</span>
+        </div>
+        <div style="margin-left:10px;">
+          <a class="button lg-switch" @click="switchLocale">
+            {{locale === 'zh' ? 'English' : '中文'}}
+          </a>
+        </div>
       </div>
     </div>
   </header>
@@ -34,6 +41,7 @@ export default {
     return {
       showWalletNew: false,
       chainNets: CHAIN_NETS,
+      locale: '',
     };
   },
   computed: {
@@ -60,8 +68,14 @@ export default {
   },
   created() {
     this.loop();
+    this.locale = this.$i18n.locale;
   },
   methods: {
+    switchLocale() {
+      this.locale = this.locale === 'zh' ? 'en' : 'zh';
+      localStorage.locale = this.locale;
+      this.$i18n.locale = this.locale;
+    },
     loop() {
       this.loopId = setTimeout(() => {
         this.fetchNodeInfo()
@@ -79,6 +93,18 @@ export default {
 </script>
 
 <style scoped>
+.lg-switch {
+  background: #fff;
+  color: #000;
+  border: none;
+  font-size: 14px;
+  height: 2.25em;
+  margin-bottom: 4px;
+  line-height: 32px;
+  width: 60px;
+  border-radius: 5px;
+}
+
 .page-header {
   display: flex;
 }

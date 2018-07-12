@@ -7,13 +7,13 @@
           <div class="publickey" style="line-height: 27px;">
             {{$t('公钥')}}：{{walletData.publicKey}}
             <span class="is-grouped">
-              <a style="margin-left:15px" class="button is-small is-outlined" @click="exportWallet()">导出钱包</a>
-              <a style="margin-left:15px" class="button is-small is-outlined" @click="toggle('showDeleteWallet', true)">删除钱包</a>
+              <a style="margin-left:15px" class="button is-small is-outlined" @click="exportWallet()">{{$t('导出钱包')}}</a>
+              <a style="margin-left:15px" class="button is-small is-outlined" @click="toggle('showDeleteWallet', true)">{{$t('删除钱包')}}</a>
             </span>
             <span class="refresh fr el-icon-refresh" @click="refresh()"></span>
           </div>
           <div class="dec" style="display:flex;">
-            <div style="margin-right:24px;">
+            <div style="margin-right:24px;" v-if="$i18n.locale === 'zh'">
               <p><span style="color:#f00">*特别提醒*：</span></p>
               <p>1. 本钱包只提供创建公私钥服务，您需要进一步创建用户名才能做链上操作。</p>
               <p>2. 请向本钱包内的其他用户，或已经拥有用户名的钱包外第三方用户提出创建申请。</p>
@@ -21,25 +21,33 @@
               <p>4. 创建用户名交易需要花费第三方0.1个EOS，创建交易成功后，请点击刷新，用户名会自动显示在左侧。</p>
               <p>5. 还可以扫描右侧二维码加群，找客服免费创建用户名，仅限新用户，每人一个。</p>
             </div>
+            <div style="margin-right:24px;" v-if="$i18n.locale === 'en'">
+              <p><span style="color:#f00">*Kind Reminder*：</span></p>
+              <p>1. The wallet only help generate public and private keys. You shall create a user account to enable any onchain activity.</p>
+              <p>2. Create an account by submitting a request to users who already have an account at EOSForce wallet or a third-party wallet that support EOSForce. </p>
+              <p>3. Provide your public key and the name you want to create to the third party. Please do not reveal your private key. </p>
+              <p>4. Create an account will consume 0.1 EOS. After the registration, please click the refresh button and your account name will be displayed on the left side of the wallet. </p>
+              <p>5. You can also scan the right qr code and add groups. You can find the customer service to create the user name for free.</p>
+            </div>
             <div><img src="@/assets/kefu.png" width="160"></div>
           </div>
           <div style="margin-top: 16px;">
-            <span style="position: relative;top: 5px;">查询用户名是否存在：</span>
-            <input class="input" style="width:300px;background: #fff;" palcaholder="需要查询的用户名" type="text" v-model="queryAccountName">
-            <a class="button is-outlined" :disabled="queryAccountName && !isValidAccountName" @click="query">查询</a>
+            <span style="position: relative;top: 5px;">{{$t('查询用户名是否存在：')}}</span>
+            <input class="input" style="width:300px;background: #fff;" :placeholder="$t('需要查询的用户名')" type="text" v-model="queryAccountName">
+            <a class="button is-outlined" :disabled="queryAccountName && !isValidAccountName" @click="query">{{$t('查询')}}</a>
           </div>
           <p class="help is-danger" v-show="queryAccountName && !isValidAccountName">
-            用户名只能包含 .12345abcdefghijklmnopqrstuvwxyz，并且在 12 位以内
+            {{this.$t('用户名只能包含 .12345abcdefghijklmnopqrstuvwxyz，并且在 12 位以内')}}
           </p>
       </div>
     </div>
-    <confirm-modal title="删除钱包" :show="showDeleteWallet" @confirm="decryptAndDeleteWallet" @close="toggle('showDeleteWallet', false)">
+    <confirm-modal :title="$t('删除钱包')" :show="showDeleteWallet" @confirm="decryptAndDeleteWallet" @close="toggle('showDeleteWallet', false)">
       <div>
         <p class="help is-danger" style="font-size:14px;">您正在进行删除钱包操作，如对该钱包还有需要，请确保您已经导出钱包并妥善保管，一经删除您的账户将无法恢复，对应资产将无法找回，请谨慎操作。</p>
         <div class="row" style="margin-top:16px;">
-          <div class="row__title">钱包密码</div>
+          <div class="row__title">{{$t('钱包密码')}}</div>
           <div class="row__content">
-            <input class="input" v-model="password" type="password" placeholder="请输入钱包密码" required />
+            <input class="input" v-model="password" type="password" :placeholder="$t('请输入钱包密码')" required />
           </div>
         </div>
       </div>
@@ -83,7 +91,7 @@ export default {
   methods: {
     initWallet(id) {
       this.fetchWallet({ id: id || this.$route.params.walletId }).catch(err => {
-        Message.error(`账户列表加载失败： ${err && err.message}`);
+        Message.error(`${this.$t('账户列表加载失败')}： ${err && err.message}`);
         return Promise.reject(err);
       });
     },
@@ -91,9 +99,9 @@ export default {
       if (!isValidAccountName) return;
       return queryAccount(this.app.currentNodeValue)(this.queryAccountName).then(result => {
         if (result) {
-          Message.success(`「${this.queryAccountName}」已存在`);
+          Message.success(`「${this.queryAccountName}」${this.$t('已存在')}`);
         } else {
-          Message.error(`「${this.queryAccountName}」不存在`);
+          Message.error(`「${this.queryAccountName}」${this.$t('不存在')}`);
         }
         this.queryAccountName = '';
       });
@@ -117,7 +125,7 @@ export default {
         .then(result => {
           this.toggle('showDeleteWallet', false);
           location.reload();
-          Message.success('删除成功');
+          Message.success(this.$t('删除成功'));
         });
     },
     // 导出钱包存储文件

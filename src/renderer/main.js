@@ -22,8 +22,16 @@ Vue.filter('formatNumber', formatNumber);
 Vue.filter('timestamp', timestamp);
 Vue.filter('hostname', hostname);
 
+if (!localStorage.locale) {
+  if (navigator.language === 'zh-CN') {
+    localStorage.locale = 'zh';
+  } else {
+    localStorage.locale = 'en';
+  }
+}
+
 const i18n = new VueI18n({
-  locale: 'en',
+  locale: localStorage.locale || 'zh',
   messages,
 });
 
