@@ -12,33 +12,33 @@
         </div>
         <div class="graphic-item">
           <img src="@/assets/vote/avaliable.png">
-          <label>可用余额</label>
+          <label>{{$t('可用余额')}}</label>
         </div>
       </div>
       <div class="row">
-        <div class="row__title">交易名称</div>
-        <div class="row__content">提取分红</div>
+        <div class="row__title">{{$t('交易名称')}}</div>
+        <div class="row__content">{{$t('提取分红')}}</div>
       </div>
       <div class="row">
-        <div class="row__title">超级节点名称</div>
+        <div class="row__title">{{$t('超级节点名称')}}</div>
         <div class="row__content">{{bpname}}</div>
       </div>
       <div class="row">
-        <div class="row__title">投票人用户</div>
+        <div class="row__title">{{$t('投票人用户')}}</div>
         <div class="row__content">{{voter}}</div>
       </div>
       <div class="row">
-        <div class="row__title">可提取金额</div>
+        <div class="row__title">{{$t('可提取金额')}}</div>
         <div class="row__content">{{rewardAmount | formatNumber({p: 4, showSymbol: true})}}</div>
       </div>
       <div class="row">
-        <div class="row__title">手续费</div>
+        <div class="row__title">{{$t('手续费')}}</div>
         <div class="row__content">0.03 EOS</div>
       </div>
       <div class="row">
-        <div class="row__title">输入密码</div>
+        <div class="row__title">{{$t('输入密码')}}</div>
         <div class="row__content">
-          <input class="input" v-model="password" type="password" placeholder="请输入投票人的钱包密码" required />
+          <input class="input" v-model="password" type="password" :placeholder="$t('请输入投票人的钱包密码')" required />
         </div>
       </div>
     </div>
@@ -90,11 +90,11 @@ export default {
         password: this.password,
       })
         .then(result => {
-          Message.success('提取分红成功');
+          Message.success(this.$t('提取分红成功'));
         })
         .catch(err => {
           Message.error({
-            title: `${err.code ? `code: ${err.code}` : '提取分红失败'}`,
+            title: `${err.code ? `code: ${err.code}` : this.$t('提取分红失败')}`,
             message: err.message,
           });
           this.submitting = false;

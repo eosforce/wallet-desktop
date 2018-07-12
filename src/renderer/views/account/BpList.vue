@@ -18,7 +18,7 @@
       <tbody>
         <tr v-for="bp in table" :key="bp.name" :class="{'is-vote': bp.hasVote}">
           <td>
-            <el-tooltip content="正在出块" placement="left" v-show="app.currentNodeInfo.head_block_producer === bp.name">
+            <el-tooltip :content="$t('正在出块')" placement="left" v-show="app.currentNodeInfo.head_block_producer === bp.name">
               <img src="@/assets/loader/producing.svg" width="20">
             </el-tooltip>
             <div v-if="app.currentNodeInfo.head_block_producer !== bp.name">{{bp.order}}</div>
@@ -39,7 +39,7 @@
           </td>
           <td>
             <router-link class="button is-small is-outlined" :class="{'is-modify': bp.hasVote}" :to="{name: 'vote', params: { bpname: bp.name }}">
-              {{bp.hasVote ? '修改投票' : '开始投票'}}
+              {{bp.hasVote ? $t('修改投票') : $t('开始投票')}}
             </router-link>
           </td>
         </tr>

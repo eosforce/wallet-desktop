@@ -2,40 +2,40 @@
   <div class="modal is-active">
     <div class="cover-page">
       <div class="cover-page__content">
-        <div class="cover-page__title">{{tokenSymbol}} 转账</div>
+        <div class="cover-page__title">{{tokenSymbol}} {{$t('转账')}}</div>
         <form class="cover-page__form" @submit.prevent="confirmInfo()">
           <div class="field">
             <label class="label">
-              收款用户
+              {{$t('收款用户')}}
             </label>
             <div class="control">
-              <input v-model="toAccountName" class="input" type="text" placeholder="请输入收款用户名" required />
+              <input v-model="toAccountName" class="input" type="text" :placeholder="$t('请输入收款用户名')" required />
               <p class="help is-danger" v-show="toAccountName && !isValidToAccountName">
-                用户名只能包含 .12345abcdefghijklmnopqrstuvwxyz，并且在 12 位以内
+                {{$t('用户名只能包含 .12345abcdefghijklmnopqrstuvwxyz，并且在 12 位以内')}}
               </p>
             </div>
           </div>
           <div class="field">
             <label class="label">
-              转账金额
+              {{$t('转账金额')}}
             </label>
             <div class="control">
-              <input v-model="amount" min="0" class="input" type="number" :step="`${0.1 ** precision}`" :placeholder="`单位 ${tokenSymbol}`" required />
+              <input v-model="amount" min="0" class="input" type="number" :step="`${0.1 ** precision}`" :placeholder="$t('template.symbol', {symbol: tokenSymbol})" required />
               <p class="help is-danger" v-show="amount && !isValidAmount">
-                金额必须为数字，且最多 {{precision}} 位小数
+                {{$t('template.precision', {p: precision})}}
               </p>
             </div>
           </div>
           <div class="field">
             <label class="label">
-              备注
+              {{$t('备注')}}
             </label>
             <div class="control">
-              <input v-model="memo" min="0" class="input" type="text" placeholder="备注" max-length="255"/>
+              <input v-model="memo" min="0" class="input" type="text" :placeholder="$t('备注')" max-length="255"/>
             </div>
           </div>
           <div class="field">
-            <p class="help tips">* 手续费 {{app.fee}}</p>
+            <p class="help tips">{{$t('template.fee', {fee: app.fee})}}</p>
           </div>
           <div class="field is-grouped is-grouped-right">
             <div class="control">
@@ -52,29 +52,29 @@
     <confirm-modal :show="showConfirm" :submitting="submitting" @confirm="submit()" @close="toggle('showConfirm', false)">
       <div>
         <div class="row">
-          <div class="row__title">交易名称</div>
-          <div class="row__content">转账</div>
+          <div class="row__title">{{$t('交易名称')}}</div>
+          <div class="row__content">{{$t('转账')}}</div>
         </div>
         <div class="row">
-          <div class="row__title">转出用户</div>
+          <div class="row__title">{{$t('转出用户')}}</div>
           <div class="row__content">{{fromAccountName}}</div>
         </div>
         <div class="row">
-          <div class="row__title">收款用户</div>
+          <div class="row__title">{{$t('收款用户')}}</div>
           <div class="row__content">{{toAccountName}}</div>
         </div>
         <div class="row">
-          <div class="row__title">转账金额</div>
+          <div class="row__title">{{$t('转账金额')}}</div>
           <div class="row__content">{{amount | formatNumber({p: precision, showSymbol: true, symbol: tokenSymbol})}}</div>
         </div>
         <div class="row">
-          <div class="row__title">手续费</div>
+          <div class="row__title">{{$t('手续费')}}</div>
           <div class="row__content">{{app.fee}}</div>
         </div>
         <div class="row">
-          <div class="row__title">输入密码</div>
+          <div class="row__title">{{$t('输入密码')}}</div>
           <div class="row__content">
-            <input class="input" v-model="password" type="password" placeholder="请输入转出用户的钱包密码" required />
+            <input class="input" v-model="password" type="password" :placeholder="$t('请输入转出用户的钱包密码')" required />
           </div>
         </div>
       </div>
@@ -133,11 +133,11 @@ export default {
 
         if (isOver < 0.00001) {
           return this.$confirm(
-            '您的可用余额将降低到0.1以下，可能不够缴纳后续交易的手续费，请注意预留一部分的可用资金。',
-            '提示',
+            this.$t('您的可用余额将降低到0.1以下，可能不够缴纳后续交易的手续费，请注意预留一部分的可用资金。'),
+            this.$t('提示'),
             {
-              confirmButtonText: '继续发送',
-              cancelButtonText: '取消发送',
+              confirmButtonText: this.$t('继续发送'),
+              cancelButtonText: this.$t('取消发送'),
               type: 'warning',
             }
           )
@@ -163,11 +163,11 @@ export default {
         precision: this.precision,
       })
         .then(result => {
-          Message.success('转账成功');
+          Message.success(this.$t('转账成功'));
         })
         .catch(err => {
           Message.error({
-            title: `${err.code ? `code: ${err.code}` : '转账失败'}`,
+            title: `${err.code ? `code: ${err.code}` : this.$t('转账失败')}`,
             message: err.message,
           });
           this.submitting = false;

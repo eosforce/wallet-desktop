@@ -3,12 +3,12 @@
     <table class="table data-table">
       <thead>
         <tr>
-          <th>序号</th>
-          <th>符号</th>
-          <th>发行人</th>
-          <th class="t_l">最大发行量</th>
-          <th class="t_l">目前发行量</th>
-          <th>我的余额</th>
+          <th>{{$t('序号')}}</th>
+          <th>{{$t('符号')}}</th>
+          <th>{{$t('发行人')}}</th>
+          <th class="t_l">{{$t('最大发行量')}}</th>
+          <th class="t_l">{{$t('目前发行量')}}</th>
+          <th>{{$t('我的余额')}}</th>
           <th>{{$t('操作')}}</th>
         </tr>
       </thead>

@@ -11,7 +11,7 @@
         <a class="min-img">
           <img :src="require(`@/assets/${tab.img1}`)" class="two hide">
           <img :src="require(`@/assets/${tab.img2}`)" class="one">
-          {{tab.tabName}}<span v-show="tab.tabKey === 'BpList'">(第 {{version}} 届)</span>
+          {{tab.tabName}}<span v-show="tab.tabKey === 'BpList'">{{$t('template.version', {version: version})}}</span>
         </a>
       </div>
       <span class="refresh fr el-icon-refresh" @click="refreshList()"></span>
@@ -38,12 +38,12 @@ export default {
   data() {
     return {
       tabMap: [
-        { tabName: `超级节点`, tabKey: 'BpList', img1: 'node.png', img2: 'node_w.png' },
-        { tabName: '候选节点', tabKey: 'AlternateNode', img1: 'laternode.png', img2: 'laternode_w.png' },
-        { tabName: '我的投票', tabKey: 'Myvote', img1: 'vote.png', img2: 'vote_w.png' },
-        { tabName: '我的 Token', tabKey: 'TokenList', img1: 'token.png', img2: 'token_w.png' },
-        { tabName: '交易记录', tabKey: 'TransferRecord', img1: 'exchange.png', img2: 'exchange_w.png' },
-        { tabName: '资产说明', tabKey: 'RateInstructions', img1: 'assets.png', img2: 'assets_w.png' },
+        { tabName: this.$t('超级节点'), tabKey: 'BpList', img1: 'node.png', img2: 'node_w.png' },
+        { tabName: this.$t('候选节点'), tabKey: 'AlternateNode', img1: 'laternode.png', img2: 'laternode_w.png' },
+        { tabName: this.$t('我的投票'), tabKey: 'Myvote', img1: 'vote.png', img2: 'vote_w.png' },
+        { tabName: this.$t('我的 Token'), tabKey: 'TokenList', img1: 'token.png', img2: 'token_w.png' },
+        { tabName: this.$t('交易记录'), tabKey: 'TransferRecord', img1: 'exchange.png', img2: 'exchange_w.png' },
+        { tabName: this.$t('资产说明'), tabKey: 'RateInstructions', img1: 'assets.png', img2: 'assets_w.png' },
       ],
       currentTab: 'BpList', // currentTab 用于标识当前触发的子组件,
     };

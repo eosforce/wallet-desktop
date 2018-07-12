@@ -34,7 +34,7 @@
           </td>
           <td>
             <router-link class="button is-small is-outlined" :class="{'is-modify': bp.hasVote}" :to="{name: 'vote', params: { bpname: bp.name }}">
-              {{bp.hasVote ? '修改投票' : '开始投票'}}
+              {{bp.hasVote ? $t('修改投票') : $t('开始投票')}}
             </router-link>
           </td>
         </tr>

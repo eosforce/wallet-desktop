@@ -18,7 +18,7 @@
       <tbody>
         <tr v-for="bp in table" :key="bp.name" :class="{'is-vote': bp.hasVote}">
           <td>
-            <el-tooltip content="正在出块" placement="left" v-show="app.currentNodeInfo.head_block_producer === bp.name">
+            <el-tooltip :content="$t('正在出块')" placement="left" v-show="app.currentNodeInfo.head_block_producer === bp.name">
               <img src="@/assets/loader/producing.svg" width="20">
             </el-tooltip>
             <div v-if="app.currentNodeInfo.head_block_producer !== bp.name">{{bp.order}}</div>
@@ -33,7 +33,7 @@
           <td>{{bp.rewards_pool | formatNumber({p: 4})}}</td>
           <td>{{ bp.vote && bp.vote.staked | formatNumber({p: 0})}}</td>
           <td>
-            <el-tooltip class="item" effect="dark" content="我的投票*我的投票时间/(总得票数*总投票时间)*奖励池" placement="top-end">
+            <el-tooltip class="item" effect="dark" :content="$t('我的投票*我的投票时间/(总得票数*总投票时间)*奖励池')" placement="top-end">
               <div>
                 <router-link
                   class="button is-small is-outlined"
@@ -52,7 +52,7 @@
           </td>
           <td>
             <router-link class="button is-small is-outlined is-modify" :to="{name: 'vote', params: { bpname: bp.name }}">
-              修改投票
+              {{$t('修改投票')}}
             </router-link>
           </td>
         </tr>
