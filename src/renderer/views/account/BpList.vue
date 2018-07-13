@@ -24,7 +24,7 @@
             </el-tooltip>
             <div v-if="app.currentNodeInfo.head_block_producer !== bp.name">{{bp.order}}</div>
           </td>
-          <td class="t-left">{{$i18n.locale && app.bpNicks[$i18n.locale] && app.bpNicks[$i18n.locale][bp.name]}}</td>
+          <td class="t-left">{{($i18n.locale && app.bpNicks[$i18n.locale] && app.bpNicks[$i18n.locale][bp.name]) || bp.name}}</td>
           <td class="t-left">{{bp.name}}</td>
           <td class="t-left">
             <span v-show="!bp.url">-</span>

@@ -19,7 +19,7 @@
       <tbody>
         <tr v-for="bp in table" :key="bp.name" :class="{'is-vote': bp.vote && bp.vote.isMyVote}">
           <td class="t-left">{{bp.order}}</td>
-          <td class="t-left">{{$i18n.locale && app.bpNicks[$i18n.locale] && app.bpNicks[$i18n.locale][bp.name]}}</td>
+          <td class="t-left">{{($i18n.locale && app.bpNicks[$i18n.locale] && app.bpNicks[$i18n.locale][bp.name]) || bp.name}}</td>
           <td class="t-left">{{bp.name}}</td>
           <td class="t-left">
             <span v-show="!bp.url">-</span>

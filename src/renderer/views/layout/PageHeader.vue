@@ -44,7 +44,7 @@ export default {
       locale: '',
       locales: {
         zh: '中文',
-        en: 'english',
+        en: 'English',
       },
     };
   },

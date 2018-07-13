@@ -1,6 +1,6 @@
 {
   "name": "eosforce",
-  "version": "1.0.2",
+  "version": "1.0.4",
   "author": "",
   "description": "eos wallet",
   "main": "./dist/electron/main.js",
