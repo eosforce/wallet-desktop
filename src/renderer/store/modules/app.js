@@ -1,7 +1,7 @@
 import { Mutations, Actions, Getters } from '@/constants/types.constants';
 
 import Storage, { getWalletIdList, createWalletData, getWalletKeyFromId, deleteWalletData } from '@/services/Storage';
-import { getNodeList, getAccounts, getNodeInfo } from '@/services/Eos';
+import { getNodeList, getAccounts, getNodeInfo, getBpNick } from '@/services/Eos';
 import { decryptWif } from '@/utils/util';
 
 import { NODE_LIST_KEY, CHAIN_NETS, CHAIN_NET_KEY } from '@/constants/config.constants';
@@ -15,6 +15,10 @@ const initState = {
   walletList: [],
   writeNodeList: [],
   chainNet: '',
+  bpNicks: {
+    zh: {},
+    en: {},
+  },
 };
 
 const mutations = {
@@ -38,6 +42,9 @@ const mutations = {
   },
   [Mutations.SET_CURRENT_NODE_INFO](state, { currentNodeInfo }) {
     state.currentNodeInfo = currentNodeInfo;
+  },
+  [Mutations.SET_BP_NICK](state, { bpNicks }) {
+    state.bpNicks = bpNicks;
   },
 };
 
@@ -142,6 +149,13 @@ const actions = {
       .then(() => {
         location.reload();
       });
+  },
+  [Actions.GET_BP_NICK]({ state, commit }) {
+    return getBpNick().then(data => {
+      commit(Mutations.SET_BP_NICK, {
+        bpNicks: data,
+      });
+    });
   },
 };
 

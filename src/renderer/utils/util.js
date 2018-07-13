@@ -187,8 +187,8 @@ export const genTrConvertFunc = trName => {
           seq: tr.global_action_seq,
           time: tr.block_time,
           name: '提取分红',
-          from: act.data.bpname,
-          to: act.data.voter,
+          from: act.data.voter,
+          to: act.data.bpname,
           status: checkStatus(tr.status),
         };
       },
@@ -198,8 +198,8 @@ export const genTrConvertFunc = trName => {
           seq: tr.global_action_seq,
           time: tr.block_time,
           name: '解冻',
-          from: act.data.bpname,
-          to: act.data.voter,
+          from: act.data.voter,
+          to: act.data.bpname,
           status: checkStatus(tr.status),
         };
       },

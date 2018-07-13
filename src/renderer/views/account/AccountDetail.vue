@@ -73,6 +73,7 @@ export default {
       refreshTransferrecord: Actions.GET_TRANSFER_RECORD,
       refreshBpsList: Actions.GET_BPS_TABLE,
       getTokenList: Actions.GET_TOKEN_LIST,
+      getBpNick: Actions.GET_BP_NICK,
     }),
     toggleTab: function(tab) {
       this.currentTab = tab; // tab 为当前触发标签页的组件名
@@ -93,6 +94,7 @@ export default {
     next();
   },
   created() {
+    this.getBpNick();
     if (this.walletData.publicKey) {
       return this.initAccount();
     } else {

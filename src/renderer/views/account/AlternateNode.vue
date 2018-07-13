@@ -5,6 +5,7 @@
         <tr>
           <th>{{$t('排名')}}</th>
           <th>{{$t('节点名')}}</th>
+          <th>{{$t('节点社区')}}</th>
           <th>{{$t('节点网址')}}</th>
           <th>{{$t('本届出块')}}</th>
           <th>{{$t('分红比例')}}</th>
@@ -19,6 +20,7 @@
         <tr v-for="bp in table" :key="bp.name" :class="{'is-vote': bp.vote && bp.vote.isMyVote}">
           <td>{{bp.order}}</td>
           <td>{{bp.name}}</td>
+          <td>{{$i18n.locale && app.bpNicks[$i18n.locale] && app.bpNicks[$i18n.locale][bp.name]}}</td>
           <td>
             <span v-show="!bp.url">-</span>
             <span v-show="bp.url"><a :href="bp.url" target="_blank" class="bpurl">{{bp.url | hostname}}</a></span>
@@ -52,7 +54,7 @@ export default {
     table() {
       return this.account.bpsTable.filter(bp => !bp.isSuperBp);
     },
-    ...mapState(['account']),
+    ...mapState(['account', 'app']),
   },
 };
 </script>

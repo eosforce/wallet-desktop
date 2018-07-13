@@ -2,6 +2,7 @@ export default {
   en: {
     '至少 9 个字符': 'at least 9 characters',
     我已经阅读并同意: 'I have read and agreed',
+    节点社区: 'community',
     导出钱包: 'Export wallet',
     删除钱包: 'Delete wallet',
     删除成功: 'successful',
@@ -156,6 +157,7 @@ export default {
   zh: {
     '至少 9 个字符': '至少 9 个字符',
     我已经阅读并同意: '我已经阅读并同意',
+    节点社区: '节点社区',
     导出钱包: '导出钱包',
     删除钱包: '删除钱包',
     删除成功: '删除成功',

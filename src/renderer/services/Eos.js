@@ -16,6 +16,14 @@ import {
   calcApr,
 } from '@/utils/util';
 
+export const getBpNick = () => {
+  const map = {
+    '1.0': NODE_API_URL,
+    // '0.7': NODE_TEST_NET_URL,
+  };
+  return fetch(map[Store.state.app.chainNet]).then(res => res.json());
+}
+;
 export const getNodeList = () => {
   const map = {
     '1.0': NODE_API_URL,
