@@ -23,7 +23,9 @@
           <td class="t-left">{{bp.name}}</td>
           <td class="t-left">
             <span v-show="!bp.url">-</span>
-            <span v-show="bp.url"><a :href="bp.url" target="_blank" class="bpurl">{{bp.url | hostname}}</a></span>
+            <span v-show="bp.url">
+              <a @click="$electron.shell.openExternal(bp.url)" target="_blank" class="bpurl">{{bp.url | hostname}}</a>
+            </span>
           </td>
           <td class="t-center">-</td>
           <td>{{10000 - bp.commission_rate | formatNumber({p: 2, sign: '%', percentage: 0.01})}}</td>
