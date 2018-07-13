@@ -4,25 +4,25 @@
       <router-link class="brand__link" :to="{name: 'dashboard'}"><img src="@/assets/logo.png" class="logo"/></router-link>
     </div>
     <div class="header-navbar">
-      <div class="select">
+      <!-- <div class="select">
         <select v-model="chainNet">
           <option :value="k" v-for="(value, k) in chainNets" :key="k">{{value}}</option>
         </select>
-      </div>
+      </div> -->
       <div class="select" style="margin-left:10px;">
         <select v-model="nodeValue">
           <option :value="node.value" v-for="node in app.nodeList" :key="node.value">{{node.name}}</option>
+        </select>
+      </div>
+      <div class="select" style="margin-left:10px;">
+        <select v-model="locale" @change="switchLocale(locale)">
+          <option :value="k" v-for="(v, k) in locales" :key="k">{{v}}</option>
         </select>
       </div>
       <div class="block" style="display:flex;align-items:center;">
         <div>
           {{$t('出块节点')}}:<span>{{nodeInfo.head_block_producer}}</span>
           {{$t('最新高度')}}:<span>{{nodeInfo.head_block_num}}</span>
-        </div>
-        <div style="margin-left:10px;">
-          <a class="button lg-switch" @click="switchLocale">
-            {{locale === 'zh' ? 'English' : '中文'}}
-          </a>
         </div>
       </div>
     </div>
@@ -42,6 +42,10 @@ export default {
       showWalletNew: false,
       chainNets: CHAIN_NETS,
       locale: '',
+      locales: {
+        zh: '中文',
+        en: 'english',
+      },
     };
   },
   computed: {
@@ -71,10 +75,9 @@ export default {
     this.locale = this.$i18n.locale;
   },
   methods: {
-    switchLocale() {
-      this.locale = this.locale === 'zh' ? 'en' : 'zh';
-      localStorage.locale = this.locale;
-      this.$i18n.locale = this.locale;
+    switchLocale(locale) {
+      localStorage.locale = locale;
+      this.$i18n.locale = locale;
     },
     loop() {
       this.loopId = setTimeout(() => {

@@ -230,7 +230,7 @@ export default {
     手续费: '手续费',
     转账金额: '转账金额',
     需要查询的用户名: '需要查询的用户名',
-    查询: 'search',
+    查询: '查询',
     '查询用户名是否存在：': '查询用户名是否存在：',
     '用户名只能包含 .12345abcdefghijklmnopqrstuvwxyz，并且在 12 位以内':
       '用户名只能包含 .12345abcdefghijklmnopqrstuvwxyz，并且在 12 位以内',

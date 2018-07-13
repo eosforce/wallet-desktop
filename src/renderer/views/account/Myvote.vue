@@ -3,9 +3,9 @@
     <table class="table data-table">
       <thead>
         <tr>
-          <th>{{$t('排名')}}</th>
-          <th>{{$t('节点名')}}</th>
-          <th>{{$t('节点社区')}}</th>
+          <th class="t-left">{{$t('排名')}}</th>
+          <th class="t-left">{{$t('节点社区')}}</th>
+          <th class="t-left">{{$t('节点名')}}</th>
           <th>{{$t('分红比例')}}</th>
           <th>{{$t('得票总数')}}</th>
           <th>{{$t('年化利率')}}</th>
@@ -18,14 +18,14 @@
       </thead>
       <tbody>
         <tr v-for="bp in table" :key="bp.name" :class="{'is-vote': bp.hasVote}">
-          <td>
+          <td class="t-left">
             <el-tooltip :content="$t('正在出块')" placement="left" v-show="app.currentNodeInfo.head_block_producer === bp.name">
               <img src="@/assets/loader/producing.svg" width="20">
             </el-tooltip>
             <div v-if="app.currentNodeInfo.head_block_producer !== bp.name">{{bp.order}}</div>
           </td>
-          <td>{{bp.name}}</td>
-          <td>{{$i18n.locale && app.bpNicks[$i18n.locale] && app.bpNicks[$i18n.locale][bp.name]}}</td>
+          <td class="t-left">{{$i18n.locale && app.bpNicks[$i18n.locale] && app.bpNicks[$i18n.locale][bp.name]}}</td>
+          <td class="t-left">{{bp.name}}</td>
           <td>{{10000 - bp.commission_rate | formatNumber({p: 2, sign: '%', percentage: 0.01})}}</td>
           <td>{{bp.total_staked | formatNumber({p: 0})}}</td>
           <td>
