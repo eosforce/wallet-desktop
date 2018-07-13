@@ -113,6 +113,7 @@ export default {
     TokenList,
   },
 };
+// <el-progress :percentage="100" status="success"></el-progress>
 </script>
 
 <style scoped>

@@ -19,6 +19,12 @@ const initState = {
     zh: {},
     en: {},
   },
+  update: {
+    startUpdate: false,
+    progress: 0,
+    speed: 0,
+    total: 0,
+  },
 };
 
 const mutations = {
@@ -45,6 +51,9 @@ const mutations = {
   },
   [Mutations.SET_BP_NICK](state, { bpNicks }) {
     state.bpNicks = bpNicks;
+  },
+  [Mutations.SET_UPDATE_INFO](state, { update }) {
+    state.update = { ...state.update, ...update };
   },
 };
 
