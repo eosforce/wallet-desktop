@@ -1,5 +1,5 @@
 <template>
-  <div class="box bplist-box">
+  <div class="box bplist-box" style="font-size:14px;">
     <div v-if="$i18n.locale === 'zh'">
       <div class="rate">
         <span><b>资产总额:</b></span>
