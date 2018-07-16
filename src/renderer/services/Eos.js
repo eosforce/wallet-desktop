@@ -16,6 +16,10 @@ import {
   calcApr,
 } from '@/utils/util';
 
+export const getBpNick = () => {
+  return fetch('https://updatewallet.oss-cn-hangzhou.aliyuncs.com/eosforce/bp-nickname.json').then(res => res.json());
+};
+
 export const getNodeList = () => {
   const map = {
     '1.0': NODE_API_URL,

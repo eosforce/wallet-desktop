@@ -1,4 +1,6 @@
 import { remote } from 'electron';
+import Store from '@/store';
+
 const dialog = remote.dialog;
 const { autoUpdater } = remote.require('electron-updater');
 
@@ -9,6 +11,8 @@ autoUpdater.autoDownload = false;
 if (process.env.NODE_ENV === 'production') {
   autoUpdater.checkForUpdates();
 }
+
+autoUpdater.setFeedURL('https://updatewallet.oss-cn-hangzhou.aliyuncs.com/latest/');
 
 autoUpdater.on('error', error => {
   dialog.showErrorBox('Error: ', error == null ? 'unknown' : (error.stack || error).toString());
@@ -24,8 +28,17 @@ autoUpdater.on('update-available', () => {
     },
     buttonIndex => {
       if (buttonIndex === 0) {
+        Store.commit('SET_UPDATE_INFO', { update: { startUpdate: true } });
         autoUpdater.downloadUpdate();
       } else {
+        Store.commit('SET_UPDATE_INFO', {
+          update: {
+            startUpdate: false,
+            progress: 0,
+            speed: 0,
+            total: 0,
+          },
+        });
         if (updater) {
           updater.enabled = true;
           updater = null;
@@ -57,6 +70,16 @@ autoUpdater.on('update-downloaded', () => {
       setImmediate(() => autoUpdater.quitAndInstall());
     }
   );
+});
+
+autoUpdater.on('download-progress', progress => {
+  Store.commit('SET_UPDATE_INFO', {
+    update: {
+      progress: progress.percent && progress.percent.toFixed(2),
+      total: (progress.total / 1000000).toFixed(2),
+      speed: progress.bytesPerSecond && progress.bytesPerSecond / 1000,
+    },
+  });
 });
 
 export const checkForUpdates = (menuItem, focusedWindow, event) => {

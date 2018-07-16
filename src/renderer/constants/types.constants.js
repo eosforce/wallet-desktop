@@ -25,6 +25,7 @@ export const Actions = {
   GET_TOKEN_LIST: 'GET_TOKEN_LIST',
   REFRESH_WALLET: 'REFRESH_WALLET',
   DELETE_WALLET: 'DELETE_WALLET',
+  GET_BP_NICK: 'GET_BP_NICK',
 };
 
 export const Getters = {
@@ -40,6 +41,7 @@ export const Getters = {
 };
 
 export const Mutations = {
+  SET_BP_NICK: 'SET_BP_NICK',
   SET_CURRENT_NODE_INFO: 'SET_CURRENT_NODE_INFO',
   SET_CUREENT_NODE: 'SET_CUREENT_NODE',
   SET_WALLET_LIST: 'SET_WALLET_LIST',
@@ -57,4 +59,5 @@ export const Mutations = {
   SET_CHAIN_NET: 'SET_CHAIN_NET',
   SET_TOKEN_LIST: 'SET_TOKEN_LIST',
   SET_WRITE_NODE_LIST: 'SET_WRITE_NODE_LIST',
+  SET_UPDATE_INFO: 'SET_UPDATE_INFO',
 };

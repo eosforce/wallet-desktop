@@ -2,45 +2,45 @@
   <div class="cover-page">
     <div class="cover-page__content">
       <div class="cover-page__title">
-        <router-link :to="{ name: 'walletNew' }" style="margin-right:20px;color:#aaa">创建钱包</router-link>
-        导入钱包文件
+        <router-link :to="{ name: 'walletNew' }" style="margin-right:20px;color:#aaa">{{$t('创建钱包')}}</router-link>
+        {{$t('导入私钥')}}
       </div>
       <form class="cover-page__form" @submit.prevent="!submitting && submit()">
         <div class="field">
           <label class="label">
-            选择钱包文件
+            {{$t('选择钱包文件')}}
           </label>
           <div class="control" style="padding-top: 4px;">
-            <a class="button is-light" @click="selectWalletFile()">点击选择你的钱包文件</a>
+            <a class="button is-light" @click="selectWalletFile()">{{$t('点击选择你的钱包文件')}}</a>
             <p class="file-path">{{walletFilePath}}</p>
           </div>
         </div>
         <div class="field">
-          <label class="label">输入密码</label>
+          <label class="label">{{$t('输入密码')}}</label>
           <div class="control">
-            <input class="input" v-model="password" type="password" placeholder="请输入钱包文件密码" required />
+            <input class="input" v-model="password" type="password" :placeholder="$t('请输入钱包文件密码')" required />
             <p class="help is-danger" v-show="isSubmited && !isValidPassword">
-              无效的密码
+              {{$t('无效的密码')}}
             </p>
           </div>
         </div>
         <div class="field" style="color:#fff">
-          <input type="checkbox" required tabindex="-1" v-model="isAgreeTerm" /> 我已经阅读并同意<a href="#" tabindex="-1">服务及隐私条款</a>
+          <input type="checkbox" required tabindex="-1" v-model="isAgreeTerm" /> {{$t('我已经阅读并同意')}}<a href="#" tabindex="-1">{{$t('服务及隐私条款')}}</a>
         </div>
         <div class="field is-grouped is-grouped-right">
           <div class="control">
-            <a tabindex="-1" class="button cancel-button" :disabled="submitting" @click="!submitting && close()">取消</a>
+            <a tabindex="-1" class="button cancel-button" :disabled="submitting" @click="!submitting && close()">{{$t('取消')}}</a>
           </div>
           <div class="control">
-            <button type="submit" class="button is-link" :class="{'is-loading': submitting}" :disabled="submitting">下一步</button>
+            <button type="submit" class="button is-link" :class="{'is-loading': submitting}" :disabled="submitting">{{$t('下一步')}}</button>
           </div>
         </div>
       </form>
     </div>
     <a class="modal-close is-large cover-page-close" @click="close"></a>
-    <confirm-modal title="用户列表" :show="showConfirm" @confirm="close()" :can-close="false" width="400px">
+    <confirm-modal :title="$t('用户列表')" :show="showConfirm" @confirm="close()" :can-close="false" width="400px">
       <div>
-        <div>本私钥对应的用户为：</div>
+        <div>{{$t('本私钥对应的用户为：')}}</div>
         <ul>
           <li v-for="accountName in accountsList" :key="accountName">{{accountName}}</li>
         </ul>
@@ -91,7 +91,7 @@ export default {
               this.walletData = JSON.parse(data);
               this.walletFilePath = path.basename(filePaths[0]);
             } catch (err) {
-              Message.error('钱包文件错误');
+              Message.error(this.$t('钱包文件错误'));
             }
           });
         }
@@ -119,7 +119,7 @@ export default {
         })
         .then(result => {
           this.submitting = false;
-          Message.success('钱包导入成功');
+          Message.success(this.$t('钱包导入成功'));
           this.walletId = result.publicKey;
           return result.publicKey;
         })

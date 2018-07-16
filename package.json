@@ -1,9 +1,8 @@
 {
   "name": "eosforce",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "author": "",
   "description": "eos wallet",
-  "license": null,
   "main": "./dist/electron/main.js",
   "scripts": {
     "build": "node .electron-vue/build.js && electron-builder",
@@ -64,10 +63,11 @@
     "dayjs": "^1.6.4",
     "electron-updater": "^2.21.10",
     "element-ui": "^2.3.8",
-    "eosjs": "git+https://github.com/eosforce/eosjs.git#2da68b5",
+    "eosjs": "github:eosforce/eosjs.git#2da68b5",
     "sjcl": "^1.0.7",
     "vue": "^2.3.3",
     "vue-electron": "^1.0.6",
+    "vue-i18n": "^8.0.0",
     "vue-router": "^2.5.3",
     "vuex": "^2.3.1"
   },

@@ -12,8 +12,8 @@
         </slot>
       </div>
       <div class="modal-footer">
-        <a tabindex="-1" v-if="canClose" class="button cancel-button" :disabled="submitting" @click="close">取消</a>
-        <a class="button is-link" :class="{'is-loading': submitting}" :disabled="submitting" @click="confirm">确定</a>
+        <a tabindex="-1" v-if="canClose" class="button cancel-button" :disabled="submitting" @click="close">{{$t('取消')}}</a>
+        <a class="button is-link" :class="{'is-loading': submitting}" :disabled="submitting" @click="confirm">{{$t('确定')}}</a>
       </div>
     </div>
   </div>

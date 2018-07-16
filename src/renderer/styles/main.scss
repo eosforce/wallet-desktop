@@ -257,7 +257,7 @@ a:hover {
 }
 
 .desc-box {
-  margin-top: 16px;
+  margin-top: 8px;
 }
 
 .desc-box ul li {
@@ -303,19 +303,16 @@ a:hover {
   // padding: 0.5em 0.25em;
 }
 
-.bplist-box .table td:nth-child(1),
-.bplist-box .table th:nth-child(1),
-.bplist-box .table td:nth-child(4),
-.bplist-box .table th:nth-child(4) {
+.bplist-box .table td.t-center,
+.bplist-box .table th.t-center {
   text-align: center;
 }
 
-.bplist-box .table td:nth-child(2),
-.bplist-box .table th:nth-child(2),
-.bplist-box .table td:nth-child(3),
-.bplist-box .table th:nth-child(3) {
+.bplist-box .table td.t-left,
+.bplist-box .table th.t-left {
   text-align: left;
 }
+
 .bplist-box .table td,
 .bplist-box .table th {
   text-align: right;

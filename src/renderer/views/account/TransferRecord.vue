@@ -3,13 +3,12 @@
     <table class="table data-table">
       <thead>
         <tr>
-          <th>时间</th>
-          <th>发起方</th>
-          <th>操作名</th>
-          <th>接收方</th>
-          <th>金额</th>
-          <th>备注</th>
-          <!-- <th>状态</th> -->
+          <th>{{$t('时间')}}</th>
+          <th>{{$t('发起方')}}</th>
+          <th>{{$t('操作名')}}</th>
+          <th>{{$t('接收方')}}</th>
+          <th>{{$t('金额')}}</th>
+          <th>{{$t('备注')}}</th>
         </tr>
       </thead>
       <tbody>
@@ -22,7 +21,7 @@
           <td>{{record.memo}}</td>
         </tr>
         <tr v-show="!recordList.length">
-          <td colspan="7" class="empty">暂无交易记录</td>
+          <td colspan="7" class="empty">{{$t('暂无交易记录')}}</td>
         </tr>
       </tbody>
     </table>

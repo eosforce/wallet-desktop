@@ -2,38 +2,38 @@
   <div class="modal is-active">
     <div class="cover-page">
       <div class="cover-page__content">
-        <div class="cover-page__title">超级节点投票</div>
+        <div class="cover-page__title">{{$t('超级节点投票')}}</div>
         <form class="cover-page__form" @submit.prevent="confirmInfo">
           <div class="field">
             <div class="static-label">
-              超级节点名称<span class="static-text">{{bpname}}</span>
+              {{$t('超级节点名称')}}<span class="static-text">{{bpname}}</span>
             </div>
           </div>
           <div class="field">
             <div class="static-label">
-              当前投票金额<span class="static-text">{{stakedAmount | formatNumber({p: 0, showSymbol: true})}}</span>
+              {{$t('当前投票金额')}}<span class="static-text">{{stakedAmount | formatNumber({p: 0, showSymbol: true})}}</span>
             </div>
           </div>
           <div class="field">
             <div class="static-label">
-              可用投票金额<span class="static-text">{{account.info.available | formatNumber({p: 4, showSymbol: true})}}</span>
+              {{$t('可用投票金额')}}<span class="static-text">{{account.info.available | formatNumber({p: 4, showSymbol: true})}}</span>
             </div>
           </div>
           <div class="field is-horizontal">
             <label class="label">
-              投票类型
+              {{$t('投票类型')}}
             </label>
             <div class="control" style="margin-left:16px;color:#fff;">
               <label class="radio">
                 <input type="radio" v-model="selectType" value="0" :disabled="selectMap['0'].disabled">
-                追加投票
+                {{$t('追加投票')}}
               </label>
               <label class="radio">
                 <input type="radio" v-model="selectType" value="1" :disabled="selectMap['1'].disabled">
-                赎回投票
+                {{$t('赎回投票')}}
               </label>
               <p class="help is-danger" v-show="amount && !isValidAmount">
-                金额必须为整数
+                {{$t('金额必须为整数')}}
               </p>
             </div>
           </div>
@@ -42,11 +42,11 @@
               {{selectInfo.title}}
             </label>
             <div class="control">
-              <input v-model="amount" min="0" :max="selectInfo.max" class="input" type="number" step="1" placeholder="单位 EOS"  required />
+              <input v-model="amount" min="0" :max="selectInfo.max" class="input" type="number" step="1" :placeholder="$t('template.symbol', {symbol: 'EOS'})"  required />
               <p class="help is-danger" v-show="amount && !isValidAmount">
-                金额必须为整数
+                {{$t('金额必须为整数')}}
               </p>
-              <p class="help tips">{{selectInfo.tip}}，手续费 {{fee}} EOS</p>
+              <p class="help tips">{{selectInfo.tip}}，{{$t('template.fee', {fee: fee + ' EOS'})}}</p>
               <p class="help is-danger" v-show="amount > selectInfo.max">
                 {{selectInfo.maxTip}}
               </p>
@@ -54,15 +54,15 @@
           </div>
           <div class="field">
             <div class="static-label">
-              修改后投票金额<span class="static-text">{{newStakedAmount | formatNumber({p: 0, showSymbol: true})}}</span>
+              {{$t('修改后投票金额')}}<span class="static-text">{{newStakedAmount | formatNumber({p: 0, showSymbol: true})}}</span>
             </div>
           </div>
           <div class="field is-grouped is-grouped-right">
             <div class="control">
-              <a tabindex="-1" class="button cancel-button" @click="close">取消</a>
+              <a tabindex="-1" class="button cancel-button" @click="close">{{$t('取消')}}</a>
             </div>
             <div class="control">
-              <button type="submit" class="button is-link">下一步</button>
+              <button type="submit" class="button is-link">{{$t('下一步')}}</button>
             </div>
           </div>
         </form>
@@ -74,9 +74,9 @@
         <div class="graphic">
           <div class="graphic-item" :style="{order: this.selectType === '0' ? 1 : 3}">
             <img v-if="this.selectType === '0'" src="@/assets/vote/avaliable.png">
-            <label v-if="this.selectType === '0'">可用余额</label>
+            <label v-if="this.selectType === '0'">{{$t('可用余额')}}</label>
             <img v-if="this.selectType === '1'" src="@/assets/vote/redeem.png">
-            <label v-if="this.selectType === '1'">赎回金额</label>
+            <label v-if="this.selectType === '1'">{{$t('赎回金额')}}</label>
           </div>
           <div class="graphic-item" style="order:2">
             <img style="width: 50px;margin-left:50px;margin-right:50px;" src="@/assets/vote/transform.png">
@@ -84,19 +84,19 @@
           </div>
           <div class="graphic-item" :style="{order: this.selectType === '0' ? 3 : 1}">
             <img src="@/assets/vote/vote.png">
-            <label>投票金额</label>
+            <label>{{$t('投票金额')}}</label>
           </div>
         </div>
         <div class="row">
-          <div class="row__title">交易名称</div>
-          <div class="row__content">超级节点投票</div>
+          <div class="row__title">{{$t('交易名称')}}</div>
+          <div class="row__content">{{$t('超级节点投票')}}</div>
         </div>
         <div class="row">
-          <div class="row__title">超级节点</div>
+          <div class="row__title">{{$t('超级节点')}}</div>
           <div class="row__content">{{bpname}}</div>
         </div>
         <div class="row">
-          <div class="row__title">投票人用户</div>
+          <div class="row__title">{{$t('投票人用户')}}</div>
           <div class="row__content">{{voter}}</div>
         </div>
         <div class="row">
@@ -104,17 +104,17 @@
           <div class="row__content">{{amount | formatNumber({p: 0, showSymbol: true})}}</div>
         </div>
         <div class="row">
-          <div class="row__title">修改后投票金额</div>
+          <div class="row__title">{{$t('修改后投票金额')}}</div>
           <div class="row__content">{{newStakedAmount | formatNumber({p: 0, showSymbol: true})}}</div>
         </div>
         <div class="row">
-          <div class="row__title">手续费</div>
+          <div class="row__title">{{$t('手续费')}}</div>
           <div class="row__content">{{fee}} EOS</div>
         </div>
         <div class="row">
-          <div class="row__title">输入密码</div>
+          <div class="row__title">{{$t('输入密码')}}</div>
           <div class="row__content">
-            <input class="input" v-model="password" type="password" placeholder="请输入投票人的钱包密码" required />
+            <input class="input" v-model="password" type="password" :placeholder="$t('请输入投票人的钱包密码')" required />
           </div>
         </div>
       </div>
@@ -148,19 +148,19 @@ export default {
     selectMap() {
       return {
         '0': {
-          title: '追加金额（整数）',
-          confirm: '追加金额',
-          tip: '* 立即生效',
+          title: this.$t('追加金额（整数）'),
+          confirm: this.$t('追加金额'),
+          tip: this.$t('* 立即生效'),
           max: toNumber(this.account.info.available) - this.fee,
-          maxTip: '超过可用投票金额！',
+          maxTip: this.$t('超过可用投票金额！'),
           disabled: false,
         },
         '1': {
-          title: '赎回金额（整数）',
-          confirm: '赎回金额',
-          tip: '* 赎回锁定期三天，三天后需手动解锁',
+          title: this.$t('赎回金额（整数）'),
+          confirm: this.$t('赎回金额'),
+          tip: this.$t('* 赎回锁定期三天，三天后需手动解锁'),
           max: toNumber(this.stakedAmount),
-          maxTip: '超过当前投票金额！',
+          maxTip: this.$t('超过当前投票金额！'),
           disabled: toNumber(this.stakedAmount) <= 0,
         },
       };
@@ -207,11 +207,11 @@ export default {
           const isOver = toNumber(this.account.info.available) - toNumber(this.amount) - 0.1 - this.fee;
           if (isOver < 0.00001) {
             return this.$confirm(
-              '您的可用余额将降低到0.1以下，可能不够缴纳后续交易的手续费，请注意预留一部分的可用资金。',
-              '提示',
+              this.$t('您的可用余额将降低到0.1以下，可能不够缴纳后续交易的手续费，请注意预留一部分的可用资金。'),
+              this.$t('提示'),
               {
-                confirmButtonText: '继续发送',
-                cancelButtonText: '取消发送',
+                confirmButtonText: this.$t('继续发送'),
+                cancelButtonText: this.$t('取消发送'),
                 type: 'warning',
               }
             ).then(() => {
@@ -233,11 +233,11 @@ export default {
         voter: this.voter,
       })
         .then(result => {
-          Message.success('投票成功');
+          Message.success(this.$t('投票成功'));
         })
         .catch(err => {
           Message.error({
-            title: `${err.code ? `code: ${err.code}` : '投票失败'}`,
+            title: `${err.code ? `code: ${err.code}` : this.$t('投票失败')}`,
             message: err.message,
           });
           this.submitting = false;
