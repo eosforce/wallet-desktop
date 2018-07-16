@@ -6,7 +6,6 @@
           <th class="t-left">{{$t('排名')}}</th>
           <th class="t-left">{{$t('节点社区')}}</th>
           <th class="t-left">{{$t('节点名')}}</th>
-          <th class="t-left">{{$t('节点网址')}}</th>
           <th class="t-center">{{$t('本届出块')}}</th>
           <th>{{$t('分红比例')}}</th>
           <th>{{$t('得票总数')}}</th>
@@ -24,14 +23,12 @@
             </el-tooltip>
             <div v-if="app.currentNodeInfo.head_block_producer !== bp.name">{{bp.order}}</div>
           </td>
-          <td class="t-left">{{($i18n.locale && app.bpNicks[$i18n.locale] && app.bpNicks[$i18n.locale][bp.name]) || bp.name}}</td>
-          <td class="t-left">{{bp.name}}</td>
           <td class="t-left">
-            <span v-show="!bp.url">-</span>
-            <span v-show="bp.url">
-              <a @click="$electron.shell.openExternal(bp.url)" target="_blank" class="bpurl">{{bp.url | hostname}}</a>
-            </span>
+            <a @click="$electron.shell.openExternal(bp.url)">
+              {{($i18n.locale && app.bpNicks[$i18n.locale] && app.bpNicks[$i18n.locale][bp.name]) || bp.name}}
+            </a>
           </td>
+          <td class="t-left">{{bp.name}}</td>
           <td class="t-center">{{bp.amount}}</td>
           <td>{{(10000 - bp.commission_rate) | formatNumber({p: 2, sign: '%', percentage: 0.01})}}</td>
           <td>{{bp.total_staked | formatNumber({p: 0})}}</td>
