@@ -19,7 +19,7 @@
         <tr v-for="bp in table" :key="bp.name" :class="{'is-vote': bp.vote && bp.vote.isMyVote}">
           <td class="t-left">{{bp.order}}</td>
           <td class="t-left">
-            <a @click="$electron.shell.openExternal(bp.url)">
+            <a @click="$electron.shell.openExternal(toUrl(bp.url))" style="color: #3273dc">
               {{($i18n.locale && app.bpNicks[$i18n.locale] && app.bpNicks[$i18n.locale][bp.name]) || bp.name}}
             </a>
           </td>
@@ -46,6 +46,7 @@
 
 <script>
 import { mapState } from 'vuex';
+import { toUrl } from '@/utils/util';
 
 export default {
   name: 'AlternateNode',
@@ -54,6 +55,11 @@ export default {
       return this.account.bpsTable.filter(bp => !bp.isSuperBp);
     },
     ...mapState(['account', 'app']),
+  },
+  methods: {
+    toUrl(url) {
+      return toUrl(url);
+    },
   },
 };
 </script>
@@ -81,13 +87,13 @@ export default {
   display: none;
 } */
 
-.bpurl{
-  color:#276cda
+.bpurl {
+  color: #276cda;
 }
 
-.table td .button.is-small.is-modify{
-    background: transparent;
-    color: #408ee1;
-    border: 1px solid #408ee1;
+.table td .button.is-small.is-modify {
+  background: transparent;
+  color: #408ee1;
+  border: 1px solid #408ee1;
 }
 </style>

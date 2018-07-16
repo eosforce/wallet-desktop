@@ -1,7 +1,7 @@
 <template>
   <div class="box">
     <div class="publickey">
-      <span class="pk">{{$t('公钥')}}：{{walletData.publicKey}}</span>
+      <span class="pk">{{$t('用户名')}}：<span style="color: #000;margin-left: 10px;font-weight: 600;">{{$route.params.accountName}}</span></span>
       <span class="is-grouped " style="line-height:27px;text-align:left;height:27px;font-size:14px;width:15%;
       ">
         <span class="refresh fr el-icon-refresh" @click="refreshOverview()"></span>

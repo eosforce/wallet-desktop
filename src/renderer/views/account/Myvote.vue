@@ -25,7 +25,7 @@
             <div v-if="app.currentNodeInfo.head_block_producer !== bp.name">{{bp.order}}</div>
           </td>
           <td class="t-left">
-            <a @click="$electron.shell.openExternal(bp.url)">
+            <a @click="$electron.shell.openExternal(toUrl(bp.url))" style="color: #3273dc">
               {{($i18n.locale && app.bpNicks[$i18n.locale] && app.bpNicks[$i18n.locale][bp.name]) || bp.name}}
             </a>
           </td>
@@ -69,6 +69,7 @@
 
 <script>
 import { mapState } from 'vuex';
+import { toUrl } from '@/utils/util';
 
 export default {
   name: 'TransferRecord',
@@ -84,6 +85,9 @@ export default {
     isLock(unstakeHeight) {
       if (unstakeHeight === undefined) return false;
       return unstakeHeight + 86400 - this.app.currentNodeInfo.head_block_num > 0;
+    },
+    toUrl(url) {
+      return toUrl(url);
     },
   },
 };

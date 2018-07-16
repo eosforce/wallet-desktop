@@ -4,6 +4,13 @@ import BigNumber from 'bignumber.js';
 
 const { ecc } = Eos.modules;
 
+export const toUrl = (url = '') => {
+  if (url && !url.match(/^(http:\/\/)|(https:\/\/)/)) {
+    return 'http://' + url;
+  }
+  return url;
+};
+
 // 错误处理
 
 export const handleApiError = err => {
