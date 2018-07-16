@@ -7,7 +7,7 @@
         <span class="refresh fr el-icon-refresh" @click="refreshOverview()"></span>
       </span>
     </div>
-    <div class="is-grouped desc-box clearfix" style="margin-top:16px;line-height:27px;text-align:left;height:27px;font-size:14px">
+    <div class="is-grouped desc-box clearfix" style="margin-top:8px;line-height:27px;text-align:left;height:27px;font-size:14px">
       <ul>
         <li>{{$t('资产总额')}}:<span class="cl">{{account.info.assetTotal | formatNumber({p: 4})}}</span></li>
         <li>{{$t('可用余额')}}:<span class="cl">{{account.info.available | formatNumber({p: 4})}}</span></li>
