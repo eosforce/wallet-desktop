@@ -1,7 +1,12 @@
 <template>
   <div class="box">
     <div class="publickey">
-      <span class="pk">{{$t('用户名')}}：<span style="color: #000;margin-left: 10px;font-weight: 600;">{{$route.params.accountName}}</span></span>
+      <span class="pk" style="min-width: 25%;width:auto;">{{$t('用户名')}}：<span style="color: #000;margin-left: 10px;font-weight: 600;">{{$route.params.accountName}}</span></span>
+      <span>
+        <router-link style="width: 110px;background: #408ee1;border-radius: 17.5px;color: #fff;border: none;" class="button is-small is-link" :to="{name: 'accountCreateAccount'}">
+          {{$t('创建用户')}}
+        </router-link>
+      </span>
       <span class="is-grouped " style="line-height:27px;text-align:left;height:27px;font-size:14px;width:15%;
       ">
         <span class="refresh fr el-icon-refresh" @click="refreshOverview()"></span>
@@ -12,7 +17,6 @@
         <li>{{$t('资产总额')}}:<span class="cl">{{account.info.assetTotal | formatNumber({p: 4})}}</span></li>
         <li>{{$t('可用余额')}}:<span class="cl">{{account.info.available | formatNumber({p: 4})}}</span></li>
         <li class="lw"><router-link class="button is-small is-link" :to="{name: 'transfer'}">{{$t('转账')}}</router-link></li>
-        <li><router-link class="button is-small is-link" :to="{name: 'accountCreateAccount'}">{{$t('创建用户')}}</router-link></li>
       </ul>
     </div>
     <div class="desc-box clearfix">
