@@ -1,6 +1,7 @@
 export default {
   en: {
     '至少 9 个字符': 'at least 9 characters',
+    用户名: 'account name',
     我已经阅读并同意: 'I have read and agreed',
     节点社区: 'community',
     导出钱包: 'Export wallet',
@@ -156,6 +157,7 @@ export default {
   },
   zh: {
     '至少 9 个字符': '至少 9 个字符',
+    用户名: '用户名',
     我已经阅读并同意: '我已经阅读并同意',
     节点社区: '节点社区',
     导出钱包: '导出钱包',
