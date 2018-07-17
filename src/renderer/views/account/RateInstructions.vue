@@ -29,7 +29,7 @@
           我的最新票龄 = 我的累计票龄 + 我的投票 * (当前时间 - 我的票龄更新时间)<br>
           节点最新票龄 = 节点累计票龄 + 总得票数 * (当前时间 - 节点票龄更新时间)<br>
           待领分红金额 = （我的最新票龄 / 节点最新票龄） * 奖池金额<br>
-          每次修改投票会更新我的累计票龄，每次领取分红会清零我的累计票龄
+          每次修改投票会更新我的累计票龄和节点累计票龄，每次领取分红会清零我的累计票龄
         </p>
       </div>
       <div class="rate">
@@ -70,7 +70,7 @@
           My newest coinage = my cumulative coinage + my vote * (recent height – my coinage update height)<br>
           BP newest coinage = BP cumulative coinage + BP total vote * (recent height –BP coinage update height)<br>
           Unclaimed dividends = (My newest coinage / BP newest coinage) * rewards pool<br>
-          My accumulated voting age will be updated every time I change the voting, and my accumulated voting age will be reset every time I receive the bonus
+          My accumulated voting age and BP cumulative coinage swill be updated every time I change the voting, and my accumulated voting age will be reset every time I receive the bonus
         </p>
       </div>
       <div class="rate">
