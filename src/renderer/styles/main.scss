@@ -292,7 +292,8 @@ a:hover {
 .table td {
   font-size: 14px;
   color: #000 !important;
-  font-family: 'Microsoft YaHei', BlinkMacSystemFont, -apple-system, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', 'Helvetica', sans-serif, Consolas, Monaco, monospace;
+  font-family: 'Microsoft YaHei', BlinkMacSystemFont, -apple-system, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu',
+    'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', 'Helvetica', sans-serif, Consolas, Monaco, monospace;
 }
 
 .table th {
@@ -477,4 +478,10 @@ tr.is-vote {
 
 .menu-list a {
   padding: 4px 0.75em;
+}
+
+@keyframes spin {
+  100% {
+    transform: rotate(-360deg);
+  }
 }

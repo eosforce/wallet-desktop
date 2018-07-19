@@ -10,7 +10,7 @@
               <a style="margin-left:15px" class="button is-small is-outlined" @click="exportWallet()">{{$t('导出钱包')}}</a>
               <a style="margin-left:15px" class="button is-small is-outlined" @click="toggle('showDeleteWallet', true)">{{$t('删除钱包')}}</a>
             </span>
-            <span class="refresh fr el-icon-refresh" @click="refresh()"></span>
+            <span class="refresh fr el-icon-refresh" :class="{spin: spin}" @click="refresh()"></span>
           </div>
           <div class="dec" style="display:flex;">
             <div style="margin-right:24px;" v-if="$i18n.locale === 'zh'">
@@ -74,6 +74,7 @@ export default {
       password: '',
       showDeleteWallet: false,
       queryAccountName: '',
+      spin: false,
     };
   },
   computed: {
@@ -107,7 +108,15 @@ export default {
       });
     },
     refresh() {
-      this.refreshWallet();
+      if (this.spin) return;
+      this.spin = true;
+      this.refreshWallet()
+        .then(data => {
+          this.spin = false;
+        })
+        .catch(() => {
+          this.spin = false;
+        });
     },
     toggle(key, val) {
       return (this[key] = val === undefined ? !this[key] : val);
@@ -174,6 +183,11 @@ export default {
   cursor: pointer;
   font-size: 20px;
 }
+
+.refresh.spin {
+  animation: spin 1s linear infinite;
+}
+
 .dec {
   margin-top: 20px;
   font-size: 14px;

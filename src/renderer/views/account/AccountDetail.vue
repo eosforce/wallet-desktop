@@ -14,7 +14,7 @@
           {{tab.tabName}}<span v-show="tab.tabKey === 'BpList'">{{$t('template.version', {version: version})}}</span>
         </a>
       </div>
-      <span class="refresh fr el-icon-refresh" @click="refreshList()"></span>
+      <span class="refresh fr el-icon-refresh" :class="{spin: spin}" @click="refreshList()"></span>
     </div>
     <div :is="currentTab" ref="cTab" keep-alive></div>
     <router-view name="modal"></router-view>
@@ -45,6 +45,7 @@ export default {
         { tabName: this.$t('交易记录'), tabKey: 'TransferRecord', img1: 'exchange.png', img2: 'exchange_w.png' },
         { tabName: this.$t('资产说明'), tabKey: 'RateInstructions', img1: 'assets.png', img2: 'assets_w.png' },
       ],
+      spin: false,
       currentTab: 'BpList', // currentTab 用于标识当前触发的子组件,
     };
   },
@@ -78,12 +79,19 @@ export default {
     toggleTab: function(tab) {
       this.currentTab = tab; // tab 为当前触发标签页的组件名
     },
-    refreshList: function() {
-      if (this.currentTab === 'TokenList') {
-        this.getTokenList({ accountName: this.accountName });
-      } else {
-        this.refreshTransferrecord({ accountName: this.accountName });
-        this.refreshBpsList();
+    refreshList: async function() {
+      if (this.spin) return;
+      this.spin = true;
+      try {
+        if (this.currentTab === 'TokenList') {
+          await this.getTokenList({ accountName: this.accountName });
+        } else {
+          await this.refreshTransferrecord({ accountName: this.accountName });
+          await this.refreshBpsList();
+        }
+        this.spin = false;
+      } catch (err) {
+        this.spin = false;
       }
     },
   },
@@ -124,12 +132,17 @@ export default {
   flex: 1;
 }
 .refresh {
-  height: 40px;
+  height: auto;
   line-height: 40px;
   margin-right: 25px;
   font-size: 20px;
   cursor: pointer;
 }
+
+.refresh.spin {
+  animation: spin 1s linear infinite;
+}
+
 .refresh img {
   width: 15px;
   margin: 12px 20px;
