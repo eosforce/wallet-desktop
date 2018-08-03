@@ -19,6 +19,7 @@
           <option :value="k" v-for="(v, k) in locales" :key="k">{{v}}</option>
         </select>
       </div>
+
       <div class="block" style="display:flex;align-items:center;">
         <div>
           {{$t('出块节点')}}:<span>{{nodeInfo.head_block_producer}}</span>

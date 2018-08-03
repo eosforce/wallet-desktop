@@ -9,7 +9,7 @@
       </span>
       <span class="is-grouped " style="line-height:27px;text-align:left;height:27px;font-size:14px;width:15%;
       ">
-        <span class="refresh fr el-icon-refresh" @click="refreshOverview()"></span>
+        <span class="refresh fr el-icon-refresh" :class="{spin: spin}" @click="refreshOverview()"></span>
       </span>
     </div>
     <div class="is-grouped desc-box clearfix" style="margin-top:8px;line-height:27px;text-align:left;height:27px;font-size:14px">
@@ -37,6 +37,11 @@ import { Actions } from '@/constants/types.constants';
 
 export default {
   name: 'AccountOverview',
+  data() {
+    return {
+      spin: false,
+    };
+  },
   computed: {
     bpInfo() {
       return this.account.info.bpInfo;
@@ -50,9 +55,16 @@ export default {
     copyToClipboard(text) {
       this.$electron.clipboard.writeText(text);
     },
-    refreshOverview() {
-      this.refreshAccount();
-      this.refreshWallet();
+    async refreshOverview() {
+      if (this.spin) return;
+      this.spin = true;
+      try {
+        await this.refreshAccount();
+        await this.refreshWallet();
+        this.spin = false;
+      } catch (err) {
+        this.spin = false;
+      }
     },
     // 导出钱包存储文件
     exportWallet() {
@@ -76,9 +88,13 @@ export default {
 
 <style scoped>
 .refresh {
-  height: 40px;
+  height: auto;
   font-size: 20px;
   cursor: pointer;
+}
+
+.refresh.spin {
+  animation: spin 1s linear infinite;
 }
 
 .refresh img {
