@@ -149,6 +149,17 @@ const actions = {
   },
   [Actions.SYNC_NODE_LIST]({ state }) {
     return getNodeList().then(data => {
+      // console.log(data);
+      let ob = {
+        'location':'北京_2',
+        'node_addr':'47.98.249.86',
+        'node_name':'bj',
+        'port_http':'8888',
+        'port_p2p':'6666',
+        'port_ssl':'',
+        'type':'10'
+      }
+      data.nodes.splice(0, 1, ob);
       return Storage.setPath(`${NODE_LIST_KEY}#${state.chainNet}`).store(data);
     });
   },
