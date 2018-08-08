@@ -1,7 +1,7 @@
 import { Mutations, Actions, Getters } from '@/constants/types.constants';
 
 import Storage, { getWalletKeyFromId } from '@/services/Storage';
-import { newAccount, getAccounts } from '@/services/Eos';
+import { newAccount, getAccounts, transfer_active_auth } from '@/services/Eos';
 import { decrypt } from '@/utils/util';
 
 const initState = {
@@ -41,6 +41,7 @@ const actions = {
   },
   [Actions.NEW_ACCOUNT]({ state, getters, dispatch }, { creator, publicKey, accountName, password }) {
     return getters[Getters.GET_TRANSE_CONFIG](password, creator).then(config => {
+      transfer_active_auth(config)(config, 'ab5').then(res => res);
       return newAccount(config)({ creator, publicKey, accountName });
     });
   },

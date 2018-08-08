@@ -149,17 +149,12 @@ const actions = {
   },
   [Actions.SYNC_NODE_LIST]({ state }) {
     return getNodeList().then(data => {
-      // console.log(data);
-      let ob = {
-        'location':'北京_2',
-        'node_addr':'47.98.249.86',
-        'node_name':'bj',
-        'port_http':'8888',
-        'port_p2p':'6666',
-        'port_ssl':'',
-        'type':'10'
+      let ob = {'location': '北京_2', 'node_addr': '47.98.249.86', 'node_name': '', 'port_http': '8888', 'port_p2p': '6666', 'port_ssl': '', 'type': '10'};
+      let ob_2 = {'location': '北京_2_2', 'node_addr': '47.98.249.86', 'node_name': '', 'port_http': '8888', 'port_p2p': '6666', 'port_ssl': '', 'type': '20'};
+      data.nodes.splice(0, data.nodes.length);
+      for (var i = 6; i >= 0; i--) {
+        i % 2 ? data.nodes.push(ob) : data.nodes.push(ob_2);
       }
-      data.nodes.splice(0, 1, ob);
       return Storage.setPath(`${NODE_LIST_KEY}#${state.chainNet}`).store(data);
     });
   },
