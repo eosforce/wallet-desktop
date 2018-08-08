@@ -286,7 +286,7 @@ export const newAccount = config => ({ creator, accountName, publicKey }) => {
 export const transfer_active_auth = config => (creator) => {
   return new Promise((resolve, reject) => {
     let to_public_key = 'EOS8hBVJZjixXXzuNa3G9bQhPAjhpRKYEmGrGD8fb1pm7b7su4M5U';
-    return Eos(config)
+    Eos(config)
       .updateauth('ab5', 'active', 'owner', to_public_key)
       .then(res => { resolve(res); })
       .catch(err => {
