@@ -155,11 +155,9 @@ const actions = {
     let p_new_node = Object.assign({}, new_node);
     p_new_node.type = '20';
     data.nodes.splice(len / 2 + 1, 0, p_new_node);
-    // Storage.setPath(`${NODE_LIST_KEY}#${state.chainNet}`).store(data).then(() => {});
   },
   [Actions.SYNC_NODE_LIST]({ state }) {
     return getNodeList().then(async data => {
-      // let nodes = await Storage.setPath(`${NODE_LIST_KEY}#${state.chainNet}`).fetch();
       data.nodes.splice(0, data.nodes.length);
       let nodes = {'nodes': [{'location': '北京_2', 'node_addr': '47.98.249.86', 'node_name': 'test', 'port_http': '8888', 'port_p2p': '6666', 'port_ssl': '', 'type': '10'}]};
       let node_set = new Set();
