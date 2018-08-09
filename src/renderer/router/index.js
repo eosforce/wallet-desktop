@@ -33,6 +33,13 @@ export default new Router({
                   },
                 },
                 {
+                  name: 'accountTransfer',
+                  path: 'new',
+                  components: {
+                    modal: () => import('@/views/account/AccountNew'),
+                  },
+                },
+                {
                   name: 'transfer',
                   path: 'transfer',
                   components: {
