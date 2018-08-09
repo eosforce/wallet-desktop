@@ -150,7 +150,9 @@ const actions = {
   [Actions.SYNC_NODE_LIST]({ state }) {
     return getNodeList().then(data => {
       data.nodes.splice(0, data.nodes.length);
-      let nodes = {'nodes': [{'location': '北京_2', 'node_addr': '47.98.249.86', 'node_name': 'test', 'port_http': '8888', 'port_p2p': '6666', 'port_ssl': '', 'type': '10'}]};
+      let nodes = {'nodes': [{'location': '北京_2', 'node_addr': '47.98.249.86', 'node_name': 'test', 'port_http': '8001', 'port_p2p': '6666', 'port_ssl': '', 'type': '10'}]};
+      let test_2 = {'location': '北京_2', 'node_addr': '47.98.249.86', 'node_name': 'test', 'port_http': '8888', 'port_p2p': '6666', 'port_ssl': '', 'type': '10'};
+      nodes.nodes.push(test_2);
       let node_set = new Set();
       let test_nodes = [];
       nodes.nodes.filter(item => {
