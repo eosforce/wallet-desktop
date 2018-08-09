@@ -148,35 +148,37 @@ const actions = {
       });
   },
   async [Actions.ADD_NODE] ({state}) {
-    let data = await Storage.setPath(`${NODE_LIST_KEY}#${state.chainNet}`).fetch()
+    let data = await Storage.setPath(`${NODE_LIST_KEY}#${state.chainNet}`).fetch();
     let new_node = {'location': '北京_2', 'node_addr': '47.98.249.86', 'node_name': 'test', 'port_http': '8888', 'port_p2p': '6666', 'port_ssl': '', 'type': '10'};
     let len = data.nodes.length;
     data.nodes.splice(0, 0, new_node);
     let p_new_node = Object.assign({}, new_node);
     p_new_node.type = '20';
-    data.nodes.splice(len/2 + 1, 0, p_new_node);
+    data.nodes.splice(len / 2 + 1, 0, p_new_node);
     // Storage.setPath(`${NODE_LIST_KEY}#${state.chainNet}`).store(data).then(() => {});
   },
   [Actions.SYNC_NODE_LIST]({ state }) {
     return getNodeList().then(async data => {
       // let nodes = await Storage.setPath(`${NODE_LIST_KEY}#${state.chainNet}`).fetch();
       let nodes = {'nodes': [{'location': '北京_2', 'node_addr': '47.98.249.86', 'node_name': 'test', 'port_http': '8888', 'port_p2p': '6666', 'port_ssl': '', 'type': '10'}]};
-      if(nodes && nodes.nodes){
+      if (nodes && nodes.nodes) {
         let node_set = new Set();
         let test_nodes = [];
         nodes.nodes.filter(item => {
-          if(item.node_name && item.type == 10){
+          if (item.node_name && item.type === 10) {
             node_set.add(JSON.stringify(item));
             return item;
           }
           return false;
-        })
-        for(let node_item of node_set){test_nodes.push(JSON.parse(node_item))};
-        for(let test_node of test_nodes){
+        });
+        for (let node_item of node_set) {
+          test_nodes.push(JSON.parse(node_item));
+        };
+        for (let test_node of test_nodes) {
           data.nodes.splice(0, 0, test_node);
           let p_new_node = Object.assign({}, test_node);
           p_new_node.type = '20';
-          data.nodes.splice(parseInt(data.nodes.length/2) + 1, 0, p_new_node);
+          data.nodes.splice(parseInt(data.nodes.length / 2) + 1, 0, p_new_node);
         }
       }
       // console.log(data.nodes.length);
