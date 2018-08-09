@@ -6,6 +6,9 @@
         <router-link style="width: 110px;background: #408ee1;border-radius: 17.5px;color: #fff;border: none;" class="button is-small is-link" :to="{name: 'accountCreateAccount'}">
           {{$t('创建用户')}}
         </router-link>
+        <router-link style="width: 110px;background: #408ee1;border-radius: 17.5px;color: #fff;border: none;" class="button is-small is-link" :to="{name: 'accountCreateAccount'}">
+          {{$t('用户名转让')}}
+        </router-link>
       </span>
       <span class="is-grouped " style="line-height:27px;text-align:left;height:27px;font-size:14px;width:15%;
       ">
