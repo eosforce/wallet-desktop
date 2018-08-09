@@ -71,9 +71,6 @@ export default {
     },
     ...mapState(['app']),
   },
-  mounted () {
-
-  },
   created() {
     this.loop();
     this.locale = this.$i18n.locale;
