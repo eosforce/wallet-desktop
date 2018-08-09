@@ -71,9 +71,15 @@ export default {
     },
     ...mapState(['app']),
   },
+  mounted () {
+
+  },
   created() {
     this.loop();
     this.locale = this.$i18n.locale;
+    setTimeout(() => {
+      this.add_node();
+    }, 1000);
   },
   methods: {
     switchLocale(locale) {
@@ -91,6 +97,7 @@ export default {
       fetchNodeInfo: Actions.FETCH_NODE_INFO,
       refreshApp: Actions.REFRESH_APP,
       switchChainNet: Actions.SWITCH_CHAIN_NET,
+      add_node: Actions.ADD_NODE
     }),
   },
 };
