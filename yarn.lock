@@ -2864,9 +2864,9 @@ eosjs-ecc@4.0.1:
     ecurve "^1.0.5"
     randombytes "^2.0.5"
 
-"eosjs@git+https://github.com/eosforce/eosjs.git#2da68b5":
+"eosjs@git+https://github.com/eosforce/eosjs.git#2cc2a53":
   version "15.0.0"
-  resolved "git+https://github.com/eosforce/eosjs.git#2da68b503806a8b16849dcdd2e5e1a0b6ee3a616"
+  resolved "git+https://github.com/eosforce/eosjs.git#2cc2a53bea4239af3f785ff60f1c46eef24d39e6"
   dependencies:
     babel-runtime "^6.26.0"
     binaryen "^37.0.0"
