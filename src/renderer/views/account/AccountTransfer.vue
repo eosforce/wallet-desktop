@@ -67,7 +67,7 @@ export default {
       let res = [];
       this.baseInfo.permissions.map(item => {
         let is_have = item.required_auth.keys.find(item => {
-          if(item.key  == this.wallet.data.publicKey){
+          if(item.key == this.wallet.data.publicKey){
             return true;
           }
         });
@@ -97,13 +97,13 @@ export default {
         Message.error({
           title: this.$t('不能设置到自己')
         });
-        return ;
+        return null;
       }
       if (this.public_key == this.wallet.data.publicKey) {
         Message.error({
           title: this.$t('不能转让用户到自己')
         });
-        return ;
+        return null;
       }
       this.submitting = true;
       let transfer_res = await this.TRANSFER_ACCOUNT({
@@ -119,7 +119,7 @@ export default {
           title: this.$t('用户名转让失败'),
           message: transfer_res.msg,
         });
-        return ;
+        return null;
       }
       Message.success(this.$t('用户名转让成功'));
       let next_params = await this.DELETE_ACCOUNT({account: this.my_name, publicKey: this.wallet.data.publicKey});

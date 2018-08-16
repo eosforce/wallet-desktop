@@ -97,26 +97,19 @@ const actions = {
     return initPromise;
   },
   [Actions.DELETE_ACCOUNT]({ state, commit, dispatch, getters }, {account, publicKey}) {
-    console.log('state.walletList');
-    console.log(state.walletList);
-    console.log(publicKey);
-    console.log(getters[Getters.CURRENT_ACCOUNT]);
-
     let has_removed = -1;
-    let next_params = {account: null, publicKey: null};
     let wallet_account_map = [];
-
     for (let row of state.walletList) {
       var new_row = JSON.parse(JSON.stringify(row));
-      for(let item of new_row.accounts){
-        if (new_row.publicKey == publicKey && item == account) {
+      for (let item of new_row.accounts) {
+        if (new_row.publicKey === publicKey && item === account) {
           let index = new_row.accounts.indexOf(account);
           if (index > -1) {
             row.accounts.splice(index, 1);
             has_removed = wallet_account_map.length;
           }
         }
-        new_row.publicKey == publicKey && item == account ? null : wallet_account_map.push({account: item, publicKey: new_row.publicKey });
+        if(new_row.publicKey === publicKey && item === account) wallet_account_map.push({ account: item, publicKey: new_row.publicKey });
       }
     }
     return wallet_account_map[has_removed] || null;
@@ -139,9 +132,6 @@ const actions = {
     ).then(result => commit(Mutations.SET_WALLET_LIST, { walletList: result }));
   },
   [Actions.FETCH_ALL_WALLET_LIST]({ state, commit, getters }) {
-    console.log('state.walletIdList');
-    console.log(getters[Getters.CURRENT_NODE]);
-    console.log(state.walletIdList);
     // getAccounts(getters[Getters.CURRENT_NODE])(pk)
   },
   [Actions.NEW_WALLET]({ dispatch }, { privateKey, password }) {
@@ -210,12 +200,10 @@ const getters = {
     const result = {};
     for (const wallet of state.walletList) {
       const publicKey = wallet.publicKey;
-      console.log(publicKey);
       for (const name of wallet.accounts) {
         result[name] = publicKey;
       }
     }
-    console.log(result);
     return result;
   },
   [Getters.GET_TRANSE_CONFIG]: (state, getters) => (password, name, walletId) => {

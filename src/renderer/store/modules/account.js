@@ -32,7 +32,7 @@ const mutations = {
     state.bpsTable = bpsTable;
   },
   [Mutations.SET_TRANSFER_RECORDS](state, { transferRecords = {} } = {}) {
-    if(transferRecords.list.length < state.transferRecords.offset){
+    if (transferRecords.list.length < state.transferRecords.offset) {
       state.transferRecords.more = false;
     }
     state.transferRecords.list.splice(state.transferRecords.list.length, 0, ...transferRecords.list);
@@ -81,7 +81,7 @@ const actions = {
   [Actions.GET_ACCOUNT_INFO]({ state, dispatch, commit, getters }) {
     const accountName = getters[Getters.CURRENT_ACCOUNT_NAME];
     commit(Mutations.START_LOAD_ACCOUNT_INFO);
-    return getAccountInfo(getters[Getters.CURRENT_NODE])(accountName, () => {  })
+    return getAccountInfo(getters[Getters.CURRENT_NODE])(accountName, () => {})
       .then(({ info, bpsTable }) => {
         commit(Mutations.END_LOAD_ACCOUNT_INFO);
         commit(Mutations.SET_ACCOUNT_INFO, { info });

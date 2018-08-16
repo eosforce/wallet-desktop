@@ -81,18 +81,18 @@ export const queryAccount = httpEndpoint => accountName => {
 };
 
 export const getAccount = httpEndpoint => async accountName => {
-    return await Eos({ httpEndpoint }).getAccount(accountName).then(data => {
-      return data;
-    })
+  let res = await Eos({ httpEndpoint })
+    .getAccount(accountName)
+    .then(data => { return data; })
     .catch(err => {
-      return null;
-    })
-}
+      return handleApiError(err);
+    });
+  return res;
+};
 
 // 获取指定账户可用余额
 export const getAvailable = httpEndpoint => async accountName => {
-  
-  return await Eos({ httpEndpoint })
+  let res = await Eos({ httpEndpoint })
     .getTableRows({
       scope: 'eosio',
       code: 'eosio',
@@ -109,6 +109,7 @@ export const getAvailable = httpEndpoint => async accountName => {
         return toBigNumber(0);
       }
     });
+  return res;
 };
 
 // 获取 token list
@@ -168,7 +169,6 @@ export const getTable = httpEndpoint => params => {
 
 // 根据 bp 和 vote 得到分红表，返回一个对象
 export const getRewardsAndBpsTable = httpEndpoint => async (votesTable, accountName) => {
-
   const bpsTable = await getBpsTable(httpEndpoint)();
   const { head_block_num: currentHeight } = await getNodeInfo(httpEndpoint);
   const { schedule_version } = await getBlock(httpEndpoint)(currentHeight);
@@ -260,12 +260,7 @@ export const getRewardsAndBpsTable = httpEndpoint => async (votesTable, accountN
 };
 
 export const getAccountInfo = httpEndpoint => async (accountName, finish_account_update) => {
-
-  // const available = await getAvailable(httpEndpoint)(accountName);
-  // const account_base_info = await getAccount(httpEndpoint)(accountName);
   const [available, account_base_info] = await Promise.all([getAvailable(httpEndpoint)(accountName), getAccount(httpEndpoint)(accountName)]);
-  finish_account_update ? finish_account_update() : null;
-
   const votesTable = await getVotesTable(httpEndpoint)(accountName);
   const { rewardsTable, bpsTable, bpInfo } = await getRewardsAndBpsTable(httpEndpoint)(votesTable, accountName);
   const stakedTotal = calcTotalAmount(votesTable, 'staked');
@@ -292,7 +287,7 @@ export const getAccountInfo = httpEndpoint => async (accountName, finish_account
 };
 
 // 创建用户
-export const newAccount = config => ({ creator, accountName, publicKey, permission}) => {
+export const newAccount = config => ({creator, accountName, publicKey, permission}) => {
   return Eos(config)
     .newaccount(creator, accountName, publicKey, publicKey, permission)
     .catch(err => {
@@ -317,7 +312,7 @@ export const transfer = config => {
 };
 
 export const vote = config => {
-  return ({ voter, bpname, amount, permission} = {}) => {
+  return ({voter, bpname, amount, permission} = {}) => {
     return Eos(config)
       .vote(voter, bpname, toAsset(amount), permission)
       .catch(err => {
@@ -349,23 +344,20 @@ export const claim = config => {
 export const transfer_owner_auth = config => (name, to_public_key, permission) => {
   return new Promise((resolve, reject) => {
     Eos(config)
-    .updateauth(name, 'owner', '', to_public_key, permission)
-    .then(res => {
-      resolve(res);
-    })
-    .catch(err => {
+      .updateauth(name, 'owner', '', to_public_key, permission)
+      .then(res => {
+        resolve(res);
+      })
+      .catch(err => {
         handleApiError(err);
-        console.log('error');
-        console.log(err);
         let error_ob = null;
-        try{
+        try {
           error_ob = JSON.parse(err);
-        }
-        catch(e){};
+        } catch (e) {};
         resolve(error_ob);
-    });
-  })
-}
+      });
+  });
+};
 
 export const transfer_active_auth = config => (name, to_public_key, permission) => {
   return new Promise((resolve, reject) => {
@@ -377,21 +369,20 @@ export const transfer_active_auth = config => (name, to_public_key, permission) 
       .catch(err => {
         handleApiError(err);
         let error_ob = null;
-        try{
+        try {
           error_ob = JSON.parse(err);
-        }
-        catch(e){};
+        } catch (e) {};
         resolve(error_ob);
       });
-  })
-}
+  });
+};
 
-export const transfer_account = config => async ({name ,publick_key, permissions}) => {
+export const transfer_account = config => async ({name, publick_key, permissions}) => {
   let res = {
     is_error: false,
     msg: '',
     data: []
-  }
+  };
 
   if (permissions.indexOf('active') > -1) {
     let active_transfer_res = await transfer_active_auth(config)(name, publick_key, 'active');
@@ -403,7 +394,6 @@ export const transfer_account = config => async ({name ,publick_key, permissions
     }
   }
   if (permissions.indexOf('owner') > -1) {
-
     let owner_transfer_res = await transfer_owner_auth(config)(name, publick_key, 'owner');
     res.data.push(owner_transfer_res);
     res.msg = get_error_msg(owner_transfer_res);
@@ -411,9 +401,6 @@ export const transfer_account = config => async ({name ,publick_key, permissions
       res.is_error = true;
       return res;
     }
-
   }
   return res;
-}
-
-
+};

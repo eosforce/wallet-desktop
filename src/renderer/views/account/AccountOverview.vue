@@ -74,7 +74,7 @@ export default {
       }
       this.baseInfo.permissions.map(item => {
         let is_have = item.required_auth.keys.find(item => {
-          if(item.key  == this.wallet.data.publicKey){
+          if(item.key == this.wallet.data.publicKey){
             return true;
           }
         });
