@@ -10,6 +10,12 @@ export const toUrl = (url = '') => {
   }
   return url;
 };
+// 提取错误信息，没有错误这换回空
+export const get_error_msg = err => {
+  if (!err.error) return '';
+  let msg = err.error.details.map(item => item.message)
+  return msg.join('.');
+}
 
 // 错误处理
 
@@ -140,7 +146,7 @@ export const decryptWif = (password, data) => {
   }
 };
 
-export const genTrConvertFunc = trName => {
+export const genTrConvertFunc = (trName, last_irreversible_block_num) => {
   const defaultFunc = tr => {
     const act = tr.action_trace.act;
     return {
@@ -149,6 +155,7 @@ export const genTrConvertFunc = trName => {
       name: act.name,
       from: act.authorization && act.authorization[0] && act.authorization[0].actor,
       status: checkStatus(tr.status),
+      has_confirmed: last_irreversible_block_num > tr.block_num
     };
   };
   return (
@@ -161,6 +168,7 @@ export const genTrConvertFunc = trName => {
           name: '创建用户',
           from: act.authorization && act.authorization[0] && act.authorization[0].actor,
           status: checkStatus(tr.status),
+          has_confirmed: last_irreversible_block_num > tr.block_num
         };
       },
       vote: tr => {
@@ -173,6 +181,7 @@ export const genTrConvertFunc = trName => {
           to: act.data.bpname,
           change: act.data.stake,
           status: checkStatus(tr.status),
+          has_confirmed: last_irreversible_block_num > tr.block_num
         };
       },
       transfer: tr => {
@@ -186,6 +195,7 @@ export const genTrConvertFunc = trName => {
           change: act.data.quantity,
           memo: act.data.memo,
           status: checkStatus(tr.status),
+          has_confirmed: last_irreversible_block_num > tr.block_num
         };
       },
       claim: tr => {
@@ -197,6 +207,7 @@ export const genTrConvertFunc = trName => {
           from: act.data.voter,
           to: act.data.bpname,
           status: checkStatus(tr.status),
+          has_confirmed: last_irreversible_block_num > tr.block_num
         };
       },
       unfreeze: tr => {
@@ -208,6 +219,7 @@ export const genTrConvertFunc = trName => {
           from: act.data.voter,
           to: act.data.bpname,
           status: checkStatus(tr.status),
+          has_confirmed: last_irreversible_block_num > tr.block_num
         };
       },
     }[trName] || defaultFunc

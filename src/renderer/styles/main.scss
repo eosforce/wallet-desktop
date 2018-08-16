@@ -479,7 +479,12 @@ tr.is-vote {
 .menu-list a {
   padding: 4px 0.75em;
 }
-
+.box_load_ct{
+  display: flex;
+  height: 130px;
+  align-items: center;
+  justify-content: center;
+}
 @keyframes spin {
   100% {
     transform: rotate(-360deg);

@@ -1,5 +1,5 @@
 import { Mutations, Actions, Getters } from '@/constants/types.constants';
-import { getAccountInfo, transfer, getTransferRecord, vote, unfreeze, claim, getTokenList } from '@/services/Eos';
+import { getAccountInfo, transfer, getTransferRecord, vote, unfreeze, claim, getTokenList, transfer_account } from '@/services/Eos';
 
 const initState = {
   accountName: '',
@@ -9,13 +9,21 @@ const initState = {
     offset: 20,
     pos: 0,
     list: [],
+    more: true
   },
   tokenList: [],
+  on_load_info: true
 };
 
 const mutations = {
+  // on_load_info
   [Mutations.SET_ACCOUNT_NAME](state, { accountName = '' } = {}) {
     state.accountName = accountName;
+  },
+  [Mutations.RESET_ACCOUNT_INFO](state) {
+    state.transferRecords.list.splice(0, state.transferRecords.list.length);
+    state.transferRecords.pos = 0;
+    state.transferRecords.more = true;
   },
   [Mutations.SET_ACCOUNT_INFO](state, { info = {} } = {}) {
     state.info = info;
@@ -24,11 +32,21 @@ const mutations = {
     state.bpsTable = bpsTable;
   },
   [Mutations.SET_TRANSFER_RECORDS](state, { transferRecords = {} } = {}) {
+    if(transferRecords.list.length < state.transferRecords.offset){
+      state.transferRecords.more = false;
+    }
+    state.transferRecords.list.splice(state.transferRecords.list.length, 0, ...transferRecords.list);
     state.transferRecords = transferRecords;
   },
   [Mutations.SET_TOKEN_LIST](state, { tokenList = [] } = {}) {
     state.tokenList = tokenList;
   },
+  [Mutations.START_LOAD_ACCOUNT_INFO](state, { tokenList = [] } = {}) {
+    state.on_load_info = true;
+  },
+  [Mutations.END_LOAD_ACCOUNT_INFO](state, { tokenList = [] } = {}) {
+    state.on_load_info = false;
+  }
 };
 
 const actions = {
@@ -36,33 +54,36 @@ const actions = {
     dispatch(Actions.FETCH_ACCOUNT, { accountName: state.accountName });
   },
   [Actions.FETCH_ACCOUNT]({ commit, dispatch }, { accountName }) {
+    commit(Mutations.RESET_ACCOUNT_INFO);
     commit(Mutations.SET_ACCOUNT_NAME, { accountName });
     dispatch(Actions.GET_ACCOUNT_INFO);
   },
-  [Actions.TRANSFER]({ state, dispatch, getters }, { from, to, amount, memo, password, tokenSymbol, precision }) {
-    return getters[Getters.GET_TRANSE_CONFIG](password, from).then(config => {
-      return transfer(config)({ from, to, amount, memo, tokenSymbol, precision });
+  [Actions.TRANSFER]({ state, dispatch, getters }, { from, to, amount, memo, password, tokenSymbol, precision, walletId, permission }) {
+    return getters[Getters.GET_TRANSE_CONFIG](password, from, walletId).then(config => {
+      return transfer(config)({ from, to, amount, memo, tokenSymbol, precision, permission });
     });
   },
-  [Actions.VOTE]({ state, dispatch, getters }, { voter, bpname, amount, password }) {
-    return getters[Getters.GET_TRANSE_CONFIG](password, voter).then(config => {
-      return vote(config)({ voter, bpname, amount });
+  [Actions.VOTE]({ state, dispatch, getters }, { voter, bpname, amount, password, walletId, permission }) {
+    return getters[Getters.GET_TRANSE_CONFIG](password, voter, walletId).then(config => {
+      return vote(config)({ voter, bpname, amount, permission });
     });
   },
-  [Actions.UNFREEZE]({ state, dispatch, getters }, { voter, bpname, password }) {
-    return getters[Getters.GET_TRANSE_CONFIG](password, voter).then(config => {
-      return unfreeze(config)({ voter, bpname });
+  [Actions.UNFREEZE]({ state, dispatch, getters }, { voter, bpname, password, walletId, permission }) {
+    return getters[Getters.GET_TRANSE_CONFIG](password, voter, walletId).then(config => {
+      return unfreeze(config)({ voter, bpname, permission });
     });
   },
-  [Actions.CLAIM]({ state, dispatch, getters }, { voter, bpname, password }) {
-    return getters[Getters.GET_TRANSE_CONFIG](password, voter).then(config => {
-      return claim(config)({ voter, bpname });
+  [Actions.CLAIM]({ state, dispatch, getters }, { voter, bpname, password, walletId, permission }) {
+    return getters[Getters.GET_TRANSE_CONFIG](password, voter, walletId).then(config => {
+      return claim(config)({ voter, bpname, permission });
     });
   },
   [Actions.GET_ACCOUNT_INFO]({ state, dispatch, commit, getters }) {
     const accountName = getters[Getters.CURRENT_ACCOUNT_NAME];
-    return getAccountInfo(getters[Getters.CURRENT_NODE])(accountName)
+    commit(Mutations.START_LOAD_ACCOUNT_INFO);
+    return getAccountInfo(getters[Getters.CURRENT_NODE])(accountName, () => {  })
       .then(({ info, bpsTable }) => {
+        commit(Mutations.END_LOAD_ACCOUNT_INFO);
         commit(Mutations.SET_ACCOUNT_INFO, { info });
         commit(Mutations.SET_BPS_TABLE, { bpsTable });
       })
@@ -97,6 +118,12 @@ const actions = {
     return getAccountInfo(getters[Getters.CURRENT_NODE])(accountName).then(({ info }) => {
       commit(Mutations.SET_ACCOUNT_INFO, { info });
     });
+  },
+
+  async [Actions.TRANSFER_ACCOUNT]({ state, dispatch, commit, getters }, { name, publick_key, password, walletId, permissions = ['active', 'owner'] }) {
+    let config = await getters[Getters.GET_TRANSE_CONFIG](password, name, walletId);
+    let res = await transfer_account(config)({ name, publick_key, permissions });
+    return res;
   },
 };
 

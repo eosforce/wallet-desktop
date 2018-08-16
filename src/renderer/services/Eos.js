@@ -14,6 +14,7 @@ import {
   calcVoteage,
   calcReward,
   calcApr,
+  get_error_msg
 } from '@/utils/util';
 
 export const getBpNick = () => {
@@ -37,7 +38,7 @@ export const getNodeInfo = httpEndpoint => {
 export const getBlock = httpEndpoint => block_num_or_id => {
   return Eos({ httpEndpoint }).getBlock({ block_num_or_id });
 };
-
+// '/v1/chain/get_account'
 // 根据公钥获取用户名数组
 export const getAccounts = httpEndpoint => publicKey => {
   return Eos({ httpEndpoint })
@@ -79,9 +80,19 @@ export const queryAccount = httpEndpoint => accountName => {
     });
 };
 
+export const getAccount = httpEndpoint => async accountName => {
+    return await Eos({ httpEndpoint }).getAccount(accountName).then(data => {
+      return data;
+    })
+    .catch(err => {
+      return null;
+    })
+}
+
 // 获取指定账户可用余额
-export const getAvailable = httpEndpoint => accountName => {
-  return Eos({ httpEndpoint })
+export const getAvailable = httpEndpoint => async accountName => {
+  
+  return await Eos({ httpEndpoint })
     .getTableRows({
       scope: 'eosio',
       code: 'eosio',
@@ -157,9 +168,11 @@ export const getTable = httpEndpoint => params => {
 
 // 根据 bp 和 vote 得到分红表，返回一个对象
 export const getRewardsAndBpsTable = httpEndpoint => async (votesTable, accountName) => {
+
   const bpsTable = await getBpsTable(httpEndpoint)();
   const { head_block_num: currentHeight } = await getNodeInfo(httpEndpoint);
   const { schedule_version } = await getBlock(httpEndpoint)(currentHeight);
+
   let version;
   const superBpsAmountTable = await getTable(httpEndpoint)({
     scope: 'eosio',
@@ -246,22 +259,26 @@ export const getRewardsAndBpsTable = httpEndpoint => async (votesTable, accountN
   };
 };
 
-export const getAccountInfo = httpEndpoint => async accountName => {
+export const getAccountInfo = httpEndpoint => async (accountName, finish_account_update) => {
+
+  // const available = await getAvailable(httpEndpoint)(accountName);
+  // const account_base_info = await getAccount(httpEndpoint)(accountName);
+  const [available, account_base_info] = await Promise.all([getAvailable(httpEndpoint)(accountName), getAccount(httpEndpoint)(accountName)]);
+  finish_account_update ? finish_account_update() : null;
+
   const votesTable = await getVotesTable(httpEndpoint)(accountName);
   const { rewardsTable, bpsTable, bpInfo } = await getRewardsAndBpsTable(httpEndpoint)(votesTable, accountName);
-
-  const available = await getAvailable(httpEndpoint)(accountName);
   const stakedTotal = calcTotalAmount(votesTable, 'staked');
   const unstakingTotal = calcTotalAmount(votesTable, 'unstaking');
   const rewardTotal = calcTotalAmount(rewardsTable, 'reward');
   const assetTotal = calcTotalAmount([available, stakedTotal, unstakingTotal, rewardTotal]);
-
   const info = {
     assetTotal: toAsset(assetTotal), // 资产总额
     available: toAsset(available), // 可用余额
     stakedTotal: toAsset(stakedTotal), // 投票总额
     unstakingTotal: toAsset(unstakingTotal), // 赎回总额
     rewardTotal: toAsset(rewardTotal), // 待领分红总额
+    baseInfo: account_base_info
   };
 
   if (bpInfo) {
@@ -275,34 +292,22 @@ export const getAccountInfo = httpEndpoint => async accountName => {
 };
 
 // 创建用户
-export const newAccount = config => ({ creator, accountName, publicKey }) => {
+export const newAccount = config => ({ creator, accountName, publicKey, permission}) => {
   return Eos(config)
-    .newaccount(creator, accountName, publicKey, publicKey)
+    .newaccount(creator, accountName, publicKey, publicKey, permission)
     .catch(err => {
       return handleApiError(err);
     });
 };
 
-export const transfer_active_auth = config => (creator) => {
-  return new Promise((resolve, reject) => {
-    let to_public_key = 'EOS8hBVJZjixXXzuNa3G9bQhPAjhpRKYEmGrGD8fb1pm7b7su4M5U';
-    Eos(config)
-      .updateauth('ab5', 'active', 'owner', to_public_key)
-      .then(res => { resolve(res); })
-      .catch(err => {
-        return handleApiError(err);
-      });
-  });
-};
-
 export const transfer = config => {
-  return ({ from, to, amount, memo = '', tokenSymbol = 'EOS', precision = '4' } = {}) => {
+  return ({ from, to, amount, memo = '', tokenSymbol = 'EOS', precision = '4', permission } = {}) => {
     return Promise.resolve()
       .then(() => {
         return Eos(config)
           .contract(tokenSymbol === 'EOS' ? 'eosio' : 'eosio.token')
           .then(token => {
-            return token.transfer(from, to, toAsset(amount, tokenSymbol, { precision }), memo);
+            return token.transfer(from, to, toAsset(amount, tokenSymbol, { precision }), memo, permission);
           });
       })
       .catch(err => {
@@ -312,9 +317,9 @@ export const transfer = config => {
 };
 
 export const vote = config => {
-  return ({ voter, bpname, amount } = {}) => {
+  return ({ voter, bpname, amount, permission} = {}) => {
     return Eos(config)
-      .vote(voter, bpname, toAsset(amount))
+      .vote(voter, bpname, toAsset(amount), permission)
       .catch(err => {
         return handleApiError(err);
       });
@@ -322,9 +327,9 @@ export const vote = config => {
 };
 
 export const unfreeze = config => {
-  return ({ voter, bpname } = {}) => {
+  return ({ voter, bpname, permission } = {}) => {
     return Eos(config)
-      .unfreeze(voter, bpname)
+      .unfreeze(voter, bpname, permission)
       .catch(err => {
         return handleApiError(err);
       });
@@ -332,11 +337,83 @@ export const unfreeze = config => {
 };
 
 export const claim = config => {
-  return ({ voter, bpname } = {}) => {
+  return ({ voter, bpname, permission } = {}) => {
     return Eos(config)
-      .claim(voter, bpname)
+      .claim(voter, bpname, permission)
       .catch(err => {
         return handleApiError(err);
       });
   };
 };
+
+export const transfer_owner_auth = config => (name, to_public_key, permission) => {
+  return new Promise((resolve, reject) => {
+    Eos(config)
+    .updateauth(name, 'owner', '', to_public_key, permission)
+    .then(res => {
+      resolve(res);
+    })
+    .catch(err => {
+        handleApiError(err);
+        console.log('error');
+        console.log(err);
+        let error_ob = null;
+        try{
+          error_ob = JSON.parse(err);
+        }
+        catch(e){};
+        resolve(error_ob);
+    });
+  })
+}
+
+export const transfer_active_auth = config => (name, to_public_key, permission) => {
+  return new Promise((resolve, reject) => {
+    Eos(config)
+      .updateauth(name, 'active', 'owner', to_public_key, permission)
+      .then(res => {
+        resolve(res);
+      })
+      .catch(err => {
+        handleApiError(err);
+        let error_ob = null;
+        try{
+          error_ob = JSON.parse(err);
+        }
+        catch(e){};
+        resolve(error_ob);
+      });
+  })
+}
+
+export const transfer_account = config => async ({name ,publick_key, permissions}) => {
+  let res = {
+    is_error: false,
+    msg: '',
+    data: []
+  }
+
+  if (permissions.indexOf('active') > -1) {
+    let active_transfer_res = await transfer_active_auth(config)(name, publick_key, 'active');
+    res.data.push(active_transfer_res);
+    res.msg = get_error_msg(active_transfer_res);
+    if (res.msg) {
+      res.is_error = true;
+      return res;
+    }
+  }
+  if (permissions.indexOf('owner') > -1) {
+
+    let owner_transfer_res = await transfer_owner_auth(config)(name, publick_key, 'owner');
+    res.data.push(owner_transfer_res);
+    res.msg = get_error_msg(owner_transfer_res);
+    if (res.msg) {
+      res.is_error = true;
+      return res;
+    }
+
+  }
+  return res;
+}
+
+

@@ -109,7 +109,36 @@ export default {
     nodeList() {
       return this.app.nodeList;
     },
-    ...mapState(['app']),
+    baseInfo() {
+      return this.account.info.baseInfo || {permissions: []};
+    },
+    permissions () {
+      let res = [];
+      this.baseInfo.permissions.map(item => {
+        let is_have = item.required_auth.keys.find(item => {
+          if(item.key  == this.wallet.data.publicKey){
+            return true;
+          }
+        });
+        is_have = is_have ? true : false;
+        res.push({
+          name: item.perm_name,
+          is_have
+        })
+      });
+      return res;
+    },
+    has_owner () {
+      return this.permissions.find(item => {
+        if(item.name == 'owner' && item.is_have){
+          return true;
+        }
+      })
+    },
+    walletData() {
+      return this.wallet.data || {};
+    },
+    ...mapState(['account', 'wallet', 'app']),
   },
   methods: {
     confirmInfo() {
@@ -128,6 +157,8 @@ export default {
             publicKey: this.publicKey,
             accountName: this.accountName,
             creator: this.creatorAccountName,
+            walletId: this.walletData.publicKey,
+            permission: this.permissions.filter(item => item.is_have)[0].name
           });
         })
         .then(result => {

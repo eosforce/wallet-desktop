@@ -9,6 +9,7 @@
           <th>{{$t('接收方')}}</th>
           <th>{{$t('金额')}}</th>
           <th>{{$t('备注')}}</th>
+          <th>交易状态</th>
         </tr>
       </thead>
       <tbody>
@@ -19,12 +20,24 @@
           <td>{{record.to}}</td>
           <td>{{record.change}}</td>
           <td>{{record.memo}}</td>
+          <td>
+            <span v-if="record.has_confirmed" class="has_confim">已完成</span>
+            <span v-if="!record.has_confirmed" class="wait_confirm">等待确认</span>
+          </td>
         </tr>
         <tr v-show="!recordList.length">
           <td colspan="7" class="empty">{{$t('暂无交易记录')}}</td>
         </tr>
       </tbody>
     </table>
+      <!-- <div v-if="has_more">
+        加载更多
+      </div>
+
+      <div class="no_data" v-if="!has_more">
+          没有更多了
+      </div> -->
+
       <el-pagination
         @current-change="getMaterial"
         :pageSize="offset"
@@ -56,11 +69,17 @@ export default {
     recordList() {
       if (!this.account.transferRecords.list || !this.account.transferRecords.list.length) return [];
       return this.account.transferRecords.list.map(tr => {
-        return genTrConvertFunc(tr.action_trace.act.name)(tr);
+        return genTrConvertFunc(tr.action_trace.act.name, this.last_irreversible_block_num)(tr);
       });
+    },
+    has_more() {
+      return this.account.transferRecords.more;
     },
     accountName() {
       return this.$route.params.accountName;
+    },
+    last_irreversible_block_num() {
+      return this.app.currentNodeInfo.last_irreversible_block_num;
     },
     ...mapState(['account', 'app']),
   },
@@ -85,5 +104,15 @@ export default {
 }
 .el-pagination {
   text-align: center;
+}
+.wait_confirm{
+  color: #900e0e;
+}
+.has_confim{
+  color: #c0c4cc;
+}
+.no_data{
+  text-align: center;
+  padding: 20px;
 }
 </style>

@@ -15,7 +15,7 @@
           <ul>
             <li  v-for="name in wallet.accounts" :key="name">
               <router-link
-                :class="{'is-active': currentAccountName=== name}"
+                :class="{'is-active': currentAccountName === name && currentWalletId === wallet.publicKey}"
                 :to="{name: 'accountDetail', params: { walletId: wallet.publicKey, accountName: name }}"
               >
                 <div class="menu-item-title">{{name}}</div>
@@ -29,7 +29,8 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapState, mapActions } from 'vuex';
+import { Actions } from '@/constants/types.constants';
 
 export default {
   name: 'PageMenu',
@@ -42,6 +43,20 @@ export default {
     },
     ...mapState(['app']),
   },
+  mounted () {
+    this.reload();
+  },
+  methods: {
+    reload () {
+      this.FETCH_WALLET_LIST();
+      setTimeout(() => {
+        this.reload();
+      }, 5000);  
+    },
+    ...mapActions({
+      FETCH_WALLET_LIST: Actions.FETCH_WALLET_LIST
+    })
+  }
 };
 </script>
 

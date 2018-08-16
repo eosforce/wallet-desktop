@@ -104,7 +104,36 @@ export default {
         return null;
       }
     },
-    ...mapState(['app', 'account']),
+    baseInfo() {
+      return this.account.info.baseInfo || {permissions: []};
+    },
+    permissions () {
+      let res = [];
+      this.baseInfo.permissions.map(item => {
+        let is_have = item.required_auth.keys.find(item => {
+          if(item.key  == this.wallet.data.publicKey){
+            return true;
+          }
+        });
+        is_have = is_have ? true : false;
+        res.push({
+          name: item.perm_name,
+          is_have
+        })
+      });
+      return res;
+    },
+    has_owner () {
+      return this.permissions.find(item => {
+        if(item.name == 'owner' && item.is_have){
+          return true;
+        }
+      })
+    },
+    walletData() {
+      return this.wallet.data || {};
+    },
+    ...mapState(['account', 'wallet', 'app']),
   },
   methods: {
     submit() {
@@ -117,6 +146,8 @@ export default {
         bpname: this.bpname,
         voter: this.voter,
         password: this.password,
+        walletId: this.walletData.publicKey,
+        permission: this.permissions.filter(item => item.is_have)[0].name
       })
         .then(result => {
           Message.success(this.$t('赎回成功'));
