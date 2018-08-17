@@ -82,8 +82,6 @@ const actions = {
     commit(Mutations.START_LOAD_ACCOUNT_INFO);
     return getAccountInfo(getters[Getters.CURRENT_NODE])(accountName, () => {})
       .then(({ info, bpsTable }) => {
-        commit(Mutations.FINISH_LOAD_ACCOUNT_INFO);
-        commit(Mutations.FINISH_LOAD_ACCOUNT_INFO);
         commit(Mutations.SET_ACCOUNT_INFO, { info });
         commit(Mutations.SET_BPS_TABLE, { bpsTable });
       })
@@ -91,6 +89,7 @@ const actions = {
         return dispatch(Actions.GET_TRANSFER_RECORD, { accountName });
       })
       .then(() => {
+        commit(Mutations.FINISH_LOAD_ACCOUNT_INFO);
         return dispatch(Actions.GET_TOKEN_LIST, { accountName });
       });
   },
