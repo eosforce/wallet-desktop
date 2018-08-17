@@ -394,12 +394,10 @@ tr.is-vote {
 }
 
 .menu-list a:hover {
-  background: transparent;
   color: #fff;
 }
 
 .menu-list a.is-active::before {
-  content: '';
   display: inline-block;
   width: 2px;
   height: 20px;
@@ -489,4 +487,57 @@ tr.is-vote {
   100% {
     transform: rotate(-360deg);
   }
+}
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg)
+  }
+  100% {
+    transform: rotate(360deg)
+  }
+}
+.load_circle{
+  border: 1px solid #0bceaa;
+  border-top: 1px solid rgba(0, 0, 0, 0);
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border-radius: 20px;
+  animation: rotate 1s linear infinite;    
+}
+.load_accounts_detail{
+  position: absolute;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.3);
+  z-index: 1;
+  width: 100%;
+  left: 0px;
+  top: 0px;
+  padding-left: 100px;
+}
+.load_area_out{
+  height: 36px;
+  width: 100%;
+  position: absolute;
+  top: 145px;
+  display: flex;
+  justify-content: center;
+}
+.load_area{
+  height: 36px;
+  padding: 0px 30px;
+  border-radius: 36px;
+  background-color: #323746;
+  font-size: 13px;
+  color: #6FD8F1;
+  display: flex;
+  align-items: center;
+}
+.load_area .load_circle{
+  height: 14px;
+  width: 14px;
+  border: 1px solid rgba(0, 0, 0, 0);
+  border-left: 1px solid #6FD8F1;
+  border-top: 1px solid #6FD8F1;
+  margin-right: 10px;
 }

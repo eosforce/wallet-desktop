@@ -1,9 +1,14 @@
 <template>
   <div>
-    <div class="box box_load_ct" v-if="on_load_info">
-      <img src="@/assets/loader/producing.svg" width="20" />
+    <div class="load_accounts_detail" v-if="on_load_info">
+      <div class="load_area_out">
+        <div class="load_area">
+          <div class="load_circle"></div><div>正在努力刷新</div>
+        </div>
+      </div>
     </div>
-    <div class="box" v-if="!on_load_info">
+
+    <div class="box">
       <div class="publickey">
         <span class="pk" style="min-width: 25%;width:auto;margin-right: 20px;">
           {{$t('用户名')}}：<span style="color: #000;margin-left: 10px;font-weight: 600;">

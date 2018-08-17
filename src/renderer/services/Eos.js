@@ -26,7 +26,10 @@ export const getNodeList = () => {
     '1.0': NODE_API_URL,
     // '0.7': NODE_TEST_NET_URL,
   };
-  return fetch(map[Store.state.app.chainNet]).then(res => res.json());
+  return fetch(map[Store.state.app.chainNet]).then(async res => {
+    let data = await res.json();
+    return data;
+  });
 };
 
 // 获取节点信息
@@ -387,8 +390,8 @@ export const transfer_account = config => async ({name, publick_key, permissions
   if (permissions.indexOf('active') > -1) {
     let active_transfer_res = await transfer_active_auth(config)(name, publick_key, 'active');
     res.data.push(active_transfer_res);
-    res.msg = get_error_msg(active_transfer_res);
-    if (res.msg) {
+    res.message = get_error_msg(active_transfer_res);
+    if (res.message) {
       res.is_error = true;
       return res;
     }
@@ -396,8 +399,8 @@ export const transfer_account = config => async ({name, publick_key, permissions
   if (permissions.indexOf('owner') > -1) {
     let owner_transfer_res = await transfer_owner_auth(config)(name, publick_key, 'owner');
     res.data.push(owner_transfer_res);
-    res.msg = get_error_msg(owner_transfer_res);
-    if (res.msg) {
+    res.message = get_error_msg(owner_transfer_res);
+    if (res.message) {
       res.is_error = true;
       return res;
     }

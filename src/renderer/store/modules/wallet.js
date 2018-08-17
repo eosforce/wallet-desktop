@@ -33,7 +33,7 @@ const actions = {
         commit(Mutations.SET_WALLET, { data });
       });
   },
-  [Actions.FETCH_ACCOUNT_LIST]({ getters, commit }, { publicKey, noset = false } = {}) {
+  [Actions.FETCH_ACCOUNT_LIST]({ getters, commit }, { publicKey, noset = false } = {}) {    
     return getAccounts(getters[Getters.CURRENT_NODE])(publicKey).then(result => {
       if (noset) return result;
       commit(Mutations.SET_ACCOUNT_LIST, { accountList: result });

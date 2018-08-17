@@ -23,7 +23,7 @@
       <div class="field">
         <label class="label">{{$t('密码')}}</label>
         <div class="control">
-          <input class="input" v-model="password" type="password" :placeholder="$t('请输入接受方公钥')" required />
+          <input class="input" v-model="password" type="password" :placeholder="$t('请输入密码')" required />
           <p class="help is-danger" v-show="public_key && !public_key">
             {{$t('密码')}}
           </p>
@@ -95,7 +95,7 @@ export default {
     async submit() {
       if (!this.public_key) {
         Message.error({
-          title: this.$t('不能设置到自己')
+          title: this.$t('请填写接受方公钥')
         });
         return null;
       }
@@ -117,7 +117,7 @@ export default {
       if (transfer_res.is_error) {
         Message.error({
           title: this.$t('用户名转让失败'),
-          message: transfer_res.msg,
+          message: transfer_res.message,
         });
         return null;
       }

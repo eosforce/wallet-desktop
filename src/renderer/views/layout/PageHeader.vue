@@ -69,7 +69,13 @@ export default {
         this.switchChainNet({ chainNet: value });
       },
     },
-    ...mapState(['app']),
+    on_load() {
+      return this.account.on_load_info;
+    },
+    is_load_accounts() {
+      return this.app.is_load_accounts;
+    },
+    ...mapState(['account', 'wallet', 'app']),
   },
   created() {
     this.loop();

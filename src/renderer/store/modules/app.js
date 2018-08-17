@@ -25,6 +25,7 @@ const initState = {
     speed: 0,
     total: 0,
   },
+  is_load_accounts: true
 };
 
 const mutations = {
@@ -54,6 +55,13 @@ const mutations = {
   },
   [Mutations.SET_UPDATE_INFO](state, { update }) {
     state.update = { ...state.update, ...update };
+  },
+  [Mutations.START_LOAD_ACCOUNT_LIST](state) {
+    if (state.walletList.length) return;
+    state.is_load_accounts = true;
+  },
+  [Mutations.FINISH_LOAD_ACCOUNT_LIST](state) {
+    state.is_load_accounts = false;
   },
 };
 
@@ -119,6 +127,7 @@ const actions = {
     dispatch(Actions.FETCH_NODE_INFO);
   },
   [Actions.FETCH_WALLET_LIST]({ state, commit, getters }) {
+    commit(Mutations.START_LOAD_ACCOUNT_LIST);
     commit(Mutations.SET_WALLET_ID_LIST, { walletIdList: getWalletIdList() });
     return Promise.all(
       state.walletIdList.map(pk => {
@@ -129,7 +138,10 @@ const actions = {
           };
         });
       })
-    ).then(result => commit(Mutations.SET_WALLET_LIST, { walletList: result }));
+    ).then(result => {
+      commit(Mutations.SET_WALLET_LIST, { walletList: result });
+      commit(Mutations.FINISH_LOAD_ACCOUNT_LIST);
+    });
   },
   [Actions.FETCH_ALL_WALLET_LIST]({ state, commit, getters }) {
     // getAccounts(getters[Getters.CURRENT_NODE])(pk)
@@ -206,12 +218,12 @@ const getters = {
     }
     return result;
   },
-  [Getters.GET_TRANSE_CONFIG]: (state, getters) => (password, name, walletId) => {
+  [Getters.GET_TRANSE_CONFIG]: (state, getters) => (password, name, walletId, with_out_reject = false) => {
     walletId = walletId || getters[Getters.ACCOUT_MAP][name];
     const httpEndpoint = state.writeNodeList[Math.floor(Math.random() * state.writeNodeList.length)].value;
     return Storage.setPath(getWalletKeyFromId(walletId))
       .fetch()
-      .then(walletData => {
+      .then(async (walletData) => {
         return decryptWif(password, walletData.crypto);
       })
       .then(wif => {
@@ -220,6 +232,15 @@ const getters = {
           httpEndpoint: httpEndpoint,
           chainId: state.currentNodeInfo.chain_id,
         };
+      })
+      .catch(err => {
+        if (with_out_reject) {
+          return {
+            is_error: true,
+            message: err.message
+          }
+        }
+        return Promise.reject(err);
       });
   },
 };

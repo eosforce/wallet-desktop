@@ -222,6 +222,18 @@ export const genTrConvertFunc = (trName, last_irreversible_block_num) => {
           has_confirmed: last_irreversible_block_num > tr.block_num
         };
       },
+      updateauth: tr => {
+        const act = tr.action_trace.act;
+        return {
+          seq: tr.global_action_seq,
+          time: tr.block_time,
+          name: '权限转让',
+          from: act.authorization && act.authorization[0] && act.authorization[0].actor,
+          to: act.data.bpname,
+          status: checkStatus(tr.status),
+          has_confirmed: last_irreversible_block_num > tr.block_num
+        };
+      },
     }[trName] || defaultFunc
   );
 };

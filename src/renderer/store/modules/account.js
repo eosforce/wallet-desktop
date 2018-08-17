@@ -12,11 +12,10 @@ const initState = {
     more: true
   },
   tokenList: [],
-  on_load_info: true
+  on_load_info: false
 };
 
 const mutations = {
-  // on_load_info
   [Mutations.SET_ACCOUNT_NAME](state, { accountName = '' } = {}) {
     state.accountName = accountName;
   },
@@ -41,10 +40,10 @@ const mutations = {
   [Mutations.SET_TOKEN_LIST](state, { tokenList = [] } = {}) {
     state.tokenList = tokenList;
   },
-  [Mutations.START_LOAD_ACCOUNT_INFO](state, { tokenList = [] } = {}) {
+  [Mutations.START_LOAD_ACCOUNT_INFO](state){
     state.on_load_info = true;
   },
-  [Mutations.END_LOAD_ACCOUNT_INFO](state, { tokenList = [] } = {}) {
+  [Mutations.FINISH_LOAD_ACCOUNT_INFO](state){
     state.on_load_info = false;
   }
 };
@@ -83,7 +82,8 @@ const actions = {
     commit(Mutations.START_LOAD_ACCOUNT_INFO);
     return getAccountInfo(getters[Getters.CURRENT_NODE])(accountName, () => {})
       .then(({ info, bpsTable }) => {
-        commit(Mutations.END_LOAD_ACCOUNT_INFO);
+        commit(Mutations.FINISH_LOAD_ACCOUNT_INFO);
+        commit(Mutations.FINISH_LOAD_ACCOUNT_INFO);
         commit(Mutations.SET_ACCOUNT_INFO, { info });
         commit(Mutations.SET_BPS_TABLE, { bpsTable });
       })
@@ -121,7 +121,11 @@ const actions = {
   },
 
   async [Actions.TRANSFER_ACCOUNT]({ state, dispatch, commit, getters }, { name, publick_key, password, walletId, permissions = ['active', 'owner'] }) {
-    let config = await getters[Getters.GET_TRANSE_CONFIG](password, name, walletId);
+    let with_out_reject = true;
+    let config = await getters[Getters.GET_TRANSE_CONFIG](password, name, walletId, with_out_reject);
+    if (config.is_error){
+      return config;
+    }
     let res = await transfer_account(config)({ name, publick_key, permissions });
     return res;
   },
