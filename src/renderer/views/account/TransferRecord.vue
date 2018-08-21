@@ -21,8 +21,8 @@
           <td>{{record.change}}</td>
           <td>{{record.memo}}</td>
           <td>
-            <span v-if="record.has_confirmed" class="has_confim">已完成</span>
-            <span v-if="!record.has_confirmed" class="wait_confirm">等待确认</span>
+            <span v-if="last_irreversible_block_num >= record.block_num" class="has_confim">已完成</span>
+            <span v-if="last_irreversible_block_num < record.block_num" class="wait_confirm">等待确认</span>
           </td>
         </tr>
         <tr v-show="!recordList.length">

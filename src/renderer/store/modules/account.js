@@ -1,9 +1,29 @@
 import { Mutations, Actions, Getters } from '@/constants/types.constants';
-import { getAccountInfo, transfer, getTransferRecord, vote, unfreeze, claim, getTokenList, transfer_account } from '@/services/Eos';
+import { 
+  getAccountInfo, 
+  transfer, 
+  getAvailable, 
+  getTransferRecord, 
+  vote, 
+  unfreeze, 
+  claim, 
+  getTokenList, 
+  transfer_account,
+  getAccount,
+  getRewardsAndBpsTable,
+  count_asset_total
+} from '@/services/Eos';
 
 const initState = {
   accountName: '',
-  info: {},
+  info: {
+    assetTotal: 0,
+    available: 0,
+    stakedTotal: 0,
+    unstakingTotal: 0,
+    rewardTotal: 0,
+    baseInfo: {}
+  },
   bpsTable: [],
   transferRecords: {
     offset: 20,
@@ -12,7 +32,11 @@ const initState = {
     more: true
   },
   tokenList: [],
-  on_load_info: false
+  on_load_info: false,
+  pre_load_key: '',
+  on_load_bps_table: false,
+  pre_load_bps_key: '',
+  load_key: 0
 };
 
 const mutations = {
@@ -40,11 +64,49 @@ const mutations = {
   [Mutations.SET_TOKEN_LIST](state, { tokenList = [] } = {}) {
     state.tokenList = tokenList;
   },
-  [Mutations.START_LOAD_ACCOUNT_INFO](state){
+  [Mutations.START_LOAD_ACCOUNT_INFO](state, { accountName }){
+    if (accountName == state.pre_load_key) return;
     state.on_load_info = true;
+    state.pre_load_key = accountName;
   },
   [Mutations.FINISH_LOAD_ACCOUNT_INFO](state){
     state.on_load_info = false;
+  },
+  update_available (state, available) {
+    state.info.available = available;
+  },
+  update_base_info (state, baseInfo) {
+    state.info.baseInfo = baseInfo;
+  },
+  start_on_load_bps_table (state, accountName) {
+    if (accountName == state.pre_load_bps_key) return;
+    state.on_load_bps_table = true;
+    state.pre_load_bps_key = accountName;
+  },
+  finish_on_load_bps_table (state, accountName) {
+    state.on_load_bps_table = false;
+  },
+  set_staked_total (state, stake_total) {
+    state.info.stakedTotal = stake_total;
+  },
+  set_unstaking_total (state, unstaking_total) {
+    state.info.unstakingTotal = unstaking_total;
+  },
+  set_reward_total (state, reward_total) {
+    state.info.rewardTotal = reward_total;
+  },
+  set_asset_total (state, asset_total) {
+    state.info.assetTotal = asset_total;
+  },
+  clear_info (state) {
+    state.info.stakedTotal = 0;
+    state.info.unstakingTotal = 0;
+    state.info.rewardTotal = 0;
+    state.info.assetTotal = 0;
+    state.info.baseInfo = {};
+  },
+  set_load_key (state, load_key){
+    state.load_key = load_key;
   }
 };
 
@@ -77,21 +139,66 @@ const actions = {
       return claim(config)({ voter, bpname, permission });
     });
   },
-  [Actions.GET_ACCOUNT_INFO]({ state, dispatch, commit, getters }) {
+  check_total_and_set_asset_total({state, dispatch, commit, getters}) {
+    let is_loaded_all = true;
+    let except_key = ['assetTotal', 'baseInfo'];
+    for(let item in state.info){
+      if (!state.info[item] && except_key.indexOf(item) < 0) {
+        is_loaded_all = false;
+      }
+    }
+    if(is_loaded_all){
+      let asset_total = count_asset_total(
+        state.info.available,
+        state.info.stakedTotal,
+        state.info.unstakingTotal,
+        state.info.rewardTotal
+      )
+      commit('set_asset_total', asset_total);
+      commit(Mutations.FINISH_LOAD_ACCOUNT_INFO);
+    }
+    return is_loaded_all;
+  },
+  start_load_new_account({state, dispatch, commit, getters}) {
     const accountName = getters[Getters.CURRENT_ACCOUNT_NAME];
-    commit(Mutations.START_LOAD_ACCOUNT_INFO);
-    return getAccountInfo(getters[Getters.CURRENT_NODE])(accountName, () => {})
-      .then(({ info, bpsTable }) => {
-        commit(Mutations.SET_ACCOUNT_INFO, { info });
-        commit(Mutations.SET_BPS_TABLE, { bpsTable });
-      })
-      .then(() => {
-        return dispatch(Actions.GET_TRANSFER_RECORD, { accountName });
-      })
-      .then(() => {
-        commit(Mutations.FINISH_LOAD_ACCOUNT_INFO);
-        return dispatch(Actions.GET_TOKEN_LIST, { accountName });
+    let new_load_key = new Date().getTime();
+    if(accountName != state.pre_load_key){
+      commit('clear_info');
+    }
+    commit('start_on_load_bps_table', accountName);
+    commit(Mutations.START_LOAD_ACCOUNT_INFO, { accountName });
+    commit('set_load_key', new_load_key);
+    return new_load_key;
+  },
+  async [Actions.GET_ACCOUNT_INFO]({ state, dispatch, commit, getters }) {
+    const accountName = getters[Getters.CURRENT_ACCOUNT_NAME];
+    let node_url = getters[Getters.CURRENT_NODE];
+    // let new_key = await dispatch('start_load_new_account');
+    dispatch('start_load_new_account');
+    // let start_time = new Date().getTime();
+    let {bpsTable, stakedTotal, unstakingTotal, rewardTotal} = await getRewardsAndBpsTable(node_url)(accountName)
+    if (accountName != state.pre_load_key) {
+      return;
+    }
+    commit(Mutations.SET_BPS_TABLE, { bpsTable });
+    commit('finish_on_load_bps_table');
+    commit('set_staked_total', stakedTotal);
+    commit('set_unstaking_total', unstakingTotal);
+    commit('set_reward_total', rewardTotal);
+
+    dispatch('check_total_and_set_asset_total');
+    getAvailable(node_url)(accountName)
+      .then(available => {
+        commit('update_available', available);
+        dispatch('check_total_and_set_asset_total');
       });
+    getAccount(node_url)(accountName)
+      .then(baseInfo => {
+        commit('update_base_info', baseInfo);
+        dispatch('check_total_and_set_asset_total');
+      });
+    dispatch(Actions.GET_TOKEN_LIST, { accountName });
+    dispatch(Actions.GET_TRANSFER_RECORD, { accountName });
   },
   [Actions.GET_TRANSFER_RECORD]({ state, commit, getters }, { accountName, pos, offset }) {
     pos = pos === undefined ? state.transferRecords.pos : pos;

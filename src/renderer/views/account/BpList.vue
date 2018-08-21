@@ -1,5 +1,12 @@
 <template>
   <div class="box bplist-box">
+
+    <!-- <div class="load_area" v-if="on_load_bps_table">
+        <div class="load_circle account_detail_loader"></div><div>正在努力刷新</div>
+    </div> -->
+
+
+
     <table class="table data-table">
       <thead>
         <tr>
@@ -16,7 +23,14 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="bp in table" :key="bp.name" :class="{'is-vote': bp.hasVote}">
+        <tr v-if="on_load_bps_table">
+          <td colspan="10">
+            <div class="load_area bp_list_load_ct">
+                <div class="load_circle account_detail_loader"></div><div>正在努力刷新</div>
+            </div>
+          </td>
+        </tr>
+        <tr v-if="!on_load_bps_table" v-for="bp in table" :key="bp.name" :class="{'is-vote': bp.hasVote}">
           <td class="t-left">
             <el-tooltip :content="$t('正在出块')" placement="left" v-show="app.currentNodeInfo.head_block_producer === bp.name">
               <img src="@/assets/loader/producing.svg" width="20">
@@ -59,6 +73,9 @@ export default {
     table() {
       return this.account.bpsTable.filter(bp => bp.isSuperBp);
     },
+    on_load_bps_table(){
+      return this.account.on_load_bps_table;
+    },
     ...mapState(['account', 'app']),
   },
   methods: {
@@ -70,6 +87,21 @@ export default {
 </script>
 
 <style scoped>
+.bp_list_load_ct{
+  height: 500px;
+  background: none;
+  align-items: center;
+  justify-content: center;
+  color: #0bceaa;
+}
+.bp_list_load_ct .load_circle{
+  height: 20px;
+  border: 1px solid #0bceaa;
+  border-top: 1px solid rgba(245, 247, 250, 0);
+  margin-right: 10px;
+  width: 20px;
+  color: #0bceaa;
+}
 .button {
   padding-left: calc(0.625em - 1px);
   padding-right: calc(0.625em - 1px);

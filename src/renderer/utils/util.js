@@ -155,6 +155,7 @@ export const genTrConvertFunc = (trName, last_irreversible_block_num) => {
       name: act.name,
       from: act.authorization && act.authorization[0] && act.authorization[0].actor,
       status: checkStatus(tr.status),
+      block_num: tr.block_num,
       has_confirmed: last_irreversible_block_num > tr.block_num
     };
   };
@@ -168,6 +169,7 @@ export const genTrConvertFunc = (trName, last_irreversible_block_num) => {
           name: '创建用户',
           from: act.authorization && act.authorization[0] && act.authorization[0].actor,
           status: checkStatus(tr.status),
+          block_num: tr.block_num,
           has_confirmed: last_irreversible_block_num > tr.block_num
         };
       },
@@ -181,6 +183,7 @@ export const genTrConvertFunc = (trName, last_irreversible_block_num) => {
           to: act.data.bpname,
           change: act.data.stake,
           status: checkStatus(tr.status),
+          block_num: tr.block_num,
           has_confirmed: last_irreversible_block_num > tr.block_num
         };
       },
@@ -195,6 +198,7 @@ export const genTrConvertFunc = (trName, last_irreversible_block_num) => {
           change: act.data.quantity,
           memo: act.data.memo,
           status: checkStatus(tr.status),
+          block_num: tr.block_num,
           has_confirmed: last_irreversible_block_num > tr.block_num
         };
       },
@@ -207,6 +211,7 @@ export const genTrConvertFunc = (trName, last_irreversible_block_num) => {
           from: act.data.voter,
           to: act.data.bpname,
           status: checkStatus(tr.status),
+          block_num: tr.block_num,
           has_confirmed: last_irreversible_block_num > tr.block_num
         };
       },
@@ -219,6 +224,7 @@ export const genTrConvertFunc = (trName, last_irreversible_block_num) => {
           from: act.data.voter,
           to: act.data.bpname,
           status: checkStatus(tr.status),
+          block_num: tr.block_num,
           has_confirmed: last_irreversible_block_num > tr.block_num
         };
       },
@@ -231,6 +237,7 @@ export const genTrConvertFunc = (trName, last_irreversible_block_num) => {
           from: act.authorization && act.authorization[0] && act.authorization[0].actor,
           to: act.data.bpname,
           status: checkStatus(tr.status),
+          block_num: tr.block_num,
           has_confirmed: last_irreversible_block_num > tr.block_num
         };
       },

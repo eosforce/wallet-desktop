@@ -171,7 +171,8 @@ export const getTable = httpEndpoint => params => {
 };
 
 // 根据 bp 和 vote 得到分红表，返回一个对象
-export const getRewardsAndBpsTable = httpEndpoint => async (votesTable, accountName) => {
+export const getRewardsAndBpsTable = httpEndpoint => async (accountName) => {
+  const votesTable = await getVotesTable(httpEndpoint)(accountName);
   const bpsTable = await getBpsTable(httpEndpoint)();
   const { head_block_num: currentHeight } = await getNodeInfo(httpEndpoint);
   const { schedule_version } = await getBlock(httpEndpoint)(currentHeight);
@@ -243,7 +244,9 @@ export const getRewardsAndBpsTable = httpEndpoint => async (votesTable, accountN
       commonBpTable.push(bpRow);
     }
   }
-
+  const stakedTotal = calcTotalAmount(votesTable, 'staked');
+  const unstakingTotal = calcTotalAmount(votesTable, 'unstaking');
+  const rewardTotal = calcTotalAmount(rewardsTable, 'reward');
   return {
     rewardsTable,
     bpsTable: superBpTable
@@ -259,17 +262,25 @@ export const getRewardsAndBpsTable = httpEndpoint => async (votesTable, accountN
         })
       ),
     bpInfo,
+    votesTable,
+    stakedTotal,
+    unstakingTotal,
+    rewardTotal
   };
 };
 
+export const count_asset_total = (available, stakedTotal, unstakingTotal, rewardTotal) => {
+  return calcTotalAmount([available, stakedTotal, unstakingTotal, rewardTotal]);
+}
+
 export const getAccountInfo = httpEndpoint => async (accountName, finish_account_update) => {
-  const [available, account_base_info] = await Promise.all([getAvailable(httpEndpoint)(accountName), getAccount(httpEndpoint)(accountName)]);
-  const votesTable = await getVotesTable(httpEndpoint)(accountName);
-  const { rewardsTable, bpsTable, bpInfo } = await getRewardsAndBpsTable(httpEndpoint)(votesTable, accountName);
+  const [available, account_base_info] = await Promise.all([getAvailable(httpEndpoint)(accountName), getAccount(httpEndpoint)(accountName), getVotesTable(httpEndpoint)(accountName)]);
+  const {rewardsTable, bpsTable, bpInfo, votesTable} = await getRewardsAndBpsTable(httpEndpoint)(accountName);
   const stakedTotal = calcTotalAmount(votesTable, 'staked');
   const unstakingTotal = calcTotalAmount(votesTable, 'unstaking');
   const rewardTotal = calcTotalAmount(rewardsTable, 'reward');
   const assetTotal = calcTotalAmount([available, stakedTotal, unstakingTotal, rewardTotal]);
+
   const info = {
     assetTotal: toAsset(assetTotal), // 资产总额
     available: toAsset(available), // 可用余额
