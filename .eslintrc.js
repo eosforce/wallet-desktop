@@ -38,6 +38,5 @@ module.exports = {
     'keyword-spacing': ['warn', { "overrides": { "if": { "after": true, "before": true}, "for": { "after": true, "before": true}, "while": { "after": true, "before": true} } }],
     // allow debugger during development
     'no-debugger': process.env.NODE_ENV === 'production' ? 2 : 0,
-    'no-multi-spaces': ['warn']
   },
 };
