@@ -13,7 +13,14 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="record in recordList" :key="record.seq" v-show="recordList.length">
+        <tr v-if="on_load_actions">
+          <td colspan="10">
+            <div class="load_area table_inner_load">
+                <div class="load_circle account_detail_loader"></div><div>{{$t('正在努力刷新')}}</div>
+            </div>
+          </td>
+        </tr>
+        <tr v-for="record in recordList" :key="record.seq" v-show="recordList.length" v-if="!on_load_actions">
           <td>{{record.time | timestamp}}</td>
           <td>{{record.from}}</td>
           <td>{{record.name}}</td>
@@ -25,9 +32,16 @@
             <span v-if="last_irreversible_block_num < record.block_num" class="wait_confirm">等待确认</span>
           </td>
         </tr>
-        <tr v-show="!recordList.length">
-          <td colspan="7" class="empty">{{$t('暂无交易记录')}}</td>
+        <tr v-if="!on_load_actions && !recordList.length">
+          <td colspan="10">
+            <div class="no_data">
+              {{$t('还没有数据')}}
+            </div>
+          </td>
         </tr>
+        <!-- <tr v-show="!recordList.length" v-if="!on_load_actions">
+          <td colspan="7" class="empty">{{$t('暂无交易记录')}}</td>
+        </tr> -->
       </tbody>
     </table>
       <!-- <div v-if="has_more">
@@ -37,8 +51,8 @@
       <div class="no_data" v-if="!has_more">
           没有更多了
       </div> -->
-
       <el-pagination
+        v-if="!on_load_actions && recordList.length"
         @current-change="getMaterial"
         :pageSize="offset"
         layout="prev, next, jumper"
@@ -62,6 +76,14 @@ export default {
       pageSize: 20,
     };
   },
+  mounted() {
+    this.getMaterial();
+  },
+  watch: {
+    accountName () {
+      this.getMaterial();
+    }
+  },
   computed: {
     offset() {
       return this.account.transferRecords ? this.account.transferRecords.offset : 20;
@@ -80,6 +102,9 @@ export default {
     },
     last_irreversible_block_num() {
       return this.app.currentNodeInfo.last_irreversible_block_num;
+    },
+    on_load_actions() {
+      return this.account.on_load_actions;
     },
     ...mapState(['account', 'app']),
   },

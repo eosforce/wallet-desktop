@@ -36,7 +36,14 @@ const initState = {
   pre_load_key: '',
   on_load_bps_table: false,
   pre_load_bps_key: '',
-  load_key: 0
+  on_load_actions: false,
+  pre_load_action_key: '',
+  on_load_token: false,
+  pre_load_token_key: '',
+  load_key: 0,
+  cancel_container: {
+    cancel: []
+  }
 };
 
 const mutations = {
@@ -86,6 +93,22 @@ const mutations = {
   finish_on_load_bps_table (state, accountName) {
     state.on_load_bps_table = false;
   },
+  start_on_load_actions (state, accountName) {
+    if (accountName == state.pre_load_action_key) return;
+    state.on_load_actions = true;
+    state.pre_load_action_key = accountName;
+  },
+  finish_on_load_actions (state) {
+    state.on_load_actions = false;
+  },
+  start_on_load_token (state, accountName) {
+    if (accountName == state.pre_load_token_key) return;
+    state.on_load_token = true;
+    state.pre_load_token_key = accountName;
+  },
+  finish_on_load_token (state) {
+    state.on_load_token = false;
+  },
   set_staked_total (state, stake_total) {
     state.info.stakedTotal = stake_total;
   },
@@ -105,8 +128,10 @@ const mutations = {
     state.info.assetTotal = 0;
     state.info.baseInfo = {};
   },
-  set_load_key (state, load_key){
-    state.load_key = load_key;
+  set_cancel_container (state, cancel) {
+    for(let item of cancel){
+      state.cancel_container.cancel.push(item);
+    }
   }
 };
 
@@ -161,22 +186,28 @@ const actions = {
   },
   start_load_new_account({state, dispatch, commit, getters}) {
     const accountName = getters[Getters.CURRENT_ACCOUNT_NAME];
-    let new_load_key = new Date().getTime();
     if(accountName != state.pre_load_key){
       commit('clear_info');
+      commit('RESET_ACCOUNT_INFO');
     }
     commit('start_on_load_bps_table', accountName);
     commit(Mutations.START_LOAD_ACCOUNT_INFO, { accountName });
-    commit('set_load_key', new_load_key);
-    return new_load_key;
   },
   async [Actions.GET_ACCOUNT_INFO]({ state, dispatch, commit, getters }) {
     const accountName = getters[Getters.CURRENT_ACCOUNT_NAME];
     let node_url = getters[Getters.CURRENT_NODE];
-    // let new_key = await dispatch('start_load_new_account');
+    if (accountName != state.pre_load_key) {
+      for(let item of state.cancel_container.cancel){
+        item();
+      }
+    }
     dispatch('start_load_new_account');
-    // let start_time = new Date().getTime();
-    let {bpsTable, stakedTotal, unstakingTotal, rewardTotal} = await getRewardsAndBpsTable(node_url)(accountName)
+    console.log('getters[Getters.CURRENT_NODE]');
+    let cancel_container = {
+      'cancel': []
+    }
+    commit('set_cancel_container', cancel_container.cancel);
+    let {bpsTable, stakedTotal, unstakingTotal, rewardTotal} = await getRewardsAndBpsTable(node_url)(accountName, getters[Getters.CURRENT_NODE_INFO], cancel_container)
     if (accountName != state.pre_load_key) {
       return;
     }
@@ -185,31 +216,42 @@ const actions = {
     commit('set_staked_total', stakedTotal);
     commit('set_unstaking_total', unstakingTotal);
     commit('set_reward_total', rewardTotal);
-
     dispatch('check_total_and_set_asset_total');
-    getAvailable(node_url)(accountName)
+    await getAvailable(node_url)(accountName, cancel_container)
       .then(available => {
+        if (accountName != state.pre_load_key) {
+          return;
+        }
         commit('update_available', available);
         dispatch('check_total_and_set_asset_total');
       });
-    getAccount(node_url)(accountName)
+    commit('set_cancel_container', cancel_container.cancel);
+    await getAccount(node_url)(accountName, cancel_container)
       .then(baseInfo => {
+        if (accountName != state.pre_load_key) {
+          return;
+        }
         commit('update_base_info', baseInfo);
         dispatch('check_total_and_set_asset_total');
       });
-    dispatch(Actions.GET_TOKEN_LIST, { accountName });
-    dispatch(Actions.GET_TRANSFER_RECORD, { accountName });
+    commit('set_cancel_container', cancel_container.cancel);
   },
-  [Actions.GET_TRANSFER_RECORD]({ state, commit, getters }, { accountName, pos, offset }) {
+  [Actions.GET_TRANSFER_RECORD]({ state, commit, getters }, {accountName, pos, offset, cancel_container}) {
     pos = pos === undefined ? state.transferRecords.pos : pos;
     offset = offset || state.transferRecords.offset;
-    return getTransferRecord(getters[Getters.CURRENT_NODE])({ accountName, pos, offset }).then(result => {
+    commit('start_on_load_actions', accountName);
+    return getTransferRecord(getters[Getters.CURRENT_NODE])({accountName, pos, offset, cancel_container}).then(result => {
+      if(accountName != state.pre_load_action_key) return;
       commit(Mutations.SET_TRANSFER_RECORDS, { transferRecords: { list: result.actions, pos, offset } });
+      commit('finish_on_load_actions');
     });
   },
-  [Actions.GET_TOKEN_LIST]({ dispatch, commit, getters }, { accountName }) {
-    return getTokenList(getters[Getters.CURRENT_NODE])(accountName).then(result => {
+  [Actions.GET_TOKEN_LIST]({state, dispatch, commit, getters}, {accountName, cancel_container}) {
+    commit('start_on_load_token', accountName);
+    return getTokenList(getters[Getters.CURRENT_NODE])(accountName, cancel_container).then(result => {
+      if(accountName != state.pre_load_token_key) return;
       commit(Mutations.SET_TOKEN_LIST, { tokenList: result });
+      commit('finish_on_load_token');
     });
   },
   [Actions.GET_BPS_TABLE]({ state, dispatch, commit, getters }) {
@@ -218,14 +260,12 @@ const actions = {
       commit(Mutations.SET_BPS_TABLE, { bpsTable });
     });
   },
-
   [Actions.GET_ACCOUNT_OVERVIEW]({ state, dispatch, commit, getters }) {
     const accountName = getters[Getters.CURRENT_ACCOUNT_NAME];
     return getAccountInfo(getters[Getters.CURRENT_NODE])(accountName).then(({ info }) => {
       commit(Mutations.SET_ACCOUNT_INFO, { info });
     });
   },
-
   async [Actions.TRANSFER_ACCOUNT]({ state, dispatch, commit, getters }, { name, publick_key, password, walletId, permissions = ['active', 'owner'] }) {
     let with_out_reject = true;
     let config = await getters[Getters.GET_TRANSE_CONFIG](password, name, walletId, with_out_reject);

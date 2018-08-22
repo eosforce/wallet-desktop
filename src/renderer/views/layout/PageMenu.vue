@@ -16,7 +16,7 @@
           >
             <div class="menu-item-title">{{wallet.publicKey.substr(0,7) + '......' + wallet.publicKey.substr(wallet.publicKey.length-6,wallet.publicKey.length)}}</div>
           </router-link>
-          <ul>
+          <ul class="inner_menu_list">
             <li  v-for="name in wallet.accounts" :key="name" class="menu_item">
               <router-link
                 class="menu-item-anchor"
@@ -64,11 +64,21 @@ export default {
     this.reload();
   },
   methods: {
-    reload () {
+    async reload () {
+      if(this.is_loading) return;
+      this.is_loading = true;
       this.FETCH_WALLET_LIST();
-      // setTimeout(() => {
-      //   this.reload();
-      // }, 5000);  
+      if (this.on_load_info) {
+        setTimeout(async () => {
+          await this.reload();
+          this.is_loading = false;
+        }, 1000);
+        return;
+      }
+      setTimeout(async () => {
+        await this.reload();
+        this.is_loading = false;
+      }, 5000);
     },
     ...mapActions({
       FETCH_WALLET_LIST: Actions.FETCH_WALLET_LIST

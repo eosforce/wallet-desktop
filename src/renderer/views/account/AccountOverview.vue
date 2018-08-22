@@ -3,7 +3,7 @@
     <!-- <div class="load_accounts_detail" v-if="on_load_info">
       <div class="load_area_out">
         <div class="load_area">
-          <div class="load_circle account_detail_loader"></div><div>正在努力刷新</div>
+          <div class="load_circle account_detail_loader"></div><div>loading</div>
         </div>
       </div>
     </div> -->
@@ -32,7 +32,7 @@
           </li>
         </ul>
 
-        <span class="is-grouped box_loader_ct">
+        <span class="is-grouped">
           <span class="refresh fr el-icon-refresh" :class="{spin: spin}" @click="refreshOverview()"></span>
         </span>
 
@@ -207,8 +207,11 @@ export default {
 }
 .refresh {
   height: auto;
-  font-size: 20px;
+  font-size: 14px;
   cursor: pointer;
+  position: absolute;
+  top: 20px;
+  right: 20px;
 }
 
 .refresh.spin {

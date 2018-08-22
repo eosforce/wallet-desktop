@@ -404,7 +404,9 @@ tr.is-vote {
   background: #fff;
   margin-right: 5px;
 }
-
+.menu-list .inner_menu_list a.is-active{
+  background-color: #668CD5;
+}
 .menu-list li ul {
   border-left: none;
 }
@@ -540,4 +542,26 @@ tr.is-vote {
   border-left: 1px solid #6FD8F1;
   border-top: 1px solid #6FD8F1;
   margin-right: 10px;
+}
+.table_inner_load{
+  height: 500px;
+  background: none;
+  align-items: center;
+  justify-content: center;
+  color: #0bceaa;
+}
+.table_inner_load .load_circle{
+  height: 20px;
+  border: 1px solid #0bceaa;
+  border-top: 1px solid rgba(245, 247, 250, 0);
+  margin-right: 10px;
+  width: 20px;
+  color: #0bceaa;
+}
+.no_data{
+  height: 200px;
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  color: #888;
 }

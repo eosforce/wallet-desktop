@@ -1,23 +1,25 @@
 <template>
   <div class="dashboard-body">
     <account-overview />
-    <div class="tabs">
-      <div
-        class="tab fl"
-        @click="toggleTab(tab.tabKey)"
-        :class="{'is-active': currentTab === tab.tabKey}"
-        v-for="tab in tabMap"
-        :key="tab.tabKey">
-        <a class="min-img">
-          <img :src="require(`@/assets/${tab.img1}`)" class="two hide">
-          <img :src="require(`@/assets/${tab.img2}`)" class="one">
-          {{tab.tabName}}<span v-show="tab.tabKey === 'BpList'">{{$t('template.version', {version: version})}}</span>
-        </a>
+    <div class="tabs_ct">
+      <div class="tabs">
+        <div
+          class="tab fl"
+          @click="toggleTab(tab.tabKey)"
+          :class="{'is-active': currentTab === tab.tabKey}"
+          v-for="tab in tabMap"
+          :key="tab.tabKey">
+          <a class="min-img">
+            <!-- <img :src="require(`@/assets/${tab.img1}`)" class="two hide"> -->
+            <!-- <img :src="require(`@/assets/${tab.img2}`)" class="one"> -->
+            {{tab.tabName}}<span v-show="tab.tabKey === 'BpList'">{{$t('template.version', {version: version})}}</span>
+          </a>
+        </div>
+        <span class="refresh fr el-icon-refresh" :class="{spin: spin}" @click="refreshList()"></span>
       </div>
-      <span class="refresh fr el-icon-refresh" :class="{spin: spin}" @click="refreshList()"></span>
+      <div :is="currentTab" ref="cTab" keep-alive></div>
+      <router-view name="modal"></router-view>
     </div>
-    <div :is="currentTab" ref="cTab" keep-alive></div>
-    <router-view name="modal"></router-view>
   </div>
 </template>
 
@@ -131,12 +133,57 @@ export default {
   background: #ebeff2;
   flex: 1;
 }
+.tabs_ct{
+  margin-top: 30px;
+  border-radius: 6px;
+  box-shadow: 0 2px 3px rgba(10, 10, 10, 0.1), 0 0 0 1px rgba(10, 10, 10, 0.1);
+  background: #fff;
+}
+.tabs_ct .tabs{
+  margin-bottom: 0px;
+  display: flex;
+  justify-content: left;
+  align-items: center;
+  margin-left: 20px;
+  margin-right: 20px;
+  border-bottom: 1px solid #E5E5E5;
+  position: relative;
+}
+.tabs_ct .tabs .tab{
+  height: 60px;
+  display: flex;
+  margin-right: 40px;
+  border: 0px;
+  border-bottom: 1px solid #333 !important;
+  font-weight: 500;
+}
+.tabs_ct .tabs .tab a{
+  padding: 0px;
+  color: #3D3E40;
+}
+.tabs_ct .tab a{
+  border-top: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+}
+.tabs_ct .tab.is-active a,.tabs_ct .tab:hover a{
+  color: #4B7DDD;
+  font-weight: 500;
+  border-bottom: 2px solid #4B7DDD !important;
+}
+.tabs_ct .box{
+  box-shadow: none;
+  border-top-left-radius: 0px;
+  border-top-right-radius: 0px;
+}
 .refresh {
-  height: auto;
-  line-height: 40px;
-  margin-right: 25px;
-  font-size: 20px;
   cursor: pointer;
+  line-height: 27px;
+  text-align: left;
+  height: 27px;
+  font-size: 14px;
+  position: absolute;
+  right: 0px;
+  top: 19px;
 }
 
 .refresh.spin {

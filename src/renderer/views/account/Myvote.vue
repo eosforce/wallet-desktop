@@ -17,7 +17,14 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="bp in table" :key="bp.name" :class="{'is-vote': bp.hasVote}">
+        <tr v-if="on_load_bps_table">
+          <td colspan="10">
+            <div class="load_area table_inner_load">
+                <div class="load_circle account_detail_loader"></div><div>{{$t('正在努力刷新')}}</div>
+            </div>
+          </td>
+        </tr>
+        <tr v-for="bp in table" :key="bp.name" :class="{'is-vote': bp.hasVote}" v-if="!on_load_bps_table">
           <td class="t-left">
             <el-tooltip :content="$t('正在出块')" placement="left" v-show="app.currentNodeInfo.head_block_producer === bp.name">
               <img src="@/assets/loader/producing.svg" width="20">
@@ -62,6 +69,13 @@
             </router-link>
           </td>
         </tr>
+        <tr v-if="!on_load_bps_table && !table.length">
+          <td colspan="12">
+            <div class="no_data">
+              {{$t('还没有数据')}}
+            </div>
+          </td>
+        </tr>
       </tbody>
     </table>
   </div>
@@ -78,6 +92,9 @@ export default {
       return this.account.bpsTable.filter(bp => bp.hasVote).sort((bp1, bp2) => {
         return bp2.vote.staked.split(' ')[0] - bp1.vote.staked.split(' ')[0];
       });
+    },
+    on_load_bps_table(){
+      return this.account.on_load_bps_table;
     },
     ...mapState(['account', 'app']),
   },

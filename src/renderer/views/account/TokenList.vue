@@ -13,7 +13,14 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(token, index) in account.tokenList" :key="token.token">
+        <tr v-if="on_load_token">
+          <td colspan="10">
+            <div class="load_area table_inner_load">
+                <div class="load_circle account_detail_loader"></div><div>{{$t('正在努力刷新')}}</div>
+            </div>
+          </td>
+        </tr>
+        <tr v-for="(token, index) in account.tokenList" :key="token.token" v-if="!on_load_token">
           <td>{{index + 1}}</td>
           <td>({{token.symbol}}, {{token.precision}})</td>
           <td>{{token.issuer}}</td>
@@ -24,19 +31,48 @@
             <router-link class="button is-small is-outlined" :to="{name: 'tokenTransfer', params: { symbol: token.symbol, precision: token.precision }}">转账</router-link>
           </td>
         </tr>
+
+        <tr v-if="!on_load_token && !account.tokenList.length">
+          <td colspan="10">
+            <div class="no_data">
+              {{$t('还没有数据')}}
+            </div>
+          </td>
+        </tr>
+
       </tbody>
     </table>
   </div>
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapState, mapActions } from 'vuex';
+import { Actions } from '@/constants/types.constants';
 
 export default {
   name: 'TokenList',
   computed: {
+    accountName() {
+      return this.$route.params.accountName;
+    },
+    on_load_token() {
+      return this.account.on_load_token;
+    },
     ...mapState(['account']),
   },
+  mounted () {
+    this.GET_TOKEN_LIST({accountName: this.accountName});
+  },
+  watch: {
+    accountName () {
+      this.GET_TOKEN_LIST({accountName: this.accountName});
+    }
+  },
+  methods: {
+    ...mapActions({
+      GET_TOKEN_LIST: Actions.GET_TOKEN_LIST,
+    }),
+  }
 };
 </script>
 

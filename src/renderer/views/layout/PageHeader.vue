@@ -69,7 +69,7 @@ export default {
         this.switchChainNet({ chainNet: value });
       },
     },
-    on_load() {
+    on_loading_accounts() {
       return this.account.on_load_info;
     },
     is_load_accounts() {
@@ -88,10 +88,16 @@ export default {
     },
     loop() {
       this.loopId = setTimeout(() => {
+        if (this.on_loading_accounts) {
+          setTimeout(() => {
+            this.loop();
+          }, 1000);
+          return;
+        }
         this.fetchNodeInfo()
           .then(() => this.loop())
           .catch(() => this.loop());
-      }, 3000);
+      }, 5000);
     },
     ...mapActions({
       fetchNodeInfo: Actions.FETCH_NODE_INFO,

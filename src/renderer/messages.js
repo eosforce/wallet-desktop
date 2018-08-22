@@ -1,5 +1,7 @@
 export default {
   en: {
+    '正在努力刷新': 'loading',
+    '还没有数据': 'no data',
     '至少 9 个字符': 'at least 9 characters',
     用户名: 'account name',
     我已经阅读并同意: 'I have read and agreed',
