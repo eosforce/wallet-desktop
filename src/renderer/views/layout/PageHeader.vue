@@ -14,7 +14,7 @@
           <option :value="node.value" v-for="node in app.nodeList" :key="node.value">{{node.name}}</option>
         </select>
       </div>
-      <div class="select" style="margin-left:10px;">
+      <div class="select with_lf_line">
         <select v-model="locale" @change="switchLocale(locale)">
           <option :value="k" v-for="(v, k) in locales" :key="k">{{v}}</option>
         </select>
@@ -129,7 +129,7 @@ export default {
   width: 200px;
   display: flex;
   align-items: center;
-  height: 49px;
+  height: 60px;
   font-size: 24px;
   padding-left: 16px;
   border-bottom: 1px solid rgba(0, 0, 0, 0.12);

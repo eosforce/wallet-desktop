@@ -16,9 +16,8 @@
         <ul class="account_info_box">
           <li>
               <span>{{$t('用户名')}}：</span>
-              <span>{{$route.params.accountName}}</span>
-                  <span v-if="!on_load_info" v-for="item in permissions" class="permission_tag" v-bind:class="{'permission_tag_not_have': !item.is_have}">{{ item.name }}</span>
-              </span>
+              <span @click="copyToClipboard($route.params.accountName)">{{$route.params.accountName}}</span>
+              <span v-if="!on_load_info" v-for="item in permissions" class="permission_tag" v-bind:class="{'permission_tag_not_have': !item.is_have}">{{ item.name }}</span>
               <div class="load_circle account_detail_loader" v-if="on_load_info"></div>
           </li>
           <li>
@@ -40,12 +39,12 @@
 
       <div class="box_item">
         <ul class="account_info_box">
-          <li class="account_detail_item w_200">
+          <li class="account_detail_item min_w_200">
             <span>{{$t('资产总额')}}:</span>
             <span class="cl" v-if="!on_load_info">{{account.info.assetTotal | formatNumber({p: 4})}}</span>
             <div class="load_circle account_detail_loader" v-if="on_load_info"></div>
           </li>
-          <li class="account_detail_item w_200">
+          <li class="account_detail_item min_w_200">
             <span>{{$t('可用余额')}}:</span>
             <span class="cl" v-if="!on_load_info">{{account.info.available | formatNumber({p: 4})}}</span>
             <div class="load_circle account_detail_loader" v-if="on_load_info"></div>
@@ -56,17 +55,17 @@
 
       <div class="box_item">
         <ul class="account_info_box">
-          <li class="account_detail_item w_200">
+          <li class="account_detail_item min_w_200">
             <span>{{$t('投票总额')}}:</span>
             <span class="cl" v-if="!on_load_info">{{account.info.stakedTotal | formatNumber({p: 0})}}</span>
             <div class="load_circle account_detail_loader" v-if="on_load_info"></div>
           </li>
-          <li class="account_detail_item w_200">
+          <li class="account_detail_item min_w_200">
             <span>{{$t('赎回总额')}}:</span>
             <span class="cl" v-if="!on_load_info">{{account.info.unstakingTotal | formatNumber({p: 0})}}</span>
             <div class="load_circle account_detail_loader" v-if="on_load_info"></div>
           </li>
-          <li class="account_detail_item w_200">
+          <li class="account_detail_item min_w_200">
             <span>{{$t('待领分红总额')}}:</span>
             <span class="cl" v-if="!on_load_info">{{account.info.rewardTotal | formatNumber({p: 4})}}</span>
             <div class="load_circle account_detail_loader" v-if="on_load_info"></div>
@@ -85,7 +84,7 @@
 import { mapState, mapActions } from 'vuex';
 
 import { Actions } from '@/constants/types.constants';
-
+import Copy from 'clipboard-copy'
 export default {
   name: 'AccountOverview',
   data() {
@@ -139,7 +138,8 @@ export default {
   },
   methods: {
     copyToClipboard(text) {
-      this.$electron.clipboard.writeText(text);
+      // this.$electron.clipboard.writeText(text);
+      Copy(text)
     },
     async refreshOverview() {
       if (this.spin) return;
@@ -250,8 +250,8 @@ export default {
   margin-left: 10px;
   margin-top: 3px;
 }
-.w_200{
-  width: 200px;
+.min_w_200{
+  min-width: 200px;
 }
 .box_transfer_link{
   margin-left: 20px;

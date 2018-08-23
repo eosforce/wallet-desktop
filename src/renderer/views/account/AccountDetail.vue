@@ -47,6 +47,7 @@ export default {
         { tabName: this.$t('交易记录'), tabKey: 'TransferRecord', img1: 'exchange.png', img2: 'exchange_w.png' },
         { tabName: this.$t('资产说明'), tabKey: 'RateInstructions', img1: 'assets.png', img2: 'assets_w.png' },
       ],
+      super_name: this.$t('超级节点'),
       spin: false,
       currentTab: 'BpList', // currentTab 用于标识当前触发的子组件,
     };

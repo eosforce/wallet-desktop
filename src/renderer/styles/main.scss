@@ -82,16 +82,32 @@ a:hover {
     padding: 1rem 2rem;
     font-size: 1rem;
   }
+  .select{
+    background-color: #fff;
+    height: auto;
+    font-size: 12px;
+    padding: 4px 0px;
+  }
+
   .select select {
     background: #fff;
     color: #000;
     border: none;
-    font-size: 14px;
+  }
+  .select select:focus{
+    outline: none;
+    border: 0px;
+    box-shadow: none;
+  }
+  .select.with_lf_line{
+    border-left: 1px solid #dbdbdb;
   }
   .select:not(.is-multiple):not(.is-loading)::after {
     border-color: #333;
-    right: 1.125em;
+    right: 12px;
     z-index: 4;
+    color: #eee;
+    border-width: 2px
   }
   .block {
     color: #fff;

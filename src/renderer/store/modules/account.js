@@ -127,6 +127,9 @@ const mutations = {
     state.info.rewardTotal = 0;
     state.info.assetTotal = 0;
     state.info.baseInfo = {};
+    state.pre_load_action_key = '';
+    state.pre_load_bps_key = '';
+    state.pre_load_token_key = '';
   },
   set_cancel_container (state, cancel) {
     for(let item of cancel){

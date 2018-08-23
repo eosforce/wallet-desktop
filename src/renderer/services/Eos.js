@@ -32,8 +32,10 @@ export const getNodeList = () => {
 };
 
 // 获取节点信息
-export const getNodeInfo = httpEndpoint => {
-  return Eos({ httpEndpoint }).getInfo({});
+export const getNodeInfo = async (httpEndpoint) => {
+  var api_path = '/v1/chain/get_info';
+  let data = await axios.post(httpEndpoint + api_path, {});
+  return data.data;
 };
 
 // 查询块信息

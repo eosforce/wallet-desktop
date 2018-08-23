@@ -1,7 +1,6 @@
 import Eos from 'eosjs';
 import sjcl from 'sjcl';
 import BigNumber from 'bignumber.js';
-
 const { ecc } = Eos.modules;
 
 export const toUrl = (url = '') => {
