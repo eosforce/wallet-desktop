@@ -39,7 +39,7 @@ import Message from '@/components/Message';
 import ConfirmModal from '@/components/ConfirmModal';
 import PromptModal from '@/components/PromptModal';
 import { Actions } from '@/constants/types.constants';
-
+import { isValidPublic } from '@/utils/rules.js'
 export default {
   name: 'Claim',
   data() {
@@ -96,6 +96,12 @@ export default {
       if (!this.public_key) {
         Message.error({
           title: this.$t('请填写接受方公钥')
+        });
+        return null;
+      }
+      if (!isValidPublic(this.public_key)) {
+        Message.error({
+          title: this.$t('请填写正确的公钥格式')
         });
         return null;
       }

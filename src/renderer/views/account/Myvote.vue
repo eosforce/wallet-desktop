@@ -52,7 +52,7 @@
                   class="button is-small is-outlined"
                   :to="{ name: 'claim', params: { bpname: bp.name } }"
                 >
-                  {{bp.vote ? bp.vote.reward : 0 | formatNumber({p: 4})}}
+                  {{bp.vote ? bp.vote.reward * 1 > 0 ? bp.vote.reward : 0 : 0 | formatNumber({p: 4}) }}
                 </router-link>
               </div>
             </el-tooltip>
