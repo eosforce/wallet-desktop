@@ -88,7 +88,7 @@ import { toUrl } from '@/utils/util';
 export default {
   name: 'TransferRecord',
   computed: {
-    table() {
+    table(){
       return this.account.bpsTable.filter(bp => bp.hasVote).sort((bp1, bp2) => {
         return bp2.vote.staked.split(' ')[0] - bp1.vote.staked.split(' ')[0];
       });
@@ -96,12 +96,15 @@ export default {
     on_load_bps_table(){
       return this.account.on_load_bps_table;
     },
+    head_block_num(){
+      return this.app.currentNodeInfo.head_block_num;
+    },
     ...mapState(['account', 'app']),
   },
   methods: {
     isLock(unstakeHeight) {
       if (unstakeHeight === undefined) return false;
-      return unstakeHeight + 86400 - this.app.currentNodeInfo.head_block_num > 0;
+      return unstakeHeight + 86400 - this.head_block_num > 0;
     },
     toUrl(url) {
       return toUrl(url);
@@ -114,6 +117,9 @@ export default {
 .table td .button.grey-button {
   background: #ddd;
   color: #363636;
+}
+.item{
+  display: inline-block;
 }
 .button {
   padding-left: calc(0.625em - 1px);

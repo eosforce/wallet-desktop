@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="overview_box">
     <!-- <div class="load_accounts_detail" v-if="on_load_info">
       <div class="load_area_out">
         <div class="load_area">
@@ -10,14 +10,28 @@
     <!-- <div class="load_area">
           <div class="load_circle account_detail_loader"></div>
     </div> -->
+
+    <div class="info_box_ct" v-if="copy_success">
+      <div class="load_area_out view_info_box">
+        <div class="load_area">
+          <div>{{ $t('已复制成功') }}</div>
+        </div>
+      </div>
+    </div>
+
     <div class="box">
 
       <div class="publickey account_detail_item">
         <ul class="account_info_box">
           <li>
               <span>{{$t('用户名')}}：</span>
-              <span @click="copyToClipboard($route.params.accountName)">{{$route.params.accountName}}</span>
-              <span v-if="!on_load_info" v-for="item in permissions" class="permission_tag" v-bind:class="{'permission_tag_not_have': !item.is_have}">{{ item.name }}</span>
+              <el-tooltip class="item account_name_tag" effect="dark" :content='$t("点击复制账号")' placement="top">
+                <span @click="copyToClipboard($route.params.accountName)">{{$route.params.accountName}}</span>
+              </el-tooltip>
+              <el-tooltip  v-for="item in permissions" placement="top" :content='get_permission_info(item)'>
+                <span v-if="!on_load_info" class="permission_tag" v-bind:class="{'permission_tag_not_have': !item.is_have}">{{ item.name }}</span>
+              </el-tooltip>
+
               <div class="load_circle account_detail_loader" v-if="on_load_info"></div>
           </li>
           <li>
@@ -90,6 +104,8 @@ export default {
   data() {
     return {
       spin: false,
+      copy_success: false,
+      pre_time: 0
     };
   },
   computed: {
@@ -136,21 +152,39 @@ export default {
     },
     ...mapState(['account', 'wallet', 'app']),
   },
+  mounted() {
+    this.refreshOverview();
+  },
   methods: {
     copyToClipboard(text) {
-      // this.$electron.clipboard.writeText(text);
-      Copy(text)
+      Copy(text);
+      this.copy_success = true;
+      setTimeout(() => {
+        this.copy_success = false;
+      }, 500);
     },
     async refreshOverview() {
       if (this.spin) return;
       this.spin = true;
       try {
-        await this.refreshAccount();
-        await this.refreshWallet();
+        let time_str = new Date().getTime();
+        this.pre_time = time_str;
+        await this.GET_ACCOUNT_INFO();
         this.spin = false;
       } catch (err) {
         this.spin = false;
       }
+      setTimeout(async () => {
+        this.refreshOverview();
+      }, 10 * 1000);
+    },
+    get_permission_info(item) {
+      let info_dict = {
+        active: 'active 权限能够执行转让 owner权限之外的所有功能',
+        owner: 'owner 权限能够执行账户的所有的功能，包含将账户的owner转让到别的账户,转让后对方可取消您的所有权限',
+      }
+      let not_have = item.is_have ? '' : `您当前不拥有${item.name}权限，`;
+      return not_have + info_dict[item.name];
     },
     // 导出钱包存储文件
     exportWallet() {
@@ -167,14 +201,38 @@ export default {
       refreshAccount: Actions.GET_ACCOUNT_OVERVIEW,
       refreshWallet: Actions.REFRESH_WALLET,
       fetchWallet: Actions.FETCH_WALLET,
+      GET_ACCOUNT_INFO: Actions.GET_ACCOUNT_INFO
     }),
   },
 };
 </script>
 
 <style scoped>
-.box_item{
-
+.info_box_ct{
+  position: absolute;
+  height: 0px;
+  background-color: rgba(0, 0, 0, 0.3);
+  z-index: 1;
+  width: 100%;
+  left: 0px;
+  top: 0px;
+}
+.info_box_ct .load_area_out{
+  top: 0px;
+  animation: info_box_top_end 0.05s linear;  
+}
+.overview_box{
+  position: relative;
+}
+.account_name_tag{
+  background: #fff;
+  padding: 0px 10px 2px 10px;
+  border-radius: 10px;
+  line-height: 1;
+  cursor: pointer;
+}
+.account_name_tag:active{
+  background-color: #eee;
 }
 .account_info_box{
   height: 40px;

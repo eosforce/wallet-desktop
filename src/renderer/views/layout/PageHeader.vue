@@ -87,22 +87,23 @@ export default {
       this.$i18n.locale = locale;
     },
     loop() {
-      this.loopId = setTimeout(() => {
+      this.loopId = setTimeout(async () => {
         if (this.on_loading_accounts) {
-          setTimeout(() => {
-            this.loop();
+          setTimeout(async () => {
+            await this.loop();
           }, 1000);
           return;
         }
-        this.fetchNodeInfo()
-          .then(() => this.loop())
-          .catch(() => this.loop());
-      }, 5000);
+        await this.fetchNodeInfo();
+        await this.GET_GLOABLE_INFO();
+        this.loop();
+      }, 3 * 1000);
     },
     ...mapActions({
       fetchNodeInfo: Actions.FETCH_NODE_INFO,
       refreshApp: Actions.REFRESH_APP,
-      switchChainNet: Actions.SWITCH_CHAIN_NET
+      switchChainNet: Actions.SWITCH_CHAIN_NET,
+      GET_GLOABLE_INFO: Actions.GET_GLOABLE_INFO
     }),
   },
 };

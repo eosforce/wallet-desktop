@@ -20,13 +20,15 @@
             </div>
           </td>
         </tr>
-        <tr v-for="record in recordList" :key="record.seq" v-show="recordList.length" v-if="!on_load_actions">
+        <tr class="tr_record" v-for="record in recordList" :key="record.seq" v-show="recordList.length" v-if="!on_load_actions">
           <td>{{record.time | timestamp}}</td>
           <td>{{record.from}}</td>
           <td>{{record.name}}</td>
           <td>{{record.to}}</td>
           <td>{{record.change}}</td>
-          <td>{{record.memo}}</td>
+          <td class="transfer_memo">
+              {{record.memo}}
+          </td>
           <td>
             <span v-if="last_irreversible_block_num >= record.block_num" class="has_confim">已完成</span>
             <span v-if="last_irreversible_block_num < record.block_num" class="wait_confirm">等待确认</span>
@@ -39,25 +41,17 @@
             </div>
           </td>
         </tr>
-        <!-- <tr v-show="!recordList.length" v-if="!on_load_actions">
-          <td colspan="7" class="empty">{{$t('暂无交易记录')}}</td>
-        </tr> -->
       </tbody>
     </table>
-      <!-- <div v-if="has_more">
-        加载更多
+      <div v-if="has_more && !on_load_actions" class="load_end_action_ct">
+        <a class="load_action" v-if="!on_load_more" @click="next">加载更多</a>
+        <div class="load_area table_inner_load" v-if="on_load_more">
+            <div class="load_circle account_detail_loader"></div><div>{{$t('正在努力加载')}}</div>
+        </div>
       </div>
-
-      <div class="no_data" v-if="!has_more">
+      <div class="no_data sm_no_data" v-if="!has_more && recordList.length">
           没有更多了
-      </div> -->
-      <el-pagination
-        v-if="!on_load_actions && recordList.length"
-        @current-change="getMaterial"
-        :pageSize="offset"
-        layout="prev, next, jumper"
-        :total="10000">
-      </el-pagination>
+      </div>
   </div>
 </template>
 
@@ -74,6 +68,7 @@ export default {
       data: [],
       list_bCurrPage: 1,
       pageSize: 20,
+      on_load_more: false
     };
   },
   mounted() {
@@ -94,6 +89,9 @@ export default {
         return genTrConvertFunc(tr.action_trace.act.name, this.last_irreversible_block_num)(tr);
       });
     },
+    need_confirmed_record() {
+      return this.recordList.filter(item => !item.has_confirmed)
+    },
     has_more() {
       return this.account.transferRecords.more;
     },
@@ -109,17 +107,58 @@ export default {
     ...mapState(['account', 'app']),
   },
   methods: {
+    next() {
+      this.on_load_more = true;
+      this.getTransferRecord({ 
+        accountName: this.accountName, 
+        finished: () => {
+          this.on_load_more = false;
+        }
+      });
+    },
     getMaterial(val = 1) {
-      this.getTransferRecord({ accountName: this.accountName, pos: this.offset * (val - 1) });
+      this.getTransferRecord({ accountName: this.accountName });
     },
     ...mapActions({
       getTransferRecord: Actions.GET_TRANSFER_RECORD,
+      RESET_ACCOUNT_INFO: Actions.RESET_ACCOUNT_INFO
     }),
   },
 };
 </script>
 
 <style scoped>
+.sm_no_data{
+  height: 36px;
+  font-weight: 300;
+}
+.table td{
+  vertical-align: middle;
+  padding: 10px 5px;
+}
+.table .tr_record:hover{
+  background-color: #f5f5f5;
+}
+.transfer_memo{
+  max-width: 200px;
+}
+.load_end_action_ct{
+  color: #209cee;
+  text-align: center;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.load_end_action_ct a{
+  color: #3273dc;
+}
+.load_end_action_ct a:hover{
+  color: #1d5ec7
+}
+.load_end_action_ct .table_inner_load{
+  height: 30px;
+}
 .empty {
   height: 100px;
   line-height: 100px;

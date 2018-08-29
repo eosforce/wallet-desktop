@@ -195,6 +195,9 @@ export default {
       })
         .then(result => {
           Message.success(this.$t('转账成功'));
+          setTimeout(() => {
+            this.getTransferRecord({ accountName: this.fromAccountName, pos: 0 });
+          }, 2000);
         })
         .catch(err => {
           Message.error({
@@ -218,6 +221,7 @@ export default {
     ...mapActions({
       getAccountInfo: Actions.GET_ACCOUNT_INFO,
       transfer: Actions.TRANSFER,
+      getTransferRecord: Actions.GET_TRANSFER_RECORD
     }),
   },
   components: {

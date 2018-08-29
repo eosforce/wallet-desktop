@@ -250,16 +250,16 @@ export const getTable = httpEndpoint => async (params, concel_container = {cance
   );
   return data.data;
 };
-
-// 根据 bp 和 vote 得到分红表，返回一个对象
-export const getRewardsAndBpsTable = httpEndpoint => async (accountName, current_node) => {
-  const votesTable = await getVotesTable(httpEndpoint)(accountName);
-  const bpsTable = await getBpsTable(httpEndpoint)();
+// 全局基础信息获取
+export const getGlobalTable = httpEndpoint => async (accountName, current_node) => {
+  let start_time = new Date().getTime();
+  let votesTable = await getVotesTable(httpEndpoint)(accountName);
+  let bpsTable = await getBpsTable(httpEndpoint)();
   const { head_block_num: currentHeight } = current_node || await getNodeInfo(httpEndpoint);
   const { schedule_version } = await getBlock(httpEndpoint)(currentHeight);
 
-  let version;
-  const superBpsAmountTable = await getTable(httpEndpoint)({
+  let version = schedule_version;
+  let superBpsAmountTable = await getTable(httpEndpoint)({
     scope: 'eosio',
     code: 'eosio',
     table: 'schedules',
@@ -268,12 +268,35 @@ export const getRewardsAndBpsTable = httpEndpoint => async (accountName, current
     version = result.rows && result.rows[0] && result.rows[0].version;
     return result.rows && result.rows[0] && result.rows[0].producers;
   });
+  console.log(`start time is ${start_time}, it ends in ${new Date().getTime()} , it cost ${new Date().getTime() - start_time}`);
+  return {
+    votesTable,
+    bpsTable,
+    superBpsAmountTable,
+    version
+  }
+}
+// 根据 bp 和 vote 得到分红表，返回一个对象
+export const getRewardsAndBpsTable = httpEndpoint => async (accountName, current_node, concel_container = {cancel: []}, votesTable, bpsTable, superBpsAmountTable) => {
+  votesTable = votesTable || await getVotesTable(httpEndpoint)(accountName);
+  bpsTable = bpsTable || await getBpsTable(httpEndpoint)();
 
+  const { head_block_num: currentHeight } = current_node || await getNodeInfo(httpEndpoint);
+  const { schedule_version } = await getBlock(httpEndpoint)(currentHeight);
+  let version = schedule_version;
+  superBpsAmountTable = superBpsAmountTable || await getTable(httpEndpoint)({
+    scope: 'eosio',
+    code: 'eosio',
+    table: 'schedules',
+    table_key: schedule_version,
+  }).then(result => {
+    version = result.rows && result.rows[0] && result.rows[0].version;
+    return result.rows && result.rows[0] && result.rows[0].producers;
+  });
   const rewardsTable = [];
   const superBpTable = [];
   const commonBpTable = [];
   let bpInfo;
-
   for (const bpRow of bpsTable) {
     for (let i = 0; i < superBpsAmountTable.length; i++) {
       if (superBpsAmountTable[i].bpname === bpRow.name) {
@@ -346,7 +369,8 @@ export const getRewardsAndBpsTable = httpEndpoint => async (accountName, current
     votesTable,
     stakedTotal,
     unstakingTotal,
-    rewardTotal
+    rewardTotal,
+    version
   };
 };
 
@@ -354,9 +378,13 @@ export const count_asset_total = (available, stakedTotal, unstakingTotal, reward
   return calcTotalAmount([available, stakedTotal, unstakingTotal, rewardTotal]);
 }
 
-export const getAccountInfo = httpEndpoint => async (accountName, finish_account_update) => {
-  const [available, account_base_info] = await Promise.all([getAvailable(httpEndpoint)(accountName), getAccount(httpEndpoint)(accountName), getVotesTable(httpEndpoint)(accountName)]);
-  const {rewardsTable, bpsTable, bpInfo, votesTable} = await getRewardsAndBpsTable(httpEndpoint)(accountName);
+export const getAccountInfo = httpEndpoint => async (accountName, current_node, concel_container = {cancel: []}, votesTable, bpsTable, superBpsAmountTable) => {
+  const [available, account_base_info] = await Promise.all([getAvailable(httpEndpoint)(accountName), getAccount(httpEndpoint)(accountName)]);
+  const reward_res = await getRewardsAndBpsTable(httpEndpoint)(accountName, current_node, concel_container = {cancel: []}, votesTable, bpsTable, superBpsAmountTable);
+  bpsTable = reward_res.bpsTable;
+  votesTable = reward_res.votesTable;
+  const {rewardsTable, bpInfo} = reward_res;
+
   const stakedTotal = calcTotalAmount(votesTable, 'staked');
   const unstakingTotal = calcTotalAmount(votesTable, 'unstaking');
   const rewardTotal = calcTotalAmount(rewardsTable, 'reward');

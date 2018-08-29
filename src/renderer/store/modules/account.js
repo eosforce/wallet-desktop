@@ -11,6 +11,7 @@ import {
   transfer_account,
   getAccount,
   getRewardsAndBpsTable,
+  getGlobalTable,
   count_asset_total
 } from '@/services/Eos';
 
@@ -24,7 +25,11 @@ const initState = {
     rewardTotal: 0,
     baseInfo: {}
   },
+  version: '',
   bpsTable: [],
+  baseBpsTable: [],
+  votesTable: [],
+  superBpsAmountTable: [],
   transferRecords: {
     offset: 20,
     pos: 0,
@@ -41,7 +46,7 @@ const initState = {
   on_load_token: false,
   pre_load_token_key: '',
   load_key: 0,
-  cancel_container: {
+  cancle_requests: {
     cancel: []
   }
 };
@@ -61,12 +66,33 @@ const mutations = {
   [Mutations.SET_BPS_TABLE](state, { bpsTable = [] } = {}) {
     state.bpsTable = bpsTable;
   },
+  [Mutations.SET_BASE_BPS_TABLE](state, { bpsTable = [] } = {}) {
+    state.baseBpsTable = bpsTable;
+  },
+  [Mutations.SET_VOTES_TABLE](state, { votesTable = [] } = {}) {
+    state.votesTable.splice(0, state.votesTable.length, ...votesTable);
+  },
+  [Mutations.SET_SUPER_PSAMOUNT_TABLE](state, { superBpsAmountTable = [] } = {}) {
+    state.superBpsAmountTable.splice(0, state.superBpsAmountTable.length, ...superBpsAmountTable);
+  },
   [Mutations.SET_TRANSFER_RECORDS](state, { transferRecords = {} } = {}) {
     if (transferRecords.list.length < state.transferRecords.offset) {
       state.transferRecords.more = false;
     }
     state.transferRecords.list.splice(state.transferRecords.list.length, 0, ...transferRecords.list);
-    state.transferRecords = transferRecords;
+    let recode_map = {};
+    let records = [];
+    state.transferRecords.list.map(item => {
+      if (recode_map[item.action_trace.trx_id]) return;
+      recode_map[item.action_trace.trx_id] = item;
+      records.push(item);
+    });
+    state.transferRecords.list.splice(0, state.transferRecords.list.length, ...records);
+    state.transferRecords.list.sort((pre, cur) => {
+      if(cur.block_num > pre.block_num) return 1;
+      return -1;
+    })
+    state.transferRecords.pos = state.transferRecords.list.length;
   },
   [Mutations.SET_TOKEN_LIST](state, { tokenList = [] } = {}) {
     state.tokenList = tokenList;
@@ -78,6 +104,9 @@ const mutations = {
   },
   [Mutations.FINISH_LOAD_ACCOUNT_INFO](state){
     state.on_load_info = false;
+  },
+  [Mutations.SET_VERSION](state, { version = '' }){
+    state.version = version;
   },
   update_available (state, available) {
     state.info.available = available;
@@ -130,10 +159,11 @@ const mutations = {
     state.pre_load_action_key = '';
     state.pre_load_bps_key = '';
     state.pre_load_token_key = '';
+    state.votesTable = [];
   },
-  set_cancel_container (state, cancel) {
+  set_cancle_requests (state, cancel) {
     for(let item of cancel){
-      state.cancel_container.cancel.push(item);
+      state.cancle_requests.cancel.push(item);
     }
   }
 };
@@ -196,31 +226,50 @@ const actions = {
     commit('start_on_load_bps_table', accountName);
     commit(Mutations.START_LOAD_ACCOUNT_INFO, { accountName });
   },
-  async [Actions.GET_ACCOUNT_INFO]({ state, dispatch, commit, getters }) {
+  async [Actions.GET_GLOABLE_INFO]({ state, dispatch, commit, getters }) {
+    let accountName = getters[Getters.CURRENT_ACCOUNT_NAME];
+    let node_url = getters[Getters.CURRENT_NODE];
+    let current_node_info = getters[Getters.CURRENT_NODE_INFO]
+    let { votesTable, bpsTable, superBpsAmountTable } = await getGlobalTable(node_url)(accountName, current_node_info);
+    commit(Mutations.SET_VOTES_TABLE, {votesTable});
+    commit(Mutations.SET_BASE_BPS_TABLE, {bpsTable});
+    commit(Mutations.SET_SUPER_PSAMOUNT_TABLE, {superBpsAmountTable});
+  },
+  async [Actions.GET_ACCOUNT_INFO]({ state, dispatch, commit, getters }, key) {
     const accountName = getters[Getters.CURRENT_ACCOUNT_NAME];
     let node_url = getters[Getters.CURRENT_NODE];
     if (accountName != state.pre_load_key) {
-      for(let item of state.cancel_container.cancel){
+      for(let item of state.cancle_requests.cancel){
         item();
       }
     }
     dispatch('start_load_new_account');
-    console.log('getters[Getters.CURRENT_NODE]');
-    let cancel_container = {
+    let cancle_requests = {
       'cancel': []
     }
-    commit('set_cancel_container', cancel_container.cancel);
-    let {bpsTable, stakedTotal, unstakingTotal, rewardTotal} = await getRewardsAndBpsTable(node_url)(accountName, getters[Getters.CURRENT_NODE_INFO], cancel_container)
+    commit('set_cancle_requests', cancle_requests.cancel);
+    var baseBpsTable = state.baseBpsTable.length > 0 ? JSON.parse(JSON.stringify(state.baseBpsTable)) : null;
+    var votesTable = state.votesTable.length > 0 ? JSON.parse(JSON.stringify(state.votesTable)) : null;
+    var superBpsAmountTable = state.superBpsAmountTable.length > 0 ? JSON.parse(JSON.stringify(state.superBpsAmountTable)) : null;
+    var {bpsTable, stakedTotal, unstakingTotal, rewardTotal, version} = await getRewardsAndBpsTable(node_url)(
+      accountName, 
+      getters[Getters.CURRENT_NODE_INFO],
+      cancle_requests,
+      votesTable,
+      baseBpsTable,
+      superBpsAmountTable
+    );
     if (accountName != state.pre_load_key) {
       return;
     }
+    commit(Mutations.SET_VERSION, {version});
     commit(Mutations.SET_BPS_TABLE, { bpsTable });
     commit('finish_on_load_bps_table');
     commit('set_staked_total', stakedTotal);
     commit('set_unstaking_total', unstakingTotal);
     commit('set_reward_total', rewardTotal);
     dispatch('check_total_and_set_asset_total');
-    await getAvailable(node_url)(accountName, cancel_container)
+    await getAvailable(node_url)(accountName, cancle_requests)
       .then(available => {
         if (accountName != state.pre_load_key) {
           return;
@@ -228,8 +277,9 @@ const actions = {
         commit('update_available', available);
         dispatch('check_total_and_set_asset_total');
       });
-    commit('set_cancel_container', cancel_container.cancel);
-    await getAccount(node_url)(accountName, cancel_container)
+    commit('set_cancle_requests', cancle_requests.cancel);
+
+    await getAccount(node_url)(accountName, cancle_requests)
       .then(baseInfo => {
         if (accountName != state.pre_load_key) {
           return;
@@ -237,35 +287,54 @@ const actions = {
         commit('update_base_info', baseInfo);
         dispatch('check_total_and_set_asset_total');
       });
-    commit('set_cancel_container', cancel_container.cancel);
+    commit('set_cancle_requests', cancle_requests.cancel);
   },
-  [Actions.GET_TRANSFER_RECORD]({ state, commit, getters }, {accountName, pos, offset, cancel_container}) {
-    pos = pos === undefined ? state.transferRecords.pos : pos;
+  [Actions.GET_TRANSFER_RECORD]({ state, commit, getters }, {accountName, pos, offset, cancle_requests, finished = () => {}}) {
     offset = offset || state.transferRecords.offset;
+    if (!pos) {
+      pos = pos === undefined ? state.transferRecords.pos : pos;
+    }
     commit('start_on_load_actions', accountName);
-    return getTransferRecord(getters[Getters.CURRENT_NODE])({accountName, pos, offset, cancel_container}).then(result => {
+    return getTransferRecord(getters[Getters.CURRENT_NODE])({accountName, pos, offset, cancle_requests}).then(result => {
       if(accountName != state.pre_load_action_key) return;
       commit(Mutations.SET_TRANSFER_RECORDS, { transferRecords: { list: result.actions, pos, offset } });
       commit('finish_on_load_actions');
+      finished();
     });
   },
-  [Actions.GET_TOKEN_LIST]({state, dispatch, commit, getters}, {accountName, cancel_container}) {
+  [Actions.GET_TOKEN_LIST]({state, dispatch, commit, getters}, {accountName, cancle_requests}) {
     commit('start_on_load_token', accountName);
-    return getTokenList(getters[Getters.CURRENT_NODE])(accountName, cancel_container).then(result => {
+    return getTokenList(getters[Getters.CURRENT_NODE])(accountName, cancle_requests).then(result => {
       if(accountName != state.pre_load_token_key) return;
       commit(Mutations.SET_TOKEN_LIST, { tokenList: result });
       commit('finish_on_load_token');
     });
   },
   [Actions.GET_BPS_TABLE]({ state, dispatch, commit, getters }) {
-    const accountName = getters[Getters.CURRENT_ACCOUNT_NAME];
-    return getAccountInfo(getters[Getters.CURRENT_NODE])(accountName).then(({ bpsTable }) => {
+    let accountName = getters[Getters.CURRENT_ACCOUNT_NAME];
+    let current_node_info = getters[Getters.CURRENT_NODE_INFO];
+    var baseBpsTable = state.baseBpsTable.length > 0 ? JSON.parse(JSON.stringify(state.baseBpsTable)) : null;
+    var votesTable = state.votesTable.length > 0 ? JSON.parse(JSON.stringify(state.votesTable)) : null;
+    var superBpsAmountTable = state.superBpsAmountTable.length > 0 ? JSON.parse(JSON.stringify(state.superBpsAmountTable)) : null;
+    return getAccountInfo(getters[Getters.CURRENT_NODE])(
+      accountName, current_node_info, {cancel: []}, votesTable, baseBpsTable, superBpsAmountTable).then(({ bpsTable }) => {
+      if (accountName != state.pre_load_key) {
+        return;
+      }
       commit(Mutations.SET_BPS_TABLE, { bpsTable });
     });
   },
   [Actions.GET_ACCOUNT_OVERVIEW]({ state, dispatch, commit, getters }) {
-    const accountName = getters[Getters.CURRENT_ACCOUNT_NAME];
-    return getAccountInfo(getters[Getters.CURRENT_NODE])(accountName).then(({ info }) => {
+    let accountName = getters[Getters.CURRENT_ACCOUNT_NAME];
+    let current_node_info = getters[Getters.CURRENT_NODE_INFO];
+    var baseBpsTable = state.baseBpsTable.length > 0 ? JSON.parse(JSON.stringify(state.baseBpsTable)) : null;
+    var votesTable = state.votesTable.length > 0 ? JSON.parse(JSON.stringify(state.votesTable)) : null;
+    var superBpsAmountTable = state.superBpsAmountTable.length > 0 ? JSON.parse(JSON.stringify(state.superBpsAmountTable)) : null;
+    return getAccountInfo(getters[Getters.CURRENT_NODE])(
+      accountName, current_node_info, {cancel: []}, votesTable, baseBpsTable, superBpsAmountTable).then(({ info }) => {
+      if (accountName != state.pre_load_key) {
+        return;
+      }
       commit(Mutations.SET_ACCOUNT_INFO, { info });
     });
   },
