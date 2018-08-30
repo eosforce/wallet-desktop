@@ -34,7 +34,7 @@ var write_package = (data) => {
                 console.log(err);
                 resolve(null);
             } else {
-                console.log('写入成功');
+                console.log('modified file success');
                 resolve(null);
             }
         });
@@ -54,6 +54,7 @@ var main = async () => {
     await create_cmd('git', ['push', '--delete', 'origin', `v${new_version}`]);
     await create_cmd('git', [`push`, `origin`, `v${new_version}`]);
     await create_cmd('git', [`tag`, `--delete`, `v${new_version}`]);
+    console.log('update tag successfull')
 }
 main();
 
