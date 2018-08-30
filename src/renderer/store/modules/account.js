@@ -259,16 +259,20 @@ const actions = {
       baseBpsTable,
       superBpsAmountTable
     );
+
     if (accountName != state.pre_load_key) {
       return;
     }
+
     commit(Mutations.SET_VERSION, {version});
     commit(Mutations.SET_BPS_TABLE, { bpsTable });
     commit('finish_on_load_bps_table');
     commit('set_staked_total', stakedTotal);
     commit('set_unstaking_total', unstakingTotal);
     commit('set_reward_total', rewardTotal);
+
     dispatch('check_total_and_set_asset_total');
+
     await getAvailable(node_url)(accountName, cancle_requests)
       .then(available => {
         if (accountName != state.pre_load_key) {
@@ -277,6 +281,7 @@ const actions = {
         commit('update_available', available);
         dispatch('check_total_and_set_asset_total');
       });
+
     commit('set_cancle_requests', cancle_requests.cancel);
 
     await getAccount(node_url)(accountName, cancle_requests)
@@ -287,6 +292,7 @@ const actions = {
         commit('update_base_info', baseInfo);
         dispatch('check_total_and_set_asset_total');
       });
+
     commit('set_cancle_requests', cancle_requests.cancel);
   },
   [Actions.GET_TRANSFER_RECORD]({ state, commit, getters }, {accountName, pos, offset, cancle_requests, finished = () => {}}) {
@@ -295,12 +301,14 @@ const actions = {
       pos = pos === undefined ? state.transferRecords.pos : pos;
     }
     commit('start_on_load_actions', accountName);
-    return getTransferRecord(getters[Getters.CURRENT_NODE])({accountName, pos, offset, cancle_requests}).then(result => {
-      if(accountName != state.pre_load_action_key) return;
-      commit(Mutations.SET_TRANSFER_RECORDS, { transferRecords: { list: result.actions, pos, offset } });
-      commit('finish_on_load_actions');
-      finished();
-    });
+    return getTransferRecord(getters[Getters.CURRENT_NODE])({accountName, pos, offset, cancle_requests})
+      .then(result => {
+        if(accountName != state.pre_load_action_key) return;
+        commit(Mutations.SET_TRANSFER_RECORDS, { transferRecords: { list: result.actions, pos, offset } });
+        commit('finish_on_load_actions');
+        finished();
+      }
+    );
   },
   [Actions.GET_TOKEN_LIST]({state, dispatch, commit, getters}, {accountName, cancle_requests}) {
     commit('start_on_load_token', accountName);
