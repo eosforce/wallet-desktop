@@ -88,14 +88,8 @@ export default {
     },
     loop() {
       this.loopId = setTimeout(async () => {
-        if (this.on_loading_accounts) {
-          setTimeout(async () => {
-            await this.loop();
-          }, 1000);
-          return;
-        }
         await this.fetchNodeInfo();
-        await this.GET_GLOABLE_INFO();
+        // await this.GET_GLOABLE_INFO();
         this.loop();
       }, 3 * 1000);
     },

@@ -1,5 +1,13 @@
 <template>
   <div class="box exchange-box">
+
+    <div class="load_end_action_ct load_top_action_ct" v-if="on_load_actions && recordList.length">
+    <!-- <div class="load_end_action_ct load_top_action_ct"> -->
+      <div class="load_area table_inner_load">
+          <div class="load_circle account_detail_loader"></div><div>{{$t('正在努力加载')}}</div>
+      </div>
+    </div>
+
     <table class="table data-table">
       <thead>
         <tr>
@@ -13,14 +21,14 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-if="on_load_actions">
+        <tr v-if="on_load_actions && !recordList.length">
           <td colspan="10">
             <div class="load_area table_inner_load">
                 <div class="load_circle account_detail_loader"></div><div>{{$t('正在努力刷新')}}</div>
             </div>
           </td>
         </tr>
-        <tr class="tr_record" v-for="record in recordList" :key="record.seq" v-show="recordList.length" v-if="!on_load_actions">
+        <tr class="tr_record" v-for="record in recordList" :key="record.seq" v-show="recordList.length" v-if="recordList.length">
           <td>{{record.time | timestamp}}</td>
           <td>{{record.from}}</td>
           <td>{{record.name}}</td>
@@ -30,8 +38,9 @@
               {{record.memo}}
           </td>
           <td>
-            <span v-if="last_irreversible_block_num >= record.block_num" class="has_confim">已完成</span>
-            <span v-if="last_irreversible_block_num < record.block_num" class="wait_confirm">等待确认</span>
+            <div v-if="record.status == 'finished'" class="record_status">已完成</div>
+            <div v-if="record.status == 'on_process'" class="record_status">确认区块中</div>
+            <div v-if="record.status == 'unfinished'" class="record_status">交易失败</div>
           </td>
         </tr>
         <tr v-if="!on_load_actions && !recordList.length">
@@ -65,7 +74,6 @@ export default {
   name: 'TransferRecord',
   data() {
     return {
-      data: [],
       list_bCurrPage: 1,
       pageSize: 20,
       on_load_more: false
@@ -88,9 +96,6 @@ export default {
       return this.account.transferRecords.list.map(tr => {
         return genTrConvertFunc(tr.action_trace.act.name, this.last_irreversible_block_num)(tr);
       });
-    },
-    need_confirmed_record() {
-      return this.recordList.filter(item => !item.has_confirmed)
     },
     has_more() {
       return this.account.transferRecords.more;
@@ -150,6 +155,9 @@ export default {
   align-items: center;
   justify-content: center;
 }
+.load_top_action_ct{
+  margin-bottom: 15px;
+}
 .load_end_action_ct a{
   color: #3273dc;
 }
@@ -172,8 +180,11 @@ export default {
 .wait_confirm{
   color: #900e0e;
 }
-.has_confim{
+.record_status{
+  display: block;
+  min-width: 80px;
   color: #c0c4cc;
+  text-align: center;
 }
 .no_data{
   text-align: center;

@@ -155,7 +155,8 @@ export const genTrConvertFunc = (trName, last_irreversible_block_num) => {
       from: act.authorization && act.authorization[0] && act.authorization[0].actor,
       status: checkStatus(tr.status),
       block_num: tr.block_num,
-      has_confirmed: last_irreversible_block_num > tr.block_num
+      status: tr.status,
+      trx_id: tr.action_trace.trx_id
     };
   };
   return (
@@ -169,7 +170,8 @@ export const genTrConvertFunc = (trName, last_irreversible_block_num) => {
           from: act.authorization && act.authorization[0] && act.authorization[0].actor,
           status: checkStatus(tr.status),
           block_num: tr.block_num,
-          has_confirmed: last_irreversible_block_num > tr.block_num
+          status: tr.status,
+          trx_id: tr.action_trace.trx_id
         };
       },
       vote: tr => {
@@ -183,7 +185,8 @@ export const genTrConvertFunc = (trName, last_irreversible_block_num) => {
           change: act.data.stake,
           status: checkStatus(tr.status),
           block_num: tr.block_num,
-          has_confirmed: last_irreversible_block_num > tr.block_num
+          status: tr.status,
+          trx_id: tr.action_trace.trx_id
         };
       },
       transfer: tr => {
@@ -198,7 +201,8 @@ export const genTrConvertFunc = (trName, last_irreversible_block_num) => {
           memo: act.data.memo,
           status: checkStatus(tr.status),
           block_num: tr.block_num,
-          has_confirmed: last_irreversible_block_num > tr.block_num
+          status: tr.status,
+          trx_id: tr.action_trace.trx_id
         };
       },
       claim: tr => {
@@ -211,7 +215,8 @@ export const genTrConvertFunc = (trName, last_irreversible_block_num) => {
           to: act.data.bpname,
           status: checkStatus(tr.status),
           block_num: tr.block_num,
-          has_confirmed: last_irreversible_block_num > tr.block_num
+          status: tr.status,
+          trx_id: tr.action_trace.trx_id
         };
       },
       unfreeze: tr => {
@@ -224,7 +229,8 @@ export const genTrConvertFunc = (trName, last_irreversible_block_num) => {
           to: act.data.bpname,
           status: checkStatus(tr.status),
           block_num: tr.block_num,
-          has_confirmed: last_irreversible_block_num > tr.block_num
+          status: tr.status,
+          trx_id: tr.action_trace.trx_id
         };
       },
       updateauth: tr => {
@@ -237,7 +243,8 @@ export const genTrConvertFunc = (trName, last_irreversible_block_num) => {
           to: act.data.bpname,
           status: checkStatus(tr.status),
           block_num: tr.block_num,
-          has_confirmed: last_irreversible_block_num > tr.block_num
+          status: tr.status,
+          trx_id: tr.action_trace.trx_id
         };
       },
     }[trName] || defaultFunc
@@ -265,3 +272,28 @@ export const exportWif = (password, data) => {
 export const getToken = asset => {
   return asset && asset.split(' ')[1];
 };
+
+export const get_involved_users_form_block = block => {
+  let involved_users = new Set();
+  block.transactions.forEach(tr => {
+     tr.trx.transaction.actions.forEach(action_item => {
+         involved_users.add(action_item.data.voter || false);
+         involved_users.add(action_item.data.bpname || false);
+         involved_users.add(action_item.data.from || false);
+         involved_users.add(action_item.data.to || false);
+     });
+  });
+  involved_users.delete(false);
+  return involved_users;
+}
+
+export const get_involved_users_form_blocks = blocks => {
+  let item_involved_users = blocks.map(item => get_involved_users_form_block(item));
+  let res = new Set();
+  item_involved_users.forEach(item => {
+    for(let i of item){
+      res.add(i);
+    }
+  });
+  return res;
+}

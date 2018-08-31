@@ -33,32 +33,42 @@ export const getNodeList = () => {
 
 // 获取节点信息
 export const getNodeInfo = async (httpEndpoint) => {
-  var api_path = '/v1/chain/get_info';
-  let data = await axios.post(httpEndpoint + api_path, {});
-  return data.data;
+  // return new Promise((resolve, reject) => {
+    let api_path = '/v1/chain/get_info';
+    let data = await axios.post(httpEndpoint + api_path, {})
+    .then(data => {
+      return data.data;
+    })
+    .catch(err => {
+      console.log('error__', err);
+      return null;
+    })
+    return data;  
 };
 
 // 查询块信息
 export const getBlock = httpEndpoint => async (block_num_or_id, concel_container = {cancel: []}) => {
-  var CancelToken = axios.CancelToken;
-  var api_path = '/v1/chain/get_block';
+  let CancelToken = axios.CancelToken;
+  let api_path = '/v1/chain/get_block';
   let data = await axios.post(httpEndpoint + api_path, 
-    { 
-      block_num_or_id
-    },  
-    {
-      cancelToken: new CancelToken(function executor(c) {
-        concel_container.cancel.push(c);
-      })
-    }
-  )
-  return data.data;
+      { 
+        block_num_or_id
+      },  
+      {
+        cancelToken: new CancelToken(function executor(c) {
+          concel_container.cancel.push(c);
+        })
+      }
+    )
+    .then(data => data.data)
+    .catch(err => null);
+  return data;
 };
 // '/v1/chain/get_account'
 // 根据公钥获取用户名数组
 export const getAccounts = httpEndpoint => async (publicKey) => {
-  var CancelToken = axios.CancelToken;
-  var api_path = '/v1/history/get_key_accounts';
+  let CancelToken = axios.CancelToken;
+  let api_path = '/v1/history/get_key_accounts';
   let data = await axios.post(httpEndpoint + api_path, 
     { 
       public_key: publicKey
@@ -69,14 +79,16 @@ export const getAccounts = httpEndpoint => async (publicKey) => {
       })
     }
   )
-  return data.data.account_names || [];
+  .then(data => data.data.account_names)
+  .catch(err => []);
+  return data;
 };
 
 // 获取交易记录
 export const getTransferRecord = httpEndpoint => async ({accountName, pos, offset, concel_container = {cancel: []}}) => {
   // /v1/history/get_actions
-  var CancelToken = axios.CancelToken;
-  var api_path = '/v1/history/get_actions';
+  let CancelToken = axios.CancelToken;
+  let api_path = '/v1/history/get_actions';
   let data = await axios.post(httpEndpoint + api_path, 
     { 
       account_name: accountName, pos: pos, offset: offset, limit: 100
@@ -87,15 +99,25 @@ export const getTransferRecord = httpEndpoint => async ({accountName, pos, offse
       })
     }
   )
-  return data.data;
+  .then(data => data.data)
+  .catch(err => []);
+  return data;
 };
 
 // 获取交易详情
-export const getTransAction = httpEndpoint => ({ tid }) => {
-  var act = Eos({ httpEndpoint }).getTransaction({ id: tid });
-  return act;
+export const getTransAction = httpEndpoint => async (tid) => {
+  // /v1/history/get_transaction
+  let CancelToken = axios.CancelToken;
+  let api_path = '/v1/history/get_transaction';
+  let data = await axios.post(httpEndpoint + api_path, 
+    { 
+      id: tid
+    }
+  )
+  .then(data => data.data)
+  .catch(err => []);
+  return data;
 };
-
 // 查询账号是否存在
 export const queryAccount = httpEndpoint => accountName => {
   return Eos({ httpEndpoint })
@@ -118,8 +140,8 @@ export const queryAccount = httpEndpoint => accountName => {
 };
 
 export const getAccount = httpEndpoint => async (accountName, concel_container = {cancel: []}) => {
-  var CancelToken = axios.CancelToken;
-  var api_path = '/v1/chain/get_account';
+  let CancelToken = axios.CancelToken;
+  let api_path = '/v1/chain/get_account';
   let data = await axios.post(httpEndpoint + api_path, 
     { 
       account_name: accountName
@@ -130,13 +152,15 @@ export const getAccount = httpEndpoint => async (accountName, concel_container =
       })
     }
   )
-  return data.data;
+  .then(data => data.data)
+  .catch(err => null);
+  return data;
 };
 
 // 获取指定账户可用余额
 export const getAvailable = httpEndpoint => async (accountName, concel_container = {cancel: []}) => {
-  var CancelToken = axios.CancelToken;
-  var api_path = '/v1/chain/get_table_rows';
+  let CancelToken = axios.CancelToken;
+  let api_path = '/v1/chain/get_table_rows';
   let data = await axios.post(httpEndpoint + api_path, 
     { 
       scope: 'eosio',
@@ -151,8 +175,11 @@ export const getAvailable = httpEndpoint => async (accountName, concel_container
         concel_container.cancel.push(c);
       })
     }
-  );
-  const account = data.data.rows.find(acc => acc.name === accountName);
+  )
+  .then(data => data.data)
+  .catch(err => null);
+  if(!data) return data;
+  const account = data.rows.find(acc => acc.name === accountName);
   if (account) {
     return toBigNumber(account.available);
   } else {
@@ -198,8 +225,8 @@ export const getTokenList = httpEndpoint => accountName => {
 
 // 获取 bp 表
 export const getBpsTable = httpEndpoint => async (concel_container = {cancel: []}) => {
-  var CancelToken = axios.CancelToken;
-  var api_path = '/v1/chain/get_table_rows';
+  let CancelToken = axios.CancelToken;
+  let api_path = '/v1/chain/get_table_rows';
   let data = await axios.post(httpEndpoint + api_path, 
     { 
       scope: 'eosio',
@@ -214,13 +241,15 @@ export const getBpsTable = httpEndpoint => async (concel_container = {cancel: []
       })
     }
   )
-  return data.data.rows;
+  .then(data => data.data.rows)
+  .catch(err => []);
+  return data;
 };
 
 // 获取 vote 表
 export const getVotesTable = httpEndpoint => async (accountName, concel_container = {cancel: []}) => {
-  var CancelToken = axios.CancelToken;
-  var api_path = '/v1/chain/get_table_rows';
+  let CancelToken = axios.CancelToken;
+  let api_path = '/v1/chain/get_table_rows';
   let data = await axios.post(httpEndpoint + api_path, 
     { 
       scope: accountName, code: 'eosio', table: 'votes', json: true, limit: 1000
@@ -230,14 +259,16 @@ export const getVotesTable = httpEndpoint => async (accountName, concel_containe
         concel_container.cancel.push(c);
       })
     }
-  );
-  return data.data.rows;
+  )
+  .then(data => data.data.rows)
+  .catch(err => []);
+  return data;
 };
 
 // table
 export const getTable = httpEndpoint => async (params, concel_container = {cancel: []}) => {
-  var CancelToken = axios.CancelToken;
-  var api_path = '/v1/chain/get_table_rows';
+  let CancelToken = axios.CancelToken;
+  let api_path = '/v1/chain/get_table_rows';
   let data = await axios.post(httpEndpoint + api_path, 
     { 
       ...params, json: true, limit: 1000 
@@ -247,16 +278,18 @@ export const getTable = httpEndpoint => async (params, concel_container = {cance
         concel_container.cancel.push(c);
       })
     }
-  );
-  return data.data;
+  )
+  .then(data => data.data)
+  .catch(err => []);
+  return data;
 };
 // 全局基础信息获取
-export const getGlobalTable = httpEndpoint => async (accountName, current_node) => {
+export const getGlobalTable = httpEndpoint => async (accountName, current_node, block) => {
   let start_time = new Date().getTime();
   let votesTable = await getVotesTable(httpEndpoint)(accountName);
   let bpsTable = await getBpsTable(httpEndpoint)();
   const { head_block_num: currentHeight } = current_node || await getNodeInfo(httpEndpoint);
-  const { schedule_version } = await getBlock(httpEndpoint)(currentHeight);
+  const { schedule_version } = block || await getBlock(httpEndpoint)(currentHeight);
 
   let version = schedule_version;
   let superBpsAmountTable = await getTable(httpEndpoint)({
@@ -268,7 +301,6 @@ export const getGlobalTable = httpEndpoint => async (accountName, current_node) 
     version = result.rows && result.rows[0] && result.rows[0].version;
     return result.rows && result.rows[0] && result.rows[0].producers;
   });
-  console.log(`start time is ${start_time}, it ends in ${new Date().getTime()} , it cost ${new Date().getTime() - start_time}`);
   return {
     votesTable,
     bpsTable,
@@ -277,12 +309,12 @@ export const getGlobalTable = httpEndpoint => async (accountName, current_node) 
   }
 }
 // 根据 bp 和 vote 得到分红表，返回一个对象
-export const getRewardsAndBpsTable = httpEndpoint => async (accountName, current_node, concel_container = {cancel: []}, votesTable, bpsTable, superBpsAmountTable) => {
+export const getRewardsAndBpsTable = httpEndpoint => async (accountName, current_node, concel_container = {cancel: []}, votesTable, bpsTable, superBpsAmountTable, block) => {
   votesTable = votesTable || await getVotesTable(httpEndpoint)(accountName);
   bpsTable = bpsTable || await getBpsTable(httpEndpoint)();
 
   const { head_block_num: currentHeight } = current_node || await getNodeInfo(httpEndpoint);
-  const { schedule_version } = await getBlock(httpEndpoint)(currentHeight);
+  const { schedule_version } = block || await getBlock(httpEndpoint)(currentHeight);
   let version = schedule_version;
   superBpsAmountTable = superBpsAmountTable || await getTable(httpEndpoint)({
     scope: 'eosio',
