@@ -410,6 +410,17 @@ const actions = {
             }
         }
         if(has_updateauth) dispatch(Actions.FETCH_WALLET_LIST);
+        // 
+        let is_newaccount_action = false;
+        if( involved_action_dict['newaccount'] ){
+            for(let item of involved_action_dict['newaccount']){
+                if(public_key_dict.has(item)){
+                    is_newaccount_action = true;
+                }
+            }
+        }
+        if(is_newaccount_action) dispatch(Actions.FETCH_WALLET_LIST);
+
         if(!accountName) return ;
         if( involved_users.has(accountName) ){
             dispatch(Actions.GET_TRANSFER_RECORD, {accountName, pos: 0, from_top: true});

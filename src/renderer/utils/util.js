@@ -291,18 +291,30 @@ export const get_involved_users_form_block = block => {
   let involved_action_dict = {};
   block.transactions.forEach(tr => {
      tr.trx.transaction.actions.forEach(action_item => {
-      let _hex_data = abi_bin_to_json(action_item.hex_data || action_item.data, action_item.name);
+      let pushed_data = abi_bin_to_json(action_item.hex_data || action_item.data, action_item.name);
       involved_action_dict[action_item.name] = involved_action_dict[action_item.name] || new Set();
-      let _keys = ['voter', 'bpname', 'from', 'to', 'auth'];
+      let _keys = ['voter', 'bpname', 'from', 'to', 'auth', 'creator'];
       for(let _key of _keys){
-        let _u = _hex_data[_key];
+        let _u = pushed_data[_key];
         if(_u){
           if(_key == 'auth'){
-            involved_users.add(_hex_data.account);
+            involved_users.add(pushed_data.account);
             _u.keys.map(item => item.key).forEach(item => {
               involved_users.add(item);
               involved_action_dict[action_item.name].add(item);
             });
+          }else if(_key == 'creator'){
+            // new_account
+            involved_users.add(_u);
+            pushed_data.active.keys.map(item => item.key).forEach(item => {
+              involved_users.add(item);
+              involved_action_dict[action_item.name].add(item);
+            });
+            pushed_data.owner.keys.map(item => item.key).forEach(item => {
+              involved_users.add(item);
+              involved_action_dict[action_item.name].add(item);
+            });
+            
           }else{
             involved_users.add(_u);
             involved_action_dict[action_item.name].add(_u);
