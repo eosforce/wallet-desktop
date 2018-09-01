@@ -192,28 +192,33 @@ const actions = {
     },
     async [Actions.FETCH_BLOCK]({ state, commit, dispatch }) {
         let block_update_queue = [];
+        let start_time = new Date().getTime();
         // 最近的连续的十个未更新过的块进行，更新
         let last_unchecked_block = state.block_list.slice(state.block_list.length - 10, state.block_list.length).filter(item => {
             if (!item.block) {
                 block_update_queue.push(getBlock(state.currentNodeValue)(item.head_block_num));
             }
         });
-
-        let block_list_res = await Promise.all(block_update_queue);
-        block_list_res.forEach((item, index) => {
-            if(!item){
-                return ;
+        Promise.all(block_update_queue)
+        .then(block_list_res => {
+            block_list_res.forEach((item, index) => {
+                if(!item){
+                    return ;
+                }
+                commit(Mutations.UPDATE_BLOCK_LIST_STATUS, { block_num: item.block_num, block: item });
+            });
+            let last_block = block_list_res[block_list_res.length - 1];
+            if(last_block){
+                commit(Mutations.SET_BLOCK, { block: last_block });
             }
-            commit(Mutations.UPDATE_BLOCK_LIST_STATUS, { block_num: item.block_num, block: item });
-        });
-        let last_block = block_list_res[block_list_res.length - 1];
-        if(last_block){
-            commit(Mutations.SET_BLOCK, { block: last_block });
-        }
-        // 最近的块中是否涉及自己的变更
-        dispatch(Actions.CHECK_INVOLED, get_involved_users_form_blocks(block_list_res));
-        // 检查交易状态
-        dispatch(Actions.CHECK_TRANSACTION);
+            let end_time = new Date().getTime();
+            console.log(end_time - start_time);
+            // 最近的块中是否涉及自己的变更
+            dispatch(Actions.CHECK_INVOLED, get_involved_users_form_blocks(block_list_res));
+            // 检查交易状态
+            dispatch(Actions.CHECK_TRANSACTION);
+        })
+        // let block_list_res = await Promise.all(block_update_queue);
     },
     [Actions.FETCH_NODE_LIST]({ commit, dispatch, state }) {
         return Storage.setPath(CHAIN_NET_KEY)

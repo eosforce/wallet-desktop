@@ -33,7 +33,6 @@ export const getNodeList = () => {
 
 // 获取节点信息
 export const getNodeInfo = async (httpEndpoint) => {
-  // return new Promise((resolve, reject) => {
     let api_path = '/v1/chain/get_info';
     let data = await axios.post(httpEndpoint + api_path, {})
     .then(data => {
