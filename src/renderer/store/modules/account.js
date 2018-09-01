@@ -216,7 +216,6 @@ const actions = {
         for (let item in state.info) {
             if (!state.info[item] && except_key.indexOf(item) < 0) {
                 is_loaded_all = false;
-                console.log(item);
             }
         }
         if (is_loaded_all) {

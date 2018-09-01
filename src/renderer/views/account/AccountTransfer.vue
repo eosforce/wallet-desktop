@@ -129,7 +129,6 @@ export default {
       }
       Message.success(this.$t('用户名转让成功'));
       let next_params = await this.DELETE_ACCOUNT({account: this.my_name, publicKey: this.wallet.data.publicKey});
-      console.log('next_params is ' + next_params);
       if(next_params){
         this.$router.push({
           name: 'accountTransfer',
