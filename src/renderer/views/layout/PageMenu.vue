@@ -65,20 +65,7 @@ export default {
   },
   methods: {
     async reload () {
-      if(this.is_loading) return;
-      this.is_loading = true;
       this.FETCH_WALLET_LIST();
-      if (this.on_load_info) {
-        setTimeout(async () => {
-          await this.reload();
-          this.is_loading = false;
-        }, 1000);
-        return;
-      }
-      setTimeout(async () => {
-        await this.reload();
-        this.is_loading = false;
-      }, 5000);
     },
     ...mapActions({
       FETCH_WALLET_LIST: Actions.FETCH_WALLET_LIST

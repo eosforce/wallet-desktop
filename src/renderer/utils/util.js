@@ -1,7 +1,7 @@
 import Eos from 'eosjs';
 import sjcl from 'sjcl';
 import BigNumber from 'bignumber.js';
-const { ecc } = Eos.modules;
+const { ecc, Fcbuffer } = Eos.modules;
 
 export const toUrl = (url = '') => {
   if (url && !url.match(/^(http:\/\/)|(https:\/\/)/)) {
@@ -273,27 +273,59 @@ export const getToken = asset => {
   return asset && asset.split(' ')[1];
 };
 
+const eos_base_struct = Eos().fc.structs;
+export const abi_bin_to_json = (data, action_name) => {
+    let buf, buf_res;
+    let start_time = new Date().getTime();
+    try{
+        buf = new Buffer(data, 'hex');
+        buf_res = Fcbuffer.fromBuffer(eos_base_struct[action_name], buf)
+    }catch(e){
+        return ;
+    }
+    return buf_res;
+}
+
 export const get_involved_users_form_block = block => {
   let involved_users = new Set();
+  let involved_action_dict = {};
   block.transactions.forEach(tr => {
      tr.trx.transaction.actions.forEach(action_item => {
-         involved_users.add(action_item.data.voter || false);
-         involved_users.add(action_item.data.bpname || false);
-         involved_users.add(action_item.data.from || false);
-         involved_users.add(action_item.data.to || false);
+      let _hex_data = abi_bin_to_json(action_item.hex_data || action_item.data, action_item.name);
+      involved_action_dict[action_item.name] = involved_action_dict[action_item.name] || new Set();
+      let _keys = ['voter', 'bpname', 'from', 'to', 'auth'];
+      for(let _key of _keys){
+        let _u = _hex_data[_key];
+        if(_u){
+          if(_key == 'auth'){
+            involved_users.add(_hex_data.account);
+            _u.keys.map(item => item.key).forEach(item => {
+              involved_users.add(item);
+              involved_action_dict[action_item.name].add(item);
+            });
+          }else{
+            involved_users.add(_u);
+            involved_action_dict[action_item.name].add(_u);
+          }
+        }
+      }
      });
   });
   involved_users.delete(false);
-  return involved_users;
+  return [involved_users, involved_action_dict];
 }
 
 export const get_involved_users_form_blocks = blocks => {
   let item_involved_users = blocks.map(item => get_involved_users_form_block(item));
-  let res = new Set();
+  let involved_users = new Set(), involved_action_dict = {};
   item_involved_users.forEach(item => {
-    for(let i of item){
-      res.add(i);
+    for(let i of item[0]){
+      involved_users.add(i);
+    }
+    for(let i in item[1]){
+      involved_action_dict[i] = involved_action_dict[i] || new Set();
+      [...item[1][i]].map(item => involved_action_dict[i].add(item));
     }
   });
-  return res;
+  return [involved_users, involved_action_dict];
 }

@@ -47,6 +47,10 @@ export default {
         zh: '中文',
         en: 'English',
       },
+      on_load_info: false,
+      on_load_global: false,
+      loop_global_info_id: null,
+      loopId: null
     };
   },
   computed: {
@@ -79,7 +83,12 @@ export default {
   },
   created() {
     this.loop();
+    // this.loop_global_info();
     this.locale = this.$i18n.locale;
+  },
+  destroyed(){
+    clearTimeout(this.loopId);
+    clearTimeout(this.loop_global_info_id);
   },
   methods: {
     switchLocale(locale) {
@@ -87,11 +96,38 @@ export default {
       this.$i18n.locale = locale;
     },
     loop() {
-      this.loopId = setTimeout(async () => {
-        await this.fetchNodeInfo();
-        // await this.GET_GLOABLE_INFO();
-        this.loop();
+      if(this.on_load_info) return ;
+      this.on_load_info = true;
+      this.loopId = setTimeout(() => {
+        this.fetchNodeInfo()
+        .then(res => {
+          this.on_load_info = false;
+          this.loop();
+        })
+        .catch(err => {
+          this.on_load_info = false;
+          this.loop();
+        });
       }, 3 * 1000);
+    },
+    async loop_global_info() {
+      if(this.on_load_global) return ;
+      this.on_load_global = true;
+
+      this.loop_global_info_id = setTimeout(() => {
+
+        this.GET_GLOABLE_INFO()
+        .then(res => {
+          this.on_load_global = false;
+          this.loop_global_info();
+        })
+        .catch(err => {
+          this.on_load_global = false;
+          this.loop_global_info();
+        });
+
+      }, 10 * 1000);
+      
     },
     ...mapActions({
       fetchNodeInfo: Actions.FETCH_NODE_INFO,

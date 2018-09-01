@@ -101,6 +101,11 @@ const mutations = {
     update_transaction_status(state, {trx_id, status}){
         let item = state.transferRecords.list.find(item => item.trx_id == trx_id);
         item.status = status;
+        state.need_confirm_transaction.forEach((tr, index) => {
+            if(tr == trx_id){
+                state.need_confirm_transaction.splice(index, 1);
+            }
+        });
     },
     [Mutations.SET_TOKEN_LIST](state, { tokenList = [] } = {}) {
         state.tokenList = tokenList;
@@ -211,6 +216,7 @@ const actions = {
         for (let item in state.info) {
             if (!state.info[item] && except_key.indexOf(item) < 0) {
                 is_loaded_all = false;
+                console.log(item);
             }
         }
         if (is_loaded_all) {
@@ -239,7 +245,10 @@ const actions = {
         let node_url = getters[Getters.CURRENT_NODE];
         let current_node_info = getters[Getters.CURRENT_NODE_INFO];
         let block_info = getters[Getters.CURRENT_BLOCK];
-        let { votesTable, bpsTable, superBpsAmountTable } = await getGlobalTable(node_url)(accountName, current_node_info, block_info);
+        if(!current_node_info) return ;
+        let response = await getGlobalTable(node_url)(accountName, current_node_info, block_info);
+        if(!response) return ;
+        let { votesTable, bpsTable, superBpsAmountTable } = response;
         commit(Mutations.SET_VOTES_TABLE, { votesTable });
         commit(Mutations.SET_BASE_BPS_TABLE, { bpsTable });
         commit(Mutations.SET_SUPER_PSAMOUNT_TABLE, { superBpsAmountTable });
@@ -270,11 +279,9 @@ const actions = {
             superBpsAmountTable,
             block_info
         );
-
         if (accountName != state.pre_load_key) {
             return;
         }
-        
         commit(Mutations.SET_VERSION, { version });
         commit(Mutations.SET_BPS_TABLE, { bpsTable });
         commit('finish_on_load_bps_table');
@@ -303,7 +310,6 @@ const actions = {
                 commit('update_base_info', baseInfo || {});
                 dispatch('check_total_and_set_asset_total');
             });
-
         commit('set_cancle_requests', cancle_requests.cancel);
     },
     [Actions.GET_TRANSFER_RECORD]({ state, commit, getters }, { accountName, pos, offset, cancle_requests, finished = () => {}, from_top = false }) {
@@ -389,8 +395,22 @@ const actions = {
         });
     },
     // 检测最新的block中是否有涉及当前账户的交易，投票
-    async [Actions.CHECK_INVOLED]({ state, dispatch, commit, getters}, involved_users){
+    async [Actions.CHECK_INVOLED]({ state, dispatch, commit, getters}, [involved_users, involved_action_dict]){
         let accountName = getters[Getters.CURRENT_ACCOUNT_NAME];
+        let public_key = getters[Getters.ACCOUT_MAP][accountName];
+        let public_key_dict = new Set();
+        for(let name in getters[Getters.ACCOUT_MAP]){
+             public_key_dict.add( getters[Getters.ACCOUT_MAP][name] );
+        }
+        let has_updateauth = false;
+        if( involved_action_dict['updateauth'] ){
+            for(let item of involved_action_dict['updateauth']){
+                if(public_key_dict.has(item)){
+                    has_updateauth = true;
+                }
+            }
+        }
+        if(has_updateauth) dispatch(Actions.FETCH_WALLET_LIST);
         if(!accountName) return ;
         if( involved_users.has(accountName) ){
             dispatch(Actions.GET_TRANSFER_RECORD, {accountName, pos: 0, from_top: true});

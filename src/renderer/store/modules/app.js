@@ -53,14 +53,14 @@ const mutations = {
         state.currentNodeInfo = currentNodeInfo;
         let last_block = state.block_list[state.block_list.length - 1];
         // 更新到连续区块
-        if ( last_block ) {
-          if(last_block.head_block_num == currentNodeInfo.head_block_num) return ;
-          let len = currentNodeInfo.head_block_num - last_block.head_block_num;
-          for (var i = len - 1; i > 0; i--) {
-            state.block_list.push({
-              head_block_num: currentNodeInfo.head_block_num - i
-            });
-          }
+        if (last_block) {
+            if (last_block.head_block_num == currentNodeInfo.head_block_num) return;
+            let len = currentNodeInfo.head_block_num - last_block.head_block_num;
+            for (var i = len - 1; i > 0; i--) {
+                state.block_list.push({
+                    head_block_num: currentNodeInfo.head_block_num - i
+                });
+            }
         }
         state.block_list.push(currentNodeInfo);
     },
@@ -77,15 +77,16 @@ const mutations = {
     [Mutations.FINISH_LOAD_ACCOUNT_LIST](state) {
         state.is_load_accounts = false;
     },
-    [Mutations.SET_BLOCK](state, { block }){
+    // 设置当前最高区块
+    [Mutations.SET_BLOCK](state, { block }) {
         state.currentBlock = block;
     },
-    [Mutations.UPDATE_BLOCK_LIST_STATUS](state, { block_num, block }){
-      state.block_list.forEach(item => {
-        if (item.head_block_num == block_num ){
-            item.block = block;
-        }
-      });
+    [Mutations.UPDATE_BLOCK_LIST_STATUS](state, { block_num, block }) {
+        state.block_list.forEach(item => {
+            if (item.head_block_num == block_num) {
+                item.block = block;
+            }
+        });
     }
 };
 
@@ -128,7 +129,7 @@ const actions = {
         }
         return initPromise;
     },
-    [Actions.DELETE_ACCOUNT]({ state, commit, dispatch, getters }, { account, publicKey }) {
+    async [Actions.DELETE_ACCOUNT]({ state, commit, dispatch, getters }, { account, publicKey }) {
         let has_removed = -1;
         let wallet_account_map = [];
         for (let row of state.walletList) {
@@ -179,7 +180,7 @@ const actions = {
     [Actions.FETCH_NODE_INFO]({ commit, state, dispatch }, { node } = {}) {
         return getNodeInfo(node || state.currentNodeValue).then(result => {
             // node 为空使用当前节点值，这个时候不设置节点的值，避免定时刷新任务和其他请求交错，然后程序出错。
-            if(!result) return ;
+            if (!result) return;
             if (node) {
                 commit(Mutations.SET_CUREENT_NODE, { currentNodeValue: node });
             }
@@ -189,20 +190,30 @@ const actions = {
             dispatch(Actions.FETCH_BLOCK);
         });
     },
-    async [Actions.FETCH_BLOCK]({state, commit, dispatch}){
-      let block_update_queue = [];
-      let last_unchecked_block = state.block_list.slice(state.block_list.length - 10, state.block_list.length).filter( item => {
-          if (!item.block) {
-              block_update_queue.push(getBlock(state.currentNodeValue)(item.head_block_num));
-          }
-      });
-      let block_list_res = await Promise.all(block_update_queue);
-      block_list_res.forEach(item => {
-          commit(Mutations.UPDATE_BLOCK_LIST_STATUS, { block_num: item.block_num , block: item});  
-      });
-      commit(Mutations.SET_BLOCK, { block: block_list_res[block_list_res.length - 1] });
-      dispatch(Actions.CHECK_INVOLED, get_involved_users_form_blocks(block_list_res));
-      dispatch(Actions.CHECK_TRANSACTION);
+    async [Actions.FETCH_BLOCK]({ state, commit, dispatch }) {
+        let block_update_queue = [];
+        // 最近的连续的十个未更新过的块进行，更新
+        let last_unchecked_block = state.block_list.slice(state.block_list.length - 10, state.block_list.length).filter(item => {
+            if (!item.block) {
+                block_update_queue.push(getBlock(state.currentNodeValue)(item.head_block_num));
+            }
+        });
+
+        let block_list_res = await Promise.all(block_update_queue);
+        block_list_res.forEach((item, index) => {
+            if(!item){
+                return ;
+            }
+            commit(Mutations.UPDATE_BLOCK_LIST_STATUS, { block_num: item.block_num, block: item });
+        });
+        let last_block = block_list_res[block_list_res.length - 1];
+        if(last_block){
+            commit(Mutations.SET_BLOCK, { block: last_block });
+        }
+        // 最近的块中是否涉及自己的变更
+        dispatch(Actions.CHECK_INVOLED, get_involved_users_form_blocks(block_list_res));
+        // 检查交易状态
+        dispatch(Actions.CHECK_TRANSACTION);
     },
     [Actions.FETCH_NODE_LIST]({ commit, dispatch, state }) {
         return Storage.setPath(CHAIN_NET_KEY)
@@ -246,7 +257,7 @@ const getters = {
     [Getters.CURRENT_NODE_INFO](state) {
         return state.currentNodeInfo;
     },
-    [Getters.CURRENT_BLOCK](state){
+    [Getters.CURRENT_BLOCK](state) {
         return state.currentBlock;
     },
     [Getters.CURRENT_NODE](state) {
