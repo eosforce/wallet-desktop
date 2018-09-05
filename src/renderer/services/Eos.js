@@ -194,7 +194,7 @@ export const getTokenList = httpEndpoint => accountName => {
       if (data.rows.length) {
         return Promise.all(
           data.rows.map(row => {
-            const balance = row.balance;
+            let balance = row.balance;
             const symbol = getToken(balance);
             return Eos({ httpEndpoint })
               .getTableRows({
@@ -207,11 +207,15 @@ export const getTokenList = httpEndpoint => accountName => {
               .then(result => {
                 const match = balance && balance.match(/\.(\d*)/);
                 const precision = match && match[1] ? match[1].length : 0;
+                balance = toBigNumber(balance, symbol);
+                let token_config = result.rows[0];
+                token_config.max_supply = toBigNumber(token_config.max_supply, symbol);
+                token_config.supply = toBigNumber(token_config.supply, symbol);
                 return {
                   symbol,
                   precision,
                   balance,
-                  ...result.rows[0],
+                  ...token_config,
                 };
               });
           })

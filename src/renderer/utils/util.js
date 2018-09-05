@@ -80,12 +80,14 @@ export const isZero = (str = '') => {
 };
 
 // 'XXX EOS或 XXX 转化为 bignumber 格式'
-export const toBigNumber = asset => {
+export const toBigNumber = (asset, symbol = 'EOS') => {
   if (BigNumber.isBigNumber(asset)) {
     return asset;
   } else if (isNaN(asset)) {
     if (!asset) return new BigNumber('0');
-    const match = asset.match(/^([0-9.]+) EOS$/);
+    let reg_str = `^([0-9.]+) ${symbol}$`;
+    let reg_ob = new RegExp(reg_str)
+    const match = asset.match(reg_ob);
     const amount = match ? match[1] : '0';
     return new BigNumber(amount);
   } else {
@@ -340,4 +342,17 @@ export const get_involved_users_form_blocks = blocks => {
     }
   });
   return [involved_users, involved_action_dict];
+}
+
+export const split_long_num = (num) => {
+    let num_str = num + '';
+    let [int_num, float_num = ''] = num_str.split('.');
+    var num_arr = int_num.split('');
+    var n = 0, n_arr = []; 
+    for(let i of num_arr.reverse()){
+        if(!(n%3) && n){n_arr.push(',');}
+        n_arr.push(i);
+        n ++;
+    };
+    return n_arr.reverse().join('') + (float_num ? '.' + float_num : '');
 }

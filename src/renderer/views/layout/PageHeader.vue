@@ -46,6 +46,7 @@ export default {
       locales: {
         zh: '中文',
         en: 'English',
+        kr: '한국어'
       },
       on_load_info: false,
       on_load_global: false,
