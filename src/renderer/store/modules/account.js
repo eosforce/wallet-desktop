@@ -108,8 +108,7 @@ const mutations = {
         });
     },
     [Mutations.SET_TOKEN_LIST](state, { tokenList = [] } = {}) {
-        console.log('tokenList', tokenList);
-        state.tokenList.splice(0, state.tokenList.length, ...tokenList);
+        state.tokenList = tokenList;
     },
     [Mutations.START_LOAD_ACCOUNT_INFO](state, { accountName }) {
         if (accountName == state.pre_load_key) return;

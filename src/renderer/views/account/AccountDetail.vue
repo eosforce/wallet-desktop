@@ -4,7 +4,7 @@
         <div class="tabs_ct">
             <div class="tabs">
                 <div class="tab fl" @click="toggleTab(tab.tabKey)" :class="{'is-active': currentTab === tab.tabKey}" v-for="tab in tabMap" :key="tab.tabKey">
-                    <a class="min-img">
+                    <a class="min-img"> 
                         {{tab.tabName}}<span v-show="tab.tabKey === 'BpList'">{{$t('template.version', {version: version})}}</span>
                     </a>
                 </div>
@@ -39,6 +39,7 @@ export default {
                 { tabName: this.$t('交易记录'), tabKey: 'TransferRecord', img1: 'exchange.png', img2: 'exchange_w.png' },
                 { tabName: this.$t('资产说明'), tabKey: 'RateInstructions', img1: 'assets.png', img2: 'assets_w.png' },
             ],
+            tab_name_keys: ['超级节点', '候选节点', '我的投票', '我的 Token', '交易记录', '资产说明'],
             super_name: this.$t('超级节点'),
             spin: false,
             currentTab: 'BpList', // currentTab 用于标识当前触发的子组件,
@@ -47,6 +48,9 @@ export default {
     computed: {
         version() {
             return this.account.version;
+        },
+        local() {
+            return localStorage.locale;
         },
         first_bp() {
             return this.account.bpsTable[0];
@@ -58,6 +62,13 @@ export default {
             return this.wallet.data || {};
         },
         ...mapState(['wallet', 'account']),
+    },
+    watch: {
+        '$i18n.locale' (curr, pre) {
+            this.tabMap.forEach((item, index) => {
+                item.tabName = this.$t(this.tab_name_keys[index]);
+            });
+        }
     },
     methods: {
         initAccount() {

@@ -80,15 +80,13 @@ export const isZero = (str = '') => {
 };
 
 // 'XXX EOS或 XXX 转化为 bignumber 格式'
-export const toBigNumber = (asset, symbol = 'EOS') => {
+export const toBigNumber = (asset, symbol = '') => {
   if (BigNumber.isBigNumber(asset)) {
     return asset;
   } else if (isNaN(asset)) {
     if (!asset) return new BigNumber('0');
-    let reg_str = `^([0-9.]+) ${symbol}$`;
-    let reg_ob = new RegExp(reg_str)
-    const match = asset.match(reg_ob);
-    const amount = match ? match[1] : '0';
+    const match = asset.split(' ');
+    const amount = match ? match[0] : '0';
     return new BigNumber(amount);
   } else {
     return new BigNumber(asset);

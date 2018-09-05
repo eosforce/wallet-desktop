@@ -15,7 +15,7 @@ const mutations = {
   },
   [Mutations.SET_ACCOUNT_LIST](state, { accountList }) {
     state.accountList = accountList;
-  },
+  }
 };
 
 const actions = {
@@ -43,7 +43,7 @@ const actions = {
     return getters[Getters.GET_TRANSE_CONFIG](password, creator, walletId).then(config => {
       return newAccount(config)({creator, publicKey, accountName, permission});
     });
-  },
+  }
 };
 
 const getters = {

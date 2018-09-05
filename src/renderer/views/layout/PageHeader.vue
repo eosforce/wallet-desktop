@@ -84,7 +84,6 @@ export default {
   },
   created() {
     this.loop();
-    // this.loop_global_info();
     this.locale = this.$i18n.locale;
   },
   destroyed(){
@@ -134,7 +133,7 @@ export default {
       fetchNodeInfo: Actions.FETCH_NODE_INFO,
       refreshApp: Actions.REFRESH_APP,
       switchChainNet: Actions.SWITCH_CHAIN_NET,
-      GET_GLOABLE_INFO: Actions.GET_GLOABLE_INFO
+      GET_GLOABLE_INFO: Actions.GET_GLOABLE_INFO,
     }),
   },
 };
