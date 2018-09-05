@@ -1,5 +1,48 @@
 <template>
   <div class="box bplist-box" style="font-size:14px;">
+    <!-- kr -->
+    <div v-if="$i18n.locale === 'kr'">
+      <div class="rate">
+        <span><b>총자산:</b></span>
+        <p class="dec">
+        총자산 = 사용 가능한 잔액 + 총 투표 수  + 총 상환 + 총 배당금 <br>
+        </p>
+      </div>
+      <div class="rate">
+        <span><b>배당 비율:</b></span>
+        <p class="dec">
+          배당 비율 = 100% - 수수료율<br>
+        </p>
+      </div>
+      <div class="rate">
+        <span><b>연간 이자율:</b></span>
+        <p class="dec">
+          사슬의 초기 순환은 10 억이다. EOS<br>
+          3s 당 하나의 블록, 각 블록은 슈퍼 노드 보상 9 EOS <br>
+          슈퍼 노드 일일 보상 = 9 * 20 * 60 * 24 = 259,200 EOS <br>
+          수퍼 노드 연간 보상 =  슈퍼 노드 일일 보상 * 365 = 94,608,000 EOS <br>
+          투표 연율 화폐 = （수퍼 노드 연간 보상 / 23 * 배당 비율） / 투표 된 투표소의 총 투표 수 * 100%
+        </p>
+      </div>
+      <div class="rate">
+        <span><b>구속:</b></span>
+        <p class="dec">
+          나의 최근 티켓 나이 = 내 누적 티켓 연령 + 내 누적 티켓 연령... * (내 표... - 내 티켓 연령 업데이트 시간)<br>
+          노드 최신 티켓 연령 = 노드 축적 티켓 연령 + 총 투표 수 * (현재 시간 - 노드 티켓 보존 기간 갱신)<br>
+          사용 금액 = （나의 최근 티켓 나이 / 노드 최신 티켓 연령） * 상금 금액<br>
+          투표를 변경할 때마다 누적 된 티켓 연령과 누적 티켓 연령을 업데이트 할 것이며, 배당금을받을 때마다 누적 된 티켓 연령을 지울 것입니다.
+        </p>
+      </div>
+      <div class="rate">
+        <span><b>BlockOne 잠금 해제：</b></span>
+        <p class="dec">
+          3 초당 1 블록, BlockOne 1 EOS에서 각 블록 잠금 해제 <br>
+          BlockOne은 매년 잠금 해제합니다. =  1 * 20 * 60 * 24 * 365 = 10,512,000 EOS<br>
+          10 년마다 약 1 억 명의 EOS 잠금 해제, 10 년 후 잠금 해제 계속
+        </p>
+      </div>
+    </div>
+    <!-- zh -->
     <div v-if="$i18n.locale === 'zh'">
       <div class="rate">
         <span><b>资产总额:</b></span>
@@ -41,6 +84,7 @@
         </p>
       </div>
     </div>
+    <!-- en -->
     <div v-if="$i18n.locale === 'en'">
       <div class="rate">
         <span><b>Total asset:</b></span>

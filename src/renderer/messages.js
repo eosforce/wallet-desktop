@@ -467,8 +467,7 @@ export default {
     接收方: '에',
     操作名: '동작',
     暂无交易记录: '거래 내역 없음',
-    '我的投票*我的投票时间/(总得票数*总投票时间)*奖励池':
-      '내 표 * 내 투표 시간/(총 투표 수*총 투표 시간)*보상 수영장',
+    '我的投票*我的投票时间/(总得票数*总投票时间)*奖励池': '내 표 * 내 투표 시간/(총 투표 수*총 투표 시간)*보상 수영장',
     template: {
       walletTitle: 'EOSForce 지갑 Mainnet v{version}',
       version: '({version}th term)',
@@ -476,5 +475,12 @@ export default {
       symbol: 'sign {symbol}',
       fee: '* fee {fee}',
     },
+    // template: {
+    //   walletTitle: 'EOSForce钱包 主网 v{version}',
+    //   version: '(第 {version} 届)',
+    //   precision: '金额必须为数字，且最多 {p} 位小数',
+    //   symbol: '单位 {symbol}',
+    //   fee: '* 手续费 {fee}',
+    // },
   },
 };
