@@ -3,8 +3,11 @@
         <account-overview />
         <div class="tabs_ct">
             <div class="tabs">
-                <div class="tab fl" @click="toggleTab(tab.tabKey)" :class="{'is-active': currentTab === tab.tabKey}" v-for="tab in tabMap" :key="tab.tabKey">
-                    <a class="min-img"> 
+                <div class="tab fl" :class="{'is-active': currentTab === tab.tabKey}" v-for="tab in tabMap" :key="tab.tabKey">
+                    <a class="min-img" v-if="!tab.is_url" @click="toggleTab(tab.tabKey)"> 
+                        {{tab.tabName}}<span v-show="tab.tabKey === 'BpList'">{{$t('template.version', {version: version})}}</span>
+                    </a>
+                    <a class="min-img" v-if="tab.is_url" v-bind:href="tab.url" target="_blank"> 
                         {{tab.tabName}}<span v-show="tab.tabKey === 'BpList'">{{$t('template.version', {version: version})}}</span>
                     </a>
                 </div>
@@ -38,8 +41,9 @@ export default {
                 { tabName: this.$t('我的 Token'), tabKey: 'TokenList', img1: 'token.png', img2: 'token_w.png' },
                 { tabName: this.$t('交易记录'), tabKey: 'TransferRecord', img1: 'exchange.png', img2: 'exchange_w.png' },
                 { tabName: this.$t('资产说明'), tabKey: 'RateInstructions', img1: 'assets.png', img2: 'assets_w.png' },
+                { tabName: this.$t('原力生态'), tabKey: '_', img1: 'assets.png', img2: 'assets_w.png', is_url: true, url: 'https://eosforce.io//?lang=cn' },
             ],
-            tab_name_keys: ['超级节点', '候选节点', '我的投票', '我的 Token', '交易记录', '资产说明'],
+            tab_name_keys: ['超级节点', '候选节点', '我的投票', '我的 Token', '交易记录', '资产说明', '原力生态'],
             super_name: this.$t('超级节点'),
             spin: false,
             currentTab: 'BpList', // currentTab 用于标识当前触发的子组件,
