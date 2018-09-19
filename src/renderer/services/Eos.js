@@ -27,6 +27,12 @@ export const getNodeList = () => {
   };
   return fetch(map[Store.state.app.chainNet]).then(async res => {
     let data = await res.json();
+    // data.nodes.forEach(item => {
+    //   console.log(item);
+    //   item.node_addr = '192.168.2.139';
+    //   item.port_http = '8888';
+    //   item.port_ssl = '';
+    // });
     return data;
   });
 };
@@ -562,3 +568,41 @@ export const transfer_account = config => async ({name, publick_key, permissions
   }
   return res;
 };
+
+export const create_token = config => async ({issuer, maximum_supply}) => {
+  // create
+  let res = await Eos(config)
+      .create(issuer, maximum_supply)
+      .then(res => {
+        return res;
+      })
+      .catch(err => {
+        let error_ob = null;
+        try {
+          error_ob = JSON.parse(err);
+        } catch (e) {};
+        return null;
+      });
+  console.log(res);
+}
+
+export const issue_token = config => async ({to, quantity, memo}) => {
+  // create
+  let res = await Eos(config)
+      .issue(to, quantity, memo)
+      .then(res => {
+        return res;
+      })
+      .catch(err => {
+        let error_ob = null;
+        try {
+          error_ob = JSON.parse(err);
+        } catch (e) {};
+        return null;
+      });
+  console.log('hell_____________');
+  console.log(res);
+}
+
+
+

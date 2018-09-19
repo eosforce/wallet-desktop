@@ -62,7 +62,7 @@
                     </li>
                     <li class="account_detail_item min_w_200">
                         <span>{{$t('待领分红总额')}}:</span>
-                        <span class="cl" v-if="!on_load_info">{{account.info.rewardTotal | formatNumber({p: 4})}}</span>
+                        <span class="cl" v-if="!on_load_info">{{ account.info.rewardTotal * 1 > 0 ? formatNumber(account.info.rewardTotal, {p: 4}) : 0 }}</span>
                         <div class="load_circle account_detail_loader" v-if="on_load_info"></div>
                     </li>
                     <li v-if="bpInfo">
@@ -76,7 +76,9 @@
 </template>
 <script>
 import { mapState, mapActions } from 'vuex';
-
+import {
+    formatNumber
+} from '@/utils/filter'
 import { Actions } from '@/constants/types.constants';
 import Copy from 'clipboard-copy'
 export default {
@@ -193,6 +195,7 @@ export default {
             fetchWallet: Actions.FETCH_WALLET,
             GET_ACCOUNT_INFO: Actions.GET_ACCOUNT_INFO
         }),
+        formatNumber
     },
 };
 </script>

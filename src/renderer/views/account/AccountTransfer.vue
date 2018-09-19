@@ -14,7 +14,7 @@
       <div class="field">
         <label class="label">{{$t('接受方公钥')}}</label>
         <div class="control">
-          <input class="input" v-model="public_key" type="text" :placeholder="$t('请输入接受方公钥')" required />
+          <input class="input" v-model="public_key" type="text" :placeholder="$t('接受方公钥')" required />
           <p class="help is-danger" v-show="public_key && !public_key">
             {{$t('无效的公钥')}}
           </p>
@@ -23,7 +23,7 @@
       <div class="field">
         <label class="label">{{$t('密码')}}</label>
         <div class="control">
-          <input class="input" v-model="password" type="password" :placeholder="$t('请输入密码')" required />
+          <input class="input" v-model="password" type="password" :placeholder="$t('密码')" required />
           <p class="help is-danger" v-show="public_key && !public_key">
             {{$t('密码')}}
           </p>
@@ -58,7 +58,7 @@ export default {
       return (this.permissions.filter(item => item.is_have).length * 0.1).toFixed(4) + ' EOS';
     },
     title () {
-      return '确认转让用户名' + this.$route.params.accountName + '?';
+      return this.$t('确认转让用户名') + this.$route.params.accountName + '?';
     },
     baseInfo() {
       return this.account.info.baseInfo || {permissions: []};

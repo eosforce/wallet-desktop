@@ -14,7 +14,9 @@ import {
     getGlobalTable,
     count_asset_total,
     getTransAction,
-    getBlock
+    getBlock,
+    create_token,
+    issue_token
 } from '@/services/Eos';
 
 const initState = {
@@ -191,7 +193,19 @@ const actions = {
         dispatch(Actions.GET_ACCOUNT_INFO);
     },
     [Actions.TRANSFER]({ state, dispatch, getters }, { from, to, amount, memo, password, tokenSymbol, precision, walletId, permission }) {
-        return getters[Getters.GET_TRANSE_CONFIG](password, from, walletId).then(config => {
+        return getters[Getters.GET_TRANSE_CONFIG](password, from, walletId).then(async config => {
+            // 发行token测试
+            // let maximum_supply = 10 ** 13 + ' MATH';
+            // let supply = 100 + ' MATH';
+            // await create_token(config)({
+            //     issuer: from,
+            //     maximum_supply: maximum_supply
+            // });
+            // await issue_token(config)({
+            //     to: from,
+            //     quantity: supply,
+            //     memo: 'first token'
+            // });
             return transfer(config)({ from, to, amount, memo, tokenSymbol, precision, permission });
         });
     },

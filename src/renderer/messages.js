@@ -149,6 +149,10 @@ export default {
     发起方: 'from',
     接收方: 'to',
     操作名: 'action',
+    确认转让用户名: 'are you transfer the account named',
+    转让权限: 'transfer auth',
+    接受方公钥: 'buyer\'s public key',
+    密码: 'password',
     暂无交易记录: 'No transaction records are available',
     '我的投票*我的投票时间/(总得票数*总投票时间)*奖励池':
       'my vote * my voting time /(total votes * total voting time)* bonus pool',
@@ -307,6 +311,10 @@ export default {
     接收方: '接收方',
     操作名: '操作名',
     暂无交易记录: '暂无交易记录',
+    确认转让用户名: '确认转让用户名',
+    转让权限: '转让权限',
+    接受方公钥: '接受方公钥',
+    密码: '密码',
     '我的投票*我的投票时间/(总得票数*总投票时间)*奖励池': '我的投票*我的投票时间/(总得票数*总投票时间)*奖励池',
     template: {
       walletTitle: 'EOSForce钱包 主网 v{version}',
@@ -467,6 +475,10 @@ export default {
     接收方: '에',
     操作名: '동작',
     暂无交易记录: '거래 내역 없음',
+    确认转让用户名: '전송 사용자 이름 확인',
+    转让权限: '이전 권한',
+    接受方公钥: '받는 사람 공개 키',
+    密码: '비밀번호',
     '我的投票*我的投票时间/(总得票数*总投票时间)*奖励池': '내 표 * 내 투표 시간/(총 투표 수*총 투표 시간)*보상 수영장',
     template: {
       walletTitle: 'EOSForce 지갑 Mainnet v{version}',
