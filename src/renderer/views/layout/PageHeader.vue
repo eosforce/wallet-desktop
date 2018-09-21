@@ -98,16 +98,14 @@ export default {
     loop() {
       if(this.on_load_info) return ;
       this.on_load_info = true;
-      this.loopId = setTimeout(() => {
-        this.fetchNodeInfo()
-        .then(res => {
-          this.on_load_info = false;
-          this.loop();
-        })
-        .catch(err => {
-          this.on_load_info = false;
-          this.loop();
-        });
+      this.loopId = setTimeout(async () => {
+        try{
+          await this.fetchNodeInfo();
+        }catch(__){
+          console.log(__);
+        }
+        this.on_load_info = false;
+        this.loop();
       }, 3 * 1000);
     },
     async loop_global_info() {

@@ -1,5 +1,6 @@
 export default {
   en: {
+    原力生态: 'EOSForce Ecology',
     正在努力刷新: 'loading',
     还没有数据: 'no data',
     已复制成功: 'Copy Successful',
@@ -165,6 +166,7 @@ export default {
     },
   },
   zh: {
+    原力生态: '原力生态',
     '至少 9 个字符': '至少 9 个字符',
     用户名: '用户名',
     我已经阅读并同意: '我已经阅读并同意',
@@ -325,6 +327,7 @@ export default {
     },
   },
   kr: {
+    原力生态: 'EOSForce 생태학',
     正在努力刷新: '새로 고침 중',
     还没有数据: '데이터가 없습니다.',
     已复制成功: '복사 완료',
