@@ -151,7 +151,7 @@ const actions = {
         dispatch(Actions.FETCH_WALLET_LIST);
         dispatch(Actions.FETCH_NODE_INFO);
     },
-    [Actions.FETCH_WALLET_LIST]({ state, commit, getters }) {
+    [Actions.FETCH_WALLET_LIST]({ state, commit, getters, dispatch }) {
         commit(Mutations.START_LOAD_ACCOUNT_LIST);
         commit(Mutations.SET_WALLET_ID_LIST, { walletIdList: getWalletIdList() });
         return Promise.all(
@@ -167,7 +167,9 @@ const actions = {
             commit(Mutations.SET_WALLET_LIST, { walletList: result });
             commit(Mutations.FINISH_LOAD_ACCOUNT_LIST);
         }).catch(err => {
-            dispatch(Actions.FETCH_WALLET_LIST);
+            setTimeout(() => {
+                dispatch(Actions.FETCH_WALLET_LIST);
+            }, 3000);
         });
     },
     [Actions.FETCH_ALL_WALLET_LIST]({ state, commit, getters }) {

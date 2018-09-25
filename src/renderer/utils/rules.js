@@ -1,4 +1,4 @@
-import eos from 'eosjs';
+import eos from 'eosforce';
 
 const { ecc } = eos.modules;
 

@@ -1,4 +1,4 @@
-import Eos from 'eosjs';
+import Eos from 'eosforce';
 import sjcl from 'sjcl';
 import BigNumber from 'bignumber.js';
 const { ecc, Fcbuffer } = Eos.modules;

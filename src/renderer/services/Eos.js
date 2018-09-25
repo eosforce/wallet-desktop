@@ -1,4 +1,4 @@
-import Eos from 'eosjs';
+import Eos from 'eosforce';
 import axios from 'axios'
 import { NODE_API_URL } from '@/constants/config.constants';
 import Store from '@/store';
@@ -140,7 +140,6 @@ export const queryAccount = httpEndpoint => accountName => {
       json: true,
     })
     .then(result => {
-      console.log(result, accountName);
       const account = result.rows.find(acc => acc.name === accountName);
       if (account) {
         return true;
@@ -165,7 +164,6 @@ export const getAccount = httpEndpoint => async (accountName, concel_container =
   )
   .then(data => data.data)
   .catch(err => null);
-  console.log(data, httpEndpoint);
   return data;
 };
 
