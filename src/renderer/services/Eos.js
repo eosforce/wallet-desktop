@@ -91,7 +91,9 @@ export const getAccounts = httpEndpoint => async (publicKey) => {
     }
   )
   .then(data => data.data.account_names)
-  .catch(err => []);
+  .catch(err => {
+    return handleApiError(err)
+  });
   return data;
 };
 
@@ -138,6 +140,7 @@ export const queryAccount = httpEndpoint => accountName => {
       json: true,
     })
     .then(result => {
+      console.log(result, accountName);
       const account = result.rows.find(acc => acc.name === accountName);
       if (account) {
         return true;
@@ -146,6 +149,7 @@ export const queryAccount = httpEndpoint => accountName => {
       }
     });
 };
+
 
 export const getAccount = httpEndpoint => async (accountName, concel_container = {cancel: []}) => {
   let CancelToken = axios.CancelToken;
@@ -161,6 +165,7 @@ export const getAccount = httpEndpoint => async (accountName, concel_container =
   )
   .then(data => data.data)
   .catch(err => null);
+  console.log(data, httpEndpoint);
   return data;
 };
 

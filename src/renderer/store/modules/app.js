@@ -166,6 +166,8 @@ const actions = {
         ).then(result => {
             commit(Mutations.SET_WALLET_LIST, { walletList: result });
             commit(Mutations.FINISH_LOAD_ACCOUNT_LIST);
+        }).catch(err => {
+            dispatch(Actions.FETCH_WALLET_LIST);
         });
     },
     [Actions.FETCH_ALL_WALLET_LIST]({ state, commit, getters }) {
