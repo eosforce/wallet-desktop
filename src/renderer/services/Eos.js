@@ -13,7 +13,8 @@ import {
   calcVoteage,
   calcReward,
   calcApr,
-  get_error_msg
+  get_error_msg,
+  get_node_version_num
 } from '@/utils/util';
 
 const API = {
@@ -36,16 +37,28 @@ export const getNodeList = () => {
   };
   return fetch(map[Store.state.app.chainNet]).then(async res => {
     let data = await res.json();
-    // data.nodes.forEach(item => {
-    //   console.log(item);
-    //   item.node_addr = '192.168.2.139';
-    //   item.port_http = '8888';
-    //   item.port_ssl = '';
-    // });
+    // trans_main
+    data.nodes.forEach(item => {
+      console.log(item);
+      item.node_addr = '47.99.167.137';
+      item.port_http = '19000';
+      item.port_ssl = '';
+    });
     return data;
   });
 };
 
+export const rank_get_action = (version_str) => {
+  // version_str = 'v1.0.3-9-g6782484'; 是否修改了 get_action 检测
+  if (!version_str) {
+    return false;
+  }
+  let num = get_node_version_num(version_str);
+  if (num > 10000003000900){
+      return true;
+  }
+  return false;
+}
 // 获取节点信息
 export const getNodeInfo = async (httpEndpoint) => {
     let data = await axios.post(httpEndpoint + API.get_info, {})
@@ -315,7 +328,7 @@ export const getGlobalTable = httpEndpoint => async (accountName, current_node, 
     votesTable,
     bpsTable,
     superBpsAmountTable,
-    version
+    version,
   }
 }
 // 根据 bp 和 vote 得到分红表，返回一个对象
@@ -338,6 +351,11 @@ export const getRewardsAndBpsTable = httpEndpoint => async (accountName, current
   const rewardsTable = [];
   const superBpTable = [];
   const commonBpTable = [];
+  let all_bp_total_staked = 0;
+  bpsTable.forEach(item => {
+    all_bp_total_staked += item.total_staked;
+  })
+  // all_bp_total_staked
   let bpInfo;
   for (const bpRow of bpsTable) {
     for (let i = 0; i < superBpsAmountTable.length; i++) {
@@ -359,8 +377,6 @@ export const getRewardsAndBpsTable = httpEndpoint => async (accountName, current
     }
 
     // 年化利率
-    bpRow.adr = calcApr(bpRow.total_staked, bpRow.commission_rate);
-
     const bpVoteage = calcVoteage([
       bpRow.total_voteage,
       bpRow.total_staked,
@@ -369,13 +385,23 @@ export const getRewardsAndBpsTable = httpEndpoint => async (accountName, current
     ]);
     bpRow.bpVoteage = bpVoteage;
 
+    let vote_own_percent = bpRow.total_staked / all_bp_total_staked;
+    bpRow.adr = 0;
+    if (currentHeight > 8000) {
+      if (vote_own_percent > 0.005 ) {
+          bpRow.adr = calcApr(bpRow.total_staked, bpRow.commission_rate, vote_own_percent, true);
+      }
+    }else{
+      bpRow.adr = calcApr(bpRow.total_staked, bpRow.commission_rate, vote_own_percent, false);
+    }
+
     if (vote) {
       // 我的最新票龄
       const myVoteage = calcVoteage([vote.voteage, vote.staked, currentHeight, vote.voteage_update_height]);
       // 节点最新票龄
       // 我的分红
       const reward = calcReward([myVoteage, bpVoteage, bpRow.rewards_pool]);
-
+      // vote_own_percent
       const extraRow = { bpname: vote.bpname, reward, ...vote };
 
       rewardsTable.push({ ...extraRow });

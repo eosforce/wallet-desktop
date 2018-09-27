@@ -16,7 +16,8 @@ import {
     getTransAction,
     getBlock,
     create_token,
-    issue_token
+    issue_token,
+    rank_get_action
 } from '@/services/Eos';
 
 const initState = {
@@ -27,7 +28,7 @@ const initState = {
         stakedTotal: 0,
         unstakingTotal: 0,
         rewardTotal: 0,
-        baseInfo: {}
+        baseInfo: {},
     },
     version: '',
     bpsTable: [],
@@ -35,8 +36,8 @@ const initState = {
     votesTable: [],
     superBpsAmountTable: [],
     transferRecords: {
-        offset: 20,
-        pos: 0,
+        offset: -20,
+        pos: -1,
         list: [],
         more: true
     },
@@ -60,9 +61,15 @@ const mutations = {
     [Mutations.SET_ACCOUNT_NAME](state, { accountName = '' } = {}) {
         state.accountName = accountName;
     },
-    [Mutations.RESET_ACCOUNT_INFO](state) {
+    [Mutations.RESET_ACCOUNT_INFO](state, transfer_rank_order) {
         state.transferRecords.list.splice(0, state.transferRecords.list.length);
-        state.transferRecords.pos = 0;
+        state.transferRecords.pos = -1;
+        state.transferRecords.offset = -20;
+        // trans_main
+        if (!transfer_rank_order){
+            state.transferRecords.pos = 0;
+            state.transferRecords.offset = 20;
+        }
         state.transferRecords.more = true;
     },
     [Mutations.SET_ACCOUNT_INFO](state, { info = {} } = {}) {
@@ -80,8 +87,8 @@ const mutations = {
     [Mutations.SET_SUPER_PSAMOUNT_TABLE](state, { superBpsAmountTable = [] } = {}) {
         state.superBpsAmountTable.splice(0, state.superBpsAmountTable.length, ...superBpsAmountTable);
     },
-    [Mutations.SET_TRANSFER_RECORDS](state, { transferRecords = {} } = {}) {
-        if (transferRecords.list.length < state.transferRecords.offset) {
+    [Mutations.SET_TRANSFER_RECORDS](state, { transferRecords = {} , rank_order = false} = {}) {
+        if (transferRecords.list.length < Math.abs( state.transferRecords.offset )) {
             state.transferRecords.more = false;
         }
         state.transferRecords.list.splice(state.transferRecords.list.length, 0, ...transferRecords.list);
@@ -98,7 +105,16 @@ const mutations = {
             if (cur.block_num > pre.block_num) return 1;
             return -1;
         });
-        state.transferRecords.pos = state.transferRecords.list.length;
+        let tr_len = state.transferRecords.list.length;
+        let last_tr = tr_len > 0 ? state.transferRecords.list[tr_len - 1] : null;
+        if (last_tr) {
+            state.transferRecords.pos = last_tr.account_action_seq - 1 ;
+            state.transferRecords.offset = -19;
+        }
+        // trans_main
+        if (!rank_order) {
+            state.transferRecords.pos = state.transferRecords.length - 1;
+        }
     },
     update_transaction_status(state, {trx_id, status}){
         let item = state.transferRecords.list.find(item => item.trx_id == trx_id);
@@ -187,8 +203,9 @@ const actions = {
     [Actions.REFRESH_APP]({ state, commit, dispatch }) {
         dispatch(Actions.FETCH_ACCOUNT, { accountName: state.accountName });
     },
-    [Actions.FETCH_ACCOUNT]({ commit, dispatch }, { accountName }) {
-        commit(Mutations.RESET_ACCOUNT_INFO);
+    [Actions.FETCH_ACCOUNT]({ commit, dispatch, getters }, { accountName }) {
+        let { server_version_string } = getters[Getters.CURRENT_NODE_INFO];
+        commit(Mutations.RESET_ACCOUNT_INFO, rank_get_action(server_version_string));
         commit(Mutations.SET_ACCOUNT_NAME, { accountName });
         dispatch(Actions.GET_ACCOUNT_INFO);
     },
@@ -338,7 +355,10 @@ const actions = {
                     item.status = has_confirmed ? 'finished' : 'on_process';
                     item.trx_id = item.action_trace.trx_id;
                 })
-                commit(Mutations.SET_TRANSFER_RECORDS, { transferRecords: { list: result.actions, pos, offset } });
+                commit(Mutations.SET_TRANSFER_RECORDS, { 
+                    transferRecords: { list: result.actions, pos, offset } , 
+                    rank_order: rank_get_action( current_node_info.server_version_string )
+                });
                 commit('finish_on_load_actions');
                 finished();
             });
@@ -437,7 +457,12 @@ const actions = {
 
         if(!accountName) return ;
         if( involved_users.has(accountName) ){
-            dispatch(Actions.GET_TRANSFER_RECORD, {accountName, pos: 0, from_top: true});
+            // trans_main
+            if ( !rank_get_action( current_node_info.server_version_string ) ) {
+                dispatch(Actions.GET_TRANSFER_RECORD, {accountName, pos: 1, from_top: true});
+            }else{
+                dispatch(Actions.GET_TRANSFER_RECORD, {accountName, pos: -1, from_top: true});    
+            }
         }
     }
 };

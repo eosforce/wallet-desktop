@@ -79,6 +79,15 @@ export const isZero = (str = '') => {
   return /^0[0.]*$/.test(String(str));
 };
 
+export const get_node_version_num = (version_str) => {
+  let res = '';
+  var t = version_str.split('-'); 
+  t = t.slice(0, t.length - 1).join('.');
+  t.replace('v', '').split('.').forEach((o, i) => {
+    res += o * (10 ** (5 - i));
+  });
+  return res;
+}
 // 'XXX EOS或 XXX 转化为 bignumber 格式'
 export const toBigNumber = (asset, symbol = '') => {
   if (BigNumber.isBigNumber(asset)) {
@@ -127,9 +136,14 @@ export const calcVoteExist = (meVoteage, reward, unstaking) => {
 };
 
 // 计算年化利率
-export const calcApr = (totalStaked, commissionRate) => {
+/*
+  vote_own_percent 投票占比
+*/
+export const calcApr = (totalStaked, commissionRate, vote_own_percent = 0, by_vote_owen = false) => {
   if (!totalStaked) return 0;
-  const n1 = (9 * 20 * 60 * 24 * 365) / 23;
+  const n1 = !by_vote_owen ? (9 * 20 * 60 * 24 * 365) / 23 :  9 * 20 * 60 * 24 * 365 * vote_own_percent * 0.7;
+  // console.log( n1, 'n1');
+  // const n1 = 9 * 20 * 60 * 24 * 365 * vote_own_percent * 0.7;
   return (n1 * (1 - commissionRate / 10000)) / totalStaked;
 };
 
