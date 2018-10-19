@@ -43,7 +43,7 @@
             </a>
           </td>
           <td class="t-left">{{bp.name}}</td>
-          <td class="t-center">{{bp.amount}}</td>
+          <td class="t-center">{{bp.amount || '_'}}</td>
           <td>{{(10000 - bp.commission_rate) | formatNumber({p: 2, sign: '%', percentage: 0.01})}}</td>
           <td>{{bp.total_staked | formatNumber({p: 0})}}</td>
           <td>{{bp.adr | formatNumber({p: 0, sign: '%', percentage: 100})}}</td>
@@ -71,7 +71,7 @@ export default {
   name: 'BpList',
   computed: {
     table() {
-      return this.account.bpsTable.filter(bp => bp.isSuperBp);
+      return this.account.bpsTable;
     },
     on_load_bps_table(){
       return this.account.on_load_bps_table;

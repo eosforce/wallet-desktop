@@ -106,7 +106,6 @@ export default {
         try{
           await this.fetchNodeInfo();
         }catch(__){
-          console.log(__);
         }
         this.on_load_info = false;
         this.loop();

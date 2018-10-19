@@ -21,7 +21,7 @@
           <div class="field">
             <label class="label">{{$t('用户名称')}}</label>
             <div class="control">
-              <input class="input" v-model="accountName" type="text" :placeholder="$t('a-y，1-5 的 12 位以内字符')" required />
+              <input class="input" v-model="accountName" type="text" :placeholder="$t('a-z，1-5 的 12 位以内字符')" required />
               <p class="help is-danger" v-show="accountName && !isValidAccountName">
                 {{$t('用户名只能包含 .12345abcdefghijklmnopqrstuvwxyz，并且在 12 位以内')}}
               </p>

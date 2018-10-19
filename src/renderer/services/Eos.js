@@ -38,11 +38,11 @@ export const getNodeList = () => {
   return fetch(map[Store.state.app.chainNet]).then(async res => {
     let data = await res.json();
     //trans_main
-    data.nodes.forEach(item => {
-      item.node_addr = '47.99.167.137';
-      item.port_http = '19000';
-      item.port_ssl = '';
-    });
+    // data.nodes.forEach(item => {
+    //   item.node_addr = '47.99.167.137';
+    //   item.port_http = '19000';
+    //   item.port_ssl = '';
+    // });
     return data;
   });
 };
@@ -403,6 +403,7 @@ export const getRewardsAndBpsTable = httpEndpoint => async (accountName, current
       bpRow.hasVote = calcVoteExist(vote.staked, reward, vote.unstaking);
     }
 
+    // superBpTable.push(bpRow);
     if (bpRow.isSuperBp) {
       superBpTable.push(bpRow);
     } else {
@@ -603,7 +604,6 @@ export const create_token = config => async ({issuer, maximum_supply}) => {
         } catch (e) {};
         return null;
       });
-  console.log(res);
 }
 
 export const issue_token = config => async ({to, quantity, memo}) => {
@@ -620,8 +620,6 @@ export const issue_token = config => async ({to, quantity, memo}) => {
         } catch (e) {};
         return null;
       });
-  console.log('hell_____________');
-  console.log(res);
 }
 
 

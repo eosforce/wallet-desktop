@@ -17,11 +17,13 @@
       <div class="rate">
         <span><b>연간 이자율:</b></span>
         <p class="dec">
-          사슬의 초기 순환은 10 억이다. EOS<br>
-          3s 당 하나의 블록, 각 블록은 슈퍼 노드 보상 9 EOS <br>
-          슈퍼 노드 일일 보상 = 9 * 20 * 60 * 24 = 259,200 EOS <br>
-          수퍼 노드 연간 보상 =  슈퍼 노드 일일 보상 * 365 = 94,608,000 EOS <br>
-          투표 연율 화폐 = （수퍼 노드 연간 보상 / 23 * 배당 비율） / 투표 된 투표소의 총 투표 수 * 100%
+          화폐 발행액는10억EOS <br/>
+          당 3s하나의 블록，당 하나의 블록모든 수익노드(투표 가 0.5%보다 많기) 장려 9 EOSC<br/>
+          매일수익노드장려= 9 * 20 * 60 * 24 = 259,200 EOSC<br/>
+          매수익노드장려= 슈퍼 노드다매일장려 * 365 = 94,608,000 EOSC<br/>
+          거중에70%노드장려지에 넣다，30%수익배분은 다음과 같다：<br/>
+          전23명슈퍼 노드다수익15%는기본급으로 그 계좌에 들어가다,수익15%는그 계좌에블록체인나온다. 나머지는후보 절기,수익15%는기본급으로 그 계좌에 들어가다, 수익15%는EOSForce 재단 계좌에 들어가다.<br/>
+          투표연간이율=（매수익노드장려*70%*득표율*배당 비율）/투포하는노드총 득표수*100%
         </p>
       </div>
       <div class="rate">
@@ -60,10 +62,12 @@
         <span><b>年化利率:</b></span>
         <p class="dec">
           链初始发行量为 10 亿 EOS<br>
-          每 3s 一个块，每个块为超级节点奖励 9 EOS <br>
-          超级节点每日奖励 = 9 * 20 * 60 * 24 = 259,200 EOS <br>
-          超级节点每年奖励 =  超级节点每日奖励 * 365 = 94,608,000 EOS <br>
-          投票年化利率 = （超级节点每年奖励 / 23 * 分红比例） / 所投节点总得票数 * 100%
+          每 3s 一个块，每个块为所有收益节点（投票大于0.5%）奖励 9 EOSC<br>
+          收益节点每日奖励 = 9 * 20 * 60 * 24 = 259,200 EOSC<br>
+          收益节点每年奖励 = 超级节点每日奖励 * 365 = 94,608,000 EOSC<br>
+          其中70%收益进入分红池，30%收益分配如下：<br>
+          前23名为超级节点，收益的15%作为基本工资进入其账户,收益的15%作为出块奖励进入其账户。 其余为候选节点，收益的15%作为基本工资进入其账户,收益的15%进入原力基金会账户。<br> 
+          投票年化利率 = （收益节点每年奖励*70%*得票率*分红比例）/ 所投节点总得票数 * 100%
         </p>
       </div>
       <div class="rate">
@@ -101,11 +105,15 @@
       <div class="rate">
         <span><b>Annual rate of return:</b></span>
         <p class="dec">
-          Initial supply is 1 billion EOS<br>
-          3 seconds per block and 9 EOS block rewards for BP<br>
-          Daily reward for all BPs =9*20*60*24=259,200 EOS<br>
-          Annual reward for all BPs=daily reward*365=94,608,000 EOS<br>
-          Annual rate of return for voting=(Annual reward as a BP/23*dividend payout ratio)/ overall votes received of the targeted BP
+        Initial supply: 1,000,000,000 EOS<br/>
+        Blocks are produced at 3 blocks/second. Every block rewards all productive nodes (with more than 0.5% of the total network votes) with 9 EOSC<br/>
+        Daily reward of a productive node = 9 * 20 * 60 * 24 = 259,200 EOSC<br/>
+        Annual reward of a productive node = daily reward * 365 = 94,608,000 EOSC<br/>
+        70% of the reward goes into the reward pool, and the rest 30% is distributed as followed:<br/>
+        For the top 23 Super Node, 15% goes into their individual account as overhead, and the other 15% is received as block reward. For the candidate nodes, 15% goes into their individual account as overhead, and the other 15% is deposited in the EOSForce Foundation account.<br/>
+
+        Voting annual rate = (ann. reward of profitable node * 70% * network votes received percentage * bonus rate) / total votes received * 100%<br/>
+          
         </p>
       </div>
       <div class="rate">

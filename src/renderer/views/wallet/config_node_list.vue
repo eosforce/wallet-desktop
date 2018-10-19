@@ -66,7 +66,6 @@ export default {
       this.node_list = JSON.stringify(node_list);
     },
     save_node_list_config () {
-      console.log( this.node_list );
       let edited_node_list = null;
       try {
           edited_node_list = JSON.parse( this.node_list );
@@ -74,9 +73,7 @@ export default {
           Message.error(this.$t(__));
           return ;
       }
-      console.log(edited_node_list);
       this.UPDATE_NODE_LIST({ node_list: edited_node_list });
-      console.log('end');
     },
     submit() {
       

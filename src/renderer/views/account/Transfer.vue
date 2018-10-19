@@ -20,7 +20,7 @@
               {{$t('转账金额')}}
             </label>
             <div class="control">
-              <input v-model="amount" min="0" class="input" type="number" :step="`${0.1 ** precision}`" :placeholder="$t('template.symbol', {symbol: tokenSymbol})" required />
+              <input v-model="amount" min="0" class="input" type="number" :step="`${0.1 ** precision}`" :placeholder="$t('template.symbol', {symbol: tokenSymbol + 'C'})" required />
               <p class="help is-danger" v-show="amount && !isValidAmount">
                 {{$t('template.precision', {p: precision})}}
               </p>
@@ -65,7 +65,7 @@
         </div>
         <div class="row">
           <div class="row__title">{{$t('转账金额')}}</div>
-          <div class="row__content">{{amount | formatNumber({p: precision, showSymbol: true, symbol: tokenSymbol})}}</div>
+          <div class="row__content">{{amount | formatNumber({p: precision, showSymbol: true, symbol: tokenSymbol})}}C</div>
         </div>
         <div class="row">
           <div class="row__title">{{$t('手续费')}}</div>
@@ -110,7 +110,7 @@ export default {
       return this.$route.params.accountName;
     },
     tokenSymbol() {
-      return this.$route.params.symbol || 'EOSC';
+      return this.$route.params.symbol || 'EOS';
     },
     precision() {
       return this.$route.params.precision !== undefined ? this.$route.params.precision : '4';

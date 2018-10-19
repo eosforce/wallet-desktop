@@ -96,7 +96,6 @@ const mutations = {
         let records = [];
         state.transferRecords.list.map(item => {
             let _key = item.action_trace.trx_id + item.action_trace.act.name;
-            console.log(_key);
             if (recode_map[_key]) return;
             recode_map[_key] = item;
             if(item.status == 'on_process') state.need_confirm_transaction.push(item);

@@ -12,12 +12,10 @@ export const toUrl = (url = '') => {
 // 提取错误信息，没有错误这换回空
 export const get_error_msg = err => {
     if (!err.error) return '';
-    let msg = err.error.details.map(item => item.message)
-    return msg.join('.');
+    return err.error.name;
 }
 
 // 错误处理
-
 export const handleApiError = err => {
     return new Promise((resolve, reject) => {
         try {
@@ -310,7 +308,7 @@ export const get_involved_users_form_block = block => {
     let involved_action_dict = {};
     block.transactions.forEach(tr => {
         tr.trx.transaction.actions.forEach(action_item => {
-            let pushed_data = action_item.data instanceof String ? abi_bin_to_json(action_item.hex_data || action_item.data, action_item.name) : action_item.data;
+            let pushed_data = typeof action_item.data === 'string' ? abi_bin_to_json(action_item.hex_data || action_item.data, action_item.name) : action_item.data;
             involved_action_dict[action_item.name] = involved_action_dict[action_item.name] || new Set();
             let _keys = ['voter', 'bpname', 'from', 'to', 'auth', 'creator'];
             for (let _key of _keys) {
