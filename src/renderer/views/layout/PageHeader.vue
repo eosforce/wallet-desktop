@@ -20,6 +20,10 @@
         </select>
       </div>
 
+      <!-- <div>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<router-link :to="{'name': 'config_node_list'}">管理节点</router-link>
+      </div> -->
+
       <div class="block" style="display:flex;align-items:center;">
         <div>
           {{$t('出块节点')}}:<span>{{nodeInfo.head_block_producer}}</span>

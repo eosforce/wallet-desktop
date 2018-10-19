@@ -11,12 +11,12 @@
           </div>
           <div class="field">
             <div class="static-label">
-              {{$t('当前投票金额')}}<span class="static-text">{{stakedAmount | formatNumber({p: 0, showSymbol: true})}}</span>
+              {{$t('当前投票金额')}}<span class="static-text">{{stakedAmount | formatNumber({p: 0, showSymbol: true})}}C</span>
             </div>
           </div>
           <div class="field">
             <div class="static-label">
-              {{$t('可用投票金额')}}<span class="static-text">{{account.info.available | formatNumber({p: 4, showSymbol: true})}}</span>
+              {{$t('可用投票金额')}}<span class="static-text">{{account.info.available | formatNumber({p: 4, showSymbol: true})}}C</span>
             </div>
           </div>
           <div class="field is-horizontal">
@@ -46,7 +46,7 @@
               <p class="help is-danger" v-show="amount && !isValidAmount">
                 {{$t('金额必须为整数')}}
               </p>
-              <p class="help tips">{{selectInfo.tip}}，{{$t('template.fee', {fee: fee + ' EOS'})}}</p>
+              <p class="help tips">{{selectInfo.tip}}，{{$t('template.fee', {fee: symblo_change(fee, 'EOS', 'EOSC') })}}</p>
               <p class="help is-danger" v-show="amount > selectInfo.max">
                 {{selectInfo.maxTip}}
               </p>
@@ -54,7 +54,7 @@
           </div>
           <div class="field">
             <div class="static-label">
-              {{$t('修改后投票金额')}}<span class="static-text">{{newStakedAmount | formatNumber({p: 0, showSymbol: true})}}</span>
+              {{$t('修改后投票金额')}}<span class="static-text">{{newStakedAmount | formatNumber({p: 0, showSymbol: true})}}C</span>
             </div>
           </div>
           <div class="field is-grouped is-grouped-right">
@@ -101,15 +101,15 @@
         </div>
         <div class="row">
           <div class="row__title">{{selectInfo.confirm}}</div>
-          <div class="row__content">{{amount | formatNumber({p: 0, showSymbol: true})}}</div>
+          <div class="row__content">{{amount | formatNumber({p: 0, showSymbol: true})}}C</div>
         </div>
         <div class="row">
           <div class="row__title">{{$t('修改后投票金额')}}</div>
-          <div class="row__content">{{newStakedAmount | formatNumber({p: 0, showSymbol: true})}}</div>
+          <div class="row__content">{{newStakedAmount | formatNumber({p: 0, showSymbol: true})}}C</div>
         </div>
         <div class="row">
           <div class="row__title">{{$t('手续费')}}</div>
-          <div class="row__content">{{fee}} EOS</div>
+          <div class="row__content">{{ symblo_change(fee, 'EOS', 'EOSC') }} </div>
         </div>
         <div class="row">
           <div class="row__title">{{$t('输入密码')}}</div>
@@ -129,7 +129,7 @@ import Message from '@/components/Message';
 import ConfirmModal from '@/components/ConfirmModal';
 import { Actions } from '@/constants/types.constants';
 import { isValidAmount } from '@/utils/rules';
-import { toNumber } from '@/utils/util';
+import { toNumber, symblo_change } from '@/utils/util';
 
 export default {
   name: 'vote',
@@ -285,6 +285,7 @@ export default {
     close() {
       this.$router.push({ name: 'accountDetail' });
     },
+    symblo_change,
     ...mapActions({
       getAccountInfo: Actions.GET_ACCOUNT_INFO,
       vote: Actions.VOTE,

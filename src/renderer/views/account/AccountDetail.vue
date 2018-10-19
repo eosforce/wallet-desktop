@@ -99,7 +99,7 @@ export default {
                 if (this.currentTab === 'TokenList') {
                     await this.getTokenList({ accountName: this.accountName });
                 } else {
-                    await this.refreshTransferrecord({ accountName: this.accountName, pos: 0, from_top: true });
+                    await this.refreshTransferrecord({ accountName: this.accountName, pos: -1, from_top: true });
                     // await this.refreshBpsList();
                 }
                 this.spin = false;

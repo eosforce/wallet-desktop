@@ -29,11 +29,11 @@
       </div>
       <div class="row">
         <div class="row__title">{{$t('可提取金额')}}</div>
-        <div class="row__content">{{rewardAmount | formatNumber({p: 4, showSymbol: true})}}</div>
+        <div class="row__content">{{rewardAmount | formatNumber({p: 4, showSymbol: true})}}C</div>
       </div>
       <div class="row">
         <div class="row__title">{{$t('手续费')}}</div>
-        <div class="row__content">0.03 EOS</div>
+        <div class="row__content">0.03 EOSC</div>
       </div>
       <div class="row">
         <div class="row__title">{{$t('输入密码')}}</div>

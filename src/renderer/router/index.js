@@ -15,6 +15,13 @@ export default new Router({
         default: () => import('@/views/wallet/Dashboard'),
       },
       children: [
+        // {
+        //   path: '/config_node_list',
+        //   name: 'config_node_list',
+        //   components: {
+        //     default: () => import('@/views/wallet/config_node_list'),
+        //   },
+        // },
         {
           name: 'walletDetail',
           path: 'wallets/:walletId',

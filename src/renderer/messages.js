@@ -1,5 +1,6 @@
 export default {
   en: {
+    合约账户: 'contract name',
     原力生态: 'EOSForce Ecology',
     正在努力刷新: 'loading',
     还没有数据: 'no data',
@@ -166,6 +167,7 @@ export default {
     },
   },
   zh: {
+    合约账户: '合约账户',
     原力生态: '原力生态',
     '至少 9 个字符': '至少 9 个字符',
     用户名: '用户名',
@@ -327,6 +329,7 @@ export default {
     },
   },
   kr: {
+    合约账户: '계약 계정',
     原力生态: 'EOSForce 생태학',
     正在努力刷新: '새로 고침 중',
     还没有数据: '데이터가 없습니다.',

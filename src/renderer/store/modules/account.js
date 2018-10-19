@@ -66,10 +66,10 @@ const mutations = {
         state.transferRecords.pos = -1;
         state.transferRecords.offset = -20;
         // trans_main
-        if (!transfer_rank_order){
-            state.transferRecords.pos = 0;
-            state.transferRecords.offset = 20;
-        }
+        // if (!transfer_rank_order){
+        //     state.transferRecords.pos = 0;
+        //     state.transferRecords.offset = 20;
+        // }
         state.transferRecords.more = true;
     },
     [Mutations.SET_ACCOUNT_INFO](state, { info = {} } = {}) {
@@ -95,14 +95,16 @@ const mutations = {
         let recode_map = {};
         let records = [];
         state.transferRecords.list.map(item => {
-            if (recode_map[item.action_trace.trx_id]) return;
-            recode_map[item.trx_id] = item;
+            let _key = item.action_trace.trx_id + item.action_trace.act.name;
+            console.log(_key);
+            if (recode_map[_key]) return;
+            recode_map[_key] = item;
             if(item.status == 'on_process') state.need_confirm_transaction.push(item);
             records.push(item);
         });
         state.transferRecords.list.splice(0, state.transferRecords.list.length, ...records);
         state.transferRecords.list.sort((pre, cur) => {
-            if (cur.block_num > pre.block_num) return 1;
+            if (cur.account_action_seq > pre.account_action_seq) return 1;
             return -1;
         });
         let tr_len = state.transferRecords.list.length;
@@ -112,13 +114,16 @@ const mutations = {
             state.transferRecords.offset = -19;
         }
         // trans_main
-        if (!rank_order) {
-            state.transferRecords.pos = state.transferRecords.length - 1;
-        }
+        // if (!rank_order) {
+        //     state.transferRecords.pos = state.transferRecords.length - 1;
+        // }
     },
     update_transaction_status(state, {trx_id, status}){
-        let item = state.transferRecords.list.find(item => item.trx_id == trx_id);
-        item.status = status;
+        state.transferRecords.list.forEach(item => {
+            if ( item.trx_id == trx_id ) {
+                item.status = status;
+            }
+        });        
         state.need_confirm_transaction.forEach((tr, index) => {
             if(tr == trx_id){
                 state.need_confirm_transaction.splice(index, 1);
@@ -457,12 +462,13 @@ const actions = {
 
         if(!accountName) return ;
         if( involved_users.has(accountName) ){
+            dispatch(Actions.GET_TRANSFER_RECORD, {accountName, pos: -1, from_top: true});    
             // trans_main
-            if ( !rank_get_action( current_node_info.server_version_string ) ) {
-                dispatch(Actions.GET_TRANSFER_RECORD, {accountName, pos: 1, from_top: true});
-            }else{
-                dispatch(Actions.GET_TRANSFER_RECORD, {accountName, pos: -1, from_top: true});    
-            }
+            // if ( !rank_get_action( current_node_info.server_version_string ) ) {
+            //     dispatch(Actions.GET_TRANSFER_RECORD, {accountName, pos: 1, from_top: true});
+            // }else{
+            //     dispatch(Actions.GET_TRANSFER_RECORD, {accountName, pos: -1, from_top: true});    
+            // }
         }
     }
 };

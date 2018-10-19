@@ -93,39 +93,36 @@ const mutations = {
 let initPromise;
 
 const actions = {
-    [Actions.INIT_APP]({ state, commit, dispatch }) {
+    async [Actions.INIT_APP]({ state, commit, dispatch }) {
         if (!initPromise) {
-            initPromise = dispatch(Actions.FETCH_NODE_LIST)
-                .then(data => {
-                    const syncPromise = dispatch(Actions.SYNC_NODE_LIST);
-                    return syncPromise;
-                })
-                .then(data => {
-                    if (data && data.nodes) {
-                        const allNodeList = data.nodes.reduce((result, node) => {
-                            const r = {};
-                            if (node.port_ssl) {
-                                r.value = `https://${node.node_addr}:${node.port_ssl}`;
-                            } else {
-                                r.value = `http://${node.node_addr}:${node.port_http}`;
-                            }
-                            r.name = `${node.node_name} ${node.location} ${r.value}`;
-                            if (node.type) {
-                                r.type = node.type;
-                            }
-                            result.push(r);
-                            return result;
-                        }, []);
-                        const nodeList = allNodeList.filter(n => n.type === '10');
-                        const writeNodeList = allNodeList.filter(n => n.type === '20');
-                        commit(Mutations.SET_NODE_LIST, { nodeList });
-                        commit(Mutations.SET_WRITE_NODE_LIST, { writeNodeList });
-                        const randomIndex = Math.floor(Math.random() * nodeList.length);
-                        return dispatch(Actions.FETCH_NODE_INFO, { node: nodeList[randomIndex] && nodeList[randomIndex].value });
+            let node_list = await dispatch(Actions.FETCH_NODE_LIST);
+            const data = await dispatch(Actions.SYNC_NODE_LIST);
+            if (data && data.nodes) {
+                
+                const allNodeList = data.nodes.reduce((result, node) => {
+                    const r = {};
+                    if (node.port_ssl) {
+                        r.value = `https://${node.node_addr}:${node.port_ssl}`;
                     } else {
-                        return Promise.reject(new Error('获取节点列表错误'));
+                        r.value = `http://${node.node_addr}:${node.port_http}`;
                     }
-                });
+                    r.name = `${node.node_name} ${node.location} ${r.value}`;
+                    if (node.type) {
+                        r.type = node.type;
+                    }
+                    result.push(r);
+                    return result;
+                }, []);
+
+                const nodeList = allNodeList.filter(n => n.type === '10');
+                const writeNodeList = allNodeList.filter(n => n.type === '20');
+                commit(Mutations.SET_NODE_LIST, { nodeList });
+                commit(Mutations.SET_WRITE_NODE_LIST, { writeNodeList });
+                const randomIndex = Math.floor(Math.random() * nodeList.length);
+                initPromise = dispatch(Actions.FETCH_NODE_INFO, { node: nodeList[randomIndex] && nodeList[randomIndex].value });
+            } else {
+                initPromise = Promise.reject(new Error('获取节点列表错误'));
+            }
         }
         return initPromise;
     },
@@ -172,9 +169,6 @@ const actions = {
             }, 3000);
         });
     },
-    [Actions.FETCH_ALL_WALLET_LIST]({ state, commit, getters }) {
-        // getAccounts(getters[Getters.CURRENT_NODE])(pk)
-    },
     [Actions.NEW_WALLET]({ dispatch }, { privateKey, password }) {
         return createWalletData({ privateKey, password });
     },
@@ -202,46 +196,53 @@ const actions = {
                 block_update_queue.push( getBlock(state.currentNodeValue)(item.head_block_num) );
             }
         });
-        Promise.all(block_update_queue)
-        .then(block_list_res => {
-            block_list_res.forEach((item, index) => {
-                if(!item){
-                    return ;
-                }
-                commit(Mutations.UPDATE_BLOCK_LIST_STATUS, { block_num: item.block_num, block: item });
-            });
-            let last_block = block_list_res[block_list_res.length - 1];
-            if(last_block){
-                commit(Mutations.SET_BLOCK, { block: last_block });
-            }
-            // 最近的块中是否涉及自己的变更
-            dispatch(Actions.CHECK_INVOLED, get_involved_users_form_blocks(block_list_res));
-            // 检查交易状态
-            dispatch(Actions.CHECK_TRANSACTION);
-        })
-        // let block_list_res = await Promise.all(block_update_queue);
-    },
-    [Actions.FETCH_NODE_LIST]({ commit, dispatch, state }) {
-        return Storage.setPath(CHAIN_NET_KEY)
-            .fetch()
-            .then(data => {
-                if (!data) return Object.keys(CHAIN_NETS)[0];
-                return data.key;
-            })
-            .then(key => {
-                return Storage.setPath(CHAIN_NET_KEY)
-                    .store({ key })
-                    .then(data => data.key);
-            })
-            .then(key => {
-                commit(Mutations.SET_CHAIN_NET, { chainNet: key });
-                return Storage.setPath(`${NODE_LIST_KEY}#${state.chainNet}`).fetch();
-            });
-    },
-    [Actions.SYNC_NODE_LIST]({ state }) {
-        return getNodeList().then(async data => {
-            return Storage.setPath(`${NODE_LIST_KEY}#${state.chainNet}`).store(data);
+        let block_list_res = await Promise.all(block_update_queue);
+        block_list_res.forEach((item, index) => {
+            if(!item) return ;
+            commit(Mutations.UPDATE_BLOCK_LIST_STATUS, { block_num: item.block_num, block: item });
         });
+        let last_block = block_list_res[block_list_res.length - 1];
+        if(last_block){
+            commit(Mutations.SET_BLOCK, { block: last_block });
+        }
+        // 最近的块中是否涉及自己的变更
+        dispatch(Actions.CHECK_INVOLED, get_involved_users_form_blocks(block_list_res));
+        // 检查交易状态
+        dispatch(Actions.CHECK_TRANSACTION);
+    },
+    async [Actions.FETCH_NODE_LIST]({ commit, dispatch, state }) {
+        let net = await Storage.setPath(CHAIN_NET_KEY).fetch();
+        let key = !net || !Object.keys(net).length ? Object.keys(CHAIN_NETS)[0] : net.key;
+        await Storage.setPath(CHAIN_NET_KEY).store({ key });
+        commit(Mutations.SET_CHAIN_NET, { chainNet: key });
+        return Storage.setPath(`${NODE_LIST_KEY}#${state.chainNet}`).fetch();
+    },
+    async [Actions.SYNC_NODE_LIST]({ state }) {
+        let data = await getNodeList();
+        return Storage.setPath(`${NODE_LIST_KEY}#${state.chainNet}`).store(data);
+    },
+    async [Actions.GET_STORE_NODE_LIST] ({ state, getters, commit }) {
+        let node_list = await getters[Getters.GET_STORE_NODE_LIST];
+        return node_list;
+    },
+    async [Actions.UPDATE_NODE_LIST] ({ state, getters, commit }, {node_list}) {
+        const allNodeList = node_list.nodes.reduce((result, node) => {
+            const r = {};
+            if (node.port_ssl) {
+                r.value = `https://${node.node_addr}:${node.port_ssl}`;
+            } else {
+                r.value = `http://${node.node_addr}:${node.port_http}`;
+            }
+            r.name = `${node.node_name} ${node.location} ${r.value}`;
+            if (node.type) {
+                r.type = node.type;
+            }
+            result.push(r);
+            return result;
+        }, []);
+        const nodeList = allNodeList.filter(n => n.type === '10');
+        commit(Mutations.SET_NODE_LIST, { nodeList: nodeList });
+        await Storage.setPath(`${NODE_LIST_KEY}#${state.chainNet}`).store(node_list)
     },
     [Actions.SWITCH_CHAIN_NET]({ state }, { chainNet }) {
         return Storage.setPath(CHAIN_NET_KEY)
@@ -278,6 +279,13 @@ const getters = {
             }
         }
         return result;
+    },
+    [Getters.GET_STORE_NODE_LIST] (state) {
+        return new Promise((resolve, reject) => {
+            let path = `${NODE_LIST_KEY}#${state.chainNet}` ;
+            let data = Storage.setPath(path).fetch_data();
+            resolve(data);
+        });
     },
     [Getters.GET_TRANSE_CONFIG]: (state, getters) => (password, name, walletId, with_out_reject = false) => {
         walletId = walletId || getters[Getters.ACCOUT_MAP][name];

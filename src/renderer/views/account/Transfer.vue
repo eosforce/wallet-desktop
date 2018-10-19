@@ -35,7 +35,7 @@
             </div>
           </div>
           <div class="field">
-            <p class="help tips">{{$t('template.fee', {fee: app.fee})}}</p>
+            <p class="help tips">{{$t( 'template.fee', {fee: symblo_change(app.fee) } )}}</p>
           </div>
           <div class="field is-grouped is-grouped-right">
             <div class="control">
@@ -69,7 +69,7 @@
         </div>
         <div class="row">
           <div class="row__title">{{$t('手续费')}}</div>
-          <div class="row__content">{{app.fee}}</div>
+          <div class="row__content">{{ symblo_change(app.fee) }}</div>
         </div>
         <div class="row">
           <div class="row__title">{{$t('输入密码')}}</div>
@@ -89,7 +89,7 @@ import Message from '@/components/Message';
 import ConfirmModal from '@/components/ConfirmModal';
 import { Actions } from '@/constants/types.constants';
 import { isValidAccountName, isValidAmount } from '@/utils/rules';
-import { toNumber } from '@/utils/util';
+import { toNumber, symblo_change } from '@/utils/util';
 
 export default {
   name: 'Transfer',
@@ -110,7 +110,7 @@ export default {
       return this.$route.params.accountName;
     },
     tokenSymbol() {
-      return this.$route.params.symbol || 'EOS';
+      return this.$route.params.symbol || 'EOSC';
     },
     precision() {
       return this.$route.params.precision !== undefined ? this.$route.params.precision : '4';
@@ -218,6 +218,7 @@ export default {
     toggle(key, val) {
       return (this[key] = val === undefined ? !this[key] : val);
     },
+    symblo_change,
     ...mapActions({
       getAccountInfo: Actions.GET_ACCOUNT_INFO,
       transfer: Actions.TRANSFER,

@@ -55,7 +55,7 @@ export default {
       return this.$route.params.accountName;
     },
     fee () {
-      return (this.permissions.filter(item => item.is_have).length * 0.1).toFixed(4) + ' EOS';
+      return (this.permissions.filter(item => item.is_have).length * 0.1).toFixed(4) + ' EOSC';
     },
     title () {
       return this.$t('确认转让用户名') + this.$route.params.accountName + '?';

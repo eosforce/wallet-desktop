@@ -15,22 +15,35 @@ export default class Storage {
     return new Storage(storagePath);
   }
 
-  store(data) {
+  async store(data) {
     try {
       localStorage.setItem(this.storagePath, JSON.stringify(data));
-      return Promise.resolve(data);
+      return data;
     } catch (err) {
-      return Promise.reject(err);
+      return err;
     }
   }
 
-  fetch() {
+  async fetch_data () {
     const _data = localStorage.getItem(this.storagePath);
+    let json_data = null;
     try {
-      return Promise.resolve(JSON.parse(_data));
+      json_data = JSON.parse(_data);
     } catch (err) {
-      return Promise.resolve(err);
+      json_data = err;
     }
+    return json_data
+  }
+
+  async fetch() {
+    const _data = localStorage.getItem(this.storagePath);
+    let res = null;
+    try {
+      res = JSON.parse(_data);
+    } catch (err) {
+      res = null;
+    }
+    return res;
   }
 
   remove() {

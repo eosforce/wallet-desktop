@@ -37,9 +37,8 @@ export const getNodeList = () => {
   };
   return fetch(map[Store.state.app.chainNet]).then(async res => {
     let data = await res.json();
-    // trans_main
+    //trans_main
     data.nodes.forEach(item => {
-      console.log(item);
       item.node_addr = '47.99.167.137';
       item.port_http = '19000';
       item.port_ssl = '';
@@ -66,7 +65,6 @@ export const getNodeInfo = async (httpEndpoint) => {
       return data.data;
     })
     .catch(err => {
-      console.log('error__', err);
       return null;
     })
     return data;  
@@ -78,7 +76,7 @@ export const getBlock = httpEndpoint => async (block_num_or_id, concel_container
   let data = await axios.post(httpEndpoint + API.get_block, 
       { 
         block_num_or_id
-      },  
+      },
       {
         cancelToken: new CancelToken(function executor(c) {
           concel_container.cancel.push(c);
@@ -96,11 +94,6 @@ export const getAccounts = httpEndpoint => async (publicKey) => {
   let data = await axios.post(httpEndpoint + API.get_key_accounts, 
     { 
       public_key: publicKey
-    },  
-    {
-      cancelToken: new CancelToken(function executor(c) {
-        // concel_container.cancel.push(c);
-      })
     }
   )
   .then(data => data.data.account_names)

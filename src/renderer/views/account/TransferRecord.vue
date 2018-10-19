@@ -12,6 +12,7 @@
       <thead>
         <tr>
           <th>{{$t('时间')}}</th>
+          <th>{{$t('合约账户')}}</th>
           <th>{{$t('发起方')}}</th>
           <th>{{$t('操作名')}}</th>
           <th>{{$t('接收方')}}</th>
@@ -30,10 +31,11 @@
         </tr>
         <tr class="tr_record" v-for="record in recordList" :key="record.seq" v-show="recordList.length" v-if="recordList.length">
           <td>{{record.time | timestamp}}</td>
+          <td>{{record.account}}</td>
           <td>{{record.from}}</td>
           <td>{{record.name}}</td>
           <td>{{record.to}}</td>
-          <td>{{record.change}}</td>
+          <td>{{ symblo_change(record.change) }}</td>
           <td class="transfer_memo">
               {{record.memo}}
           </td>
@@ -68,7 +70,7 @@
 import { mapState, mapActions } from 'vuex';
 
 import { Actions } from '@/constants/types.constants';
-import { genTrConvertFunc } from '@/utils/util';
+import { genTrConvertFunc, symblo_change } from '@/utils/util';
 
 export default {
   name: 'TransferRecord',
@@ -124,6 +126,7 @@ export default {
     getMaterial(val = 1) {
       this.getTransferRecord({ accountName: this.accountName });
     },
+    symblo_change,
     ...mapActions({
       getTransferRecord: Actions.GET_TRANSFER_RECORD,
       RESET_ACCOUNT_INFO: Actions.RESET_ACCOUNT_INFO
@@ -146,6 +149,7 @@ export default {
 }
 .transfer_memo{
   max-width: 200px;
+  word-break: break-word;
 }
 .load_end_action_ct{
   color: #209cee;
