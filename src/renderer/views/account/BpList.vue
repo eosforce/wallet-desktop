@@ -38,7 +38,13 @@
             <div v-if="app.currentNodeInfo.head_block_producer !== bp.name">{{bp.order}}</div>
           </td>
           <td class="t-left">
-            <a @click="$electron.shell.openExternal(toUrl(bp.url))" style="color: #3273dc">
+            <a @click="$electron.shell.openExternal(toUrl(bp.url))" v-if="bp.amount > 0" style="color: #3273dc">
+              {{($i18n.locale && app.bpNicks[$i18n.locale] && app.bpNicks[$i18n.locale][bp.name]) || bp.name}}
+            </a>
+            <a @click="$electron.shell.openExternal(toUrl(bp.url))" v-if="!bp.amount && bp.adr" style="color: #92b2f1">
+              {{($i18n.locale && app.bpNicks[$i18n.locale] && app.bpNicks[$i18n.locale][bp.name]) || bp.name}}
+            </a>
+            <a @click="$electron.shell.openExternal(toUrl(bp.url))" v-if="!bp.amount && !bp.adr" style="color: #bec2c9">
               {{($i18n.locale && app.bpNicks[$i18n.locale] && app.bpNicks[$i18n.locale][bp.name]) || bp.name}}
             </a>
           </td>
