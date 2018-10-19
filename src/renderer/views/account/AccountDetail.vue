@@ -20,7 +20,6 @@
 </template>
 <script>
 import { mapState, mapActions } from 'vuex';
-
 import { Actions } from '@/constants/types.constants';
 import AccountOverview from '@/views/account/AccountOverview';
 import TransferRecord from '@/views/account/TransferRecord';
