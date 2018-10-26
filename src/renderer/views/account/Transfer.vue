@@ -193,24 +193,21 @@ export default {
         walletId: this.walletData.publicKey,
         permission: this.permissions.filter(item => item.is_have)[0].name
       })
-        .then(result => {
-          Message.success(this.$t('转账成功'));
-          setTimeout(() => {
-            this.getTransferRecord({ accountName: this.fromAccountName, pos: 0 });
-          }, 2000);
-        })
-        .catch(err => {
-          Message.error({
-            title: `${err.code ? `code: ${err.code}` : this.$t('转账失败')}`,
-            message: err.message,
-          });
-          this.submitting = false;
-          return Promise.reject(err);
-        })
-        .then(() => {
-          this.getAccountInfo();
-          this.close();
+      .then(result => {
+        Message.success(this.$t('转账成功'));
+      })
+      .catch(err => {
+        Message.error({
+          title: `${err.code ? `code: ${err.code}` : this.$t('转账失败')}`,
+          message: err.message,
         });
+        this.submitting = false;
+        return Promise.reject(err);
+      })
+      .then(() => {
+        this.getAccountInfo();
+        this.close();
+      });
     },
     close() {
       this.$router.push({ name: 'accountDetail' });

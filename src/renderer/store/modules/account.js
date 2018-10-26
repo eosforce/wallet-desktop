@@ -95,11 +95,16 @@ const mutations = {
         let recode_map = {};
         let records = [];
         state.transferRecords.list.map(item => {
-            let _key = item.action_trace.trx_id + item.action_trace.act.name;
-            if (recode_map[_key]) return;
-            recode_map[_key] = item;
-            if(item.status == 'on_process') state.need_confirm_transaction.push(item);
-            records.push(item);
+            let receiver = item.action_trace.receipt.receiver;
+            let actor = item.action_trace.act.authorization[0].actor;
+            let action_name = item.action_trace.act.name;
+            if (receiver == state.accountName || actor == state.accountName) {
+                let _key = `${item.action_trace.trx_id} + ${actor} + ${action_name}`;
+                if (recode_map[_key]) return;
+                recode_map[_key] = item;
+                if(item.status == 'on_process') state.need_confirm_transaction.push(item);
+                records.push(item);
+            }
         });
         state.transferRecords.list.splice(0, state.transferRecords.list.length, ...records);
         state.transferRecords.list.sort((pre, cur) => {
@@ -349,6 +354,10 @@ const actions = {
     [Actions.GET_TRANSFER_RECORD]({ state, commit, getters }, { accountName, pos, offset, cancle_requests, finished = () => {}, from_top = false }) {
         offset = offset || state.transferRecords.offset;
         pos = pos === undefined ? state.transferRecords.pos : pos;
+        if (from_top) {
+            offset = -20;
+            pos = -1;
+        }
         let current_node_info = getters[Getters.CURRENT_NODE_INFO];
         commit('start_on_load_actions', {accountName, from_top});
         return getTransferRecord(getters[Getters.CURRENT_NODE])({ accountName, pos, offset, cancle_requests })
@@ -462,12 +471,6 @@ const actions = {
         if(!accountName) return ;
         if( involved_users.has(accountName) ){
             dispatch(Actions.GET_TRANSFER_RECORD, {accountName, pos: -1, from_top: true});    
-            // trans_main
-            // if ( !rank_get_action( current_node_info.server_version_string ) ) {
-            //     dispatch(Actions.GET_TRANSFER_RECORD, {accountName, pos: 1, from_top: true});
-            // }else{
-            //     dispatch(Actions.GET_TRANSFER_RECORD, {accountName, pos: -1, from_top: true});    
-            // }
         }
     }
 };
