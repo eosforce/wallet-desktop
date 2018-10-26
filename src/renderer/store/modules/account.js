@@ -65,11 +65,6 @@ const mutations = {
         state.transferRecords.list.splice(0, state.transferRecords.list.length);
         state.transferRecords.pos = -1;
         state.transferRecords.offset = -20;
-        // trans_main
-        // if (!transfer_rank_order){
-        //     state.transferRecords.pos = 0;
-        //     state.transferRecords.offset = 20;
-        // }
         state.transferRecords.more = true;
     },
     [Mutations.SET_ACCOUNT_INFO](state, { info = {} } = {}) {
