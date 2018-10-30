@@ -14,7 +14,8 @@ import {
   calcReward,
   calcApr,
   get_error_msg,
-  get_node_version_num
+  get_node_version_num,
+  string_to_name
 } from '@/utils/util';
 
 const API = {
@@ -269,7 +270,7 @@ export const getVotesTable = httpEndpoint => async (accountName, concel_containe
   let CancelToken = axios.CancelToken;
   let data = await axios.post(httpEndpoint + API.get_table_rows, 
     { 
-      scope: accountName, code: 'eosio', table: 'votes', json: true, limit: 1000
+      scope: string_to_name(accountName), code: 'eosio', table: 'votes', json: true, limit: 1000
     },  
     {
       cancelToken: new CancelToken(function executor(c) {

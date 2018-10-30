@@ -407,3 +407,98 @@ function l(e) {
   } 
   return t.join(""); 
 }
+
+export const square_num = (num, times) => {
+  let n = new Array(times);
+  let y = new BigNumber(num);
+  for(let i of n.keys()){
+    y = y.times(num);
+  }
+  return y;
+}
+const char_to_symbol = (c) => {
+    let code_c = (c + '').charCodeAt(),
+        code_a = 'a'.charCodeAt(),
+        code_z = 'z'.charCodeAt(),
+        code_1 = '1'.charCodeAt(),
+        code_5 = '5'.charCodeAt(),
+        res = 0;
+    if( code_c >= code_a && code_c <= code_z )
+         res = (code_c - code_a) + 6;
+    if( code_c >= code_1 && code_c <= code_5 )
+         res = (code_c - code_1) + 1;
+    return res
+}
+var get_max_pos = (ten_num) => {
+    let p_n = new Array(64), res = -1;
+    for (let i of p_n.keys()) {
+        p_n[i] = 2 ** i;
+    }
+    for (let _index of p_n.keys()) {
+        if (ten_num >= p_n[_index] && ten_num < p_n[_index + 1]) {
+            res = _index;
+            break ;
+        }
+    }
+    return res;
+}
+var ten_to_bit = (ten_num) => {
+    let p_n = new Array(64), res = new Array(64);
+    for (let i of p_n.keys()) {
+        p_n[i] = 2 ** i;
+        res[i] = 0;
+    }
+    while (ten_num > 0) {
+        let pos = get_max_pos(ten_num);
+        ten_num -= 2 ** pos;
+        res[pos] = 1;
+    }
+    return res;
+}
+const move_bite = (bit_num, move_pos) => {
+    let new_zero_array = new Array(move_pos);
+    for(let _index of new_zero_array.keys()) { new_zero_array[_index] = 0 };
+    console.log( new_zero_array );
+    bit_num.splice(0, 0, ...new_zero_array);
+    return bit_num;
+}
+const or_bits = (bit_num_from, bit_num_to) => {
+    let total = new BigNumber(0);
+    for (let _i of bit_num_from.keys()) {
+        if (bit_num_from[_i] || bit_num_to[_i]) {
+            bit_num_from[_i] = 1;
+        }else{
+            bit_num_from[_i] = 0;
+        }
+    }
+    return bit_num_from;
+}
+const bits_to_ten = (bit_num) => {
+    let total = new BigNumber(0), keys = bit_num.keys();
+    for(let item of keys){
+        if ( bit_num[item] ) {
+            total = total.plus(square_num(2, item))
+        }
+    }
+    return total;
+}
+// 数字账户转换为查询时需要的数字
+export const string_to_name = ( _str ) => {
+    let int_num = parseInt(_str);
+    if (!int_num || ('' + int_num ).length != (_str + '').length) {
+        return _str;
+    }
+    let name = new Array(64);
+    for(let _i of name.keys()) { name[_i] = 0 };
+    let i = 0;
+    for ( i ; _str[i] && i < 12; ++i) {
+       let symbol = ten_to_bit((char_to_symbol(_str[i]) & 0x1f )),
+       pos = 64 - 5 * (i + 1) - 1;
+       let moved_bites = move_bite(symbol, pos);
+       or_bits(name, moved_bites);
+   }
+   if (i == 12){
+      or_bits(name, ten_to_bit((char_to_symbol(_str[12]) & 0x1f )));
+   }
+   return bits_to_ten(name).toString();
+}
