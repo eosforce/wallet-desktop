@@ -206,7 +206,7 @@ export const getAvailable = httpEndpoint => async (accountName, concel_container
 // 获取 token list
 export const getTokenList = httpEndpoint => accountName => {
   return Eos({ httpEndpoint })
-    .getTableRows({ scope: accountName, code: 'eosio.token', table: 'accounts', json: true, limit: 1000 })
+    .getTableRows({ scope: string_to_name(accountName), code: 'eosio.token', table: 'accounts', json: true, limit: 1000 })
     .then(data => {
       if (data.rows.length) {
         return Promise.all(
