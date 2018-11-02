@@ -100,6 +100,16 @@ const mutations = {
                 if(item.status == 'on_process') state.need_confirm_transaction.push(item);
                 records.push(item);
             }
+            // if (action_name == 'transfer' && receiver == state.accountName) {
+            //     records.push(item);
+            //     if(item.status == 'on_process') state.need_confirm_transaction.push(item);
+            // }else if(action_name != 'transfer'){
+            //     let _key = `${item.action_trace.trx_id} + ${actor} + ${action_name}`;
+            //     if (recode_map[_key]) return;
+            //     recode_map[_key] = item;
+            //     if(item.status == 'on_process') state.need_confirm_transaction.push(item);
+            //     records.push(item);
+            // }
         });
         state.transferRecords.list.splice(0, state.transferRecords.list.length, ...records);
         state.transferRecords.list.sort((pre, cur) => {

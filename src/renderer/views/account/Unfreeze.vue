@@ -37,11 +37,11 @@
       </div>
       <div class="row">
         <div class="row__title">{{$t('可赎回金额')}}</div>
-        <div class="row__content">{{unstakingAmount | formatNumber({p: 4, showSymbol: true})}}</div>
+        <div class="row__content">{{ symblo_change( unstakingAmount ) | formatNumber({p: 4, showSymbol: true})  }}</div>
       </div>
       <div class="row">
         <div class="row__title">{{$t('手续费')}}</div>
-        <div class="row__content">{{app.fee}}</div>
+        <div class="row__content">{{ symblo_change(app.fee) }}</div>
       </div>
       <div class="row" v-if="remainHeight <= 0">
         <div class="row__title">{{$t('输入密码')}}</div>
@@ -59,6 +59,9 @@ import { mapActions, mapState } from 'vuex';
 import Message from '@/components/Message';
 import ConfirmModal from '@/components/ConfirmModal';
 import { Actions } from '@/constants/types.constants';
+import {
+  symblo_change
+} from '@/utils/util.js'
 import dayjs from 'dayjs';
 
 export default {
@@ -168,6 +171,7 @@ export default {
     close() {
       this.$router.push({ name: 'accountDetail' });
     },
+    symblo_change,
     ...mapActions({
       getAccountInfo: Actions.GET_ACCOUNT_INFO,
       unfreeze: Actions.UNFREEZE,

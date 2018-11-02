@@ -20,7 +20,7 @@
               {{$t('转账金额')}}
             </label>
             <div class="control">
-              <input v-model="amount" min="0" class="input" type="number" :step="`${0.1 ** precision}`" :placeholder="$t('template.symbol', {symbol: tokenSymbol + 'C'})" required />
+              <input v-model="amount" min="0" class="input" type="number" :step="`${0.1 ** precision}`" :placeholder="$t('template.symbol', {symbol: symblo_change(tokenSymbol)})" required />
               <p class="help is-danger" v-show="amount && !isValidAmount">
                 {{$t('template.precision', {p: precision})}}
               </p>
@@ -65,7 +65,7 @@
         </div>
         <div class="row">
           <div class="row__title">{{$t('转账金额')}}</div>
-          <div class="row__content">{{amount | formatNumber({p: precision, showSymbol: true, symbol: tokenSymbol})}}C</div>
+          <div class="row__content">{{amount | formatNumber({p: precision, showSymbol: true, symbol: symblo_change(tokenSymbol)})}}</div>
         </div>
         <div class="row">
           <div class="row__title">{{$t('手续费')}}</div>

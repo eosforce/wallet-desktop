@@ -140,7 +140,6 @@ export const calcVoteExist = (meVoteage, reward, unstaking) => {
 export const calcApr = (totalStaked, commissionRate, vote_own_percent = 0, by_vote_owen = false) => {
     if (!totalStaked) return 0;
     const n1 = !by_vote_owen ? (9 * 20 * 60 * 24 * 365) / 23 : 9 * 20 * 60 * 24 * 365 * vote_own_percent * 0.7;
-    // console.log( n1, 'n1');
     // const n1 = 9 * 20 * 60 * 24 * 365 * vote_own_percent * 0.7;
     return (n1 * (1 - commissionRate / 10000)) / totalStaked;
 };
@@ -385,11 +384,15 @@ export const split_long_num = (num) => {
     change_to_symblo : str
 */
 export const symblo_change = (amount_with_symblo, pre_symblo = 'EOS', change_to_symblo = 'EOSC') => {
-    if (isNaN(parseInt(amount_with_symblo))) return '';
+    if (!amount_with_symblo) return '';
     amount_with_symblo = amount_with_symblo + '';
     amount_with_symblo = amount_with_symblo.replace(/^\s+|\s+$/, '');
     if (amount_with_symblo == '') return amount_with_symblo;
-    let current_symblo = amount_with_symblo.split(/\s+/g)[1] || '';
+    let [num, current_symblo] = amount_with_symblo.split(/\s+/g);
+    if (isNaN(parseInt(num)) && !current_symblo) {
+        current_symblo = num;
+    }
+    current_symblo = current_symblo || '';
     current_symblo = current_symblo.toLocaleUpperCase();
     pre_symblo = pre_symblo.toLocaleUpperCase();
     if (current_symblo && current_symblo != pre_symblo) return amount_with_symblo;
@@ -458,7 +461,6 @@ var ten_to_bit = (ten_num) => {
 const move_bite = (bit_num, move_pos) => {
     let new_zero_array = new Array(move_pos);
     for(let _index of new_zero_array.keys()) { new_zero_array[_index] = 0 };
-    console.log( new_zero_array );
     bit_num.splice(0, 0, ...new_zero_array);
     return bit_num;
 }
