@@ -93,23 +93,27 @@ const mutations = {
             let receiver = item.action_trace.receipt.receiver;
             let actor = item.action_trace.act.authorization[0].actor;
             let action_name = item.action_trace.act.name;
-            if (receiver == state.accountName || actor == state.accountName) {
-                let _key = `${item.action_trace.trx_id} + ${actor} + ${action_name}`;
-                if (recode_map[_key]) return;
-                recode_map[_key] = item;
-                if(item.status == 'on_process') state.need_confirm_transaction.push(item);
-                records.push(item);
-            }
-            // if (action_name == 'transfer' && receiver == state.accountName) {
-            //     records.push(item);
-            //     if(item.status == 'on_process') state.need_confirm_transaction.push(item);
-            // }else if(action_name != 'transfer'){
+            let account_action_seq = item.account_action_seq;
+            // if (receiver == state.accountName || actor == state.accountName) {
             //     let _key = `${item.action_trace.trx_id} + ${actor} + ${action_name}`;
             //     if (recode_map[_key]) return;
             //     recode_map[_key] = item;
             //     if(item.status == 'on_process') state.need_confirm_transaction.push(item);
             //     records.push(item);
             // }
+            if (action_name == 'transfer' && receiver == state.accountName) {
+                let _key = `${item.action_trace.trx_id} + ${actor} + ${action_name} + ${account_action_seq}`;
+                if (recode_map[_key]) return;
+                recode_map[_key] = item;
+                records.push(item);
+                if(item.status == 'on_process') state.need_confirm_transaction.push(item);
+            }else if(action_name != 'transfer'){
+                let _key = `${item.action_trace.trx_id} + ${actor} + ${action_name}`;
+                if (recode_map[_key]) return;
+                recode_map[_key] = item;
+                if(item.status == 'on_process') state.need_confirm_transaction.push(item);
+                records.push(item);
+            }
         });
         state.transferRecords.list.splice(0, state.transferRecords.list.length, ...records);
         state.transferRecords.list.sort((pre, cur) => {
@@ -226,8 +230,8 @@ const actions = {
     [Actions.TRANSFER]({ state, dispatch, getters }, { from, to, amount, memo, password, tokenSymbol, precision, walletId, permission }) {
         return getters[Getters.GET_TRANSE_CONFIG](password, from, walletId).then(async config => {
             // 发行token测试
-            // let maximum_supply = 10 ** 13 + ' MATH';
-            // let supply = 100 + ' MATH';
+            // let maximum_supply = 1000000 + ' MACXX';
+            // let supply = 100 + ' MACXX';
             // await create_token(config)({
             //     issuer: from,
             //     maximum_supply: maximum_supply
