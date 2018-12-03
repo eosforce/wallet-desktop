@@ -12,7 +12,7 @@
           <div class="field">
             <label class="label">{{$t('Owner权限公钥')}}</label>
             <div class="control">
-              <input class="input" v-model="OwnerKey" type="text" :placeholder="$t('将要创建账户的公钥')" required />
+              <input class="input" v-model="OwnerKey" type="text" :placeholder="$t('拥有owner权限的公钥')" required />
               <p class="help is-danger" v-show="OwnerKey && !isValidOwnerKey">
                 {{$t('无效的公钥')}}
               </p>
@@ -22,7 +22,7 @@
           <div class="field">
             <label class="label">{{$t('Active权限公钥')}}</label>
             <div class="control">
-              <input class="input" v-model="ActiveKey" type="text" :placeholder="$t('将要创建账户的公钥')" required />
+              <input class="input" v-model="ActiveKey" type="text" :placeholder="$t('拥有Active权限的公钥')" required />
               <p class="help is-danger" v-show="ActiveKey && !isValidActiveKey">
                 {{$t('无效的公钥')}}
               </p>

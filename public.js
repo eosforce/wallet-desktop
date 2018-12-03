@@ -40,8 +40,10 @@ const main = async () => {
     let package = await read_package(),
         version = package.version,
         version_arr = version.split('.').map(item => parseInt(item)),
-        version_arr[version_arr.length - 1] += 1,
-        new_version = version_arr.join('.');
+        new_version = null;
+        
+    version_arr[version_arr.length - 1] += 1;
+    new_version = version_arr.join('.');
     console.log(new_version);
     package.version = new_version;
     let res = await write_package(JSON.stringify(package));
