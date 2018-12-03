@@ -484,7 +484,23 @@ export const newAccount = config => ({creator, accountName, OwnerKey, ActiveKey,
 export const transfer = config => {
   return ({ from, to, amount, memo = '', tokenSymbol = 'EOS', precision = '4', permission } = {}) => {
     return Promise.resolve()
-      .then(() => {
+      .then(async () => {
+        // let expireInSeconds = 60 ;
+        // let eos = Eos(config);
+        // let info = await eos.getInfo({});
+        // let chainDate = new Date(info.head_block_time + 'Z');
+        // let expiration = new Date(chainDate.getTime() + expireInSeconds * 1000);
+        // expiration = expiration.toISOString().split('.')[0];
+        // let block = await eos.getBlock(info.last_irreversible_block_num);
+        // let headers = {
+        //     expiration,
+        //     ref_block_num: info.last_irreversible_block_num & 0xFFFF,
+        //     ref_block_prefix: block.ref_block_prefix,
+        //     net_usage_words: 0,
+        //     max_cpu_usage_ms: 0,
+        //     delay_sec: 60 * 5
+        // }
+        // config.transactionHeaders = (exp, cb) => cb(null, headers);
         return Eos(config)
           .contract(tokenSymbol === 'EOS' ? 'eosio' : 'eosio.token')
           .then(token => {

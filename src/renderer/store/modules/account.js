@@ -230,8 +230,8 @@ const actions = {
     [Actions.TRANSFER]({ state, dispatch, getters }, { from, to, amount, memo, password, tokenSymbol, precision, walletId, permission }) {
         return getters[Getters.GET_TRANSE_CONFIG](password, from, walletId).then(async config => {
             // 发行token测试
-            // let maximum_supply = 1000000 + ' MACXX';
-            // let supply = 100 + ' MACXX';
+            // let maximum_supply = 1000000 + ' H';
+            // let supply = 100 + ' H';
             // await create_token(config)({
             //     issuer: from,
             //     maximum_supply: maximum_supply
