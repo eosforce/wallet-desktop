@@ -10,14 +10,25 @@
             </div>
           </div>
           <div class="field">
-            <label class="label">{{$t('用户公钥')}}</label>
+            <label class="label">{{$t('Owner权限公钥')}}</label>
             <div class="control">
-              <input class="input" v-model="publicKey" type="text" :placeholder="$t('将要创建账户的公钥')" required />
-              <p class="help is-danger" v-show="publicKey && !isValidPublicKey">
+              <input class="input" v-model="OwnerKey" type="text" :placeholder="$t('将要创建账户的公钥')" required />
+              <p class="help is-danger" v-show="OwnerKey && !isValidOwnerKey">
                 {{$t('无效的公钥')}}
               </p>
             </div>
           </div>
+
+          <div class="field">
+            <label class="label">{{$t('Active权限公钥')}}</label>
+            <div class="control">
+              <input class="input" v-model="ActiveKey" type="text" :placeholder="$t('将要创建账户的公钥')" required />
+              <p class="help is-danger" v-show="ActiveKey && !isValidActiveKey">
+                {{$t('无效的公钥')}}
+              </p>
+            </div>
+          </div>
+
           <div class="field">
             <label class="label">{{$t('用户名称')}}</label>
             <div class="control">
@@ -53,8 +64,12 @@
           <div class="row__content">{{creatorAccountName}}</div>
         </div>
         <div class="row">
-          <div class="row__title">{{$t('用户公钥')}}</div>
-          <div class="row__content">{{publicKey}}</div>
+          <div class="row__title">{{$t('Owner权限公钥')}}</div>
+          <div class="row__content">{{OwnerKey}}</div>
+        </div>
+        <div class="row">
+          <div class="row__title">{{$t('Active权限公钥')}}</div>
+          <div class="row__content">{{ActiveKey}}</div>
         </div>
         <div class="row">
           <div class="row__title">{{$t('用户名称')}}</div>
@@ -87,7 +102,8 @@ export default {
   name: 'AccountNew',
   data() {
     return {
-      publicKey: '',
+      OwnerKey: '',
+      ActiveKey: '',
       accountName: '',
       accountCreator: '',
       submitting: false,
@@ -100,8 +116,11 @@ export default {
     isValidAccountName() {
       return this.accountName && isValidAccountName(this.accountName);
     },
-    isValidPublicKey() {
-      return this.publicKey && isValidPublic(this.publicKey);
+    isValidOwnerKey() {
+      return this.OwnerKey && isValidPublic(this.OwnerKey);
+    },
+    isValidActiveKey() {
+      return this.ActiveKey && isValidPublic(this.ActiveKey);
     },
     creatorAccountName() {
       return this.$route.params.accountName;
@@ -142,7 +161,7 @@ export default {
   },
   methods: {
     confirmInfo() {
-      if (this.isValidAccountName && this.isValidPublicKey && (this.accountCreator || this.creatorAccountName)) {
+      if (this.isValidAccountName && this.isValidOwnerKey && this.isValidActiveKey && (this.accountCreator || this.creatorAccountName)) {
         if (this.creatorAccountName) {
           this.showConfirm = true;
         }
@@ -154,7 +173,8 @@ export default {
           this.modalSubmitting = true;
           return this.newAccount({
             password: this.password,
-            publicKey: this.publicKey,
+            OwnerKey: this.OwnerKey,
+            ActiveKey: this.ActiveKey,
             accountName: this.accountName,
             creator: this.creatorAccountName,
             walletId: this.walletData.publicKey,

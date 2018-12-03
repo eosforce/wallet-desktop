@@ -39,11 +39,11 @@ export const getNodeList = () => {
   return fetch(map[Store.state.app.chainNet]).then(async res => {
     let data = await res.json();
     //trans_main
-    data.nodes.forEach(item => {
-      item.node_addr = '47.99.167.137';
-      item.port_http = '19001';
-      item.port_ssl = '';
-    });
+    // data.nodes.forEach(item => {
+    //   item.node_addr = '47.99.167.137';
+    //   item.port_http = '19001';
+    //   item.port_ssl = '';
+    // });
     return data;
   });
 };
@@ -473,9 +473,9 @@ export const getAccountInfo = httpEndpoint => async (accountName, current_node, 
 };
 
 // 创建用户
-export const newAccount = config => ({creator, accountName, publicKey, permission}) => {
+export const newAccount = config => ({creator, accountName, OwnerKey, ActiveKey, permission}) => {
   return Eos(config)
-    .newaccount(creator, accountName, publicKey, publicKey, permission)
+    .newaccount(creator, accountName, OwnerKey, ActiveKey, permission)
     .catch(err => {
       return handleApiError(err);
     });

@@ -1,8 +1,8 @@
-var spawn = require('child_process').spawn;
-var git_status = spawn('git', ['status']);
-var fs = require('fs');
+const spawn = require('child_process').spawn;
+const git_status = spawn('git', ['status']);
+const fs = require('fs');
 
-var create_cmd = (cmd, args) => {
+const create_cmd = (cmd, args) => {
     return new Promise((resolve, reject) => {
         var git_status = spawn(cmd, args);
         git_status.on('exit', function (data) {
@@ -14,7 +14,7 @@ var create_cmd = (cmd, args) => {
     });
 }
 
-var read_package = () => {
+const read_package = () => {
     return new Promise((resolve, reject) => {
         fs.readFile(__dirname + '/package.json', {flag: 'r+', encoding: 'utf8'}, function (err, data) {
             if(err) {
@@ -26,27 +26,22 @@ var read_package = () => {
     });
 }
 
-var write_package = (data) => {
+const write_package = (data) => {
     return new Promise((resolve, reject) => {
         console.log(data);
         fs.writeFile(__dirname + '/package.json', data, {flag: 'w'}, function (err) {
-            if(err) {
-                console.log(err);
-                resolve(null);
-            } else {
-                console.log('modified file success');
-                resolve(null);
-            }
+            if(err) console.log(err);
+            resolve(null);
         });
     });
 }
 
-var main = async () => {
-    let package = await read_package();
-    let version = package.version;
-    let version_arr = version.split('.').map(item => parseInt(item));
-    version_arr[version_arr.length - 1] += 1;
-    let new_version = version_arr.join('.');
+const main = async () => {
+    let package = await read_package(),
+        version = package.version,
+        version_arr = version.split('.').map(item => parseInt(item)),
+        version_arr[version_arr.length - 1] += 1,
+        new_version = version_arr.join('.');
     console.log(new_version);
     package.version = new_version;
     let res = await write_package(JSON.stringify(package));

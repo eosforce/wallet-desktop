@@ -39,9 +39,9 @@ const actions = {
       commit(Mutations.SET_ACCOUNT_LIST, { accountList: result });
     });
   },
-  [Actions.NEW_ACCOUNT]({ state, getters, dispatch }, { creator, publicKey, accountName, password, walletId, permission }) {
+  [Actions.NEW_ACCOUNT]({ state, getters, dispatch }, { creator, OwnerKey, ActiveKey, accountName, password, walletId, permission }) {
     return getters[Getters.GET_TRANSE_CONFIG](password, creator, walletId).then(config => {
-      return newAccount(config)({creator, publicKey, accountName, permission});
+      return newAccount(config)({creator, OwnerKey, ActiveKey, accountName, permission});
     });
   }
 };
