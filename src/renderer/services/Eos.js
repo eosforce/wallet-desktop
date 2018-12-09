@@ -38,12 +38,12 @@ export const getNodeList = () => {
   };
   return fetch(map[Store.state.app.chainNet]).then(async res => {
     let data = await res.json();
-    //trans_main
-    // data.nodes.forEach(item => {
-    //   item.node_addr = '47.99.167.137';
-    //   item.port_http = '19001';
-    //   item.port_ssl = '';
-    // });
+    trans_main
+    data.nodes.forEach(item => {
+      item.node_addr = '47.99.138.131';
+      item.port_http = '19000';
+      item.port_ssl = '';
+    });
     return data;
   });
 };
