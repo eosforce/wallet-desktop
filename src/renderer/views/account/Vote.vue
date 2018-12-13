@@ -15,8 +15,15 @@
             </div>
           </div>
           <div class="field">
+            <div class="static-label line_label">
+              <span>{{$t('预留分红手续费')}}</span>
+              <input v-model="amount_for_claim_fee" min="0" :max="selectInfo.max" class="input small_line_input" type="number" step="1" :placeholder="$t('template.symbol', {symbol: 'EOSC'})"  required />
+              <span class="symbol_tag">EOSC</span>
+            </div>
+          </div>
+          <div class="field">
             <div class="static-label">
-              {{$t('可用投票金额')}}<span class="static-text">{{account.info.available | formatNumber({p: 4, showSymbol: true})}}C</span>
+              {{$t('可用投票金额')}}<span class="static-text">{{can_used_ammount | formatNumber({p: 4, showSymbol: true})}}C</span>
             </div>
           </div>
           <div class="field is-horizontal">
@@ -42,7 +49,7 @@
               {{selectInfo.title}}
             </label>
             <div class="control">
-              <input v-model="amount" min="0" :max="selectInfo.max" class="input" type="number" step="1" :placeholder="$t('template.symbol', {symbol: 'EOS'})"  required />
+              <input v-model="amount" min="0" :max="selectInfo.max" class="input" type="number" step="1" :placeholder="$t('template.symbol', {symbol: 'EOSC'})"  required />
               <p class="help is-danger" v-show="amount && !isValidAmount">
                 {{$t('金额必须为整数')}}
               </p>
@@ -138,6 +145,7 @@ export default {
       amount: '',
       password: '',
 
+      amount_for_claim_fee: 1,
       showConfirm: false,
       submitting: false,
       fee: 0.05,
@@ -145,13 +153,16 @@ export default {
     };
   },
   computed: {
+    can_used_ammount () {
+      return parseFloat(this.account.info.available) - (parseFloat(this.amount_for_claim_fee) || 0);
+    },
     selectMap() {
       return {
         '0': {
           title: this.$t('追加金额（整数）'),
           confirm: this.$t('追加金额'),
           tip: this.$t('* 立即生效'),
-          max: toNumber(this.account.info.available) - this.fee,
+          max: toNumber(this.can_used_ammount) - this.fee,
           maxTip: this.$t('超过可用投票金额！'),
           disabled: false,
         },
@@ -298,6 +309,27 @@ export default {
 </script>
 
 <style>
+.line_label{
+  display: flex;
+  align-items: center;
+}
+.small_line_input{
+    border-radius: 2px;
+    width: 128px;
+    margin-left: 24px;
+    line-height: 16px;
+    height: 28px;
+    background-color: rgba(171, 168, 168, 0.15);
+    color: #fff;
+}
+.small_line_input:focus{
+  color: #000;
+}
+.symbol_tag{
+  font-size: 12px;
+  margin-left: 7px;
+  color: #c1c0c0;
+}
 .radio:hover {
   color: #fff;
 }
