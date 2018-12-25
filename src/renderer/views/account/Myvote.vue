@@ -44,7 +44,16 @@
             <span v-show="bp.order < 24">{{bp.adr | formatNumber({p: 0, sign: '%', percentage: 100})}}</span>
           </td>
           <td>{{bp.rewards_pool | formatNumber({p: 4})}}</td>
-          <td>{{ bp.vote && bp.vote.staked | formatNumber({p: 0})}}</td>
+          <td>
+            <template v-if="bp.vote">
+              {{ (bp.vote ? bp.vote && bp.vote.staked : 0) | formatNumber({p: 0})}} 
+            </template>
+            <!-- <template v-if="bp.ramvote">
+              <span style="color:#30e230;">
+                {{ (bp.ramvote ? bp.ramvote && bp.ramvote.staked : 0) | formatNumber({p: 0})}} 
+              </span>
+            </template> -->
+          </td>
           <td>
             <el-tooltip class="item" effect="dark" :content="$t('我的投票*我的投票时间/(总得票数*总投票时间)*奖励池')" placement="top-end">
               <div>
@@ -56,12 +65,15 @@
                 </router-link>
               </div>
             </el-tooltip>
+            
           </td>
           <td>
-            <div v-show="bp.vote.unstaking === '0.0000 EOS'">-</div>
-            <router-link v-show="bp.vote.unstaking !== '0.0000 EOS'" class="button is-small is-outlined" :class="{'grey-button': isLock(bp.vote.unstake_height)}" :to="{name: 'unfreeze', params: { bpname: bp.name }}">
-              {{ bp.vote && bp.vote.unstaking | formatNumber({p: 0}) }}
-            </router-link>
+            <template v-if="bp.vote">
+              <div v-show="bp.vote.unstaking === '0.0000 EOS'">-</div>
+              <router-link v-show="bp.vote.unstaking !== '0.0000 EOS'" class="button is-small is-outlined" :class="{'grey-button': isLock(bp.vote.unstake_height)}" :to="{name: 'unfreeze', params: { bpname: bp.name }}">
+                {{ (bp.vote ? bp.vote && bp.vote.unstaking : '0') | formatNumber({p: 0}) }}
+              </router-link>
+            </template>
           </td>
           <td>
             <router-link class="button is-small is-outlined is-modify" :to="{name: 'vote', params: { bpname: bp.name }}">
@@ -89,9 +101,10 @@ export default {
   name: 'TransferRecord',
   computed: {
     table(){
-      return this.account.bpsTable.filter(bp => bp.hasVote).sort((bp1, bp2) => {
-        return bp2.vote.staked.split(' ')[0] - bp1.vote.staked.split(' ')[0];
-      });
+      return this.account.bpsTable.filter(bp => bp.hasVote || bp.hasrRamvote);
+      // return this.account.bpsTable.filter(bp => bp.hasVote || bp.hasrRamvote).sort((bp1, bp2) => {
+      //   return bp2.vote.staked.split(' ')[0] - bp1.vote.staked.split(' ')[0];
+      // });
     },
     on_load_bps_table(){
       return this.account.on_load_bps_table;

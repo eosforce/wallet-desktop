@@ -71,6 +71,45 @@
                     </li>
                 </ul>
             </div>
+            <!-- {{ramstakedTotal}} -->
+            <!-- box_item -->
+            <div class="box_item">
+                <ul class="account_info_box">
+                    <li class="account_detail_item min_w_200">
+                        <span>{{$t('内存租赁投票')}}:</span>
+                        <span class="cl" v-if="!on_load_info">
+                        {{ ramstakedTotal | formatNumber({p: 0}) }}
+                        </span>
+                        <div class="load_circle account_detail_loader" v-if="on_load_info"></div>
+                    </li>
+                    <li class="account_detail_item min_w_200">
+                        <span>{{$t('内存租赁赎回')}}:</span>
+                        <span class="cl" v-if="!on_load_info">
+                        {{( ramunstakingTotal | formatNumber({p: 0}) ) || 0}}
+                        </span>
+                        <div class="load_circle account_detail_loader" v-if="on_load_info"></div>
+                    </li>
+                </ul>
+            </div>
+            
+            <!-- box_item -->
+            <!-- box_item -->
+            <div class="box_item">
+                <ul class="account_info_box">
+                    <li class="account_detail_item min_w_200">
+                        <span>{{$t('内存总量')}}:</span>
+                        <span class="cl" v-if="!on_load_info">{{ram_quota}} K</span>
+                        <div class="load_circle account_detail_loader" v-if="on_load_info"></div>
+                    </li>
+                    <li>
+                        <span>{{$t('已使用内存')}}:</span>
+                        <span class="cl" v-if="!on_load_info">{{ram_usage}} K</span>
+                        <div class="load_circle account_detail_loader" v-if="on_load_info"></div>
+                    </li>
+                </ul>
+            </div>
+            
+            <!-- box_item -->
         </div>
     </div>
 </template>
@@ -133,6 +172,18 @@ export default {
                     return true;
                 }
             });
+        },
+        ram_quota () {
+            return (this.baseInfo.ram_quota/1000).toFixed(4);
+        },
+        ram_usage () {
+            return (this.baseInfo.ram_usage/1000).toFixed(4);
+        },
+        ramstakedTotal () {
+            return this.account.info.ramstakedTotal;
+        },
+        ramunstakingTotal () {
+            return this.account.info.ramunstakingTotal;
         },
         walletData() {
             return this.wallet.data || {};

@@ -24,6 +24,7 @@ import { Actions } from '@/constants/types.constants';
 import AccountOverview from '@/views/account/AccountOverview';
 import TransferRecord from '@/views/account/TransferRecord';
 import BpList from '@/views/account/BpList';
+import Vote4ramList from '@/views/account/Vote4ramList'
 import Myvote from '@/views/account/Myvote';
 import AlternateNode from '@/views/account/AlternateNode';
 import RateInstructions from '@/views/account/RateInstructions';
@@ -35,14 +36,14 @@ export default {
         return {
             tabMap: [
                 { tabName: this.$t('超级节点'), tabKey: 'BpList', img1: 'node.png', img2: 'node_w.png' },
-                // { tabName: this.$t('候选节点'), tabKey: 'AlternateNode', img1: 'laternode.png', img2: 'laternode_w.png' },
                 { tabName: this.$t('我的投票'), tabKey: 'Myvote', img1: 'vote.png', img2: 'vote_w.png' },
+                { tabName: this.$t('内存租赁'), tabKey: 'Vote4ramList', img1: 'vote.png', img2: 'vote_w.png' },
                 { tabName: this.$t('我的 Token'), tabKey: 'TokenList', img1: 'token.png', img2: 'token_w.png' },
                 { tabName: this.$t('交易记录'), tabKey: 'TransferRecord', img1: 'exchange.png', img2: 'exchange_w.png' },
                 { tabName: this.$t('资产说明'), tabKey: 'RateInstructions', img1: 'assets.png', img2: 'assets_w.png' },
                 { tabName: this.$t('原力生态'), tabKey: '_', img1: 'assets.png', img2: 'assets_w.png', is_url: true, url: 'https://eosforce.io//?lang=cn' },
             ],
-            tab_name_keys: ['超级节点', '我的投票', '我的 Token', '交易记录', '资产说明', '原力生态'],
+            tab_name_keys: ['超级节点', '我的投票', '内存租赁','我的 Token', '交易记录', '资产说明', '原力生态'],
             super_name: this.$t('超级节点'),
             spin: false,
             currentTab: 'BpList', // currentTab 用于标识当前触发的子组件,
@@ -131,6 +132,7 @@ export default {
         AlternateNode,
         RateInstructions,
         TokenList,
+        Vote4ramList
     },
 };
 </script>
