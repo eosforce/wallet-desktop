@@ -38,12 +38,12 @@ export const getNodeList = () => {
   };
   return fetch(map[Store.state.app.chainNet]).then(async res => {
     let data = await res.json();
-    // trans_main
-    data.nodes.forEach(item => {
-      item.node_addr = '47.99.138.131';
-      item.port_http = '19000';
-      item.port_ssl = '';
-    });
+    //trans_main
+    // data.nodes.forEach(item => {
+    //   item.node_addr = '47.99.138.131';
+    //   item.port_http = '8080';
+    //   item.port_ssl = '';
+    // });
     return data;
   });
 };
@@ -283,6 +283,24 @@ export const getVotesTable = httpEndpoint => async (accountName, concel_containe
   return data;
 };
 
+// 获取 votes4ram 表
+export const getVotes4ramTable = httpEndpoint => async (accountName, concel_container = {cancel: []}) => {
+  let CancelToken = axios.CancelToken;
+  let data = await axios.post(httpEndpoint + API.get_table_rows, 
+    { 
+      scope: string_to_name(accountName), code: 'eosio', table: 'votes4ram', json: true, limit: 1000
+    },  
+    {
+      cancelToken: new CancelToken(function executor(c) {
+        concel_container.cancel.push(c);
+      })
+    }
+  )
+  .then(data => data.data.rows)
+  .catch(err => []);
+  return data;
+};
+
 // table
 export const getTable = httpEndpoint => async (params, concel_container = {cancel: []}) => {
   let CancelToken = axios.CancelToken;
@@ -304,6 +322,7 @@ export const getTable = httpEndpoint => async (params, concel_container = {cance
 export const getGlobalTable = httpEndpoint => async (accountName, current_node, block) => {
   let start_time = new Date().getTime();
   let votesTable = await getVotesTable(httpEndpoint)(accountName);
+  let votes4ramTable = await getVotes4ramTable(httpEndpoint)(accountName);
   let bpsTable = await getBpsTable(httpEndpoint)();
   const { head_block_num: currentHeight } = current_node || await getNodeInfo(httpEndpoint);
   const { schedule_version } = block || await getBlock(httpEndpoint)(currentHeight);
@@ -320,14 +339,16 @@ export const getGlobalTable = httpEndpoint => async (accountName, current_node, 
   });
   return {
     votesTable,
+    votes4ramTable,
     bpsTable,
     superBpsAmountTable,
     version,
   }
 }
 // 根据 bp 和 vote 得到分红表，返回一个对象
-export const getRewardsAndBpsTable = httpEndpoint => async (accountName, current_node, concel_container = {cancel: []}, votesTable, bpsTable, superBpsAmountTable, block) => {
+export const getRewardsAndBpsTable = httpEndpoint => async (accountName, current_node, concel_container = {cancel: []}, votesTable, votes4ramTable, bpsTable, superBpsAmountTable, block) => {
   votesTable = votesTable || await getVotesTable(httpEndpoint)(accountName);
+  votes4ramTable = votes4ramTable || await getVotes4ramTable(httpEndpoint)(accountName);
   bpsTable = bpsTable || await getBpsTable(httpEndpoint)();
 
   const { head_block_num: currentHeight } = current_node || await getNodeInfo(httpEndpoint);
@@ -362,7 +383,7 @@ export const getRewardsAndBpsTable = httpEndpoint => async (accountName, current
     }
 
     const vote = votesTable.find(row => row.bpname === bpRow.name);
-
+    const ramvote = votes4ramTable.find(row => row.bpname === bpRow.name);
     if (bpRow.name === accountName) {
       bpInfo = {
         bpname: bpRow,
@@ -404,6 +425,13 @@ export const getRewardsAndBpsTable = httpEndpoint => async (accountName, current
       bpRow.hasVote = calcVoteExist(vote.staked, reward, vote.unstaking);
     }
 
+    if(ramvote){
+      const reward = 0;
+      const extraRow = { bpname: ramvote.bpname, reward, ...ramvote };
+      rewardsTable.push({...extraRow});
+      bpRow.ramvote = { ...extraRow };
+      bpRow.hasRamvote = calcVoteExist(ramvote.staked, reward, ramvote.unstaking);
+    }
     // superBpTable.push(bpRow);
     if (bpRow.isSuperBp) {
       superBpTable.push(bpRow);
@@ -413,7 +441,14 @@ export const getRewardsAndBpsTable = httpEndpoint => async (accountName, current
   }
   const stakedTotal = calcTotalAmount(votesTable, 'staked');
   const unstakingTotal = calcTotalAmount(votesTable, 'unstaking');
+  const ramstakedTotal = calcTotalAmount(votes4ramTable, 'staked');
+  const ramunstakingTotal = calcTotalAmount(votes4ramTable, 'unstaking');
   const rewardTotal = calcTotalAmount(rewardsTable, 'reward');
+  for(let item of bpsTable){
+    if(item.name == 'jiqix'){
+      console.log(item, 'jiqix');
+    }
+  }
   return {
     rewardsTable,
     bpsTable: superBpTable
@@ -430,8 +465,11 @@ export const getRewardsAndBpsTable = httpEndpoint => async (accountName, current
       ),
     bpInfo,
     votesTable,
+    votes4ramTable,
     stakedTotal,
     unstakingTotal,
+    ramstakedTotal,
+    ramunstakingTotal,
     rewardTotal,
     version
   };
@@ -441,9 +479,9 @@ export const count_asset_total = (available, stakedTotal, unstakingTotal, reward
   return calcTotalAmount([available, stakedTotal, unstakingTotal, rewardTotal]);
 }
 
-export const getAccountInfo = httpEndpoint => async (accountName, current_node, concel_container = {cancel: []}, votesTable, bpsTable, superBpsAmountTable) => {
+export const getAccountInfo = httpEndpoint => async (accountName, current_node, concel_container = {cancel: []}, votesTable, votes4ramTable, bpsTable, superBpsAmountTable) => {
   const [available, account_base_info] = await Promise.all([getAvailable(httpEndpoint)(accountName), getAccount(httpEndpoint)(accountName)]);
-  const reward_res = await getRewardsAndBpsTable(httpEndpoint)(accountName, current_node, concel_container = {cancel: []}, votesTable, bpsTable, superBpsAmountTable);
+  const reward_res = await getRewardsAndBpsTable(httpEndpoint)(accountName, current_node, concel_container = {cancel: []}, votesTable, votes4ramTable, bpsTable, superBpsAmountTable);
   bpsTable = reward_res.bpsTable;
   votesTable = reward_res.votesTable;
   const {rewardsTable, bpInfo} = reward_res;
@@ -543,6 +581,21 @@ export const claim = config => {
   };
 };
 
+
+export const vote4ram = async (config, {voter, bpname, amount, permission}) => {
+    // config.httpEndpoint = 'http://w2.eosforce.cn'
+    let token = await Eos(config).contract('eosio');
+    let res = await token.vote4ram(voter, bpname, toAsset(amount), permission).catch(err => { handleApiError(err) }).then(res => res);
+    return res;
+};
+
+export const unfreeze4ram = async (config, { voter, bpname, permission }) => {
+    let token = await Eos(config).contract('eosio');
+    let res = await token.unfreezeram(voter, bpname, permission).catch(err => { handleApiError(err) }).then(res => res);
+    return res;
+};
+
+
 export const transfer_owner_auth = config => (name, to_public_key, permission) => {
   return new Promise((resolve, reject) => {
     Eos(config)
@@ -638,6 +691,7 @@ export const issue_token = config => async ({to, quantity, memo}) => {
         return null;
       });
 }
+
 
 
 

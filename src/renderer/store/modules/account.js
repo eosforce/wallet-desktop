@@ -7,6 +7,8 @@ import {
     vote,
     unfreeze,
     claim,
+    vote4ram,
+    unfreeze4ram,
     getTokenList,
     transfer_account,
     getAccount,
@@ -27,6 +29,8 @@ const initState = {
         available: 0,
         stakedTotal: 0,
         unstakingTotal: 0,
+        ramstakedTotal: 0,
+        ramunstakingTotal: 0,
         rewardTotal: 0,
         baseInfo: {},
     },
@@ -34,6 +38,7 @@ const initState = {
     bpsTable: [],
     baseBpsTable: [],
     votesTable: [],
+    votes4ramTable: [],
     superBpsAmountTable: [],
     transferRecords: {
         offset: -20,
@@ -78,6 +83,9 @@ const mutations = {
     },
     [Mutations.SET_VOTES_TABLE](state, { votesTable = [] } = {}) {
         state.votesTable.splice(0, state.votesTable.length, ...votesTable);
+    },
+    [Mutations.SET_VOTES4RAM_TABLE](state, { votes4ramTable = [] } = {}) {
+        state.votes4ramTable.splice(0, state.votes4ramTable.length, ...votes4ramTable);
     },
     [Mutations.SET_SUPER_PSAMOUNT_TABLE](state, { superBpsAmountTable = [] } = {}) {
         state.superBpsAmountTable.splice(0, state.superBpsAmountTable.length, ...superBpsAmountTable);
@@ -193,6 +201,13 @@ const mutations = {
     set_unstaking_total(state, unstaking_total) {
         state.info.unstakingTotal = unstaking_total;
     },
+    set_ramstaked_total(state, ramstake_total) {
+        state.info.ramstakedTotal = ramstake_total;
+    },
+    set_ramunstaking_total(state, ramunstaking_total) {
+        state.info.ramunstakingTotal = ramunstaking_total;
+    },
+    // ramstakedTotal
     set_reward_total(state, reward_total) {
         state.info.rewardTotal = reward_total;
     },
@@ -209,6 +224,7 @@ const mutations = {
         state.pre_load_bps_key = '';
         state.pre_load_token_key = '';
         state.votesTable = [];
+        state.votes4ramTable = [];
     },
     set_cancle_requests(state, cancel) {
         for (let item of cancel) {
@@ -248,6 +264,20 @@ const actions = {
         return getters[Getters.GET_TRANSE_CONFIG](password, voter, walletId).then(config => {
             return vote(config)({ voter, bpname, amount, permission });
         });
+    },
+    [Actions.VOTE4RAM]({ state, dispatch, getters }, { voter, bpname, amount, password, walletId, permission }) {
+        return new Promise(async (resolve, reject) => {
+            let config = await getters[Getters.GET_TRANSE_CONFIG](password, voter, walletId);
+            let res = await vote4ram(config, { voter, bpname, amount, permission });
+            resolve(res);
+        })
+    },
+    [Actions.UNFREEZE4RAM]({ state, dispatch, getters }, { voter, bpname, password, walletId, permission }) {
+        return new Promise(async (resolve, reject) => {
+            let config = await getters[Getters.GET_TRANSE_CONFIG](password, voter, walletId);
+            let res = await unfreeze4ram(config, { voter, bpname, permission });
+            resolve(res);
+        })
     },
     [Actions.UNFREEZE]({ state, dispatch, getters }, { voter, bpname, password, walletId, permission }) {
         return getters[Getters.GET_TRANSE_CONFIG](password, voter, walletId).then(config => {
@@ -296,9 +326,11 @@ const actions = {
         if(!current_node_info) return ;
         let response = await getGlobalTable(node_url)(accountName, current_node_info, block_info);
         if(!response) return ;
-        let { votesTable, bpsTable, superBpsAmountTable } = response;
+        let { votesTable, bpsTable, votes4ramTable, superBpsAmountTable } = response;
+        commit(Mutations.SET_VOTES4RAM_TABLE, { votes4ramTable });
         commit(Mutations.SET_VOTES_TABLE, { votesTable });
         commit(Mutations.SET_BASE_BPS_TABLE, { bpsTable });
+
         commit(Mutations.SET_SUPER_PSAMOUNT_TABLE, { superBpsAmountTable });
     },
     async [Actions.GET_ACCOUNT_INFO]({ state, dispatch, commit, getters }, key) {
@@ -316,16 +348,18 @@ const actions = {
         commit('set_cancle_requests', cancle_requests.cancel);
         var baseBpsTable = state.baseBpsTable.length > 0 ? JSON.parse(JSON.stringify(state.baseBpsTable)) : null;
         var votesTable = state.votesTable.length > 0 ? JSON.parse(JSON.stringify(state.votesTable)) : null;
+        var votes4ramTable = state.votes4ramTable.length > 0 ? JSON.parse(JSON.stringify(state.votes4ramTable)) : null;
         var superBpsAmountTable = state.superBpsAmountTable.length > 0 ? JSON.parse(JSON.stringify(state.superBpsAmountTable)) : null;
         let block_info = getters[Getters.CURRENT_BLOCK];
-        var { bpsTable, stakedTotal, unstakingTotal, rewardTotal, version } = await getRewardsAndBpsTable(node_url)(
+        var { bpsTable, stakedTotal, unstakingTotal, ramstakedTotal, ramunstakingTotal, rewardTotal, version } = await getRewardsAndBpsTable(node_url)(
             accountName,
             getters[Getters.CURRENT_NODE_INFO],
             cancle_requests,
             votesTable,
+            votes4ramTable,
             baseBpsTable,
             superBpsAmountTable,
-            block_info
+            block_info,
         );
         if (accountName != state.pre_load_key) {
             return;
@@ -335,6 +369,8 @@ const actions = {
         commit('finish_on_load_bps_table');
         commit('set_staked_total', stakedTotal);
         commit('set_unstaking_total', unstakingTotal);
+        commit('set_ramstaked_total', ramstakedTotal);
+        commit('set_ramunstaking_total', ramunstakingTotal);
         commit('set_reward_total', rewardTotal);
 
         dispatch('check_total_and_set_asset_total');
@@ -398,9 +434,10 @@ const actions = {
         let current_node_info = getters[Getters.CURRENT_NODE_INFO];
         var baseBpsTable = state.baseBpsTable.length > 0 ? JSON.parse(JSON.stringify(state.baseBpsTable)) : null;
         var votesTable = state.votesTable.length > 0 ? JSON.parse(JSON.stringify(state.votesTable)) : null;
+        var votes4ramTable = state.votes4ramTable.length > 0 ? JSON.parse(JSON.stringify(state.votes4ramTable)) : null;
         var superBpsAmountTable = state.superBpsAmountTable.length > 0 ? JSON.parse(JSON.stringify(state.superBpsAmountTable)) : null;
         return getAccountInfo(getters[Getters.CURRENT_NODE])(
-            accountName, current_node_info, { cancel: [] }, votesTable, baseBpsTable, superBpsAmountTable).then(({ bpsTable }) => {
+            accountName, current_node_info, { cancel: [] }, votesTable, votes4ramTable, baseBpsTable, superBpsAmountTable).then(({ bpsTable }) => {
             if (accountName != state.pre_load_key) {
                 return;
             }
@@ -412,9 +449,10 @@ const actions = {
         let current_node_info = getters[Getters.CURRENT_NODE_INFO];
         var baseBpsTable = state.baseBpsTable.length > 0 ? JSON.parse(JSON.stringify(state.baseBpsTable)) : null;
         var votesTable = state.votesTable.length > 0 ? JSON.parse(JSON.stringify(state.votesTable)) : null;
+        var votes4ramTable = state.votes4ramTable.length > 0 ? JSON.parse(JSON.stringify(state.votes4ramTable)) : null;
         var superBpsAmountTable = state.superBpsAmountTable.length > 0 ? JSON.parse(JSON.stringify(state.superBpsAmountTable)) : null;
         return getAccountInfo(getters[Getters.CURRENT_NODE])(
-            accountName, current_node_info, { cancel: [] }, votesTable, baseBpsTable, superBpsAmountTable).then(({ info }) => {
+            accountName, current_node_info, { cancel: [] }, votesTable, votes4ramTable, baseBpsTable, superBpsAmountTable).then(({ info }) => {
             if (accountName != state.pre_load_key) {
                 return;
             }

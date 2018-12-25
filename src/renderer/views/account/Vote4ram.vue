@@ -2,7 +2,7 @@
   <div class="modal is-active">
     <div class="cover-page">
       <div class="cover-page__content">
-        <div class="cover-page__title">{{$t('超级节点投票')}}</div>
+        <div class="cover-page__title">{{$t('内存租赁')}}</div>
         <form class="cover-page__form" @submit.prevent="confirmInfo">
           <div class="field">
             <div class="static-label">
@@ -11,7 +11,7 @@
           </div>
           <div class="field">
             <div class="static-label">
-              {{$t('当前投票金额')}}<span class="static-text">{{stakedAmount | formatNumber({p: 0, showSymbol: true})}}C</span>
+              {{$t('当前投票金额')}}<span class="static-text">{{ramstakedAmount | formatNumber({p: 0, showSymbol: true})}}C</span>
             </div>
           </div>
           <div class="field">
@@ -33,11 +33,11 @@
             <div class="control" style="margin-left:16px;color:#fff;">
               <label class="radio">
                 <input type="radio" v-model="selectType" value="0" :disabled="selectMap['0'].disabled">
-                {{$t('追加投票')}}
+                {{$t('内存租赁')}}
               </label>
               <label class="radio">
                 <input type="radio" v-model="selectType" value="1" :disabled="selectMap['1'].disabled">
-                {{$t('赎回投票')}}
+                {{$t('取消内存')}}
               </label>
               <p class="help is-danger" v-show="amount && !isValidAmount">
                 {{$t('金额必须为整数')}}
@@ -139,13 +139,12 @@ import { isValidAmount } from '@/utils/rules';
 import { toNumber, symblo_change } from '@/utils/util';
 
 export default {
-  name: 'vote',
+  name: 'vote4ram',
   data() {
     return {
       amount: '',
       password: '',
 
-      amount_for_claim_fee: 1,
       showConfirm: false,
       submitting: false,
       fee: 0.05,
@@ -154,9 +153,6 @@ export default {
     };
   },
   computed: {
-    can_used_ammount () {
-      return parseFloat(this.account.info.available) - (parseFloat(this.amount_for_claim_fee) || 0);
-    },
     selectMap() {
       return {
         '0': {
@@ -171,17 +167,17 @@ export default {
           title: this.$t('赎回金额（整数）'),
           confirm: this.$t('赎回金额'),
           tip: this.$t('* 赎回锁定期三天，三天后需手动解锁'),
-          max: toNumber(this.stakedAmount),
+          max: toNumber(this.ramstakedAmount),
           maxTip: this.$t('超过当前投票金额！'),
-          disabled: toNumber(this.stakedAmount) <= 0,
+          disabled: toNumber(this.ramstakedAmount) <= 0,
         }
       };
     },
     newStakedAmount() {
       if (this.selectType === '0') {
-        return toNumber(this.stakedAmount) + toNumber(this.amount);
+        return toNumber(this.ramstakedAmount) + toNumber(this.amount);
       } else if (this.selectType === '1') {
-        return toNumber(this.stakedAmount) - toNumber(this.amount);
+        return toNumber(this.ramstakedAmount) - toNumber(this.amount);
       } else {
         return undefined;
       }
@@ -200,6 +196,18 @@ export default {
       if (bp) {
         if (bp.vote) {
           return bp.vote.staked;
+        } else {
+          return '0 EOS';
+        }
+      } else {
+        return null;
+      }
+    },
+    ramstakedAmount() {
+      const bp = this.account.bpsTable && this.account.bpsTable.find(bp => this.bpname === bp.name);
+      if (bp) {
+        if (bp.ramvote) {
+          return bp.ramvote.staked;
         } else {
           return '0 EOS';
         }
@@ -267,7 +275,7 @@ export default {
     },
     submit() {
       this.submitting = true;
-      this.vote({
+      this.vote4ram({
         amount: this.newStakedAmount,
         bpname: this.bpname,
         password: this.password,
@@ -300,7 +308,7 @@ export default {
     symblo_change,
     ...mapActions({
       getAccountInfo: Actions.GET_ACCOUNT_INFO,
-      vote: Actions.VOTE,
+      vote4ram: Actions.VOTE4RAM,
     }),
   },
   components: {
@@ -310,27 +318,6 @@ export default {
 </script>
 
 <style>
-.line_label{
-  display: flex;
-  align-items: center;
-}
-.small_line_input{
-    border-radius: 2px;
-    width: 128px;
-    margin-left: 24px;
-    line-height: 16px;
-    height: 28px;
-    background-color: rgba(171, 168, 168, 0.15);
-    color: #fff;
-}
-.small_line_input:focus{
-  color: #000;
-}
-.symbol_tag{
-  font-size: 12px;
-  margin-left: 7px;
-  color: #c1c0c0;
-}
 .small_input{
     border-radius: 4px;
     outline: none;

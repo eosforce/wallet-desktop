@@ -1,5 +1,12 @@
 export default {
   en: {
+    已使用内存: 'Used Memory',
+    内存总量: 'Available Memory',
+    内存租赁: 'Memory lease',
+    租赁内存: 'Lease memory',
+    取消内存: 'Cancel memory',
+    内存租赁投票: 'Memory lease voting',
+    内存租赁赎回: 'Memory lease redemption',
     交易状态: 'Status',
     合约账户: 'contract name',
     原力生态: 'EOSForce Ecosystem',
@@ -339,6 +346,13 @@ export default {
     },
   },
   kr: {
+    已使用内存: 'Used Memory',
+    内存总量: 'Available Memory',
+    内存租赁: '메모리 임대',
+    租赁内存: '임대 메모리',
+    取消内存: '메모리 취소',
+    内存租赁投票: '메모리리스 투표',
+    内存租赁赎回: '메모리리스 상환',
     交易状态: '거래 상태',
     合约账户: '계약 계정',
     原力生态: 'EOSForce 생태학',

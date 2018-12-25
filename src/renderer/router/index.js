@@ -81,6 +81,20 @@ export default new Router({
                     modal: () => import('@/views/account/Claim'),
                   },
                 },
+                {
+                    name: 'vote4ram',
+                    path: ':bpname/vote4ram',
+                    components: {
+                      modal: () => import('@/views/account/Vote4ram'),
+                    },
+                },
+                {
+                    name: 'Unfreeze4ram',
+                    path: ':bpname/Unfreeze4ram',
+                    components: {
+                      modal: () => import('@/views/account/Unfreeze4ram'),
+                    },
+                },
               ],
             },
           ],

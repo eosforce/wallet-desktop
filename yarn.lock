@@ -1253,8 +1253,8 @@ balanced-match@^1.0.0:
   resolved "https://registry.yarnpkg.com/balanced-match/-/balanced-match-1.0.0.tgz#89b4d199ab2bee49de164ea02b89ce462d71b767"
 
 base-x@^3.0.2:
-  version "3.0.4"
-  resolved "https://registry.yarnpkg.com/base-x/-/base-x-3.0.4.tgz#94c1788736da065edb1d68808869e357c977fa77"
+  version "3.0.5"
+  resolved "https://registry.yarnpkg.com/base-x/-/base-x-3.0.5.tgz#d3ada59afed05b921ab581ec3112e6444ba0795a"
   dependencies:
     safe-buffer "^5.0.1"
 
@@ -2855,20 +2855,20 @@ env-paths@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/env-paths/-/env-paths-1.0.0.tgz#4168133b42bb05c38a35b1ae4397c8298ab369e0"
 
-eosforce@^15.0.0:
-  version "15.0.0"
-  resolved "https://registry.yarnpkg.com/eosforce/-/eosforce-15.0.0.tgz#0781287f0b47f5bb67761a8116008444ad682804"
+eosforce@^15.0.1:
+  version "15.0.1"
+  resolved "https://registry.yarnpkg.com/eosforce/-/eosforce-15.0.1.tgz#7570602445b6b142d63afe4955f387ddf4c9a0ec"
   dependencies:
     babel-runtime "^6.26.0"
     binaryen "^37.0.0"
     create-hash "^1.1.3"
-    eosjs-api "git+https://github.com/eosforce/eosjs-api#e1e17b5"
+    eosjs-api "git+https://github.com/eosforce/eosjs-api#faea748"
     eosjs-ecc "4.0.1"
     fcbuffer "2.2.0"
 
-"eosjs-api@git+https://github.com/eosforce/eosjs-api#e1e17b5":
+"eosjs-api@git+https://github.com/eosforce/eosjs-api.git#faea748":
   version "6.2.1"
-  resolved "git+https://github.com/eosforce/eosjs-api#e1e17b5a9c9e03d666d6450892378909d4afdf71"
+  resolved "git+https://github.com/eosforce/eosjs-api.git#faea748329e316110513debcdcaa7ffd4873268f"
   dependencies:
     camel-case "^3.0.0"
     isomorphic-fetch "^2.2.1"
@@ -4122,9 +4122,15 @@ iconv-lite@0.4.19:
   version "0.4.19"
   resolved "https://registry.yarnpkg.com/iconv-lite/-/iconv-lite-0.4.19.tgz#f7468f60135f5e5dad3399c0a81be9a1603a082b"
 
-iconv-lite@^0.4.17, iconv-lite@^0.4.19, iconv-lite@^0.4.4, iconv-lite@~0.4.13:
+iconv-lite@^0.4.17, iconv-lite@^0.4.19, iconv-lite@^0.4.4:
   version "0.4.23"
   resolved "https://registry.yarnpkg.com/iconv-lite/-/iconv-lite-0.4.23.tgz#297871f63be507adcfbfca715d0cd0eed84e9a63"
+  dependencies:
+    safer-buffer ">= 2.1.2 < 3"
+
+iconv-lite@~0.4.13:
+  version "0.4.24"
+  resolved "https://registry.yarnpkg.com/iconv-lite/-/iconv-lite-0.4.24.tgz#2022b4b25fbddc21d2f524974a474aafe733908b"
   dependencies:
     safer-buffer ">= 2.1.2 < 3"
 
@@ -7985,8 +7991,8 @@ websocket-extensions@>=0.1.1:
   resolved "https://registry.yarnpkg.com/websocket-extensions/-/websocket-extensions-0.1.3.tgz#5d2ff22977003ec687a4b87073dfbbac146ccf29"
 
 whatwg-fetch@>=0.10.0:
-  version "2.0.4"
-  resolved "https://registry.yarnpkg.com/whatwg-fetch/-/whatwg-fetch-2.0.4.tgz#dde6a5df315f9d39991aa17621853d720b85566f"
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/whatwg-fetch/-/whatwg-fetch-3.0.0.tgz#fc804e458cc460009b1a2b966bc8817d2578aefb"
 
 whet.extend@~0.9.9:
   version "0.9.9"
