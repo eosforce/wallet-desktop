@@ -1,4 +1,5 @@
-import Eos from 'eosforce';
+import eosforce from '@/services/eosforce';
+
 import axios from 'axios'
 import { NODE_API_URL } from '@/constants/config.constants';
 import Store from '@/store';
@@ -444,11 +445,6 @@ export const getRewardsAndBpsTable = httpEndpoint => async (accountName, current
   const ramstakedTotal = calcTotalAmount(votes4ramTable, 'staked');
   const ramunstakingTotal = calcTotalAmount(votes4ramTable, 'unstaking');
   const rewardTotal = calcTotalAmount(rewardsTable, 'reward');
-  for(let item of bpsTable){
-    if(item.name == 'jiqix'){
-      console.log(item, 'jiqix');
-    }
-  }
   return {
     rewardsTable,
     bpsTable: superBpTable

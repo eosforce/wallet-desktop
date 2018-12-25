@@ -2866,9 +2866,9 @@ eosforce@^15.0.1:
     eosjs-ecc "4.0.1"
     fcbuffer "2.2.0"
 
-"eosjs-api@git+https://github.com/eosforce/eosjs-api.git#faea748":
+"eosjs-api@git+https://github.com/eosforce/eosjs-api#faea748":
   version "6.2.1"
-  resolved "git+https://github.com/eosforce/eosjs-api.git#faea748329e316110513debcdcaa7ffd4873268f"
+  resolved "git+https://github.com/eosforce/eosjs-api#faea748329e316110513debcdcaa7ffd4873268f"
   dependencies:
     camel-case "^3.0.0"
     isomorphic-fetch "^2.2.1"
