@@ -64,6 +64,11 @@
               {{$t('修改后投票金额')}}<span class="static-text">{{newStakedAmount | formatNumber({p: 0, showSymbol: true})}}C</span>
             </div>
           </div>
+          <div class="field">
+            <div class="static-label">
+              {{$t('内存量')}}<span class="static-text">{{ ((newStakedAmount/10)).toFixed(4) }} K</span>
+            </div>
+          </div>
           <div class="field is-grouped is-grouped-right">
             <div class="control">
               <a tabindex="-1" class="button cancel-button" @click="close">{{$t('取消')}}</a>
@@ -96,7 +101,7 @@
         </div>
         <div class="row">
           <div class="row__title">{{$t('交易名称')}}</div>
-          <div class="row__content">{{$t('超级节点投票')}}</div>
+          <div class="row__content">{{$t('内存租赁')}}</div>
         </div>
         <div class="row">
           <div class="row__title">{{$t('超级节点')}}</div>
@@ -284,9 +289,23 @@ export default {
         permission: this.permissions.filter(item => item.is_have)[0].name
       })
         .then(result => {
+
+          if(result.is_error){
+            let err = result.msg;
+            let error_msg = err.error ? err.error.details.map(item => item.message).join(';') : '';
+            error_msg = error_msg || err.message;
+            Message.error({
+              title: `${err.code ? `code: ${err.code}` : this.$t('投票失败')}`,
+              message: error_msg,
+            });
+            this.submitting = false;
+            return Promise.reject(err);
+          }
+
           Message.success(this.$t('投票成功'));
         })
         .catch(err => {
+          err = err.msg;
           Message.error({
             title: `${err.code ? `code: ${err.code}` : this.$t('投票失败')}`,
             message: err.message,

@@ -98,12 +98,12 @@
                 <ul class="account_info_box">
                     <li class="account_detail_item min_w_200">
                         <span>{{$t('内存总量')}}:</span>
-                        <span class="cl" v-if="!on_load_info">{{ram_quota}} K</span>
+                        <span class="cl" v-if="!on_load_info && ram_quota">{{ram_quota}} K</span>
                         <div class="load_circle account_detail_loader" v-if="on_load_info"></div>
                     </li>
                     <li>
                         <span>{{$t('已使用内存')}}:</span>
-                        <span class="cl" v-if="!on_load_info">{{ram_usage}} K</span>
+                        <span class="cl" v-if="!on_load_info && ram_usage">{{ram_usage}} K</span>
                         <div class="load_circle account_detail_loader" v-if="on_load_info"></div>
                     </li>
                 </ul>

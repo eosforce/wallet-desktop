@@ -302,7 +302,9 @@ const actions = {
                 state.info.available,
                 state.info.stakedTotal,
                 state.info.unstakingTotal,
-                state.info.rewardTotal
+                state.info.rewardTotal,
+                state.info.ramstakedTotal,
+                state.info.ramunstakingTotal
             )
             commit('set_asset_total', asset_total);
             commit(Mutations.FINISH_LOAD_ACCOUNT_INFO);

@@ -5,7 +5,7 @@
       <div class="graphic">
         <div class="graphic-item">
           <img src="@/assets/vote/redeem.png">
-          <label>{{$t('赎回金额')}}</label>
+          <label>{{$t('内存租赁赎回')}}</label>
         </div>
         <div class="graphic-item">
           <img style="width: 50px;margin-left:50px;margin-right:50px;" src="@/assets/vote/transform.png">
@@ -157,6 +157,19 @@ export default {
         permission: this.permissions.filter(item => item.is_have)[0].name
       })
         .then(result => {
+
+          if(result.is_error){
+            let err = result.msg;
+            let error_msg = err.error ? err.error.details.map(item => item.message).join(';') : '';
+            error_msg = error_msg || err.message;
+            Message.error({
+              title: `${err.code ? `code: ${err.code}` : this.$t('投票失败')}`,
+              message: error_msg,
+            });
+            this.submitting = false;
+            return Promise.reject(err);
+          }
+          
           Message.success(this.$t('赎回成功'));
         })
         .catch(err => {

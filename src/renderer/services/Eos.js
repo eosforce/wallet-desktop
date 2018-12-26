@@ -471,8 +471,9 @@ export const getRewardsAndBpsTable = httpEndpoint => async (accountName, current
   };
 };
 
-export const count_asset_total = (available, stakedTotal, unstakingTotal, rewardTotal) => {
-  return calcTotalAmount([available, stakedTotal, unstakingTotal, rewardTotal]);
+// available, stakedTotal, unstakingTotal, rewardTotal
+export const count_asset_total = (...args) => {
+  return calcTotalAmount([...args]);
 }
 
 export const getAccountInfo = httpEndpoint => async (accountName, current_node, concel_container = {cancel: []}, votesTable, votes4ramTable, bpsTable, superBpsAmountTable) => {
@@ -480,12 +481,15 @@ export const getAccountInfo = httpEndpoint => async (accountName, current_node, 
   const reward_res = await getRewardsAndBpsTable(httpEndpoint)(accountName, current_node, concel_container = {cancel: []}, votesTable, votes4ramTable, bpsTable, superBpsAmountTable);
   bpsTable = reward_res.bpsTable;
   votesTable = reward_res.votesTable;
+  votes4ramTable = reward_res.votes4ramTable;
   const {rewardsTable, bpInfo} = reward_res;
 
   const stakedTotal = calcTotalAmount(votesTable, 'staked');
   const unstakingTotal = calcTotalAmount(votesTable, 'unstaking');
   const rewardTotal = calcTotalAmount(rewardsTable, 'reward');
-  const assetTotal = calcTotalAmount([available, stakedTotal, unstakingTotal, rewardTotal]);
+  const ramstakedTotal = calcTotalAmount(votes4ramTable, 'staked');
+  const ramunstakingTotal = calcTotalAmount(votes4ramTable, 'unstaking');
+  const assetTotal = calcTotalAmount([available, stakedTotal, unstakingTotal, rewardTotal, ramstakedTotal, ramunstakingTotal]);
 
   const info = {
     assetTotal: toAsset(assetTotal), // 资产总额
@@ -579,15 +583,38 @@ export const claim = config => {
 
 
 export const vote4ram = async (config, {voter, bpname, amount, permission}) => {
-    // config.httpEndpoint = 'http://w2.eosforce.cn'
     let token = await Eos(config).contract('eosio');
-    let res = await token.vote4ram(voter, bpname, toAsset(amount), permission).catch(err => { handleApiError(err) }).then(res => res);
+    let res = await token.vote4ram(voter, bpname, toAsset(amount), permission)
+                    .catch(err => { 
+                      handleApiError(err);
+                      try{
+                        err = JSON.parse(err);
+                      }catch(e){
+
+                      }
+                      return {
+                        is_error: true,
+                        msg: err
+                      }
+                     })
+                    .then(res => res);
     return res;
 };
 
 export const unfreeze4ram = async (config, { voter, bpname, permission }) => {
     let token = await Eos(config).contract('eosio');
-    let res = await token.unfreezeram(voter, bpname, permission).catch(err => { handleApiError(err) }).then(res => res);
+    let res = await token.unfreezeram(voter, bpname, permission)
+                    .catch(err => { 
+                        handleApiError(err);
+                        try{
+                          err = JSON.parse(err);
+                        }catch(e){}
+                        return {
+                          is_error: true,
+                          msg: err
+                        }
+                     })
+                    .then(res => res);
     return res;
 };
 
