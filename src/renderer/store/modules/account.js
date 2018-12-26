@@ -267,15 +267,25 @@ const actions = {
     },
     [Actions.VOTE4RAM]({ state, dispatch, getters }, { voter, bpname, amount, password, walletId, permission }) {
         return new Promise(async (resolve, reject) => {
-            let config = await getters[Getters.GET_TRANSE_CONFIG](password, voter, walletId);
-            let res = await vote4ram(config, { voter, bpname, amount, permission });
+            let config = await getters[Getters.GET_TRANSE_CONFIG](password, voter, walletId).catch(err => {
+                return {
+                    is_error: true,
+                    msg: err
+                }
+            });
+            let res = config.is_error ? config : await vote4ram(config, { voter, bpname, amount, permission });
             resolve(res);
         })
     },
     [Actions.UNFREEZE4RAM]({ state, dispatch, getters }, { voter, bpname, password, walletId, permission }) {
         return new Promise(async (resolve, reject) => {
-            let config = await getters[Getters.GET_TRANSE_CONFIG](password, voter, walletId);
-            let res = await unfreeze4ram(config, { voter, bpname, permission });
+            let config = await getters[Getters.GET_TRANSE_CONFIG](password, voter, walletId).catch(err => {
+                return {
+                    is_error: true,
+                    msg: err
+                }
+            });
+            let res = config.is_error ? config : await unfreeze4ram(config, { voter, bpname, permission });
             resolve(res);
         })
     },
