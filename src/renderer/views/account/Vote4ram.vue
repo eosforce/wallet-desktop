@@ -66,7 +66,7 @@
           </div>
           <div class="field">
             <div class="static-label">
-              {{$t('内存量')}}<span class="static-text">{{ ((newStakedAmount/10)).toFixed(4) }} K</span>
+              {{$t('内存量')}}<span class="static-text">{{ ((newStakedAmount/10) * (1000/1024)).toFixed(4) }} K</span>
             </div>
           </div>
           <div class="field is-grouped is-grouped-right">

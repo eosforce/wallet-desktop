@@ -174,10 +174,10 @@ export default {
             });
         },
         ram_quota () {
-            return (this.baseInfo.ram_quota/1000).toFixed(4);
+            return (this.baseInfo.ram_quota/1024).toFixed(4);
         },
         ram_usage () {
-            return (this.baseInfo.ram_usage/1000).toFixed(4);
+            return (this.baseInfo.ram_usage/1024).toFixed(4);
         },
         ramstakedTotal () {
             return this.account.info.ramstakedTotal;
