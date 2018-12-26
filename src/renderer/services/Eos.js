@@ -1,4 +1,4 @@
-import eosforce from '@/services/eosforce';
+import '@/services/eosforce';
 
 import axios from 'axios'
 import { NODE_API_URL } from '@/constants/config.constants';
