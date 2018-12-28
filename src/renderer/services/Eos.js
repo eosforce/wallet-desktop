@@ -138,7 +138,6 @@ export const getTransAction = httpEndpoint => async (tid) => {
 
 // 查询账户被锁定数额
 export const getLockedEosc = httpEndpoint => async (account_name, concel_container = {cancel: []}) => {
-  // account_name = 'gyzdogenesis';
   let CancelToken = axios.CancelToken;
   let data = await axios.post(httpEndpoint + API.get_table_rows, 
     {
@@ -518,7 +517,7 @@ export const getAccountInfo = httpEndpoint => async (accountName, current_node, 
   const ramstakedTotal = calcTotalAmount(votes4ramTable, 'staked');
   const ramunstakingTotal = calcTotalAmount(votes4ramTable, 'unstaking');
   const assetTotal = calcTotalAmount([available, stakedTotal, unstakingTotal, rewardTotal, ramstakedTotal, ramunstakingTotal]);
-  alert('d');
+  
   const info = {
     assetTotal: toAsset(assetTotal), // 资产总额
     available: toAsset(available), // 可用余额
