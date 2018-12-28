@@ -21,10 +21,10 @@
                         <div class="load_circle account_detail_loader" v-if="on_load_info"></div>
                     </li>
                     <li>
-                        <router-link v-if="!on_load_info && has_active" style="width: 110px;background: #408ee1;border-radius: 17.5px;color: #fff;border: none;" class="button is-small is-link" :to="{name: 'accountCreateAccount'}">
+                        <router-link v-if="!on_load_info && has_active" style="min-width: 110px;background: #408ee1;border-radius: 17.5px;color: #fff;border: none;" class="button is-small is-link" :to="{name: 'accountCreateAccount'}">
                             {{$t('创建用户')}}
                         </router-link>
-                        <router-link v-if="has_owner && !on_load_info" style="width: 110px;background: #408ee1;border-radius: 17.5px;color: #fff;border: none;" class="button is-small is-link" :to="{name: 'accountTransfer'}">
+                        <router-link v-if="has_owner && !on_load_info" style="min-width: 110px;background: #408ee1;border-radius: 17.5px;color: #fff;border: none;" class="button is-small is-link" :to="{name: 'accountTransfer'}">
                             {{$t('账户转让')}}
                         </router-link>
                     </li>
@@ -37,7 +37,12 @@
                 <ul class="account_info_box">
                     <li class="account_detail_item min_w_200">
                         <span>{{$t('资产总额')}}:</span>
-                        <span class="cl" v-if="!on_load_info">{{account.info.assetTotal | formatNumber({p: 4})}}</span>
+                        <span class="cl" v-if="!on_load_info">{{(account.info.assetTotal) | formatNumber({p: 4})}}</span>
+                        <div class="load_circle account_detail_loader" v-if="on_load_info"></div>
+                    </li>
+                    <li>
+                        <span>{{$t('锁定')}}:</span>
+                        <span class="cl" v-if="!on_load_info">{{account.info.locked_eosc | formatNumber({p: 4})}}</span>
                         <div class="load_circle account_detail_loader" v-if="on_load_info"></div>
                     </li>
                     <li class="account_detail_item min_w_200">

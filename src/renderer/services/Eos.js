@@ -136,6 +136,34 @@ export const getTransAction = httpEndpoint => async (tid) => {
   return data;
 };
 
+// 查询账户被锁定数额
+export const getLockedEosc = httpEndpoint => async (account_name, concel_container = {cancel: []}) => {
+  // account_name = 'gyzdogenesis';
+  let CancelToken = axios.CancelToken;
+  let data = await axios.post(httpEndpoint + API.get_table_rows, 
+    {
+          "scope": 'eosio.lock',
+          "code":"eosio.lock",
+          "table":"accounts",
+          "table_key": account_name,
+          "json":true,
+          "limit":1000
+    },  
+    {
+      cancelToken: new CancelToken(function executor(c) {
+        concel_container.cancel.push(c);
+      })
+    }
+  )
+  .then(data => data.data)
+  .catch(err => null);
+  if(!data) return data;
+  if(data.rows && data.rows.length){
+    return toBigNumber(data.rows[0].balance);
+  }
+  return toBigNumber(0);
+};
+
 // 查询账号是否存在
 export const queryAccount = httpEndpoint => accountName => {
   return Eos({ httpEndpoint })
@@ -477,7 +505,7 @@ export const count_asset_total = (...args) => {
 }
 
 export const getAccountInfo = httpEndpoint => async (accountName, current_node, concel_container = {cancel: []}, votesTable, votes4ramTable, bpsTable, superBpsAmountTable) => {
-  const [available, account_base_info] = await Promise.all([getAvailable(httpEndpoint)(accountName), getAccount(httpEndpoint)(accountName)]);
+  const [available, account_base_info, locked_eosc] = await Promise.all([getAvailable(httpEndpoint)(accountName), getAccount(httpEndpoint)(accountName), getLockedEosc(httpEndpoint)(accountName)]);
   const reward_res = await getRewardsAndBpsTable(httpEndpoint)(accountName, current_node, concel_container = {cancel: []}, votesTable, votes4ramTable, bpsTable, superBpsAmountTable);
   bpsTable = reward_res.bpsTable;
   votesTable = reward_res.votesTable;
@@ -490,14 +518,15 @@ export const getAccountInfo = httpEndpoint => async (accountName, current_node, 
   const ramstakedTotal = calcTotalAmount(votes4ramTable, 'staked');
   const ramunstakingTotal = calcTotalAmount(votes4ramTable, 'unstaking');
   const assetTotal = calcTotalAmount([available, stakedTotal, unstakingTotal, rewardTotal, ramstakedTotal, ramunstakingTotal]);
-
+  alert('d');
   const info = {
     assetTotal: toAsset(assetTotal), // 资产总额
     available: toAsset(available), // 可用余额
     stakedTotal: toAsset(stakedTotal), // 投票总额
     unstakingTotal: toAsset(unstakingTotal), // 赎回总额
     rewardTotal: toAsset(rewardTotal), // 待领分红总额
-    baseInfo: account_base_info
+    baseInfo: account_base_info,
+    locked_eosc: locked_eosc
   };
 
   if (bpInfo) {

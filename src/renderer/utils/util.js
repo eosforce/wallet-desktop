@@ -165,6 +165,7 @@ export const genTrConvertFunc = (trName, last_irreversible_block_num) => {
             time: tr.block_time,
             name: act.name,
             from: act.authorization && act.authorization[0] && act.authorization[0].actor,
+            change: act.data.stake,
             status: checkStatus(tr.status),
             block_num: tr.block_num,
             status: tr.status,

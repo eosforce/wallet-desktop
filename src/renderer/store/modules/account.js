@@ -19,7 +19,8 @@ import {
     getBlock,
     create_token,
     issue_token,
-    rank_get_action
+    rank_get_action,
+    getLockedEosc
 } from '@/services/Eos';
 
 const initState = {
@@ -33,6 +34,7 @@ const initState = {
         ramunstakingTotal: 0,
         rewardTotal: 0,
         baseInfo: {},
+        locked_eosc: ''
     },
     version: '',
     bpsTable: [],
@@ -64,6 +66,7 @@ const initState = {
 
 const mutations = {
     [Mutations.SET_ACCOUNT_NAME](state, { accountName = '' } = {}) {
+        // state.accountName = 'gyztqgenesis';
         state.accountName = accountName;
     },
     [Mutations.RESET_ACCOUNT_INFO](state, transfer_rank_order) {
@@ -165,6 +168,9 @@ const mutations = {
     [Mutations.SET_VERSION](state, { version = '' }) {
         state.version = version;
     },
+    set_locked_eosc(state, num){
+        state.info.locked_eosc = num;
+    },
     update_available(state, available) {
         state.info.available = available;
     },
@@ -220,6 +226,7 @@ const mutations = {
         state.info.rewardTotal = 0;
         state.info.assetTotal = 0;
         state.info.baseInfo = {};
+        state.info.locked_eosc = 0;
         state.pre_load_action_key = '';
         state.pre_load_bps_key = '';
         state.pre_load_token_key = '';
@@ -299,6 +306,12 @@ const actions = {
             return claim(config)({ voter, bpname, permission });
         });
     },
+    async GET_LOCKED_EOSC ({ state, dispatch, commit, getters }) {
+        let node_url = getters[Getters.CURRENT_NODE];
+        const accountName = getters[Getters.CURRENT_ACCOUNT_NAME];
+        let res = await getLockedEosc(node_url)(accountName);
+        commit('set_locked_eosc', res);
+    },
     check_total_and_set_asset_total({ state, dispatch, commit, getters }) {
         let is_loaded_all = true;
         let except_key = ['assetTotal', 'baseInfo'];
@@ -314,7 +327,8 @@ const actions = {
                 state.info.unstakingTotal,
                 state.info.rewardTotal,
                 state.info.ramstakedTotal,
-                state.info.ramunstakingTotal
+                state.info.ramunstakingTotal,
+                state.info.locked_eosc
             )
             commit('set_asset_total', asset_total);
             commit(Mutations.FINISH_LOAD_ACCOUNT_INFO);
@@ -386,26 +400,28 @@ const actions = {
         commit('set_reward_total', rewardTotal);
 
         dispatch('check_total_and_set_asset_total');
-
-        await getAvailable(node_url)(accountName, cancle_requests)
+        await dispatch('GET_LOCKED_EOSC');
+        let ps = [];
+        ps.push(getAvailable(node_url)(accountName, cancle_requests)
             .then(available => {
                 if (accountName != state.pre_load_key) {
                     return;
                 }
                 commit('update_available', available);
                 dispatch('check_total_and_set_asset_total');
-            });
+            }));
 
-        commit('set_cancle_requests', cancle_requests.cancel);
 
-        await getAccount(node_url)(accountName, cancle_requests)
+        ps.push(getAccount(node_url)(accountName, cancle_requests)
             .then(baseInfo => {
                 if (accountName != state.pre_load_key) {
                     return;
                 }
                 commit('update_base_info', baseInfo || {});
                 dispatch('check_total_and_set_asset_total');
-            });
+            }));
+        await Promise.all(ps);
+        commit('set_cancle_requests', cancle_requests.cancel);
         commit('set_cancle_requests', cancle_requests.cancel);
     },
     [Actions.GET_TRANSFER_RECORD]({ state, commit, getters }, { accountName, pos, offset, cancle_requests, finished = () => {}, from_top = false }) {
