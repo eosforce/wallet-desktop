@@ -40,7 +40,7 @@
                         <span class="cl" v-if="!on_load_info">{{(account.info.assetTotal) | formatNumber({p: 4})}}</span>
                         <div class="load_circle account_detail_loader" v-if="on_load_info"></div>
                     </li>
-                    <li>
+                    <li class="account_detail_item min_w_200">
                         <span>{{$t('锁定')}}:</span>
                         <span class="cl" v-if="!on_load_info">{{account.info.locked_eosc | formatNumber({p: 4})}}</span>
                         <div class="load_circle account_detail_loader" v-if="on_load_info"></div>

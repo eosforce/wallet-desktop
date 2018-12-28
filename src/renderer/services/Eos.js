@@ -110,7 +110,7 @@ export const getTransferRecord = httpEndpoint => async ({accountName, pos, offse
   let CancelToken = axios.CancelToken;
   let data = await axios.post(httpEndpoint + API.get_actions, 
     { 
-      account_name: accountName, pos: pos, offset: offset, limit: 100
+      account_name: accountName, pos: pos, offset: offset
     },  
     {
       cancelToken: new CancelToken(function executor(c) {
