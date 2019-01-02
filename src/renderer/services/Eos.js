@@ -540,8 +540,12 @@ export const getAccountInfo = httpEndpoint => async (accountName, current_node, 
 
 // 创建用户
 export const newAccount = config => ({creator, accountName, OwnerKey, ActiveKey, permission}) => {
+  let auth = {
+    actor: creator,
+    permission
+  }
   return Eos(config)
-    .newaccount(creator, accountName, OwnerKey, ActiveKey, permission)
+    .newaccount(creator, accountName, OwnerKey, ActiveKey, auth)
     .catch(err => {
       return handleApiError(err);
     });
@@ -551,26 +555,14 @@ export const transfer = config => {
   return ({ from, to, amount, memo = '', tokenSymbol = 'EOS', precision = '4', permission } = {}) => {
     return Promise.resolve()
       .then(async () => {
-        // let expireInSeconds = 60 ;
-        // let eos = Eos(config);
-        // let info = await eos.getInfo({});
-        // let chainDate = new Date(info.head_block_time + 'Z');
-        // let expiration = new Date(chainDate.getTime() + expireInSeconds * 1000);
-        // expiration = expiration.toISOString().split('.')[0];
-        // let block = await eos.getBlock(info.last_irreversible_block_num);
-        // let headers = {
-        //     expiration,
-        //     ref_block_num: info.last_irreversible_block_num & 0xFFFF,
-        //     ref_block_prefix: block.ref_block_prefix,
-        //     net_usage_words: 0,
-        //     max_cpu_usage_ms: 0,
-        //     delay_sec: 60 * 5
-        // }
-        // config.transactionHeaders = (exp, cb) => cb(null, headers);
+        let auth = {
+          actor: from,
+          permission
+        }
         return Eos(config)
           .contract(tokenSymbol === 'EOS' ? 'eosio' : 'eosio.token')
           .then(token => {
-            return token.transfer(from, to, toAsset(amount, tokenSymbol, { precision }), memo, permission);
+            return token.transfer(from, to, toAsset(amount, tokenSymbol, { precision }), memo, auth);
           });
       })
       .catch(err => {
@@ -580,9 +572,14 @@ export const transfer = config => {
 };
 
 export const vote = config => {
-  return ({voter, bpname, amount, permission} = {}) => {
-    return Eos(config)
-      .vote(voter, bpname, toAsset(amount), permission)
+  return async ({voter, bpname, amount, permission} = {}) => {
+    let auth = {
+      actor: voter,
+      permission
+    }
+    let token = await Eos(config).contract('eosio');
+    return token
+      .vote(voter, bpname, toAsset(amount), auth)
       .catch(err => {
         return handleApiError(err);
       });
@@ -590,9 +587,14 @@ export const vote = config => {
 };
 
 export const unfreeze = config => {
-  return ({ voter, bpname, permission } = {}) => {
-    return Eos(config)
-      .unfreeze(voter, bpname, permission)
+  return async ({ voter, bpname, permission } = {}) => {
+    let auth = {
+      actor: voter,
+      permission
+    }
+    let token = await Eos(config).contract('eosio');
+    return token
+      .unfreeze(voter, bpname, auth)
       .catch(err => {
         return handleApiError(err);
       });
@@ -600,9 +602,14 @@ export const unfreeze = config => {
 };
 
 export const claim = config => {
-  return ({ voter, bpname, permission } = {}) => {
-    return Eos(config)
-      .claim(voter, bpname, permission)
+  return async ({ voter, bpname, permission } = {}) => {
+    let auth = {
+      actor: voter,
+      permission
+    };
+    let token = await Eos(config).contract('eosio');
+    return token
+      .claim(voter, bpname, auth)
       .catch(err => {
         return handleApiError(err);
       });
@@ -611,8 +618,12 @@ export const claim = config => {
 
 
 export const vote4ram = async (config, {voter, bpname, amount, permission}) => {
+    let auth = {
+      actor: voter,
+      permission
+    };
     let token = await Eos(config).contract('eosio');
-    let res = await token.vote4ram(voter, bpname, toAsset(amount), permission)
+    let res = await token.vote4ram(voter, bpname, toAsset(amount), auth)
                     .catch(err => { 
                       handleApiError(err);
                       try{
@@ -630,8 +641,12 @@ export const vote4ram = async (config, {voter, bpname, amount, permission}) => {
 };
 
 export const unfreeze4ram = async (config, { voter, bpname, permission }) => {
+    let auth = {
+      actor: voter,
+      permission
+    };
     let token = await Eos(config).contract('eosio');
-    let res = await token.unfreezeram(voter, bpname, permission)
+    let res = await token.unfreezeram(voter, bpname, auth)
                     .catch(err => { 
                         handleApiError(err);
                         try{
@@ -649,8 +664,12 @@ export const unfreeze4ram = async (config, { voter, bpname, permission }) => {
 
 export const transfer_owner_auth = config => (name, to_public_key, permission) => {
   return new Promise((resolve, reject) => {
+    let auth = {
+      actor: name,
+      permission
+    };
     Eos(config)
-      .updateauth(name, 'owner', '', to_public_key, permission)
+      .updateauth(name, 'owner', '', to_public_key, auth)
       .then(res => {
         resolve(res);
       })
@@ -667,8 +686,12 @@ export const transfer_owner_auth = config => (name, to_public_key, permission) =
 
 export const transfer_active_auth = config => (name, to_public_key, permission) => {
   return new Promise((resolve, reject) => {
+    let auth = {
+      actor: name,
+      permission
+    };
     Eos(config)
-      .updateauth(name, 'active', 'owner', to_public_key, permission)
+      .updateauth(name, 'active', 'owner', to_public_key, auth)
       .then(res => {
         resolve(res);
       })
@@ -690,28 +713,38 @@ export const transfer_account = config => async ({name, publick_key, permissions
     data: []
   };
 
-  if (permissions.indexOf('active') > -1) {
-    let active_transfer_res = await transfer_active_auth(config)(name, publick_key, 'active');
-    res.data.push(active_transfer_res);
-    res.message = get_error_msg(active_transfer_res);
-    if (res.message) {
-      res.is_error = true;
-      return res;
-    }
+  let token = await Eos(config).contract('eosio');
+  let auth = {
+    actor: name,
+    permission: 'owner'
   }
-  if (permissions.indexOf('owner') > -1) {
-    let owner_transfer_res = await transfer_owner_auth(config)(name, publick_key, 'owner');
-    res.data.push(owner_transfer_res);
-    res.message = get_error_msg(owner_transfer_res);
-    if (res.message) {
-      res.is_error = true;
-      return res;
-    }
+  let action_res = await token.transaction('eosio', tr => {
+    tr.updateauth(name, 'active', 'owner', publick_key, auth);
+    tr.updateauth(name, 'owner', '', publick_key, auth);
+  })
+  .then(res => {
+    return res;
+  })
+  .catch(err => {
+    let error_ob = null;
+    try {
+          error_ob = JSON.parse(err);
+    } catch (e) {};
+    return error_ob;
+  });
+  res.message = get_error_msg(action_res);
+  if(res.message){
+    res.is_error = true;
+    return res;
   }
   return res;
 };
 
 export const create_token = config => async ({issuer, maximum_supply}) => {
+  // let auth = {
+  //   actor: issuer,
+  //   permission: 'owner'
+  // };
   // create
   let res = await Eos(config)
       .create(issuer, maximum_supply, 'owner')

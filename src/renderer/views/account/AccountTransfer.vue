@@ -96,13 +96,13 @@ export default {
   },
   methods: {
     async submit() {
-      if(this.available < this.fee){
+      if(this.available < parseFloat(this.fee)){
         Message.error({
           title: this.$t('手续费不足')
         });
         return null;
       }
-
+      
       if (!this.public_key) {
         Message.error({
           title: this.$t('请填写接受方公钥')

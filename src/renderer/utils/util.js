@@ -12,7 +12,9 @@ export const toUrl = (url = '') => {
 // 提取错误信息，没有错误这换回空
 export const get_error_msg = err => {
     if (!err.error) return '';
-    return err.error.name;
+    let details = err.error.details || [];
+    let details_msg = [details.map(item => item.message)].join(',')
+    return details_msg || err.error.name;
 }
 
 // 错误处理
