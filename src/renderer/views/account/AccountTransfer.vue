@@ -133,7 +133,7 @@ export default {
       if (transfer_res.is_error) {
         Message.error({
           title: this.$t('用户名转让失败'),
-          message: transfer_res.message,
+          message: this.$t(transfer_res.message),
         });
         return null;
       }

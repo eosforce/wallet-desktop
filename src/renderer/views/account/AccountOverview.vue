@@ -1,5 +1,7 @@
 <template>
     <div class="overview_box">
+        
+        <!-- todo_top_info_components -->
         <div class="info_box_ct" v-if="copy_success">
             <div class="load_area_out view_info_box">
                 <div class="load_area">
@@ -7,6 +9,7 @@
                 </div>
             </div>
         </div>
+
         <div class="box">
             <div class="publickey account_detail_item">
                 <ul class="account_info_box">

@@ -3,13 +3,24 @@
     <page-menu />
     <router-view></router-view>
     <div class="dashboard-body" v-if="$route.name === 'walletDetail'">
-      <div class="box">
+      <div class="box overview_box">
+
+          <!-- todo_top_info_components -->
+          <div class="info_box_ct" v-if="copy_success">
+              <div class="load_area_out view_info_box">
+                  <div class="load_area">
+                      <div>{{ $t('已复制成功') }}</div>
+                  </div>
+              </div>
+          </div>
+
           <div class="publickey" style="line-height: 27px;">
-            {{$t('公钥')}}：{{walletData.publicKey}}
+            <span>{{$t('公钥')}}</span>： <el-tooltip class="item account_name_tag" effect="dark" :content='$t("点击复制")' placement="top"> <span @click="copyToClipboard(walletData.publicKey)" class="point_tag">{{ walletData.publicKey }}</span> </el-tooltip>
             <span class="is-grouped">
               <a style="margin-left:15px" class="button is-small is-outlined" @click="exportWallet()">{{$t('导出钱包')}}</a>
               <a style="margin-left:15px" class="button is-small is-outlined" @click="toggle('showDeleteWallet', true)">{{$t('删除钱包')}}</a>
             </span>
+
             <span class="refresh fr el-icon-refresh" :class="{spin: spin}" @click="refresh()"></span>
           </div>
           <div class="dec" style="display:flex;">
@@ -66,6 +77,7 @@ import Message from '@/components/Message';
 import { Getters, Actions } from '@/constants/types.constants';
 import { decryptWif } from '@/utils/util';
 import { queryAccount } from '@/services/Eos';
+import Copy from 'clipboard-copy'
 
 export default {
   name: 'WalletDetail',
@@ -75,6 +87,7 @@ export default {
       showDeleteWallet: false,
       queryAccountName: '',
       spin: false,
+      copy_success: false
     };
   },
   computed: {
@@ -95,6 +108,13 @@ export default {
         Message.error(`${this.$t('账户列表加载失败')}： ${err && err.message}`);
         return Promise.reject(err);
       });
+    },
+    copyToClipboard(text) {
+        Copy(text);
+        this.copy_success = true;
+        setTimeout(() => {
+            this.copy_success = false;
+        }, 500);
     },
     query() {
       if (!isValidAccountName) return;
@@ -173,11 +193,35 @@ export default {
 </script>
 
 <style scoped>
+.info_box_ct {
+    position: absolute;
+    height: 0px;
+    background-color: rgba(0, 0, 0, 0.3);
+    z-index: 1;
+    width: 100%;
+    left: 0px;
+    top: 0px;
+}
+
+.info_box_ct .load_area_out {
+    top: 0px;
+    animation: info_box_top_end 0.05s linear;
+}
+
+.overview_box {
+    position: relative;
+}
+
+.point_tag{
+  cursor: pointer;
+}
+
 .dashboard-body {
   padding: 24px;
   overflow: auto;
   flex: 1;
 }
+
 .refresh {
   line-height: 27px;
   cursor: pointer;
