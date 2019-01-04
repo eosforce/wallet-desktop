@@ -47,7 +47,7 @@ const main = async () => {
     console.log(new_version);
     package.version = new_version;
     let res = await write_package(JSON.stringify(package));
-    await create_cmd('git', [`tag`, '-a', `v${new_version}`, `-m`, `"update for test"`]);
+    await create_cmd('git', [`tag`, '-a', `v${new_version}`, `-m`, `"multiaction in update key permissions"`]);
     await create_cmd('git', ['push', '--delete', 'origin', `v${new_version}`]);
     await create_cmd('git', [`push`, `origin`, `v${new_version}`]);
     await create_cmd('git', [`tag`, `--delete`, `v${new_version}`]);
