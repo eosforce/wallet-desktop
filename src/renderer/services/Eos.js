@@ -373,6 +373,7 @@ export const getGlobalTable = httpEndpoint => async (accountName, current_node, 
     version,
   }
 }
+
 // 根据 bp 和 vote 得到分红表，返回一个对象
 export const getRewardsAndBpsTable = httpEndpoint => async (accountName, current_node, concel_container = {cancel: []}, votesTable, votes4ramTable, bpsTable, superBpsAmountTable, block) => {
   votesTable = votesTable || await getVotesTable(httpEndpoint)(accountName);

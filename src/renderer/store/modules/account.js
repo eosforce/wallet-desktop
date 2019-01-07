@@ -101,17 +101,10 @@ const mutations = {
         let recode_map = {};
         let records = [];
         state.transferRecords.list.map(item => {
-            let receiver = item.action_trace.receipt.receiver;
-            let actor = item.action_trace.act.authorization[0].actor;
-            let action_name = item.action_trace.act.name;
-            let account_action_seq = item.account_action_seq;
-            // if (receiver == state.accountName || actor == state.accountName) {
-            //     let _key = `${item.action_trace.trx_id} + ${actor} + ${action_name}`;
-            //     if (recode_map[_key]) return;
-            //     recode_map[_key] = item;
-            //     if(item.status == 'on_process') state.need_confirm_transaction.push(item);
-            //     records.push(item);
-            // }
+            let receiver = item.action_trace.receipt.receiver,
+                actor = item.action_trace.act.authorization[0].actor,
+                action_name = item.action_trace.act.name,
+                account_action_seq = item.account_action_seq;
             if (action_name == 'transfer' && receiver == state.accountName) {
                 let _key = `${item.action_trace.trx_id} + ${actor} + ${action_name} + ${account_action_seq}`;
                 if (recode_map[_key]) return;
@@ -137,10 +130,9 @@ const mutations = {
             state.transferRecords.pos = last_tr.account_action_seq - 1 ;
             state.transferRecords.offset = -19;
         }
-        // trans_main
-        // if (!rank_order) {
-        //     state.transferRecords.pos = state.transferRecords.length - 1;
-        // }
+        if (last_tr.account_action_seq == 0) {
+            state.transferRecords.more = false;
+        }
     },
     update_transaction_status(state, {trx_id, status}){
         state.transferRecords.list.forEach(item => {
@@ -252,18 +244,6 @@ const actions = {
     },
     [Actions.TRANSFER]({ state, dispatch, getters }, { from, to, amount, memo, password, tokenSymbol, precision, walletId, permission }) {
         return getters[Getters.GET_TRANSE_CONFIG](password, from, walletId).then(async config => {
-            // 发行token测试
-            // let maximum_supply = 1000000 + ' H';
-            // let supply = 100 + ' H';
-            // await create_token(config)({
-            //     issuer: from,
-            //     maximum_supply: maximum_supply
-            // });
-            // await issue_token(config)({
-            //     to: from,
-            //     quantity: supply,
-            //     memo: 'first token'
-            // });
             return transfer(config)({ from, to, amount, memo, tokenSymbol, precision, permission });
         });
     },
@@ -425,11 +405,12 @@ const actions = {
         commit('set_cancle_requests', cancle_requests.cancel);
     },
     [Actions.GET_TRANSFER_RECORD]({ state, commit, getters }, { accountName, pos, offset, cancle_requests, finished = () => {}, from_top = false }) {
-        offset = offset || state.transferRecords.offset;
-        pos = pos === undefined ? state.transferRecords.pos : pos;
         if (from_top) {
             offset = -20;
             pos = -1;
+        }else{
+            offset = offset || state.transferRecords.offset ;
+            pos = pos === undefined ? state.transferRecords.pos : pos;
         }
         let current_node_info = getters[Getters.CURRENT_NODE_INFO];
         commit('start_on_load_actions', {accountName, from_top});

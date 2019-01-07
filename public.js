@@ -42,6 +42,7 @@ const get_comments = () => {
     }
     return process.argv[2];
 }
+
 const main = async () => {
     let package = await read_package(),
         version = package.version,
