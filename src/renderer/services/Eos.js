@@ -1,5 +1,4 @@
-import '@/services/eosforce';
-
+import Eos from 'eosforce'
 import axios from 'axios'
 import { NODE_API_URL } from '@/constants/config.constants';
 import Store from '@/store';
@@ -294,17 +293,23 @@ export const getBpsTable = httpEndpoint => async (concel_container = {cancel: []
 };
 
 // 获取 vote 表
-export const getVotesTable = httpEndpoint => async (accountName, concel_container = {cancel: []}) => {
+export const getVotesTable = httpEndpoint => async (accountName, table_key = '', concel_container = {cancel: []}) => {
   let CancelToken = axios.CancelToken;
-  let data = await axios.post(httpEndpoint + API.get_table_rows, 
-    { 
-      scope: string_to_name(accountName), code: 'eosio', table: 'votes', json: true, limit: 1000
-    },  
-    {
-      cancelToken: new CancelToken(function executor(c) {
-        concel_container.cancel.push(c);
-      })
-    }
+  let data = await axios.post(
+        httpEndpoint + API.get_table_rows, 
+        { 
+          scope: string_to_name(accountName),
+          code: 'eosio',
+          table: 'votes',
+          json: true,
+          limit: 1000,
+          table_key
+        },  
+        {
+          cancelToken: new CancelToken(function executor(c) {
+            concel_container.cancel.push(c);
+          })
+        }
   )
   .then(data => data.data.rows)
   .catch(err => []);
@@ -346,6 +351,7 @@ export const getTable = httpEndpoint => async (params, concel_container = {cance
   .catch(err => []);
   return data;
 };
+
 // 全局基础信息获取
 export const getGlobalTable = httpEndpoint => async (accountName, current_node, block) => {
   let start_time = new Date().getTime();
@@ -461,12 +467,13 @@ export const getRewardsAndBpsTable = httpEndpoint => async (accountName, current
       bpRow.ramvote = { ...extraRow };
       bpRow.hasRamvote = calcVoteExist(ramvote.staked, reward, ramvote.unstaking);
     }
-    // superBpTable.push(bpRow);
+
     if (bpRow.isSuperBp) {
       superBpTable.push(bpRow);
     } else {
       commonBpTable.push(bpRow);
     }
+    
   }
   const stakedTotal = calcTotalAmount(votesTable, 'staked');
   const unstakingTotal = calcTotalAmount(votesTable, 'unstaking');

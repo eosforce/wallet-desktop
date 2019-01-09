@@ -1,5 +1,5 @@
 {
-  "name": "eosforce",
+  "name": "EOSForceWallet",
   "version": "1.1.243",
   "author": "",
   "description": "eos wallet",
@@ -23,29 +23,38 @@
     "directories": {
       "output": "build"
     },
-    "files": ["dist/electron/**/*"],
+    "files": [
+      "dist/electron/**/*"
+    ],
     "dmg": {
-      "contents": [{
-        "x": 410,
-        "y": 150,
-        "type": "link",
-        "path": "/Applications"
-      }, {
-        "x": 130,
-        "y": 150,
-        "type": "file"
-      }]
+      "contents": [
+        {
+          "x": 410,
+          "y": 150,
+          "type": "link",
+          "path": "/Applications"
+        },
+        {
+          "x": 130,
+          "y": 150,
+          "type": "file"
+        }
+      ]
     },
     "mac": {
       "icon": "build/icons/icon.icns"
     },
     "win": {
       "icon": "build/icons/icon.ico",
-      "target": ["nsis"]
+      "target": [
+        "nsis"
+      ]
     },
     "linux": {
       "icon": "build/icons",
-      "target": ["AppImage"]
+      "target": [
+        "AppImage"
+      ]
     }
   },
   "dependencies": {
@@ -112,5 +121,7 @@
     "webpack-dev-server": "^2.7.1",
     "webpack-hot-middleware": "^2.18.2"
   },
-  "pre-commit": ["lint"]
+  "pre-commit": [
+    "lint"
+  ]
 }
