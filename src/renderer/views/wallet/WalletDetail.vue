@@ -41,7 +41,7 @@
               <p>2. Create an account by submitting a request to users who already have an account at EOSForce wallet or a third-party wallet that support EOSForce. </p>
               <p>3. Provide your public key and the name you want to create to the third party. Please do not reveal your private key. </p>
               <p>4. Create an account will consume 0.1 EOS. After the registration, please click the refresh button and your account name will be displayed on the left side of the wallet. </p>
-              <p>5. Telegram <os_uri href="https://t.me/eosforce_en">https://t.me/eosforce_en</os_uri></p>
+              <p>5. You can find the customer service to create the user name for free. Telegram <os_uri href="https://t.me/eosforce_en">https://t.me/eosforce_en</os_uri></p>
             </div>
             <div style="margin-right:24px;" v-if="$i18n.locale === 'kr'">
               <p><span style="color:#f00">* 주의사항 *</span></p>
@@ -54,9 +54,6 @@
 </p>
               <p> 5. 개설한 이후, 새로고침을 클릭하시면 계정명이 왼쪽에 자동으로 표시됩니다.
 </p>
-              <p>
-                지갑을 삭제하기 전, 만약 후에 이 지갑에 대해 아직 필요한 것이 있다면 지갑을 백업하였는지 확인해주세요. 백업을 거치지 않고 삭제할 경우, 계정을 복구할 수 없으며 대응 자산 또한 되찾을 수 없으니 다시 한 번 확인하시고 주의하시기 바랍니다.
-              </p>
             </div>
             <div  v-if="$i18n.locale === 'zh'"><img src="@/assets/kefu.png" width="160"></div>
           </div>
