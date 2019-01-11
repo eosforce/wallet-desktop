@@ -34,7 +34,6 @@ export const getBpNick = () => {
 export const getNodeList = async () => {
   const map = {
     '1.0': NODE_API_URL,
-    // '0.7': NODE_TEST_NET_URL,
   };
   return fetch(map[Store.state.app.chainNet]).then(async res => {
     let data = await res.json();
