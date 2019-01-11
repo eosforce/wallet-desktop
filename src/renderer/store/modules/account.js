@@ -130,7 +130,7 @@ const mutations = {
             state.transferRecords.pos = last_tr.account_action_seq - 1 ;
             state.transferRecords.offset = -19;
         }
-        if (last_tr.account_action_seq == 0) {
+        if (last_tr && last_tr.account_action_seq == 0) {
             state.transferRecords.more = false;
         }
     },
