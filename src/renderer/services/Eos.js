@@ -36,24 +36,14 @@ export const getNodeList = async () => {
     '1.0': NODE_API_URL,
     // '0.7': NODE_TEST_NET_URL,
   };
-    // let data = {
-    //   nodes: [{type: '10', name: 'a'}, {type: '20', name: 'b'}]
-    // }
+  return fetch(map[Store.state.app.chainNet]).then(async res => {
+    let data = await res.json();
+    //trans_main
     // data.nodes.forEach(item => {
     //   item.node_addr = 'w1.eosforce.cn';
     //   item.port_http = '';
     //   item.port_ssl = '443';
     // });
-    // console.log(JSON.stringify(data));
-    // return data;
-  return fetch(map[Store.state.app.chainNet]).then(async res => {
-    let data = await res.json();
-    //trans_main
-    data.nodes.forEach(item => {
-      item.node_addr = 'w1.eosforce.cn';
-      item.port_http = '';
-      item.port_ssl = '443';
-    });
     return data;
   });
 };
