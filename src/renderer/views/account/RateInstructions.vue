@@ -141,7 +141,6 @@ export default {
 .rate {
   margin-bottom: 20px;
 }
-
 .dec {
   margin-top: 10px;
 }
