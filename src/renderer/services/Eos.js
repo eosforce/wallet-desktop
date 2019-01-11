@@ -31,19 +31,29 @@ export const getBpNick = () => {
   return fetch('https://updatewallet.oss-cn-hangzhou.aliyuncs.com/eosforce/bp-nickname.json').then(res => res.json());
 };
 
-export const getNodeList = () => {
+export const getNodeList = async () => {
   const map = {
     '1.0': NODE_API_URL,
     // '0.7': NODE_TEST_NET_URL,
   };
+    // let data = {
+    //   nodes: [{type: '10', name: 'a'}, {type: '20', name: 'b'}]
+    // }
+    // data.nodes.forEach(item => {
+    //   item.node_addr = 'w1.eosforce.cn';
+    //   item.port_http = '';
+    //   item.port_ssl = '443';
+    // });
+    // console.log(JSON.stringify(data));
+    // return data;
   return fetch(map[Store.state.app.chainNet]).then(async res => {
     let data = await res.json();
     //trans_main
-    // data.nodes.forEach(item => {
-    //   item.node_addr = '47.99.138.131';
-    //   item.port_http = '8080';
-    //   item.port_ssl = '';
-    // });
+    data.nodes.forEach(item => {
+      item.node_addr = 'w1.eosforce.cn';
+      item.port_http = '';
+      item.port_ssl = '443';
+    });
     return data;
   });
 };

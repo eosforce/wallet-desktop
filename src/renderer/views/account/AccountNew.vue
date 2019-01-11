@@ -32,7 +32,7 @@
           <div class="field">
             <label class="label">{{$t('用户名称')}}</label>
             <div class="control">
-              <input class="input" v-model="accountName" type="text" :placeholder="$t('a-z，1-5 的 12 位以内字符')" required />
+              <input class="input" v-model="accountName" type="text" :placeholder="$t('用户名只能包含 .12345abcdefghijklmnopqrstuvwxyz，并且在 12 位以内')" required />
               <p class="help is-danger" v-show="accountName && !isValidAccountName">
                 {{$t('用户名只能包含 .12345abcdefghijklmnopqrstuvwxyz，并且在 12 位以内')}}
               </p>
@@ -46,7 +46,7 @@
               <a tabindex="-1" class="button cancel-button" :disabled="submitting" @click="!submitting && close()">{{$t('取消')}}</a>
             </div>
             <div class="control">
-              <button type="submit" class="button is-link" :class="{'is-loading': this.accountCreator && this.accountCreator.account && submitting}" :disabled="submitting">确认</button>
+              <button type="submit" class="button is-link" :class="{'is-loading': this.accountCreator && this.accountCreator.account && submitting}" style="width: auto;" :disabled="submitting">{{$t('确认创建账户')}}</button>
             </div>
           </div>
         </form>

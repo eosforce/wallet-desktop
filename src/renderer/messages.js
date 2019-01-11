@@ -47,7 +47,7 @@ export default {
     明文私钥: 'clear private key',
     设置密码: 'password',
     重复密码: 'confirm password',
-    随机生成私钥: 'random',
+    随机生成私钥: 'create new private key',
     密码不匹配: 'password mismatch',
     无效的私钥: 'invalid private key',
     公钥: 'public key',
@@ -201,7 +201,8 @@ export default {
     '没有更新': 'no update',
     '你当前的版本是最新的！': 'Your current version is the latest!',
     '安装更新': 'Install update',
-    '更新已下载完成，确认后会自动安装': 'The update has been downloaded and will be installed automatically after confirmation.'
+    '更新已下载完成，确认后会自动安装': 'The update has been downloaded and will be installed automatically after confirmation.',
+    '确认创建账户': 'create account'
   },
   zh: {
     交易状态: '交易状态',
@@ -383,7 +384,8 @@ export default {
     '没有更新': '没有更新',
     '你当前的版本是最新的！': '你当前的版本是最新的！',
     '安装更新': '安装更新',
-    '更新已下载完成，确认后会自动安装': '更新已下载完成，确认后会自动安装'
+    '更新已下载完成，确认后会自动安装': '更新已下载完成，确认后会自动安装',
+    '确认创建账户': '确认创建账户'
   },
   kr: {
     已使用内存: '사용 된 메모리',
@@ -586,7 +588,8 @@ export default {
     '没有更新': '업데이트 없음',
     '你当前的版本是最新的！': '현재 버전이 최신 버전입니다',
     '安装更新': '업데이트 설치',
-    '更新已下载完成，确认后会自动安装': '업데이트가 다운로드되었으며 확인 후 자동으로 설치됩니다.'
+    '更新已下载完成，确认后会自动安装': '업데이트가 다운로드되었으며 확인 후 자동으로 설치됩니다.',
+    '确认创建账户': '계정 생성 확인'
     // template: {
     //   walletTitle: 'EOSForce钱包 主网 v{version}',
     //   version: '(第 {version} 届)',

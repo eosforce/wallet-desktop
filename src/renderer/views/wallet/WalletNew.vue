@@ -9,7 +9,7 @@
         <div class="field">
           <label class="label">
             {{$t('明文私钥')}}
-            <a style="position: relative;margin-left: 8px;top: -4px;margin-bottom: 4px;" class="button is-small is-link is-import" :disabled="isDisabledRandomKey" @click="randomKey()">
+            <a style="position: relative;margin-left: 8px;top: -4px;margin-bottom: 4px;width: auto;" class="button is-small is-link is-import" :disabled="isDisabledRandomKey" @click="randomKey()">
             {{$t('随机生成私钥')}}
             </a>
           </label>
