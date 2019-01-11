@@ -41,7 +41,7 @@
               <p>2. Create an account by submitting a request to users who already have an account at EOSForce wallet or a third-party wallet that support EOSForce. </p>
               <p>3. Provide your public key and the name you want to create to the third party. Please do not reveal your private key. </p>
               <p>4. Create an account will consume 0.1 EOS. After the registration, please click the refresh button and your account name will be displayed on the left side of the wallet. </p>
-              <p>5. Telegram <a href="https://t.me/eosforce_en">https://t.me/eosforce_en</a></p>
+              <p>5. Telegram <os_uri href="https://t.me/eosforce_en">https://t.me/eosforce_en</os_uri></p>
             </div>
             <div style="margin-right:24px;" v-if="$i18n.locale === 'kr'">
               <p><span style="color:#f00">* 주의사항 *</span></p>
@@ -49,7 +49,8 @@
               <p> 2. 사용자 이름을 만들려면 0.1 EOSC가 필요하므로 지갑의 다른 사용자 또는 이미 계정이 있는 제3자에 요청하거나, 공식 고객 서비스 채널에 계정 개설을 요청하세요.</p>
               <p>3. 다른 사용자나 제3자에게 요청하여 계정을 만들경우, Public Key와 희망하는 계정명을 생성자에게 제공하세요. (Private Key는 누구에게도 제공해서는 안됩니다.)
 </p>
-              <p>4. 공식 고객 서비스 채널에 무료로 계정 개설을 요청할 수 있습니다. 공식 채널 : https://t.me/eosforcekr
+              <p>4. 공식 고객 서비스 채널에 무료로 계정 개설을 요청할 수 있습니다. 공식 채널 : 
+                <os_uri href="https://t.me/eosforcekr">https://t.me/eosforcekr</os_uri>
 </p>
               <p> 5. 개설한 이후, 새로고침을 클릭하시면 계정명이 왼쪽에 자동으로 표시됩니다.
 </p>
@@ -95,7 +96,7 @@ import { Getters, Actions } from '@/constants/types.constants';
 import { decryptWif } from '@/utils/util';
 import { queryAccount } from '@/services/Eos';
 import Copy from 'clipboard-copy'
-
+import os_uri from '@/views/components/os_uri'
 export default {
   name: 'WalletDetail',
   data() {
@@ -205,6 +206,7 @@ export default {
   components: {
     PageMenu,
     ConfirmModal,
+    os_uri
   },
 };
 </script>

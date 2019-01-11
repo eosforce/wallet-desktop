@@ -7,9 +7,10 @@
                     <a class="min-img" v-if="!tab.is_url" @click="toggleTab(tab.tabKey)"> 
                         {{tab.tabName}}<span v-show="tab.tabKey === 'BpList'">{{$t('template.version', {version: version})}}</span>
                     </a>
-                    <a class="min-img" v-if="tab.is_url" v-bind:href="tab.url" target="_blank"> 
-                        {{tab.tabName}}<span v-show="tab.tabKey === 'BpList'">{{$t('template.version', {version: version})}}</span>
-                    </a>
+
+                    <os_uri _class="min-img" v-bind:href="tab.url" v-if="tab.is_url">
+                        {{tab.tabName}}
+                    </os_uri>
                 </div>
                 <span class="refresh fr el-icon-refresh" :class="{spin: spin}" @click="refreshList()"></span>
             </div>
@@ -29,7 +30,7 @@ import Myvote from '@/views/account/Myvote';
 import AlternateNode from '@/views/account/AlternateNode';
 import RateInstructions from '@/views/account/RateInstructions';
 import TokenList from '@/views/account/TokenList';
-
+import os_uri from '@/views/components/os_uri'
 export default {
     name: 'AccountDetail',
     data() {
@@ -41,7 +42,7 @@ export default {
                 { tabName: this.$t('我的 Token'), tabKey: 'TokenList', img1: 'token.png', img2: 'token_w.png' },
                 { tabName: this.$t('交易记录'), tabKey: 'TransferRecord', img1: 'exchange.png', img2: 'exchange_w.png' },
                 { tabName: this.$t('资产说明'), tabKey: 'RateInstructions', img1: 'assets.png', img2: 'assets_w.png' },
-                { tabName: this.$t('原力生态'), tabKey: '_', img1: 'assets.png', img2: 'assets_w.png', is_url: true, url: 'https://eosforce.io//?lang=cn' },
+                { tabName: this.$t('原力生态'), tabKey: '_', img1: 'assets.png', img2: 'assets_w.png', is_url: true, url: 'https://eosforce.io' },
             ],
             tab_name_keys: ['超级节点', '我的投票', '内存租赁','我的 Token', '交易记录', '资产说明', '原力生态'],
             super_name: this.$t('超级节点'),
@@ -132,7 +133,8 @@ export default {
         AlternateNode,
         RateInstructions,
         TokenList,
-        Vote4ramList
+        Vote4ramList,
+        os_uri
     },
 };
 </script>

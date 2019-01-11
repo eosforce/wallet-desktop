@@ -3,7 +3,6 @@ import Store from '@/store';
 
 const dialog = remote.dialog;
 const { autoUpdater } = remote.require('electron-updater');
-
 let showNotUpdate = false;
 let updater;
 autoUpdater.autoDownload = false;
@@ -18,13 +17,28 @@ autoUpdater.on('error', error => {
   dialog.showErrorBox('Error: ', error == null ? 'unknown' : (error.stack || error).toString());
 });
 
+// lang start
+import messages from '@/messages';
+if (!localStorage.locale) {
+  if (navigator.language === 'zh-CN') {
+    localStorage.locale = 'zh';
+  } else {
+    localStorage.locale = 'en';
+  }
+}
+
+const word = (word) => {
+  return messages[localStorage.locale][word]
+}
+
+// lang end
 autoUpdater.on('update-available', () => {
   dialog.showMessageBox(
     {
       type: 'info',
-      title: '发现新版本',
-      message: '是否立即更新新版本，确认后程序会在后台下载更新。',
-      buttons: ['更新', '取消'],
+      title: word('发现新版本'),
+      message: word('是否立即更新新版本，确认后程序会在后台下载更新。'),
+      buttons: [word('更新'), word('取消')],
     },
     buttonIndex => {
       if (buttonIndex === 0) {
@@ -51,8 +65,8 @@ autoUpdater.on('update-available', () => {
 autoUpdater.on('update-not-available', () => {
   if (showNotUpdate) {
     dialog.showMessageBox({
-      title: '没有更新',
-      message: '你当前的版本是最新的！',
+      title: word('没有更新'),
+      message: word('你当前的版本是最新的！'),
     });
     updater.enabled = true;
     updater = null;
@@ -63,8 +77,8 @@ autoUpdater.on('update-not-available', () => {
 autoUpdater.on('update-downloaded', () => {
   dialog.showMessageBox(
     {
-      title: '安装更新',
-      message: '更新已下载完成，确认后会自动安装',
+      title: word('安装更新'),
+      message: word('更新已下载完成，确认后会自动安装'),
     },
     () => {
       setImmediate(() => autoUpdater.quitAndInstall());

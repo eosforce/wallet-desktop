@@ -30,8 +30,8 @@ if (!localStorage.locale) {
   }
 }
 
-const i18n = new VueI18n({
-  locale: localStorage.locale || 'zh',
+export const i18n = new VueI18n({
+  locale: localStorage.locale || 'en',
   messages,
 });
 

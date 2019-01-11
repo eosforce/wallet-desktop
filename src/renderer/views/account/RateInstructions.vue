@@ -61,13 +61,13 @@
       <div class="rate">
         <span><b>年化利率:</b></span>
         <p class="dec">
-          链初始发行量为 10 亿 EOSC<br>
-          每 3s 一个块，所有收益节点（投票大于0.5%）奖励共 9 EOSC <br>
-          收益节点每日奖励 = 9 * 20 * 60 * 24 = 259,200 EOSC<br>
-          收益节点每年奖励 = 超级节点每日奖励 * 365 = 94,608,000 EOSC<br>
+          年化利率:链初始发行量为 10 亿 EOSC<br>
+          每 3s 一个块，所有收益节点（投票大于0.5%）奖励共 3 EOSC <br>
+          收益节点每日奖励 = 3 * 20 * 60 * 24 = 86,400 EOSC<br>
+          收益节点每年奖励 = 收益节点每日奖励 * 365 = 31,536,000 EOSC<br>
           其中70%收益进入分红池，30%收益分配如下：<br>
-          前23名为超级节点，收益的15%作为基本工资进入其账户,收益的15%作为出块奖励进入其账户。 其余为候选节点，收益的15%作为基本工资进入其账户,收益的15%进入原力基金会账户。<br> 
-          投票年化利率 = （收益节点每年奖励*70%*得票率*分红比例）/ 所投节点总得票数 * 100%
+          前23名为超级节点，收益的15%作为基本工资进入其账户,收益的15%作为出块奖励进入其账户。 <br>其余非超级节点的收益节点，收益的15%作为基本工资进入其账户,收益的15%进入原力社区开发者委员会账户。<br>
+          投票年化利率 = （收益节点每年奖励*70%*得票率*分红比例）/ 所投节点总得票数 * 100%<br>
         </p>
       </div>
       <div class="rate">
@@ -106,14 +106,12 @@
         <span><b>Annual rate of return:</b></span>
         <p class="dec">
         Initial supply: 1,000,000,000 EOS<br/>
-        Blocks are produced at 3 blocks/second. Every block rewards all productive nodes (with more than 0.5% of the total network votes) with 9 EOSC<br/>
-        Daily reward of a productive node = 9 * 20 * 60 * 24 = 259,200 EOSC<br/>
-        Annual reward of a productive node = daily reward * 365 = 94,608,000 EOSC<br/>
+        Blocks are produced at 3 blocks/second. Every block rewards all productive nodes (with more than 0.5% of the total network votes) with 3 EOSC<br/>
+        Daily reward of a productive node = 3 * 20 * 60 * 24 = 86,400 EOSC<br/>
+        Annual reward of a productive node = daily reward * 365 = 31,536,000 EOSC<br/>
         70% of the reward goes into the reward pool, and the rest 30% is distributed as followed:<br/>
-        For the top 23 Super Node, 15% goes into their individual account as overhead, and the other 15% is received as block reward. For the candidate nodes, 15% goes into their individual account as overhead, and the other 15% is deposited in the EOSForce Foundation account.<br/>
-
+        For the top 23 Super Node, 15% goes into their individual account as overhead, and the other 15% is received as block reward. For the Non-BP Nodes that also receive  rewards , 15% goes into their individual account as overhead, and the other 15% is deposited in the EOSForce Developers Committee account.<br/>
         Voting annual rate = (ann. reward of profitable node * 70% * network votes received percentage * bonus rate) / total votes received * 100%<br/>
-          
         </p>
       </div>
       <div class="rate">
