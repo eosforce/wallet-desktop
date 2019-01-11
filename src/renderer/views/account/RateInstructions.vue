@@ -35,14 +35,6 @@
           투표를 변경할 때마다 누적 된 티켓 연령과 누적 티켓 연령을 업데이트 할 것이며, 배당금을받을 때마다 누적 된 티켓 연령을 지울 것입니다.
         </p>
       </div>
-      <div class="rate">
-        <span><b>BlockOne 잠금 해제：</b></span>
-        <p class="dec">
-          3 초당 1 블록, BlockOne 1 EOS에서 각 블록 잠금 해제 <br>
-          BlockOne은 매년 잠금 해제합니다. =  1 * 20 * 60 * 24 * 365 = 10,512,000 EOS<br>
-          10 년마다 약 1 억 명의 EOS 잠금 해제, 10 년 후 잠금 해제 계속
-        </p>
-      </div>
     </div>
     <!-- zh -->
     <div v-if="$i18n.locale === 'zh'">
@@ -79,14 +71,6 @@
           每次修改投票会更新我的累计票龄和节点累计票龄，每次领取分红会清零我的累计票龄
         </p>
       </div>
-      <div class="rate">
-        <span><b>BlockOne 解锁：</b></span>
-        <p class="dec">
-          每 3s 一个块，每个块为BlockOne解锁 1 EOS <br>
-          BlockOne每年解锁 =  1 * 20 * 60 * 24 * 365 = 10,512,000 EOS<br>
-          每10年解锁约 1 亿 EOS，10年以后继续解锁，永不间断
-        </p>
-      </div>
     </div>
     <!-- en -->
     <div v-if="$i18n.locale === 'en'">
@@ -121,14 +105,6 @@
           BP newest coinage = BP cumulative coinage + BP total vote * (recent height –BP coinage update height)<br>
           Unclaimed dividends = (My newest coinage / BP newest coinage) * rewards pool<br>
           My accumulated voting age and BP cumulative coinage swill be updated every time I change the voting, and my accumulated voting age will be reset every time I receive the bonus
-        </p>
-      </div>
-      <div class="rate">
-        <span><b>BockOne Unlock：</b></span>
-        <p class="dec">
-          3s peer block, each block can unlock 1 EOS to BlockOne<br>
-          Annual unlock for BlockOne = 1 * 20 * 60 * 24 * 365 = 10,512,000 EOS<br>
-          About 100 million EOS are unlocked every 10 years, and continue to be unlocked after 10 years without interruption
         </p>
       </div>
     </div>
