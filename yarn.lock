@@ -2863,7 +2863,7 @@ env-paths@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/env-paths/-/env-paths-1.0.0.tgz#4168133b42bb05c38a35b1ae4397c8298ab369e0"
 
-eosforce@^15.0.1:
+eosforce@^15.0.5:
   version "15.0.5"
   resolved "https://registry.yarnpkg.com/eosforce/-/eosforce-15.0.5.tgz#39b1df2aac7941888c968ec239b22fd61655a511"
   dependencies:

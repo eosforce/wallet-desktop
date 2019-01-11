@@ -188,6 +188,7 @@ export default {
       symbol: 'sign {symbol}',
       fee: '* fee {fee}',
     },
+    '您正在进行删除钱包操作，如对该钱包还有需要，请确保您已经导出钱包并妥善保管，一经删除您的账户将无法恢复，对应资产将无法找回，请谨慎操作。': 'You are deleting the wallet. If there is a need for the wallet, please make sure that you have exported the wallet and kept it safely. Once you delete your account, you will not be able to recover it. The corresponding assets will not be retrieved. Please be cautious.'
   },
   zh: {
     交易状态: '交易状态',
@@ -356,6 +357,7 @@ export default {
       symbol: '单位 {symbol}',
       fee: '* 手续费 {fee}',
     },
+    '您正在进行删除钱包操作，如对该钱包还有需要，请确保您已经导出钱包并妥善保管，一经删除您的账户将无法恢复，对应资产将无法找回，请谨慎操作。': '您正在进行删除钱包操作，如对该钱包还有需要，请确保您已经导出钱包并妥善保管，一经删除您的账户将无法恢复，对应资产将无法找回，请谨慎操作。'
   },
   kr: {
     已使用内存: '사용 된 메모리',
@@ -545,6 +547,7 @@ export default {
       symbol: 'sign {symbol}',
       fee: '* fee {fee}',
     },
+    '您正在进行删除钱包操作，如对该钱包还有需要，请确保您已经导出钱包并妥善保管，一经删除您的账户将无法恢复，对应资产将无法找回，请谨慎操作。': '지갑을 필요로하는 경우 지갑을 내 보낸 다음 안전하게 보관했는지 확인하십시오. 계정을 삭제하면 복구 할 수 없으므로 해당 자산은 검색되지 않습니다.주의하십시오.'
     // template: {
     //   walletTitle: 'EOSForce钱包 主网 v{version}',
     //   version: '(第 {version} 届)',
@@ -553,4 +556,5 @@ export default {
     //   fee: '* 手续费 {fee}',
     // },
   },
+
 };

@@ -27,10 +27,13 @@
             <div style="margin-right:24px;" v-if="$i18n.locale === 'zh'">
               <p><span style="color:#f00">*特别提醒*：</span></p>
               <p>1. 本钱包只提供创建公私钥服务，您需要进一步创建用户名才能做链上操作。</p>
-              <p>2. 请向本钱包内的其他用户，或已经拥有用户名的钱包外第三方用户提出创建申请。</p>
-              <p>3. 需向创建者提供您的公钥(EOS...) 和期望的用户名，切勿提供您的私钥（5...）。</p>
-              <p>4. 创建用户名交易需要花费第三方0.1个EOSC，创建交易成功后，请点击刷新，用户名会自动显示在左侧。</p>
-              <p>5. 还可以扫描右侧二维码加群，找客服免费创建用户名，仅限新用户，每人一个。</p>
+              <p>2. 因为创建用户名需要花费0.1个EOSC，所以请向本钱包内的其他用户，或已经拥有用户名的钱包外第三方用户，或官方客服提出创建申请。
+</p>
+              <p>3. 需向创建者提供您的公钥(EOS...) 和期望的用户名，切勿提供您的私钥（5...）。
+</p>
+              <p>4. 你还可以扫描右侧二维码加群，找客服免费创建用户名，仅限新用户，每人一个。
+</p>
+              <p>5. 创建交易成功后，请点击刷新，用户名会自动显示在左侧。</p>
             </div>
             <div style="margin-right:24px;" v-if="$i18n.locale === 'en'">
               <p><span style="color:#f00">*Kind Reminder*：</span></p>
@@ -38,9 +41,23 @@
               <p>2. Create an account by submitting a request to users who already have an account at EOSForce wallet or a third-party wallet that support EOSForce. </p>
               <p>3. Provide your public key and the name you want to create to the third party. Please do not reveal your private key. </p>
               <p>4. Create an account will consume 0.1 EOS. After the registration, please click the refresh button and your account name will be displayed on the left side of the wallet. </p>
-              <p>5. You can also scan the right qr code and add groups. You can find the customer service to create the user name for free.</p>
+              <p>5. Telegram <a href="https://t.me/eosforce_en">https://t.me/eosforce_en</a></p>
             </div>
-            <div><img src="@/assets/kefu.png" width="160"></div>
+            <div style="margin-right:24px;" v-if="$i18n.locale === 'kr'">
+              <p><span style="color:#f00">* 주의사항 *</span></p>
+              <p>1.본 지갑은 Public / Private Key만 제공하므로 체인 상에서 작업을 수행하려면 사용자 계정을 만들어야 합니다.</p>
+              <p> 2. 사용자 이름을 만들려면 0.1 EOSC가 필요하므로 지갑의 다른 사용자 또는 이미 계정이 있는 제3자에 요청하거나, 공식 고객 서비스 채널에 계정 개설을 요청하세요.</p>
+              <p>3. 다른 사용자나 제3자에게 요청하여 계정을 만들경우, Public Key와 희망하는 계정명을 생성자에게 제공하세요. (Private Key는 누구에게도 제공해서는 안됩니다.)
+</p>
+              <p>4. 공식 고객 서비스 채널에 무료로 계정 개설을 요청할 수 있습니다. 공식 채널 : https://t.me/eosforcekr
+</p>
+              <p> 5. 개설한 이후, 새로고침을 클릭하시면 계정명이 왼쪽에 자동으로 표시됩니다.
+</p>
+              <p>
+                지갑을 삭제하기 전, 만약 후에 이 지갑에 대해 아직 필요한 것이 있다면 지갑을 백업하였는지 확인해주세요. 백업을 거치지 않고 삭제할 경우, 계정을 복구할 수 없으며 대응 자산 또한 되찾을 수 없으니 다시 한 번 확인하시고 주의하시기 바랍니다.
+              </p>
+            </div>
+            <div  v-if="$i18n.locale === 'zh'"><img src="@/assets/kefu.png" width="160"></div>
           </div>
           <div style="margin-top: 16px;">
             <span style="position: relative;top: 5px;">{{$t('查询用户名是否存在：')}}</span>
@@ -54,7 +71,7 @@
     </div>
     <confirm-modal :title="$t('删除钱包')" :show="showDeleteWallet" @confirm="decryptAndDeleteWallet" @close="toggle('showDeleteWallet', false)">
       <div>
-        <p class="help is-danger" style="font-size:14px;">您正在进行删除钱包操作，如对该钱包还有需要，请确保您已经导出钱包并妥善保管，一经删除您的账户将无法恢复，对应资产将无法找回，请谨慎操作。</p>
+        <p class="help is-danger" style="font-size:14px;">{{ $t('您正在进行删除钱包操作，如对该钱包还有需要，请确保您已经导出钱包并妥善保管，一经删除您的账户将无法恢复，对应资产将无法找回，请谨慎操作。') }}</p>
         <div class="row" style="margin-top:16px;">
           <div class="row__title">{{$t('钱包密码')}}</div>
           <div class="row__content">

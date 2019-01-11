@@ -281,7 +281,7 @@ export default {
         .catch(err => {
           Message.error({
             title: `${err.code ? `code: ${err.code}` : this.$t('投票失败')}`,
-            message: err.message,
+            message: this.$t(err.message),
           });
           this.submitting = false;
           return Promise.reject(err);
