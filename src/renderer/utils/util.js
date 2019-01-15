@@ -141,7 +141,8 @@ export const calcVoteExist = (meVoteage, reward, unstaking) => {
 */
 export const calcApr = (totalStaked, commissionRate, vote_own_percent = 0, by_vote_owen = false) => {
     if (!totalStaked) return 0;
-    const n1 = !by_vote_owen ? (9 * 20 * 60 * 24 * 365) / 23 : 9 * 20 * 60 * 24 * 365 * vote_own_percent * 0.7;
+    let block_token = 2.7;
+    const n1 = !by_vote_owen ? (block_token * 20 * 60 * 24 * 365) / 23 : block_token * 20 * 60 * 24 * 365 * vote_own_percent * 0.7;
     // const n1 = 9 * 20 * 60 * 24 * 365 * vote_own_percent * 0.7;
     return (n1 * (1 - commissionRate / 10000)) / totalStaked;
 };
