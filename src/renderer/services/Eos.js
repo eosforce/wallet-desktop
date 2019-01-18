@@ -38,11 +38,11 @@ export const getNodeList = async () => {
   return fetch(map[Store.state.app.chainNet]).then(async res => {
     let data = await res.json();
     //trans_main
-    // data.nodes.forEach(item => {
-    //   item.node_addr = 'w1.eosforce.cn';
-    //   item.port_http = '';
-    //   item.port_ssl = '443';
-    // });
+    data.nodes.forEach(item => {
+      item.node_addr = '192.168.2.139';
+      item.port_http = '8877';
+      item.port_ssl = '';
+    });
     return data;
   });
 };
@@ -139,12 +139,12 @@ export const getLockedEosc = httpEndpoint => async (account_name, concel_contain
   let CancelToken = axios.CancelToken;
   let data = await axios.post(httpEndpoint + API.get_table_rows, 
     {
-          "scope": 'eosio.lock',
-          "code":"eosio.lock",
-          "table":"accounts",
-          "table_key": account_name,
-          "json":true,
-          "limit":1000
+      "scope": 'eosio.lock',
+      "code":"eosio.lock",
+      "table":"accounts",
+      "table_key": account_name,
+      "json":true,
+      "limit":1000
     },  
     {
       cancelToken: new CancelToken(function executor(c) {
@@ -200,18 +200,28 @@ export const getAccount = httpEndpoint => async (accountName, concel_container =
   return data;
 };
 
+const get_filter_available_condition = (accountName, filter_way = 'EOSC') => {
+  let base_params = { 
+    scope: 'eosio',
+    code: 'eosio',
+    table: 'accounts',
+    table_key: accountName,
+    limit: 10000,
+    json: true,
+  }
+  if(filter_way == 'EOS'){
+    base_params.scope = base_params.table_key;
+    base_params.code = 'eosio.token';
+    delete base_params.table_key;
+  }
+  return base_params;
+}
 // 获取指定账户可用余额
-export const getAvailable = httpEndpoint => async (accountName, concel_container = {cancel: []}) => {
-  let CancelToken = axios.CancelToken;
+export const getAvailable = httpEndpoint => async (accountName, filter_way = 'EOSC', concel_container = {cancel: []}) => {
+  let CancelToken = axios.CancelToken,
+      params = get_filter_available_condition(accountName, filter_way);
   let data = await axios.post(httpEndpoint + API.get_table_rows, 
-    { 
-      scope: 'eosio',
-      code: 'eosio',
-      table: 'accounts',
-      table_key: accountName,
-      limit: 10000,
-      json: true,
-    },  
+    params,  
     {
       cancelToken: new CancelToken(function executor(c) {
         concel_container.cancel.push(c);
@@ -220,6 +230,7 @@ export const getAvailable = httpEndpoint => async (accountName, concel_container
   )
   .then(data => data.data)
   .catch(err => null);
+  return toBigNumber(0);
   if(!data) return data;
   const account = data.rows.find(acc => acc.name === accountName);
   if (account) {

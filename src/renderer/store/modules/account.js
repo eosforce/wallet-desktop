@@ -240,7 +240,7 @@ const actions = {
         let { server_version_string } = getters[Getters.CURRENT_NODE_INFO];
         commit(Mutations.RESET_ACCOUNT_INFO, rank_get_action(server_version_string));
         commit(Mutations.SET_ACCOUNT_NAME, { accountName });
-        dispatch(Actions.GET_ACCOUNT_INFO);
+        dispatch(Actions.GET_ACCOUNT_INFO, getters['GET_FILER_WAY']);
     },
     [Actions.TRANSFER]({ state, dispatch, getters }, { from, to, amount, memo, password, tokenSymbol, precision, walletId, permission }) {
         return getters[Getters.GET_TRANSE_CONFIG](password, from, walletId).then(async config => {
@@ -289,7 +289,7 @@ const actions = {
     async GET_LOCKED_EOSC ({ state, dispatch, commit, getters }) {
         let node_url = getters[Getters.CURRENT_NODE];
         const accountName = getters[Getters.CURRENT_ACCOUNT_NAME];
-        let res = await getLockedEosc(node_url)(accountName);
+        let res = '0.0000 EOS';// await getLockedEosc(node_url)(accountName);
         commit('set_locked_eosc', res);
     },
     check_total_and_set_asset_total({ state, dispatch, commit, getters }) {
@@ -311,8 +311,8 @@ const actions = {
                 state.info.locked_eosc
             )
             commit('set_asset_total', asset_total);
-            commit(Mutations.FINISH_LOAD_ACCOUNT_INFO);
         }
+        commit(Mutations.FINISH_LOAD_ACCOUNT_INFO);
         return is_loaded_all;
     },
     start_load_new_account({ state, dispatch, commit, getters }) {
@@ -339,7 +339,7 @@ const actions = {
 
         commit(Mutations.SET_SUPER_PSAMOUNT_TABLE, { superBpsAmountTable });
     },
-    async [Actions.GET_ACCOUNT_INFO]({ state, dispatch, commit, getters }, key) {
+    async [Actions.GET_ACCOUNT_INFO]({ state, dispatch, commit, getters }, filter_way = 'EOSC') {
         const accountName = getters[Getters.CURRENT_ACCOUNT_NAME];
         let node_url = getters[Getters.CURRENT_NODE];
         if (accountName != state.pre_load_key) {
@@ -380,9 +380,8 @@ const actions = {
         commit('set_reward_total', rewardTotal);
 
         dispatch('check_total_and_set_asset_total');
-        await dispatch('GET_LOCKED_EOSC');
         let ps = [];
-        ps.push(getAvailable(node_url)(accountName, cancle_requests)
+        ps.push(getAvailable(node_url)(accountName, getters['GET_FILER_WAY'], cancle_requests)
             .then(available => {
                 if (accountName != state.pre_load_key) {
                     return;

@@ -169,8 +169,8 @@ const actions = {
             }, 3000);
         });
     },
-    [Actions.NEW_WALLET]({ dispatch }, { privateKey, password }) {
-        return createWalletData({ privateKey, password });
+    [Actions.NEW_WALLET]({ dispatch }, { privateKey, password, symbol = 'EOS' }) {
+        return createWalletData({ privateKey, password, symbol });
     },
     [Actions.DELETE_WALLET]({ state, getters, dispatch }, { publicKey }) {
         return deleteWalletData({ publicKey });

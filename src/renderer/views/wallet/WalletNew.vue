@@ -158,6 +158,7 @@ export default {
             return this.newWallet({
               privateKey: this.privateKey,
               password: this.password,
+              symbol: this.symbol
             });
           })
           .then(result => {

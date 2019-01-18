@@ -6,7 +6,8 @@ import { decrypt } from '@/utils/util';
 
 const initState = {
   data: {},
-  wallet_symbol: 'EOS',
+  wallet_symbol: 'EOST',
+  FILTER_WAY: 'EOS',
   accountList: [],
 };
 
@@ -59,6 +60,9 @@ const getters = {
       return Promise.reject(new Error('密码错误'));
     }
   },
+  GET_FILER_WAY (state) {
+    return state.FILTER_WAY;
+  }
 };
 
 export default {

@@ -67,9 +67,9 @@ export const getWalletKeyFromId = id => {
   return `${EOSFORCE_WALLET_KEY}/${id}#${Store.state.app.chainNet}`;
 };
 
-export const createWalletData = ({ privateKey, password }) => {
+export const createWalletData = ({ privateKey, password, symbol = 'EOS' }) => {
   if (isValidPrivate(privateKey) && isValidPassword(password)) {
-    const publicKey = privateToPublic(privateKey);
+    const publicKey = privateToPublic(privateKey, symbol);
     const crypto = encrypt(password, { privateKey });
     const id = uuidV4();
     const data = {
