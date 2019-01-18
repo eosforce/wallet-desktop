@@ -6,6 +6,7 @@ import { decrypt } from '@/utils/util';
 
 const initState = {
   data: {},
+  wallet_symbol: 'EOS',
   accountList: [],
 };
 

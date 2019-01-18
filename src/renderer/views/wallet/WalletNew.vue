@@ -85,7 +85,7 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex';
+import { mapActions, mapState } from 'vuex';
 
 import Message from '@/components/Message';
 import ConfirmModal from '@/components/ConfirmModal';
@@ -118,7 +118,7 @@ export default {
   computed: {
     publicKey() {
       if (!this.isValidPrivateKey) return '';
-      return privateToPublic(this.privateKey);
+      return privateToPublic(this.privateKey, this.symbol);
     },
     isValidAccountName() {
       return this.accountName && isValidAccountName(this.accountName);
@@ -137,6 +137,10 @@ export default {
         this.confirmMsg && (this.confirmMsg === '我已保存私钥' || this.confirmMsg === 'I have saved the private key')
       );
     },
+    symbol () {
+      return this.wallet.wallet_symbol;
+    },
+    ...mapState(['wallet'])
   },
   methods: {
     submit() {
@@ -192,18 +196,21 @@ export default {
         resolve();
       }
     },
-    randomKey() {
+    async randomKey() {
       if (this.isDisabledRandomKey) return Promise.reject();
       this.isDisabledRandomKey = true;
-      return randomKey()
-        .then(privateKey => {
-          this.randomPK = privateKey;
-          this.privateKey = privateKey;
-          this.isDisabledRandomKey = false;
-        })
-        .catch(() => {
-          this.isDisabledRandomKey = false;
-        });
+      let private_key = await randomKey().catch(error => {
+          return {
+            is_error: true
+          }
+      });
+      if(!private_key.error){
+        this.randomPK = private_key;
+        this.privateKey = private_key;
+        this.isDisabledRandomKey = false;
+      }else{
+        this.isDisabledRandomKey = false;
+      }
     },
     ...mapActions({
       newWallet: Actions.NEW_WALLET,

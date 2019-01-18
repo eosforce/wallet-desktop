@@ -50,10 +50,15 @@ export const calcReward = args => {
 };
 
 // 返回随机私钥
-export const randomKey = (...args) => ecc.randomKey(...args);
+export const randomKey = async () => {
+    return await ecc.randomKey();
+};
 
 // 私钥转公钥
-export const privateToPublic = (...args) => ecc.privateToPublic(...args);
+export const privateToPublic = (private_key, symbol = 'EOS') => {
+    let public_key = ecc.privateToPublic(private_key);
+    return public_key.replace(/^EOS/, symbol);
+}
 
 // 加密
 export const encrypt = (key, data) => {
