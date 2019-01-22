@@ -1,4 +1,5 @@
 import Eos from 'eosforce'
+import EOS_ML from 'eosjs'
 import axios from 'axios'
 import { NODE_API_URL } from '@/constants/config.constants';
 import Store from '@/store';
@@ -27,6 +28,7 @@ const API = {
   'get_account': '/v1/chain/get_account',
   'get_table_rows': '/v1/chain/get_table_rows'
 }
+
 export const getBpNick = () => {
   return fetch('https://updatewallet.oss-cn-hangzhou.aliyuncs.com/eosforce/bp-nickname.json').then(res => res.json());
 };
@@ -58,6 +60,7 @@ export const rank_get_action = (version_str) => {
   }
   return false;
 }
+
 // 获取节点信息
 export const getNodeInfo = async (httpEndpoint) => {
     let data = await axios.post(httpEndpoint + API.get_info, {})
@@ -156,7 +159,8 @@ export const getLockedEosc = httpEndpoint => async (account_name, concel_contain
   .catch(err => null);
   if(!data) return data;
   if(data.rows && data.rows.length){
-    return toBigNumber(data.rows[0].balance);
+    let balance = data.rows.length ? data.rows[0].balance : 0;
+    return toBigNumber(balance);
   }
   return toBigNumber(0);
 };
@@ -216,6 +220,21 @@ const get_filter_available_condition = (accountName, filter_way = 'EOSC') => {
   }
   return base_params;
 }
+
+const filter_main_token_by_way = (data, accountName, filter_way = 'EOSC') => {
+
+  if(filter_way == 'EOSC'){
+    const account = data.rows.find(acc => acc.name === accountName);
+    if (account) {
+      return toBigNumber(account.available);
+    } else {
+      return toBigNumber(0);
+    }
+  }
+
+  let balance = data.rows.length ? data.rows[0].balance : 0;
+  return toBigNumber(balance);
+}
 // 获取指定账户可用余额
 export const getAvailable = httpEndpoint => async (accountName, filter_way = 'EOSC', concel_container = {cancel: []}) => {
   let CancelToken = axios.CancelToken,
@@ -230,14 +249,9 @@ export const getAvailable = httpEndpoint => async (accountName, filter_way = 'EO
   )
   .then(data => data.data)
   .catch(err => null);
-  return toBigNumber(0);
+
   if(!data) return data;
-  const account = data.rows.find(acc => acc.name === accountName);
-  if (account) {
-    return toBigNumber(account.available);
-  } else {
-    return toBigNumber(0);
-  }
+  return filter_main_token_by_way(data, accountName, filter_way);
 };
 
 // 获取 token list
@@ -554,54 +568,45 @@ export const getAccountInfo = httpEndpoint => async (accountName, current_node, 
     info,
     bpsTable,
   };
+
 };
 
+const filter_lib_and_auth = (wallet_symbol = 'EOS', name, permission = 'active') => {
+  let EOS = wallet_symbol == 'EOS' ? Eos : EOS_ML;
+  let auth = wallet_symbol == 'EOS' ? {actor: name, permission} : {authorization: `${name}@${permission}`};
+  return {EOS, auth}
+}
+
 // 创建用户
-export const newAccount = config => ({creator, accountName, OwnerKey, ActiveKey, permission}) => {
+export const newAccount = config => async ({creator, accountName, OwnerKey, ActiveKey, permission, wallet_symbol = 'EOS'}) => {
   let auth = {
     actor: creator,
     permission
   }
-  return Eos(config)
-    .newaccount(creator, accountName, OwnerKey, ActiveKey, auth)
-    .catch(err => {
+  let EOS = wallet_symbol == 'EOS' ? Eos : EOS_ML;
+  let result = await EOS(config).newaccount(creator, accountName, OwnerKey, ActiveKey, auth).catch(err => {
       return handleApiError(err);
     });
+  return result;
 };
 
-export const transfer = config => {
-  return ({ from, to, amount, memo = '', tokenSymbol = 'EOS', precision = '4', permission } = {}) => {
-    return Promise.resolve()
-      .then(async () => {
-        let auth = {
-          actor: from,
-          permission
-        }
-        return Eos(config)
-          .contract(tokenSymbol === 'EOS' ? 'eosio' : 'eosio.token')
-          .then(token => {
-            return token.transfer(from, to, toAsset(amount, tokenSymbol, { precision }), memo, auth);
-          });
-      })
-      .catch(err => {
-        return handleApiError(err);
-      });
-  };
+// transfer
+export const transfer = config => async ({ from, to, amount, memo = '', tokenSymbol = 'EOST', precision = '4', permission, wallet_symbol = 'EOS' } = {}) => {
+   // ({ from, to, amount, memo = '', tokenSymbol = 'EOST', precision = '4', permission, wallet_symbol = 'EOS' } = {}) => {
+    let {EOS, auth} = filter_lib_and_auth(wallet_symbol, from, permission);
+    let contract_name = wallet_symbol == 'EOS' && tokenSymbol == 'EOS' ? 'eosio' : 'eosio.token';
+    let token = await EOS(config).contract(contract_name).catch(err => handleApiError(err) );
+    let res = await token.transfer(from, to, toAsset(amount, tokenSymbol), memo, auth).catch(err => handleApiError(err) );
+    return res;
 };
 
-export const vote = config => {
-  return async ({voter, bpname, amount, permission} = {}) => {
-    let auth = {
-      actor: voter,
-      permission
-    }
-    let token = await Eos(config).contract('eosio');
-    return token
-      .vote(voter, bpname, toAsset(amount), auth)
-      .catch(err => {
-        return handleApiError(err);
-      });
-  };
+export const vote = config => async ({voter, bpname, amount, permission, wallet_symbol = 'EOS'} = {}) => {
+    let {EOS, auth} = filter_lib_and_auth(wallet_symbol, voter, permission);
+    let token = await EOS(config).contract('eosio');
+    return token.vote(voter, bpname, toAsset(amount, wallet_symbol), auth)
+            .catch(err => {
+              return handleApiError(err);
+            });
 };
 
 export const unfreeze = config => {
@@ -679,69 +684,19 @@ export const unfreeze4ram = async (config, { voter, bpname, permission }) => {
     return res;
 };
 
-
-export const transfer_owner_auth = config => (name, to_public_key, permission) => {
-  return new Promise((resolve, reject) => {
-    let auth = {
-      actor: name,
-      permission
-    };
-    Eos(config)
-      .updateauth(name, 'owner', '', to_public_key, auth)
-      .then(res => {
-        resolve(res);
-      })
-      .catch(err => {
-        handleApiError(err);
-        let error_ob = null;
-        try {
-          error_ob = JSON.parse(err);
-        } catch (e) {};
-        resolve(error_ob);
-      });
-  });
-};
-
-export const transfer_active_auth = config => (name, to_public_key, permission) => {
-  return new Promise((resolve, reject) => {
-    let auth = {
-      actor: name,
-      permission
-    };
-    Eos(config)
-      .updateauth(name, 'active', 'owner', to_public_key, auth)
-      .then(res => {
-        resolve(res);
-      })
-      .catch(err => {
-        handleApiError(err);
-        let error_ob = null;
-        try {
-          error_ob = JSON.parse(err);
-        } catch (e) {};
-        resolve(error_ob);
-      });
-  });
-};
-
-export const transfer_account = config => async ({name, publick_key, permissions}) => {
+export const transfer_account = config => async ({name, publick_key, permissions, wallet_symbol = 'EOS'}) => {
   let res = {
     is_error: false,
     msg: '',
     data: []
   };
 
-  let token = await Eos(config).contract('eosio');
-  let auth = {
-    actor: name,
-    permission: 'owner'
-  }
+  let {EOS, auth} = filter_lib_and_auth(wallet_symbol, name, 'owner');
+
+  let token = await EOS(config).contract('eosio');
   let action_res = await token.transaction('eosio', tr => {
     tr.updateauth(name, 'active', 'owner', publick_key, auth);
     tr.updateauth(name, 'owner', '', publick_key, auth);
-  })
-  .then(res => {
-    return res;
   })
   .catch(err => {
     let error_ob = null;
@@ -750,6 +705,7 @@ export const transfer_account = config => async ({name, publick_key, permissions
     } catch (e) {};
     return error_ob;
   });
+
   res.message = get_error_msg(action_res);
   if(res.message){
     res.is_error = true;
@@ -759,11 +715,6 @@ export const transfer_account = config => async ({name, publick_key, permissions
 };
 
 export const create_token = config => async ({issuer, maximum_supply}) => {
-  // let auth = {
-  //   actor: issuer,
-  //   permission: 'owner'
-  // };
-  // create
   let res = await Eos(config)
       .create(issuer, maximum_supply, 'owner')
       .then(res => {
@@ -793,6 +744,101 @@ export const issue_token = config => async ({to, quantity, memo}) => {
         return null;
       });
 }
+
+/*
+  test_multi_action
+*/
+
+const test_config = {
+  httpEndpoint: 'http://192.168.2.139:8877',
+  keyProvider: '',
+  chainId: '8c755999b47be35914771c4c3df7dfe12f9412f5e4bb7807a2c1ae8776086a8d',
+};
+const test_account_name = 'abcd';
+const test_multi_action = async () => {
+  let eos = await EOS_ML(test_config).contract('eosio.token');
+  await eos.transfer(test_account_name, 'abc', '300.0000 EOST', 'hello');
+  await eos.transfer(test_account_name, 'abcd', '300.0000 EOST', 'hello');
+  await eos.transfer(test_account_name, 'abcde', '300.0000 EOST', 'hello');
+  await eos.transfer(test_account_name, 'bdbdbdbdbd', '300.0000 EOST', 'hello');
+  await eos.transfer(test_account_name, 'zzz', '300.0000 EOST', 'hello');
+}
+// test_multi_action();
+
+const test_new_account = async () => {
+  let eos = await EOS_ML(test_config).contract('eosio');
+  let auth = {
+              accounts : [],
+              keys : [{key: "EOS5E711ynubMqZeqphqUrbfig36QVgqtbo5uJjVZkA5VTU4Cz5sA", weight: 1}],
+              threshold : 1,
+              waits : []
+            }
+  let res = await eos.newaccount(test_account_name, 'z2', '5qYfFGE7k95SEbLdxjmuNUhvcbXifAgmMVusooRDwugvWk89w5', '5qYfFGE7k95SEbLdxjmuNUhvcbXifAgmMVusooRDwugvWk89w5', {'actor': 'zhi', permission: 'owner'})
+  console.log(res);
+}
+// test_new_account();
+
+const test_update_permission = async () => {
+  let eos = await EOS_ML(test_config).contract('eosio');
+  let auth = {
+              accounts : [],
+              keys : [{key: "EOST5qYfFGE7k95SEbLdxjmuNUhvcbXifAgmMVusooRDwugvWk89w5", weight: 1}],
+              threshold : 1,
+              waits : []
+            }
+  let res = await eos.updateauth(test_account_name, 'active', 'owner', '5E711ynubMqZeqphqUrbfig36QVgqtbo5uJjVZkA5VTU4Cz5sA', {authorization: `${test_account_name}@owner`})
+  console.log( res );
+}
+// test_update_permission()
+
+const test_vote = async () => {
+  let eos = await EOS_ML(test_config).contract('eosio');
+  // let res = await eos.freeze(test_account_name, '100.0000 EOST');
+  // let vote_res = await eos.vote(test_account_name, 'sbp.a', '10.0000 EOST');
+  // console.log( vote_res );
+  let freeze_res = await EOS_ML(test_config).getTableRows({
+    // { 
+      scope: 'eosio',
+      code: 'eosio',
+      table: 'freezed',
+      json: true,
+      limit: 1,
+      // table_key: test_account_name
+      lower_bound : test_account_name
+    // }
+    // table: 'freezed'
+  });
+  console.log(freeze_res);
+}
+// test_vote();
+
+const test_unfreeze = async () => {
+  let eos = await EOS_ML(test_config).contract('eosio');
+  await eos.vote(test_account_name, 'sbp.b', '0.0000 EOST');
+  // await eos.vote(test_account_name, 'sbp.a', '0.0000 EOST');
+  // let res = await eos.unfreeze(test_account_name);
+  // console.log(res);
+}
+// test_unfreeze();
+
+const test_claim = async () => {
+  let eos = await EOS_ML(test_config).contract('eosio');
+  await eos.claim('abc', 'sbp.b');
+}
+
+// test_claim();
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

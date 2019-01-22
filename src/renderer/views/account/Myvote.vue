@@ -46,7 +46,7 @@
           <td>{{bp.rewards_pool | formatNumber({p: 4})}}</td>
           <td>
             <template v-if="bp.vote">
-              {{ (bp.vote ? bp.vote && bp.vote.staked : 0) | formatNumber({p: 0})}} 
+                {{ (bp.vote.vote ? bp.vote.vote : (bp.vote.staked ? bp.vote.staked : 0)) | formatNumber({p: 0}) }}
             </template>
             <!-- <template v-if="bp.ramvote">
               <span style="color:#30e230;">

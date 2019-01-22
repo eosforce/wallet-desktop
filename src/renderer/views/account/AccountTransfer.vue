@@ -1,7 +1,7 @@
 <template>
   <confirm-modal :show="true" v-bind:title="title" :submitting="submitting" @confirm="submit()" @close="close">
     <div>
-      <div class="row">
+      <div class="row" v-if="is_fee_model">
         <div class="row__title">{{$t('手续费')}}</div>
         <div class="row__content">{{ fee }}</div>
       </div>
@@ -39,7 +39,7 @@ import Message from '@/components/Message';
 import ConfirmModal from '@/components/ConfirmModal';
 import PromptModal from '@/components/PromptModal';
 import { Actions } from '@/constants/types.constants';
-import { isValidPublic } from '@/utils/rules.js'
+import { isValidPublic, filter_public_key } from '@/utils/rules.js'
 export default {
   name: 'Claim',
   data() {
@@ -92,6 +92,12 @@ export default {
     walletData() {
       return this.wallet.data || {};
     },
+    wallet_symbol () {
+      return this.wallet.wallet_symbol;
+    },
+    is_fee_model () {
+      return this.wallet.is_fee_model;
+    },
     ...mapState(['account', 'wallet', 'app']),
   },
   methods: {
@@ -109,7 +115,7 @@ export default {
         });
         return null;
       }
-      if (!isValidPublic(this.public_key)) {
+      if (!isValidPublic(this.public_key, this.wallet_symbol)) {
         Message.error({
           title: this.$t('请填写正确的公钥格式')
         });
@@ -124,10 +130,11 @@ export default {
       this.submitting = true;
       let transfer_res = await this.TRANSFER_ACCOUNT({
         name: this.my_name, 
-        publick_key: this.public_key,
+        publick_key: filter_public_key(this.public_key, this.wallet_symbol),
         walletId: this.wallet.data.publicKey,
         password: this.password,
-        permissions: this.permissions.filter(item => item.is_have).map(item => item.name)
+        permissions: this.permissions.filter(item => item.is_have).map(item => item.name),
+        wallet_symbol: this.wallet_symbol
       });
       this.submitting = false;
       if (transfer_res.is_error) {

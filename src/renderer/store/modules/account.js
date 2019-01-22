@@ -242,14 +242,14 @@ const actions = {
         commit(Mutations.SET_ACCOUNT_NAME, { accountName });
         dispatch(Actions.GET_ACCOUNT_INFO, getters['GET_FILER_WAY']);
     },
-    [Actions.TRANSFER]({ state, dispatch, getters }, { from, to, amount, memo, password, tokenSymbol, precision, walletId, permission }) {
+    [Actions.TRANSFER]({ state, dispatch, getters }, { from, to, amount, memo, password, tokenSymbol, precision, walletId, permission, wallet_symbol }) {
         return getters[Getters.GET_TRANSE_CONFIG](password, from, walletId).then(async config => {
-            return transfer(config)({ from, to, amount, memo, tokenSymbol, precision, permission });
+            return transfer(config)({ from, to, amount, memo, tokenSymbol, precision, permission, wallet_symbol: getters['wallet_symbol'] });
         });
     },
     [Actions.VOTE]({ state, dispatch, getters }, { voter, bpname, amount, password, walletId, permission }) {
         return getters[Getters.GET_TRANSE_CONFIG](password, voter, walletId).then(config => {
-            return vote(config)({ voter, bpname, amount, permission });
+            return vote(config)({ voter, bpname, amount, permission, wallet_symbol: getters['wallet_symbol'] });
         });
     },
     [Actions.VOTE4RAM]({ state, dispatch, getters }, { voter, bpname, amount, password, walletId, permission }) {
@@ -467,13 +467,13 @@ const actions = {
             commit(Mutations.SET_ACCOUNT_INFO, { info });
         });
     },
-    async [Actions.TRANSFER_ACCOUNT]({ state, dispatch, commit, getters }, { name, publick_key, password, walletId, permissions = ['active', 'owner'] }) {
+    async [Actions.TRANSFER_ACCOUNT]({ state, dispatch, commit, getters }, { name, publick_key, password, walletId, permissions = ['active', 'owner'], wallet_symbol = 'EOS' }) {
         let with_out_reject = true;
         let config = await getters[Getters.GET_TRANSE_CONFIG](password, name, walletId, with_out_reject);
         if (config.is_error) {
             return config;
         }
-        let res = await transfer_account(config)({ name, publick_key, permissions });
+        let res = await transfer_account(config)({ name, publick_key, permissions, wallet_symbol: getters['wallet_symbol'] });
         return res;
     },
     async [Actions.CHECK_TRANSACTION]({ state, dispatch, commit, getters }){

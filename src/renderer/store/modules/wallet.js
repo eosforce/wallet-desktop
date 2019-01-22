@@ -7,6 +7,7 @@ import { decrypt } from '@/utils/util';
 const initState = {
   data: {},
   wallet_symbol: 'EOST',
+  is_fee_model: false,
   FILTER_WAY: 'EOS',
   accountList: [],
 };
@@ -43,7 +44,7 @@ const actions = {
   },
   [Actions.NEW_ACCOUNT]({ state, getters, dispatch }, { creator, OwnerKey, ActiveKey, accountName, password, walletId, permission }) {
     return getters[Getters.GET_TRANSE_CONFIG](password, creator, walletId).then(config => {
-      return newAccount(config)({creator, OwnerKey, ActiveKey, accountName, permission});
+      return newAccount(config)({creator, OwnerKey, ActiveKey, accountName, permission, wallet_symbol: state.wallet_symbol});
     });
   }
 };
@@ -62,6 +63,9 @@ const getters = {
   },
   GET_FILER_WAY (state) {
     return state.FILTER_WAY;
+  },
+  wallet_symbol (state) {
+    return state.wallet_symbol;
   }
 };
 

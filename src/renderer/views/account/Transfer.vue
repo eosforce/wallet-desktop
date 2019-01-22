@@ -34,7 +34,7 @@
               <input v-model="memo" min="0" class="input" type="text" :placeholder="$t('备注')" max-length="255"/>
             </div>
           </div>
-          <div class="field">
+          <div class="field" v-if="is_fee_model">
             <p class="help tips">{{$t( 'template.fee', {fee: symblo_change(app.fee) } )}}</p>
           </div>
           <div class="field is-grouped is-grouped-right">
@@ -67,7 +67,7 @@
           <div class="row__title">{{$t('转账金额')}}</div>
           <div class="row__content">{{amount | formatNumber({p: precision, showSymbol: true, symbol: symblo_change(tokenSymbol)})}}</div>
         </div>
-        <div class="row">
+        <div class="row" v-if="is_fee_model">
           <div class="row__title">{{$t('手续费')}}</div>
           <div class="row__content">{{ symblo_change(app.fee) }}</div>
         </div>
@@ -88,7 +88,7 @@ import { mapActions, mapState } from 'vuex';
 import Message from '@/components/Message';
 import ConfirmModal from '@/components/ConfirmModal';
 import { Actions } from '@/constants/types.constants';
-import { isValidAccountName, isValidAmount } from '@/utils/rules';
+import { isValidAccountName, isValidAmount, filter_public_key } from '@/utils/rules';
 import { toNumber, symblo_change } from '@/utils/util';
 
 export default {
@@ -110,7 +110,7 @@ export default {
       return this.$route.params.accountName;
     },
     tokenSymbol() {
-      return this.$route.params.symbol || 'EOS';
+      return this.$route.params.symbol || this.wallet_symbol;
     },
     precision() {
       return this.$route.params.precision !== undefined ? this.$route.params.precision : '4';
@@ -150,13 +150,19 @@ export default {
     walletData() {
       return this.wallet.data || {};
     },
+    wallet_symbol () {
+      return this.wallet.wallet_symbol;
+    },
+    is_fee_model () {
+      return this.wallet.is_fee_model;
+    },
     ...mapState(['account', 'wallet', 'app']),
   },
   methods: {
     confirmInfo() {
       if (this.isValidToAccountName && this.isValidAmount) {
         const isOver =
-          this.tokenSymbol === 'EOS'
+          this.tokenSymbol === this.wallet_symbol
             ? toNumber(this.account.info.available) - toNumber(this.amount) - 0.1 - this.fee
             : toNumber(this.account.info.available) - 0.1 - this.fee;
 
@@ -191,7 +197,8 @@ export default {
         tokenSymbol: this.tokenSymbol,
         precision: this.precision,
         walletId: this.walletData.publicKey,
-        permission: this.permissions.filter(item => item.is_have)[0].name
+        permission: this.permissions.filter(item => item.is_have)[0].name,
+        wallet_symbol: this.wallet_symbol
       })
       .then(result => {
         Message.success(this.$t('转账成功'));

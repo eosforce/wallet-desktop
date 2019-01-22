@@ -18,9 +18,6 @@
                         <el-tooltip class="item account_name_tag" effect="dark" :content='$t("点击复制账号")' placement="top">
                             <span @click="copyToClipboard($route.params.accountName)">{{$route.params.accountName}}</span>
                         </el-tooltip>
-                        {{
-                            permissions
-                        }}
                         <el-tooltip v-for="item in permissions" placement="top" :content='get_permission_info(item)'>
                             <span v-if="!on_load_info" class="permission_tag" v-bind:class="{'permission_tag_not_have': !item.is_have}">{{ item.name }}</span>
                         </el-tooltip>
@@ -40,10 +37,6 @@
                 </span>
             </div>
             <div class="box_item">
-                {{ account.info.assetTotal }}
-                {{ account.info.locked_eosc }}
-                {{ account.info.available }}
-                {{ on_load_info }}
                 <ul class="account_info_box">
                     <li class="account_detail_item min_w_200">
                         <span>{{$t('资产总额')}}:</span>

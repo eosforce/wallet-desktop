@@ -75,7 +75,7 @@
           <div class="row__title">{{$t('用户名称')}}</div>
           <div class="row__content">{{accountName}}</div>
         </div>
-        <div class="row">
+        <div class="row" v-if="is_fee_model">
           <div class="row__title">{{$t('手续费')}}</div>
           <div class="row__content">0.1 EOSC</div>
         </div>
@@ -96,7 +96,7 @@ import { mapActions, mapState } from 'vuex';
 import Message from '@/components/Message';
 import ConfirmModal from '@/components/ConfirmModal';
 import { Actions } from '@/constants/types.constants';
-import { isValidAccountName, isValidPublic } from '@/utils/rules';
+import { isValidAccountName, isValidPublic, filter_public_key } from '@/utils/rules';
 
 export default {
   name: 'AccountNew',
@@ -117,10 +117,10 @@ export default {
       return this.accountName && isValidAccountName(this.accountName);
     },
     isValidOwnerKey() {
-      return this.OwnerKey && isValidPublic(this.OwnerKey);
+      return this.OwnerKey && isValidPublic(this.OwnerKey, this.wallet_symbol);
     },
     isValidActiveKey() {
-      return this.ActiveKey && isValidPublic(this.ActiveKey);
+      return this.ActiveKey && isValidPublic(this.ActiveKey, this.wallet_symbol);
     },
     creatorAccountName() {
       return this.$route.params.accountName;
@@ -157,6 +157,12 @@ export default {
     walletData() {
       return this.wallet.data || {};
     },
+    wallet_symbol () {
+      return this.wallet.wallet_symbol;
+    },
+    is_fee_model () {
+      return this.wallet.is_fee_model;
+    },
     ...mapState(['account', 'wallet', 'app']),
   },
   methods: {
@@ -173,8 +179,8 @@ export default {
           this.modalSubmitting = true;
           return this.newAccount({
             password: this.password,
-            OwnerKey: this.OwnerKey,
-            ActiveKey: this.ActiveKey,
+            OwnerKey: filter_public_key(this.OwnerKey, this.wallet_symbol),
+            ActiveKey: filter_public_key(this.ActiveKey, this.wallet_symbol),
             accountName: this.accountName,
             creator: this.creatorAccountName,
             walletId: this.walletData.publicKey,

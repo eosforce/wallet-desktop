@@ -19,10 +19,18 @@ export const isValidAccountName = name => {
   return /^[.12345abcdefghijklmnopqrstuvwxyz]{1,12}$/.test(name);
 };
 
+export const filter_public_key = (public_key, symbol = 'EOS') => {
+  let reg = new RegExp('^'+symbol);
+  return public_key.replace(reg, '');
+}
+
 // 验证私钥 WIF 格式
 export const isValidPrivate = (...args) => ecc.isValidPrivate(...args);
 
-export const isValidPublic = (...args) => ecc.isValidPublic(...args);
+export const isValidPublic = (public_key, symbol = 'EOS') => {
+  public_key = filter_public_key(public_key, symbol);
+  return ecc.isValidPublic(public_key)
+}
 
 // 验证金额格式
 export const isValidAmount = (value, { precision = 4 } = {}) => {
