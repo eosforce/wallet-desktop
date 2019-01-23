@@ -9,6 +9,8 @@ const initState = {
   wallet_symbol: 'EOST',
   is_fee_model: false,
   FILTER_WAY: 'EOS',
+  has_cpu: true,
+  has_net: true,
   accountList: [],
 };
 

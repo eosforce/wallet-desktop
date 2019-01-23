@@ -11,12 +11,12 @@
           </div>
           <div class="field">
             <div class="static-label">
-              {{$t('当前投票金额')}}<span class="static-text">{{ramstakedAmount | formatNumber({p: 0, showSymbol: true})}}C</span>
+              {{$t('当前投票金额')}}<span class="static-text">{{ramstakedAmount | formatNumber({p: 0, showSymbol: true, symbol: wallet_symbol})}}</span>
             </div>
           </div>
           <div class="field">
             <div class="static-label">
-              {{$t('可用投票金额')}}<span class="static-text">{{account.info.available - fee_for_claim | formatNumber({p: 4, showSymbol: true})}}C</span>
+              {{$t('可用投票金额')}}<span class="static-text">{{account.info.available - fee_for_claim | formatNumber({p: 4, showSymbol: true, symbol: wallet_symbol})}}</span>
             </div>
           </div>
           <div class="field" v-if="selectType == 0">
@@ -53,7 +53,7 @@
               <p class="help is-danger" v-show="amount && !isValidAmount">
                 {{$t('金额必须为整数')}}
               </p>
-              <p class="help tips">{{selectInfo.tip}}，{{$t('template.fee', {fee: symblo_change(fee, 'EOS', 'EOSC') })}}</p>
+              <p class="help tips">{{selectInfo.tip}}，{{$t('template.fee', {fee: symblo_change(fee, 'EOS', wallet_symbol) })}}</p>
               <p class="help is-danger" v-show="amount > selectInfo.max">
                 {{selectInfo.maxTip}}
               </p>
@@ -61,7 +61,7 @@
           </div>
           <div class="field">
             <div class="static-label">
-              {{$t('修改后投票金额')}}<span class="static-text">{{newStakedAmount | formatNumber({p: 0, showSymbol: true})}}C</span>
+              {{$t('修改后投票金额')}}<span class="static-text">{{newStakedAmount | formatNumber({p: 0, showSymbol: true, symbol: wallet_symbol})}}C</span>
             </div>
           </div>
           <div class="field">
@@ -141,7 +141,7 @@ import Message from '@/components/Message';
 import ConfirmModal from '@/components/ConfirmModal';
 import { Actions } from '@/constants/types.constants';
 import { isValidAmount } from '@/utils/rules';
-import { toNumber, symblo_change } from '@/utils/util';
+import { toNumber, symblo_change, toAsset } from '@/utils/util';
 
 export default {
   name: 'vote4ram',
@@ -202,7 +202,7 @@ export default {
         if (bp.vote) {
           return bp.vote.staked;
         } else {
-          return '0 EOS';
+          return '0 ' + this.wallet_symbol;
         }
       } else {
         return null;
@@ -214,7 +214,7 @@ export default {
         if (bp.ramvote) {
           return bp.ramvote.staked;
         } else {
-          return '0 EOS';
+          return '0 ' + this.wallet_symbol;
         }
       } else {
         return null;
@@ -252,6 +252,9 @@ export default {
     walletData() {
       return this.wallet.data || {};
     },
+    wallet_symbol () {
+      return this.wallet.wallet_symbol;
+    },
     ...mapState(['account', 'wallet', 'app']),
   },
   methods: {
@@ -281,7 +284,7 @@ export default {
     submit() {
       this.submitting = true;
       this.vote4ram({
-        amount: this.newStakedAmount,
+        amount: toAsset(this.newStakedAmount, this.wallet_symbol),
         bpname: this.bpname,
         password: this.password,
         voter: this.voter,

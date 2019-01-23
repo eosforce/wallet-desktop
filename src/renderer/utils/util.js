@@ -84,6 +84,12 @@ export const isZero = (str = '') => {
     return /^0[0.]*$/.test(String(str));
 };
 
+export const is_float = (str = '') => {
+    let res = parseFloat(str);
+    if(isNaN(res)) return false;
+    return true;
+}
+
 export const get_node_version_num = (version_str) => {
     let res = '';
     var t = version_str.split('-');

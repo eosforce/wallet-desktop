@@ -592,7 +592,6 @@ export const newAccount = config => async ({creator, accountName, OwnerKey, Acti
 
 // transfer
 export const transfer = config => async ({ from, to, amount, memo = '', tokenSymbol = 'EOST', precision = '4', permission, wallet_symbol = 'EOS' } = {}) => {
-   // ({ from, to, amount, memo = '', tokenSymbol = 'EOST', precision = '4', permission, wallet_symbol = 'EOS' } = {}) => {
     let {EOS, auth} = filter_lib_and_auth(wallet_symbol, from, permission);
     let contract_name = wallet_symbol == 'EOS' && tokenSymbol == 'EOS' ? 'eosio' : 'eosio.token';
     let token = await EOS(config).contract(contract_name).catch(err => handleApiError(err) );
@@ -608,6 +607,24 @@ export const vote = config => async ({voter, bpname, amount, permission, wallet_
               return handleApiError(err);
             });
 };
+
+export const delegatebw = config => async ({from, to, net_quantity, cpu_quantity, release_to_to = 0, permission, wallet_symbol = 'EOS'}) => {
+  let {EOS, auth} = filter_lib_and_auth(wallet_symbol, from, permission);
+  let token = await EOS(config).contract('eosio');
+  let result = await token.delegatebw(from, to, net_quantity, cpu_quantity, release_to_to).catch(err => {
+    let error_ob = null;
+
+    try {
+          error_ob = JSON.parse(err);
+    } catch (e) {};
+
+    return {
+      is_error: true,
+      message: get_error_msg(error_ob)
+    }
+  });
+  return result;
+}
 
 export const unfreeze = config => {
   return async ({ voter, bpname, permission } = {}) => {
@@ -639,28 +656,24 @@ export const claim = config => {
   };
 };
 
+export const vote4ram = async (config, {voter, bpname, amount, permission, wallet_symbol = 'EOS'}) => {
+  let {EOS, auth} = filter_lib_and_auth(wallet_symbol, voter, permission);
+  let token = await EOS(config).contract('eosio');
+  let res = await token.vote4ram(voter, bpname, toAsset(amount), auth)
+                  .catch(err => { 
+                    handleApiError(err);
+                    try{
+                      err = JSON.parse(err);
+                    }catch(e){
 
-export const vote4ram = async (config, {voter, bpname, amount, permission}) => {
-    let auth = {
-      actor: voter,
-      permission
-    };
-    let token = await Eos(config).contract('eosio');
-    let res = await token.vote4ram(voter, bpname, toAsset(amount), auth)
-                    .catch(err => { 
-                      handleApiError(err);
-                      try{
-                        err = JSON.parse(err);
-                      }catch(e){
-
-                      }
-                      return {
-                        is_error: true,
-                        msg: err
-                      }
-                     })
-                    .then(res => res);
-    return res;
+                    }
+                    return {
+                      is_error: true,
+                      msg: err
+                    }
+                   })
+                  .then(res => res);
+  return res;
 };
 
 export const unfreeze4ram = async (config, { voter, bpname, permission }) => {
@@ -815,9 +828,9 @@ const test_vote = async () => {
 const test_unfreeze = async () => {
   let eos = await EOS_ML(test_config).contract('eosio');
   await eos.vote(test_account_name, 'sbp.b', '0.0000 EOST');
-  // await eos.vote(test_account_name, 'sbp.a', '0.0000 EOST');
-  // let res = await eos.unfreeze(test_account_name);
-  // console.log(res);
+  await eos.vote(test_account_name, 'sbp.a', '0.0000 EOST');
+  let res = await eos.unfreeze(test_account_name);
+  console.log(res);
 }
 // test_unfreeze();
 
@@ -827,6 +840,13 @@ const test_claim = async () => {
 }
 
 // test_claim();
+
+const test_delegatebw = async () => {
+  let eos = await EOS_ML(test_config).contract('eosio');
+  let result = await eos.delegatebw(test_account_name, test_account_name, '10.0000 EOST', '0.0000 EOST', 0);
+  console.error(result);
+}
+// test_delegatebw();
 
 
 

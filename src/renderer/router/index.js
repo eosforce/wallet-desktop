@@ -47,6 +47,13 @@ export default new Router({
                   },
                 },
                 {
+                  name: 'NetCpu',
+                  path: 'NetCpu',
+                  components: {
+                    modal: () => import('@/views/account/NetCpu'),
+                  },
+                },
+                {
                   name: 'transfer',
                   path: 'transfer',
                   components: {

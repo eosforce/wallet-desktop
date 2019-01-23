@@ -99,8 +99,8 @@
                     </li>
                 </ul>
             </div>
-            
             <!-- box_item -->
+
             <!-- box_item -->
             <div class="box_item">
                 <ul class="account_info_box">
@@ -116,7 +116,54 @@
                     </li>
                 </ul>
             </div>
-            
+            <!-- box_item -->
+            <!-- box_item -->
+            <div class="box_item" v-if="has_cpu">
+                <ul class="account_info_box">
+                    <li class="account_detail_item min_w_200">
+                        <span>{{$t('CPU总量')}}:</span>
+                        <span class="cl" v-if="!on_load_info && cpu_limit">{{ cpu_limit.max }} us</span>
+                        <div class="load_circle account_detail_loader" v-if="on_load_info"></div>
+                    </li>
+                    <li>
+                        <span>{{$t('可用CPU')}}:</span>
+                        <span class="cl" v-if="!on_load_info && cpu_limit">{{ cpu_limit.available }} us</span>
+                        <div class="load_circle account_detail_loader" v-if="on_load_info"></div>
+                    </li>
+                    <li>
+                        <span>{{$t('已使用CPU')}}:</span>
+                        <span class="cl" v-if="!on_load_info && cpu_limit">{{ cpu_limit.used }} us</span>
+                        <div class="load_circle account_detail_loader" v-if="on_load_info"></div>
+                    </li>
+                    <router-link v-if="!on_load_info" style="min-width: 110px;background: #408ee1;border-radius: 17.5px;color: #fff;border: none;" class="button is-small is-link" :to="{name: 'NetCpu'}">
+                            {{$t('抵押CPU')}}
+                        </router-link>
+                </ul>
+            </div>
+            <!-- box_item -->
+            <!-- box_item -->
+            <div class="box_item" v-if="has_net">
+                <ul class="account_info_box">
+                    <li class="account_detail_item min_w_200">
+                        <span>{{$t('网络总量')}}:</span>
+                        <span class="cl" v-if="!on_load_info && net_limit">{{ net_limit.max/1024 }} KB</span>
+                        <div class="load_circle account_detail_loader" v-if="on_load_info"></div>
+                    </li>
+                    <li>
+                        <span>{{$t('可用网络')}}:</span>
+                        <span class="cl" v-if="!on_load_info && net_limit">{{ (net_limit.available/1024).toFixed(4) }} KB</span>
+                        <div class="load_circle account_detail_loader" v-if="on_load_info"></div>
+                    </li>
+                    <li>
+                        <span>{{$t('已使用网络')}}:</span>
+                        <span class="cl" v-if="!on_load_info && net_limit">{{ (net_limit.used/1024).toFixed(4) }} KB</span>
+                        <div class="load_circle account_detail_loader" v-if="on_load_info"></div>
+                    </li>
+                    <router-link v-if="!on_load_info" style="min-width: 110px;background: #408ee1;border-radius: 17.5px;color: #fff;border: none;" class="button is-small is-link" :to="{name: 'NetCpu'}">
+                            {{$t('抵押网络')}}
+                        </router-link>
+                </ul>
+            </div>
             <!-- box_item -->
         </div>
     </div>
@@ -187,6 +234,12 @@ export default {
         ram_usage () {
             return (this.baseInfo.ram_usage/1024).toFixed(4);
         },
+        cpu_limit () {
+            return this.baseInfo.cpu_limit;
+        },
+        net_limit () {
+            return this.baseInfo.net_limit;
+        },
         ramstakedTotal () {
             return this.account.info.ramstakedTotal;
         },
@@ -201,6 +254,12 @@ export default {
         },
         filter_way () {
             return this.wallet.FILTER_WAY;
+        },
+        has_cpu () {
+            return this.wallet.has_cpu;
+        },
+        has_net () {
+            return this.wallet.has_net;
         },
         ...mapState(['account', 'wallet', 'app']),
     },

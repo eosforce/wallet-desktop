@@ -5,6 +5,7 @@ import {
     getAvailable,
     getTransferRecord,
     vote,
+    delegatebw,
     unfreeze,
     claim,
     vote4ram,
@@ -260,7 +261,7 @@ const actions = {
                     msg: err
                 }
             });
-            let res = config.is_error ? config : await vote4ram(config, { voter, bpname, amount, permission });
+            let res = config.is_error ? config : await vote4ram(config, { voter, bpname, amount, permission, wallet_symbol: getters['wallet_symbol'] });
             resolve(res);
         })
     },
@@ -474,6 +475,11 @@ const actions = {
             return config;
         }
         let res = await transfer_account(config)({ name, publick_key, permissions, wallet_symbol: getters['wallet_symbol'] });
+        return res;
+    },
+    async [Actions.DELEGATEBW]({ state, dispatch, commit, getters }, { password, walletId, from, to, net_quantity, cpu_quantity, release_to_to = 0, permission}) {
+        let config = await getters[Getters.GET_TRANSE_CONFIG](password, from, walletId);
+        let res = await delegatebw(config)({ from, to, net_quantity, cpu_quantity, release_to_to, permission, wallet_symbol: getters['wallet_symbol'] });
         return res;
     },
     async [Actions.CHECK_TRANSACTION]({ state, dispatch, commit, getters }){
