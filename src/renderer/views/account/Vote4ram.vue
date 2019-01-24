@@ -16,14 +16,14 @@
           </div>
           <div class="field">
             <div class="static-label">
-              {{$t('可用投票金额')}}<span class="static-text">{{account.info.available - fee_for_claim | formatNumber({p: 4, showSymbol: true, symbol: wallet_symbol})}}</span>
+              {{$t('可用投票金额')}}<span class="static-text">{{staked - fee_for_claim | formatNumber({p: 4, showSymbol: true, symbol: wallet_symbol})}}</span>
             </div>
           </div>
-          <div class="field" v-if="selectType == 0">
+          <div class="field" v-if="selectType == 0 && is_fee_model">
             <div class="static-label">
               {{$t('预留领取手续费')}}
               <input type="text" name="" v-model="fee_for_claim" class="small_input" >
-              <span class="symbol_tag">EOSC</span>
+              <span class="symbol_tag">{{ wallet_symbol }}</span>
             </div>
           </div>
           <div class="field is-horizontal">
@@ -49,11 +49,11 @@
               {{selectInfo.title}}
             </label>
             <div class="control">
-              <input v-model="amount" min="0" :max="selectInfo.max" class="input" type="number" step="1" :placeholder="$t('template.symbol', {symbol: 'EOSC'})"  required />
+              <input v-model="amount" min="0" :max="selectInfo.max" class="input" type="number" step="1" :placeholder="$t('template.symbol', {symbol: wallet_symbol})"  required />
               <p class="help is-danger" v-show="amount && !isValidAmount">
                 {{$t('金额必须为整数')}}
               </p>
-              <p class="help tips">{{selectInfo.tip}}，{{$t('template.fee', {fee: symblo_change(fee, 'EOS', wallet_symbol) })}}</p>
+              <p class="help tips" v-if="is_fee_model">{{selectInfo.tip}}，{{$t('template.fee', {fee: symblo_change(fee, 'EOS', wallet_symbol) })}}</p>
               <p class="help is-danger" v-show="amount > selectInfo.max">
                 {{selectInfo.maxTip}}
               </p>
@@ -113,15 +113,15 @@
         </div>
         <div class="row">
           <div class="row__title">{{selectInfo.confirm}}</div>
-          <div class="row__content">{{amount | formatNumber({p: 0, showSymbol: true})}}C</div>
+          <div class="row__content">{{amount | formatNumber({p: 0, showSymbol: true, symbol: wallet_symbol})}}</div>
         </div>
         <div class="row">
           <div class="row__title">{{$t('修改后投票金额')}}</div>
-          <div class="row__content">{{newStakedAmount | formatNumber({p: 0, showSymbol: true})}}C</div>
+          <div class="row__content">{{newStakedAmount | formatNumber({p: 0, showSymbol: true, symbol: wallet_symbol})}}</div>
         </div>
-        <div class="row">
+        <div class="row" v-if="is_fee_model">
           <div class="row__title">{{$t('手续费')}}</div>
-          <div class="row__content">{{ symblo_change(fee, 'EOS', 'EOSC') }} </div>
+          <div class="row__content">{{ symblo_change(fee, 'EOS', wallet_symbol) }} </div>
         </div>
         <div class="row">
           <div class="row__title">{{$t('输入密码')}}</div>
@@ -164,7 +164,7 @@ export default {
           title: this.$t('追加金额（整数）'),
           confirm: this.$t('追加金额'),
           tip: this.$t('* 立即生效'),
-          max: toNumber(this.account.info.available) - this.fee - this.fee_for_claim,
+          max: toNumber(this.staked) - this.fee - this.fee_for_claim,
           maxTip: this.$t('超过可用投票金额！'),
           disabled: false,
         },
@@ -212,7 +212,7 @@ export default {
       const bp = this.account.bpsTable && this.account.bpsTable.find(bp => this.bpname === bp.name);
       if (bp) {
         if (bp.ramvote) {
-          return bp.ramvote.staked;
+          return bp.ramvote.staked || bp.ramvote.vote;
         } else {
           return '0 ' + this.wallet_symbol;
         }
@@ -255,13 +255,66 @@ export default {
     wallet_symbol () {
       return this.wallet.wallet_symbol;
     },
+    is_fee_model () {
+      return this.wallet.is_fee_model;
+    },
+    has_freezed () {
+      return this.wallet.has_freezed;
+    },
+    // unfreeze_time () {
+    //         // 518400
+    //   if(!this.vote_and_voteram_freeze.data){
+    //       return ;
+    //   }
+    //   let rows = this.vote_and_voteram_freeze.data.rows,
+    //       row = rows.length ? rows[0] : null,
+    //       unstake_height = row ? row.unstake_height : null,
+    //       unfreeze_time = (this.nodeInfo.last_irreversible_block_num - unstake_height - 518400) * 2;
+    //   return unfreeze_time;
+    // },
+    unstaking () {
+      if(!this.vote_and_voteram_freeze.data){
+          return ;
+      }
+      let rows = this.vote_and_voteram_freeze.data.rows,
+          row = rows.length ? rows[0] : null,
+          unstaking = row ? row.unstaking : 0;
+      return toNumber(unstaking);
+    },
+    staked () {
+      if(this.vote_back_state){
+        return this.account.info.available;
+      }
+      if(!this.vote_and_voteram_freeze.data){
+          return ;
+      }
+      let rows = this.vote_and_voteram_freeze.data.rows,
+          row = rows.length ? rows[0] : null,
+          staked = row ? row.staked : 0;
+      return toNumber(staked);
+    },
+    vote_and_voteram_freeze () {
+      return this.account.vote_and_voteram_freeze;
+    },
+    vote_back_state () {
+      return this.wallet.vote_back_state;
+    },
     ...mapState(['account', 'wallet', 'app']),
   },
+  mounted () {
+    this.update_lease_fee();
+  },
   methods: {
+    update_lease_fee () {
+      if(!this.is_fee_model){
+        this.fee_for_claim = 0;
+        this.fee = 0;
+      }
+    },
     confirmInfo() {
       if (this.isValidAmount && this.newStakedAmount !== undefined) {
         if (this.selectType === '0') {
-          const isOver = toNumber(this.account.info.available) - toNumber(this.amount) - 0.1 - this.fee;
+          const isOver = toNumber(this.staked) - toNumber(this.amount) - 0.1 - this.fee;
           if (isOver < 0.00001) {
             return this.$confirm(
               this.$t('您的可用余额将降低到0.1以下，可能不够缴纳后续交易的手续费，请注意预留一部分的可用资金。'),
@@ -283,6 +336,7 @@ export default {
     },
     submit() {
       this.submitting = true;
+
       this.vote4ram({
         amount: toAsset(this.newStakedAmount, this.wallet_symbol),
         bpname: this.bpname,
@@ -291,35 +345,21 @@ export default {
         walletId: this.walletData.publicKey,
         permission: this.permissions.filter(item => item.is_have)[0].name
       })
-        .then(result => {
-
-          if(result.is_error){
-            let err = result.msg;
-            let error_msg = err.error ? err.error.details.map(item => item.message).join(';') : '';
-            error_msg = error_msg || err.message;
-            Message.error({
-              title: `${err.code ? `code: ${err.code}` : this.$t('投票失败')}`,
-              message: error_msg,
-            });
-            this.submitting = false;
-            return Promise.reject(err);
-          }
-
-          Message.success(this.$t('投票成功'));
-        })
-        .catch(err => {
-          err = err.msg;
-          Message.error({
-            title: `${err.code ? `code: ${err.code}` : this.$t('投票失败')}`,
-            message: err.message,
-          });
-          this.submitting = false;
-          return Promise.reject(err);
-        })
-        .then(() => {
-          this.getAccountInfo({ accountName: this.voter });
-          this.close();
+      .then(result => {
+        Message.success(this.$t('投票成功'));
+        this.getAccountInfo({ accountName: this.voter });
+        this.close();
+      })
+      .catch(err => {
+        Message.error({
+          title: this.$t('投票失败'),
+          message: err,
         });
+      })
+      .then(res => {
+        this.submitting = false;
+      });
+
     },
     toggle(key, val) {
       return (this[key] = val === undefined ? !this[key] : val);

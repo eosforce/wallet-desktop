@@ -16,14 +16,14 @@
           </div>
           <div class="field">
             <div class="static-label">
-              {{$t('可用投票金额')}}<span class="static-text">{{account.info.available - fee_for_claim | formatNumber({p: 4, showSymbol: true, symbol: wallet_symbol}) }}</span>
+              {{$t('可用投票金额')}}<span class="static-text">{{staked | formatNumber({p: 4, showSymbol: true, symbol: wallet_symbol}) }}</span>
             </div>
           </div>
-          <div class="field" v-if="selectType == 0">
+          <div class="field" v-if="selectType == 0 && is_fee_model">
             <div class="static-label">
               {{$t('预留领取手续费')}}
               <input type="text" name="" v-model="fee_for_claim" class="small_input" >
-              <span class="symbol_tag">EOSC</span>
+              <span class="symbol_tag">{{ wallet_symbol }}</span>
             </div>
           </div>
           <div class="field is-horizontal">
@@ -108,7 +108,7 @@
         </div>
         <div class="row">
           <div class="row__title">{{selectInfo.confirm}}</div>
-          <div class="row__content">{{amount | formatNumber({p: 0, showSymbol: true})}}C</div>
+          <div class="row__content">{{amount | formatNumber({p: 0, showSymbol: true, symbol: wallet_symbol})}}</div>
         </div>
         <div class="row">
           <div class="row__title">{{$t('修改后投票金额')}}</div>
@@ -162,7 +162,7 @@ export default {
           title: this.$t('追加金额（整数）'),
           confirm: this.$t('追加金额'),
           tip: this.$t('* 立即生效'),
-          max: toNumber(this.account.info.available) - this.fee - this.fee_for_claim,
+          max: toNumber(this.staked) - this.fee - this.fee_for_claim,
           maxTip: this.$t('超过可用投票金额！'),
           disabled: false,
         },
@@ -198,7 +198,7 @@ export default {
       const bp = this.account.bpsTable && this.account.bpsTable.find(bp => this.bpname === bp.name);
       if (bp) {
         if (bp.vote) {
-          return bp.vote.staked;
+          return bp.vote.staked || bp.vote.vote;
         } else {
           return '0 EOS';
         }
@@ -244,13 +244,63 @@ export default {
     is_fee_model () {
       return this.wallet.is_fee_model;
     },
+    has_freezed () {
+      return this.wallet.has_freezed;
+    },
+    unfreeze_time () {
+            // 518400
+      if(!this.vote_and_voteram_freeze.data){
+          return ;
+      }
+      let rows = this.vote_and_voteram_freeze.data.rows,
+          row = rows.length ? rows[0] : null,
+          unstake_height = row ? row.unstake_height : null,
+          unfreeze_time = (this.nodeInfo.last_irreversible_block_num - unstake_height - 518400) * 2;
+      return unfreeze_time;
+    },
+    unstaking () {
+      if(!this.vote_and_voteram_freeze.data){
+          return ;
+      }
+      let rows = this.vote_and_voteram_freeze.data.rows,
+          row = rows.length ? rows[0] : null,
+          unstaking = row ? row.unstaking : 0;
+      return toNumber(unstaking);
+    },
+    staked () {
+      if(this.vote_back_state){
+        return this.account.info.available;
+      }
+      if(!this.vote_and_voteram_freeze.data){
+          return ;
+      }
+      let rows = this.vote_and_voteram_freeze.data.rows,
+          row = rows.length ? rows[0] : null,
+          staked = row ? row.staked : 0;
+      return toNumber(staked);
+    },
+    vote_and_voteram_freeze () {
+      return this.account.vote_and_voteram_freeze;
+    },
+    vote_back_state () {
+      return this.wallet.vote_back_state;
+    },
     ...mapState(['account', 'wallet', 'app']),
   },
+  mounted () {
+    this.update_lease_fee();
+  },
   methods: {
+    update_lease_fee () {
+      if(!this.is_fee_model){
+        this.fee_for_claim = 0;
+        this.fee = 0;
+      }
+    },
     confirmInfo() {
       if (this.isValidAmount && this.newStakedAmount !== undefined) {
         if (this.selectType === '0') {
-          const isOver = toNumber(this.account.info.available) - toNumber(this.amount) - 0.1 - this.fee;
+          const isOver = toNumber(this.staked) - toNumber(this.amount) - 0.1 - this.fee;
           if (isOver < 0.00001) {
             return this.$confirm(
               this.$t('您的可用余额将降低到0.1以下，可能不够缴纳后续交易的手续费，请注意预留一部分的可用资金。'),
@@ -273,7 +323,7 @@ export default {
     submit() {
       this.submitting = true;
       this.vote({
-        amount: '1 EOST',
+        amount: this.newStakedAmount,
         bpname: this.bpname,
         password: this.password,
         voter: this.voter,

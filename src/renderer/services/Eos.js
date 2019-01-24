@@ -40,11 +40,11 @@ export const getNodeList = async () => {
   return fetch(map[Store.state.app.chainNet]).then(async res => {
     let data = await res.json();
     //trans_main
-    data.nodes.forEach(item => {
-      item.node_addr = '192.168.2.139';
-      item.port_http = '8877';
-      item.port_ssl = '';
-    });
+    // data.nodes.forEach(item => {
+    //   item.node_addr = '192.168.2.139';
+    //   item.port_http = '8877';
+    //   item.port_ssl = '';
+    // });
     return data;
   });
 };
@@ -221,9 +221,9 @@ const get_filter_available_condition = (accountName, filter_way = 'EOSC') => {
   return base_params;
 }
 
-const filter_main_token_by_way = (data, accountName, filter_way = 'EOSC') => {
+const filter_main_token_by_way = (data, accountName, filter_way = 'eosio') => {
 
-  if(filter_way == 'EOSC'){
+  if(filter_way == 'eosio'){
     const account = data.rows.find(acc => acc.name === accountName);
     if (account) {
       return toBigNumber(account.available);
@@ -236,7 +236,7 @@ const filter_main_token_by_way = (data, accountName, filter_way = 'EOSC') => {
   return toBigNumber(balance);
 }
 // 获取指定账户可用余额
-export const getAvailable = httpEndpoint => async (accountName, filter_way = 'EOSC', concel_container = {cancel: []}) => {
+export const getAvailable = httpEndpoint => async (accountName, filter_way = 'eosio', concel_container = {cancel: []}) => {
   let CancelToken = axios.CancelToken,
       params = get_filter_available_condition(accountName, filter_way);
   let data = await axios.post(httpEndpoint + API.get_table_rows, 
@@ -376,6 +376,24 @@ export const getTable = httpEndpoint => async (params, concel_container = {cance
   return data;
 };
 
+export const getFreeze = httpEndpoint => async (account_name) => {
+  let freeze_res = await Eos({httpEndpoint}).getTableRows({
+      scope: 'eosio',
+      code: 'eosio',
+      table: 'freezed',
+      json: true,
+      limit: 1,
+      lower_bound : account_name
+  });
+
+
+  if(freeze_res && freeze_res.rows && freeze_res.rows.length && freeze_res.rows[0].voter != account_name){
+    freeze_res.rows = [];
+  }
+
+  return freeze_res;
+}
+
 // 全局基础信息获取
 export const getGlobalTable = httpEndpoint => async (accountName, current_node, block) => {
   let start_time = new Date().getTime();
@@ -405,7 +423,7 @@ export const getGlobalTable = httpEndpoint => async (accountName, current_node, 
 }
 
 // 根据 bp 和 vote 得到分红表，返回一个对象
-export const getRewardsAndBpsTable = httpEndpoint => async (accountName, current_node, concel_container = {cancel: []}, votesTable, votes4ramTable, bpsTable, superBpsAmountTable, block) => {
+export const getRewardsAndBpsTable = httpEndpoint => async (accountName, current_node, concel_container = {cancel: []}, votesTable, votes4ramTable, bpsTable, superBpsAmountTable, block, vote_num_in = 'staked') => {
   votesTable = votesTable || await getVotesTable(httpEndpoint)(accountName);
   votes4ramTable = votes4ramTable || await getVotes4ramTable(httpEndpoint)(accountName);
   bpsTable = bpsTable || await getBpsTable(httpEndpoint)();
@@ -481,7 +499,7 @@ export const getRewardsAndBpsTable = httpEndpoint => async (accountName, current
       rewardsTable.push({ ...extraRow });
 
       bpRow.vote = { ...extraRow };
-      bpRow.hasVote = calcVoteExist(vote.staked, reward, vote.unstaking);
+      bpRow.hasVote = vote.staked ? calcVoteExist(vote.staked, reward, vote.unstaking) : calcVoteExist(vote.vote, reward, vote.unstaking);
     }
 
     if(ramvote){
@@ -489,7 +507,7 @@ export const getRewardsAndBpsTable = httpEndpoint => async (accountName, current
       const extraRow = { bpname: ramvote.bpname, reward, ...ramvote };
       rewardsTable.push({...extraRow});
       bpRow.ramvote = { ...extraRow };
-      bpRow.hasRamvote = calcVoteExist(ramvote.staked, reward, ramvote.unstaking);
+      bpRow.hasRamvote = ramvote.staked ? calcVoteExist(ramvote.staked, reward, ramvote.unstaking) : calcVoteExist(ramvote.vote, reward, ramvote.unstaking);
     }
 
     if (bpRow.isSuperBp) {
@@ -499,11 +517,17 @@ export const getRewardsAndBpsTable = httpEndpoint => async (accountName, current
     }
     
   }
-  const stakedTotal = calcTotalAmount(votesTable, 'staked');
+  let stakedTotal = calcTotalAmount(votesTable, vote_num_in);
+  // stakedTotal = calcTotalAmount(votesTable, 'vote');
+
   const unstakingTotal = calcTotalAmount(votesTable, 'unstaking');
-  const ramstakedTotal = calcTotalAmount(votes4ramTable, 'staked');
+
+  let ramstakedTotal = calcTotalAmount(votes4ramTable, vote_num_in);
+  // ramstakedTotal = calcTotalAmount(votes4ramTable, 'vote');
+
   const ramunstakingTotal = calcTotalAmount(votes4ramTable, 'unstaking');
   const rewardTotal = calcTotalAmount(rewardsTable, 'reward');
+
   return {
     rewardsTable,
     bpsTable: superBpTable
@@ -535,18 +559,17 @@ export const count_asset_total = (...args) => {
   return calcTotalAmount([...args]);
 }
 
-export const getAccountInfo = httpEndpoint => async (accountName, current_node, concel_container = {cancel: []}, votesTable, votes4ramTable, bpsTable, superBpsAmountTable) => {
+export const getAccountInfo = httpEndpoint => async ({accountName, current_node, votesTable, votes4ramTable, bpsTable, superBpsAmountTable, vote_num_in = 'staked'}) => {
   const [available, account_base_info, locked_eosc] = await Promise.all([getAvailable(httpEndpoint)(accountName), getAccount(httpEndpoint)(accountName), getLockedEosc(httpEndpoint)(accountName)]);
   const reward_res = await getRewardsAndBpsTable(httpEndpoint)(accountName, current_node, concel_container = {cancel: []}, votesTable, votes4ramTable, bpsTable, superBpsAmountTable);
   bpsTable = reward_res.bpsTable;
   votesTable = reward_res.votesTable;
   votes4ramTable = reward_res.votes4ramTable;
   const {rewardsTable, bpInfo} = reward_res;
-
-  const stakedTotal = calcTotalAmount(votesTable, 'staked');
+  const stakedTotal = calcTotalAmount(votesTable, vote_num_in);
   const unstakingTotal = calcTotalAmount(votesTable, 'unstaking');
   const rewardTotal = calcTotalAmount(rewardsTable, 'reward');
-  const ramstakedTotal = calcTotalAmount(votes4ramTable, 'staked');
+  const ramstakedTotal = calcTotalAmount(votes4ramTable, vote_num_in);
   const ramunstakingTotal = calcTotalAmount(votes4ramTable, 'unstaking');
   const assetTotal = calcTotalAmount([available, stakedTotal, unstakingTotal, rewardTotal, ramstakedTotal, ramunstakingTotal]);
   
@@ -625,7 +648,6 @@ export const delegatebw = config => async ({from, to, net_quantity, cpu_quantity
   });
   return result;
 }
-
 export const unfreeze = config => {
   return async ({ voter, bpname, permission } = {}) => {
     let auth = {
@@ -641,13 +663,17 @@ export const unfreeze = config => {
   };
 };
 
+export const freeze = config => async ({ voter, ammount, permission, wallet_symbol = 'EOS' } = {}) => {
+  let {EOS, auth} = filter_lib_and_auth(wallet_symbol, voter, permission);
+  let token = await EOS(config).contract('eosio');
+  let res = await token.freeze(voter, toAsset(ammount, wallet_symbol));
+  return res;
+};
+
 export const claim = config => {
-  return async ({ voter, bpname, permission } = {}) => {
-    let auth = {
-      actor: voter,
-      permission
-    };
-    let token = await Eos(config).contract('eosio');
+  return async ({ voter, bpname, permission, wallet_symbol = 'EOS' } = {}) => {
+    let {EOS, auth} = filter_lib_and_auth(wallet_symbol, voter, permission);
+    let token = await EOS(config).contract('eosio');
     return token
       .claim(voter, bpname, auth)
       .catch(err => {
@@ -659,20 +685,10 @@ export const claim = config => {
 export const vote4ram = async (config, {voter, bpname, amount, permission, wallet_symbol = 'EOS'}) => {
   let {EOS, auth} = filter_lib_and_auth(wallet_symbol, voter, permission);
   let token = await EOS(config).contract('eosio');
-  let res = await token.vote4ram(voter, bpname, toAsset(amount), auth)
+  let res = await token.vote4ram(voter, bpname, toAsset(amount, wallet_symbol), auth)
                   .catch(err => { 
-                    handleApiError(err);
-                    try{
-                      err = JSON.parse(err);
-                    }catch(e){
-
-                    }
-                    return {
-                      is_error: true,
-                      msg: err
-                    }
-                   })
-                  .then(res => res);
+                    throw err;
+                   });
   return res;
 };
 

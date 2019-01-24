@@ -56,7 +56,7 @@
           <td>{{bp.rewards_pool | formatNumber({p: 4})}}</td>
           <td>
             <span v-show="!bp.hasVote">-</span>
-            <span v-show="bp.hasVote">{{ bp.vote && bp.vote.staked | formatNumber({p: 0})}}</span>
+            <span v-show="bp.hasVote">{{ (bp.vote ? bp.vote.vote || bp.vote.staked : 0) | formatNumber({p: 0})}}</span>
           </td>
           <td>
             <router-link class="button is-small is-outlined" :class="{'is-modify': bp.hasVote}" :to="{name: 'vote', params: { bpname: bp.name }}">

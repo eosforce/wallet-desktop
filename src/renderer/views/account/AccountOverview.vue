@@ -65,10 +65,26 @@
                     </li>
                     <li class="account_detail_item min_w_200">
                         <span>{{$t('赎回总额')}}:</span>
-                        <span class="cl" v-if="!on_load_info">{{account.info.unstakingTotal | formatNumber({p: 0})}}</span>
+                        <span class="cl" v-if="!on_load_info && vote_back_state" >
+                            {{ account.info.unstakingTotal | formatNumber({p: 0})}}
+                        </span>
+                        <span v-bind:class="{'cl': unfreeze_time > 0 }" v-if="!on_load_info && !vote_back_state" >
+                            {{ unstaking | formatNumber({p: 0})}}
+                        </span>
+                        <!-- {{ unfreeze_time }} -->
+                        <router-link class="button is-small is-link box_transfer_link" :to="{name: 'Freeze'}" v-if="!on_load_info && (has_active || has_owner) && unfreeze_time > 0 && !vote_back_state">{{$t('赎回')}}</router-link>
                         <div class="load_circle account_detail_loader" v-if="on_load_info"></div>
+                        
                     </li>
-                    <li class="account_detail_item min_w_200">
+                    <li class="account_detail_item min_w_200" v-if="has_freezed">
+                        <span>{{$t('抵押总额')}}:</span>
+                        <span class="cl" v-if="vote_and_voteram_freeze.data">
+                            {{ vote_and_voteram_freeze.data.rows.length ? toNumber(vote_and_voteram_freeze.data.rows[0].staked) : 0 }}
+                        </span>
+                        <div class="load_circle account_detail_loader" v-if="!vote_and_voteram_freeze.data && vote_and_voteram_freeze.on_load"></div>
+                        <router-link class="button is-small is-link box_transfer_link" :to="{name: 'Freeze'}" v-if="!on_load_info && (has_active || has_owner)">{{$t('抵押')}}</router-link>
+                    </li>
+                    <li class="account_detail_item min_w_200" v-if="has_claim">
                         <span>{{$t('待领分红总额')}}:</span>
                         <span class="cl" v-if="!on_load_info">{{ account.info.rewardTotal * 1 > 0 ? formatNumber(account.info.rewardTotal, {p: 4}) : 0 }}</span>
                         <div class="load_circle account_detail_loader" v-if="on_load_info"></div>
@@ -90,7 +106,7 @@
                         </span>
                         <div class="load_circle account_detail_loader" v-if="on_load_info"></div>
                     </li>
-                    <li class="account_detail_item min_w_200">
+                    <li class="account_detail_item min_w_200" v-if="vote_back_state">
                         <span>{{$t('内存租赁赎回')}}:</span>
                         <span class="cl" v-if="!on_load_info">
                         {{( ramunstakingTotal | formatNumber({p: 0}) ) || 0}}
@@ -173,6 +189,10 @@ import { mapState, mapActions } from 'vuex';
 import {
     formatNumber
 } from '@/utils/filter'
+import {
+    toNumber,
+    toAsset
+} from '@/utils/util'
 import { Actions } from '@/constants/types.constants';
 import Copy from 'clipboard-copy'
 export default {
@@ -188,6 +208,9 @@ export default {
     computed: {
         bpInfo() {
             return this.account.info.bpInfo;
+        },
+        nodeInfo() {
+          return this.app.currentNodeInfo || {};
         },
         on_load_info() {
             return this.account.on_load_info;
@@ -261,6 +284,47 @@ export default {
         has_net () {
             return this.wallet.has_net;
         },
+        has_claim () {
+            return this.wallet.has_claim;
+        },
+        has_freezed () {
+          return this.wallet.has_freezed;
+        },
+        unfreeze_time () {
+            // 518400
+            if(!this.vote_and_voteram_freeze.data){
+                return ;
+            }
+            let rows = this.vote_and_voteram_freeze.data.rows,
+                row = rows.length ? rows[0] : null,
+                unstake_height = row ? row.unstake_height : null,
+                unfreeze_time = (this.nodeInfo.last_irreversible_block_num - unstake_height - 518400) * 2;
+            return unfreeze_time;
+        },
+        unstaking () {
+            if(!this.vote_and_voteram_freeze.data){
+                return 0;
+            }
+            let rows = this.vote_and_voteram_freeze.data.rows,
+                row = rows.length ? rows[0] : null,
+                unstaking = row ? row.unstaking : 0;
+            return toNumber(unstaking);
+        },
+        staked () {
+            if(!this.vote_and_voteram_freeze.data){
+                return 0;
+            }
+            let rows = this.vote_and_voteram_freeze.data.rows,
+                row = rows.length ? rows[0] : null,
+                staked = row ? row.staked : 0;
+            return toNumber(staked);
+        },
+        vote_and_voteram_freeze () {
+            return this.account.vote_and_voteram_freeze;
+        },
+        vote_back_state () {
+            return this.wallet.vote_back_state;
+        },
         ...mapState(['account', 'wallet', 'app']),
     },
     mounted() {
@@ -316,7 +380,8 @@ export default {
             fetchWallet: Actions.FETCH_WALLET,
             GET_ACCOUNT_INFO: Actions.GET_ACCOUNT_INFO
         }),
-        formatNumber
+        formatNumber,
+        toNumber
     },
 };
 </script>

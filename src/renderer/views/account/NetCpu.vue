@@ -5,12 +5,7 @@
         <div class="row__title">{{$t('手续费')}}</div>
         <div class="row__content">{{ fee }}</div>
       </div>
-      <div class="row">
-        <div class="row__title">{{$t('转让权限')}}</div>
-        <div class="row__content">
-          <span v-for="item in permissions" v-if="item.is_have">{{ item.name }} </span>
-        </div>
-      </div>
+
       <div class="field">
         <label class="label">{{$t('抵押给账户')}}</label>
         <div class="control">

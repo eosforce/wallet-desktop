@@ -19,7 +19,7 @@
           <!-- <th>{{$t('年化利率')}}</th> -->
           <!-- <th>{{$t('奖池金额')}}</th> -->
           <th>{{$t('我的投票')}}</th>
-          <th>{{$t('赎回金额')}}</th>
+          <th v-if="ram_back_state">{{$t('赎回金额')}}</th>
           <th>{{$t('操作')}}</th>
         </tr>
       </thead>
@@ -53,13 +53,12 @@
           <td class="t-center">{{bp.amount || '_'}}</td>
           <td>{{(10000 - bp.commission_rate) | formatNumber({p: 2, sign: '%', percentage: 0.01})}}</td>
           <td>{{bp.total_staked | formatNumber({p: 0})}}</td>
-          <!-- <td>{{bp.adr | formatNumber({p: 0, sign: '%', percentage: 100})}}</td> -->
-          <!-- <td>{{bp.rewards_pool | formatNumber({p: 4})}}</td> -->
           <td>
             <span v-show="!bp.hasRamvote">-</span>
-            <span v-show="bp.hasRamvote">{{ bp.ramvote && bp.ramvote.staked | formatNumber({p: 0})}}</span>
+            <!-- {{ bp.ramvote }} -->
+            <span v-show="bp.hasRamvote">{{ (bp.ramvote ? bp.ramvote.staked || bp.ramvote.vote : 0) | formatNumber({p: 0})}}</span>
           </td>
-          <td>
+          <td v-if="ram_back_state">
             <template v-if="bp.ramvote">
               <div v-show="bp.ramvote.unstaking === '0.0000 EOS'">-</div>
               <router-link v-show="bp.ramvote.unstaking !== '0.0000 EOS'" class="button is-small is-outlined" :class="{'grey-button': isLock(bp.ramvote.unstake_height)}" :to="{name: 'Unfreeze4ram', params: { bpname: bp.name }}">
@@ -94,7 +93,10 @@ export default {
     head_block_num(){
       return this.app.currentNodeInfo.head_block_num;
     },
-    ...mapState(['account', 'app']),
+    ram_back_state () {
+      return this.wallet.ram_back_state;
+    },
+    ...mapState(['account', 'app', 'wallet']),
   },
   mounted () {
 

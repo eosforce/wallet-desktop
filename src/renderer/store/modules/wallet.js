@@ -6,11 +6,42 @@ import { decrypt } from '@/utils/util';
 
 const initState = {
   data: {},
-  wallet_symbol: 'EOST',
+  wallet_symbol: 'EOSC',
   is_fee_model: false,
   FILTER_WAY: 'EOS',
   has_cpu: true,
   has_net: true,
+  // 内存投票是否有赎回状态
+  ram_back_state: false,
+  // 投票是否有赎回状态
+  vote_back_state: false,
+  // 是否有分红
+  has_claim: false,
+  // 有抵押机制
+  has_freezed: true,
+  // 可用余额提取方式
+  avalaible_filter: 'eosio.token',
+  // vote num in which key
+  vote_num_key: 'vote',
+
+
+  wallet_symbol: 'EOS',
+  is_fee_model: true,
+  FILTER_WAY: 'EOS',
+  has_cpu: false,
+  has_net: false,
+  // 内存投票是否有赎回状态
+  ram_back_state: true,
+  // 投票是否有赎回状态
+  vote_back_state: true,
+  // 是否有分红
+  has_claim: true,
+  // 有抵押机制
+  has_freezed: false,
+  // 可用余额提取方式
+  avalaible_filter: 'eosio',
+  vote_num_key: 'staked',
+
   accountList: [],
 };
 
@@ -68,6 +99,15 @@ const getters = {
   },
   wallet_symbol (state) {
     return state.wallet_symbol;
+  },
+  avalaible_filter (state) {
+    return state.avalaible_filter;
+  },
+  vote_num_key (state) {
+    return state.vote_num_key;
+  },
+  has_freezed (state) {
+    return state.has_freezed;
   }
 };
 

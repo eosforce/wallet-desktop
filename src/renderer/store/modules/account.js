@@ -21,7 +21,9 @@ import {
     create_token,
     issue_token,
     rank_get_action,
-    getLockedEosc
+    getLockedEosc,
+    getFreeze,
+    freeze
 } from '@/services/Eos';
 
 const initState = {
@@ -36,6 +38,43 @@ const initState = {
         rewardTotal: 0,
         baseInfo: {},
         locked_eosc: ''
+    },
+    // @todo
+    node_info: {
+        data: null,
+        is_error: false,
+        on_load: true
+    },
+    available: {
+        data: null,
+        is_error: false,
+        on_load: true
+    },
+    votes_table: {
+        data: null,
+        is_error: false,
+        on_load: true
+    },
+    votes4ram_table: {
+        data: null,
+        is_error: false,
+        on_load: true
+    },
+    bps_table: {
+        data: null,
+        is_error: false,
+        on_load: true
+    },
+    super_bps_table: {
+        data: null,
+        is_error: false,
+        on_load: true
+    },
+    // 
+    vote_and_voteram_freeze: {
+        data: null,
+        is_error: false,
+        on_load: true
     },
     version: '',
     bpsTable: [],
@@ -161,6 +200,16 @@ const mutations = {
     [Mutations.SET_VERSION](state, { version = '' }) {
         state.version = version;
     },
+    update_vote_and_voteram_freeze (state, {on_load = true, data = null, is_error = false}) {
+        state.vote_and_voteram_freeze.on_load = on_load;
+        state.vote_and_voteram_freeze.data = data || state.vote_and_voteram_freeze.data;
+        state.vote_and_voteram_freeze.is_error = is_error;
+    },
+    clear_vote_and_voteram_freeze (state) {
+        state.vote_and_voteram_freeze.on_load = false;
+        state.vote_and_voteram_freeze.is_error = false;
+        state.vote_and_voteram_freeze.data = null;
+    },
     set_locked_eosc(state, num){
         state.info.locked_eosc = num;
     },
@@ -240,6 +289,7 @@ const actions = {
     [Actions.FETCH_ACCOUNT]({ commit, dispatch, getters }, { accountName }) {
         let { server_version_string } = getters[Getters.CURRENT_NODE_INFO];
         commit(Mutations.RESET_ACCOUNT_INFO, rank_get_action(server_version_string));
+        commit('clear_vote_and_voteram_freeze');
         commit(Mutations.SET_ACCOUNT_NAME, { accountName });
         dispatch(Actions.GET_ACCOUNT_INFO, getters['GET_FILER_WAY']);
     },
@@ -253,17 +303,15 @@ const actions = {
             return vote(config)({ voter, bpname, amount, permission, wallet_symbol: getters['wallet_symbol'] });
         });
     },
-    [Actions.VOTE4RAM]({ state, dispatch, getters }, { voter, bpname, amount, password, walletId, permission }) {
-        return new Promise(async (resolve, reject) => {
-            let config = await getters[Getters.GET_TRANSE_CONFIG](password, voter, walletId).catch(err => {
-                return {
-                    is_error: true,
-                    msg: err
-                }
-            });
-            let res = config.is_error ? config : await vote4ram(config, { voter, bpname, amount, permission, wallet_symbol: getters['wallet_symbol'] });
-            resolve(res);
-        })
+    async [Actions.VOTE4RAM]({ state, dispatch, getters }, { voter, bpname, amount, password, walletId, permission }) {
+        let config = await getters[Getters.GET_TRANSE_CONFIG](password, voter, walletId).catch(err => {
+            return {
+                is_error: true,
+                msg: err
+            }
+        });
+        let res = config.is_error ? config : await vote4ram(config, { voter, bpname, amount, permission, wallet_symbol: getters['wallet_symbol'] });
+        return res;
     },
     [Actions.UNFREEZE4RAM]({ state, dispatch, getters }, { voter, bpname, password, walletId, permission }) {
         return new Promise(async (resolve, reject) => {
@@ -284,7 +332,7 @@ const actions = {
     },
     [Actions.CLAIM]({ state, dispatch, getters }, { voter, bpname, password, walletId, permission }) {
         return getters[Getters.GET_TRANSE_CONFIG](password, voter, walletId).then(config => {
-            return claim(config)({ voter, bpname, permission });
+            return claim(config)({ voter, bpname, permission, wallet_symbol: getters['wallet_symbol'] });
         });
     },
     async GET_LOCKED_EOSC ({ state, dispatch, commit, getters }) {
@@ -340,6 +388,7 @@ const actions = {
 
         commit(Mutations.SET_SUPER_PSAMOUNT_TABLE, { superBpsAmountTable });
     },
+    // @todo 接口分拆
     async [Actions.GET_ACCOUNT_INFO]({ state, dispatch, commit, getters }, filter_way = 'EOSC') {
         const accountName = getters[Getters.CURRENT_ACCOUNT_NAME];
         let node_url = getters[Getters.CURRENT_NODE];
@@ -352,6 +401,11 @@ const actions = {
         let cancle_requests = {
             'cancel': []
         }
+
+        if(getters['has_freezed']){
+            dispatch(Actions.GETFREEZE);
+        }
+
         commit('set_cancle_requests', cancle_requests.cancel);
         var baseBpsTable = state.baseBpsTable.length > 0 ? JSON.parse(JSON.stringify(state.baseBpsTable)) : null;
         var votesTable = state.votesTable.length > 0 ? JSON.parse(JSON.stringify(state.votesTable)) : null;
@@ -367,6 +421,7 @@ const actions = {
             baseBpsTable,
             superBpsAmountTable,
             block_info,
+            getters['vote_num_in']
         );
         if (accountName != state.pre_load_key) {
             return;
@@ -382,7 +437,7 @@ const actions = {
 
         dispatch('check_total_and_set_asset_total');
         let ps = [];
-        ps.push(getAvailable(node_url)(accountName, getters['GET_FILER_WAY'], cancle_requests)
+        ps.push(getAvailable(node_url)(accountName, getters['avalaible_filter'], cancle_requests)
             .then(available => {
                 if (accountName != state.pre_load_key) {
                     return;
@@ -440,13 +495,17 @@ const actions = {
     },
     [Actions.GET_BPS_TABLE]({ state, dispatch, commit, getters }) {
         let accountName = getters[Getters.CURRENT_ACCOUNT_NAME];
-        let current_node_info = getters[Getters.CURRENT_NODE_INFO];
-        var baseBpsTable = state.baseBpsTable.length > 0 ? JSON.parse(JSON.stringify(state.baseBpsTable)) : null;
+        let current_node = getters[Getters.CURRENT_NODE_INFO];
+
+        var bpsTable = state.baseBpsTable.length > 0 ? JSON.parse(JSON.stringify(state.baseBpsTable)) : null;
         var votesTable = state.votesTable.length > 0 ? JSON.parse(JSON.stringify(state.votesTable)) : null;
         var votes4ramTable = state.votes4ramTable.length > 0 ? JSON.parse(JSON.stringify(state.votes4ramTable)) : null;
         var superBpsAmountTable = state.superBpsAmountTable.length > 0 ? JSON.parse(JSON.stringify(state.superBpsAmountTable)) : null;
+        let vote_num_in = getters['vote_num_key'];
+
         return getAccountInfo(getters[Getters.CURRENT_NODE])(
-            accountName, current_node_info, { cancel: [] }, votesTable, votes4ramTable, baseBpsTable, superBpsAmountTable).then(({ bpsTable }) => {
+            // {accountName, current_node, votesTable, votes4ramTable, bpsTable, superBpsAmountTable}
+            {accountName, current_node, votesTable, votes4ramTable, bpsTable, superBpsAmountTable, vote_num_in}).then(({ bpsTable }) => {
             if (accountName != state.pre_load_key) {
                 return;
             }
@@ -455,13 +514,15 @@ const actions = {
     },
     [Actions.GET_ACCOUNT_OVERVIEW]({ state, dispatch, commit, getters }) {
         let accountName = getters[Getters.CURRENT_ACCOUNT_NAME];
-        let current_node_info = getters[Getters.CURRENT_NODE_INFO];
-        var baseBpsTable = state.baseBpsTable.length > 0 ? JSON.parse(JSON.stringify(state.baseBpsTable)) : null;
+        let current_node = getters[Getters.CURRENT_NODE_INFO];
+        var bpsTable = state.baseBpsTable.length > 0 ? JSON.parse(JSON.stringify(state.baseBpsTable)) : null;
         var votesTable = state.votesTable.length > 0 ? JSON.parse(JSON.stringify(state.votesTable)) : null;
         var votes4ramTable = state.votes4ramTable.length > 0 ? JSON.parse(JSON.stringify(state.votes4ramTable)) : null;
         var superBpsAmountTable = state.superBpsAmountTable.length > 0 ? JSON.parse(JSON.stringify(state.superBpsAmountTable)) : null;
+        let vote_num_in = getters['vote_num_key'];
+
         return getAccountInfo(getters[Getters.CURRENT_NODE])(
-            accountName, current_node_info, { cancel: [] }, votesTable, votes4ramTable, baseBpsTable, superBpsAmountTable).then(({ info }) => {
+            {accountName, current_node, votesTable, votes4ramTable, bpsTable, superBpsAmountTable, vote_num_in}).then(({ info }) => {
             if (accountName != state.pre_load_key) {
                 return;
             }
@@ -501,6 +562,40 @@ const actions = {
             }
         });
     },
+    // 获取抵押额度
+    async [Actions.GETFREEZE] ({ state, dispatch, commit, getters}){
+
+        commit('update_vote_and_voteram_freeze', {
+            on_load: true
+        });
+
+        let accountName = getters[Getters.CURRENT_ACCOUNT_NAME],
+            node_uri = getters[Getters.CURRENT_NODE];
+
+        let data = await getFreeze(node_uri)(accountName).catch(err => {
+            commit('update_vote_and_voteram_freeze', {
+                on_load: false,
+                is_error: true
+            });
+            throw err;
+        });
+
+        commit('update_vote_and_voteram_freeze', {
+            on_load: false,
+            is_error: false,
+            data
+        });
+    },
+
+    // 抵押
+
+    async [Actions.FREEZE] ({ state, dispatch, commit, getters}, { password, walletId, voter, ammount, permission}){
+        let config = await getters[Getters.GET_TRANSE_CONFIG](password, voter, walletId);
+        let res = await freeze(config)({voter, ammount, permission, wallet_symbol: getters['wallet_symbol'] });
+        dispatch(Actions.GETFREEZE);
+        return res;
+    },
+
     // 检测最新的block中是否有涉及当前账户的交易，投票
     async [Actions.CHECK_INVOLED]({ state, dispatch, commit, getters}, [involved_users, involved_action_dict]){
         let accountName = getters[Getters.CURRENT_ACCOUNT_NAME];

@@ -54,6 +54,13 @@ export default new Router({
                   },
                 },
                 {
+                  name: 'Freeze',
+                  path: 'Freeze',
+                  components: {
+                    modal: () => import('@/views/account/Freeze'),
+                  },
+                },
+                {
                   name: 'transfer',
                   path: 'transfer',
                   components: {
