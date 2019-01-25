@@ -11,19 +11,19 @@
           </div>
           <div class="field">
             <div class="static-label">
-              {{$t('当前投票金额')}}<span class="static-text">{{stakedAmount | formatNumber({p: 0, showSymbol: true, symbol: wallet_symbol})}}</span>
+              {{$t('当前投票金额')}}<span class="static-text">{{stakedAmount | formatNumber({p: 0, showSymbol: true, symbol: wallet_show_symbol})}}</span>
             </div>
           </div>
           <div class="field">
             <div class="static-label">
-              {{$t('可用投票金额')}}<span class="static-text">{{staked | formatNumber({p: 4, showSymbol: true, symbol: wallet_symbol}) }}</span>
+              {{$t('可用投票金额')}}<span class="static-text">{{staked | formatNumber({p: 4, showSymbol: true, symbol: wallet_show_symbol}) }}</span>
             </div>
           </div>
           <div class="field" v-if="selectType == 0 && is_fee_model">
             <div class="static-label">
               {{$t('预留领取手续费')}}
               <input type="text" name="" v-model="fee_for_claim" class="small_input" >
-              <span class="symbol_tag">{{ wallet_symbol }}</span>
+              <span class="symbol_tag">{{ wallet_show_symbol }}</span>
             </div>
           </div>
           <div class="field is-horizontal">
@@ -49,11 +49,11 @@
               {{selectInfo.title}}
             </label>
             <div class="control">
-              <input v-model="amount" min="0" :max="selectInfo.max" class="input" type="number" step="1" :placeholder="$t('template.symbol', {symbol: wallet_symbol})"  required />
+              <input v-model="amount" min="0" :max="selectInfo.max" class="input" type="number" step="1" :placeholder="$t('template.symbol', {symbol: wallet_show_symbol})"  required />
               <p class="help is-danger" v-show="amount && !isValidAmount">
                 {{$t('金额必须为整数')}}
               </p>
-              <p class="help tips" v-if="is_fee_model">{{selectInfo.tip}}，{{$t('template.fee', {fee: symblo_change(fee, 'EOS', wallet_symbol) })}}</p>
+              <p class="help tips" v-if="is_fee_model">{{selectInfo.tip}}，{{$t('template.fee', {fee: symblo_change(fee, 'EOS', wallet_show_symbol) })}}</p>
               <p class="help is-danger" v-show="amount > selectInfo.max">
                 {{selectInfo.maxTip}}
               </p>
@@ -61,7 +61,7 @@
           </div>
           <div class="field">
             <div class="static-label">
-              {{$t('修改后投票金额')}}<span class="static-text">{{newStakedAmount | formatNumber({p: 0, showSymbol: true, symbol: wallet_symbol})}}</span>
+              {{$t('修改后投票金额')}}<span class="static-text">{{newStakedAmount | formatNumber({p: 0, showSymbol: true, symbol: wallet_show_symbol})}}</span>
             </div>
           </div>
           <div class="field is-grouped is-grouped-right">
@@ -108,15 +108,15 @@
         </div>
         <div class="row">
           <div class="row__title">{{selectInfo.confirm}}</div>
-          <div class="row__content">{{amount | formatNumber({p: 0, showSymbol: true, symbol: wallet_symbol})}}</div>
+          <div class="row__content">{{amount | formatNumber({p: 0, showSymbol: true, symbol: wallet_show_symbol})}}</div>
         </div>
         <div class="row">
           <div class="row__title">{{$t('修改后投票金额')}}</div>
-          <div class="row__content">{{newStakedAmount | formatNumber({p: 0, showSymbol: true, symbol: wallet_symbol})}}</div>
+          <div class="row__content">{{newStakedAmount | formatNumber({p: 0, showSymbol: true, symbol: wallet_show_symbol})}}</div>
         </div>
         <div class="row" v-if="is_fee_model">
           <div class="row__title">{{$t('手续费')}}</div>
-          <div class="row__content">{{ symblo_change(fee, 'EOS', wallet_symbol) }} </div>
+          <div class="row__content">{{ symblo_change(fee, 'EOS', wallet_show_symbol) }} </div>
         </div>
         <div class="row">
           <div class="row__title">{{$t('输入密码')}}</div>
@@ -240,6 +240,9 @@ export default {
     },
     wallet_symbol () {
       return this.wallet.wallet_symbol;
+    },
+    wallet_show_symbol () {
+      return this.wallet.wallet_show_symbol;
     },
     is_fee_model () {
       return this.wallet.is_fee_model;

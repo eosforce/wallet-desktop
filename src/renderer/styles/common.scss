@@ -7,9 +7,16 @@
 .label:not(:last-child) {
   font-weight: 400;
   color: #bdc2d3;
+  color: #484848;
+  font-size: 14px;
   margin-bottom: 0;
 }
-
+.cover-page{
+  .label:not(:last-child) {
+    color: #bdc2d3;
+    margin-bottom: 4px;
+  }
+}
 a {
   color: #73b9f3;
 }
@@ -46,6 +53,7 @@ a:hover {
   border-color: rgb(64, 142, 225);
   background: #fff;
   box-shadow: 0 0 0 0.2rem rgba(64, 142, 225, 0.25);
+  box-shadow: none;
 }
 
 .cover-page {
@@ -102,7 +110,9 @@ a:hover {
     color: rgba(0, 0, 0, 0.8);
     max-width: 100%;
     background: #494e5f;
+    background: #fff;
     position: relative;
+    border-radius: 4px;
   }
   .modal-header {
     position: relative;
@@ -136,6 +146,7 @@ a:hover {
 
 .modal-background {
   background-color: rgba(10, 10, 10, 0.3);
+  background-color: rgba(37,40,43,0.6);
 }
 
 .dropdown {
@@ -152,6 +163,11 @@ a:hover {
       width: 100%;
       background-color: #e0e0e0;
     }
+  }
+  input {
+    background: #fff;
+    box-shadow: none;
+    border-radius: 2px;
   }
 }
 
@@ -183,6 +199,13 @@ a:hover {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  border-bottom: 1px solid #fff;
+  &:hover{
+    border-bottom: 1px solid #eee;
+    div {
+      color: #409eff;
+    }
+  }
 }
 
 .row__content {
@@ -190,6 +213,7 @@ a:hover {
   overflow: hidden;
   text-overflow: ellipsis;
   color: #f5ebff;
+  color: #151515;
   input {
     width: 240px;
   }
@@ -203,4 +227,24 @@ a:hover {
   font-weight: 400;
   color: #bdc2d3;
   margin-bottom: 0;
+}
+
+.slider_select{
+  width: 100%;
+  display: flex;
+  background: #fff;
+  padding: 0px;
+  border-radius: 3px;
+  overflow: hidden;
+}
+.slider_select_item{
+  color: #333;
+  width: 50%;
+  text-align: center;
+  font-size: 14px;
+  padding: 5px;
+}
+.slider_selected_item{
+  background-color: #409eff;
+  color: #fff;
 }

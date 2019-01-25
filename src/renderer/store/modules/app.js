@@ -7,27 +7,27 @@ import { decryptWif, get_involved_users_form_blocks } from '@/utils/util';
 import { NODE_LIST_KEY, CHAIN_NETS, CHAIN_NET_KEY } from '@/constants/config.constants';
 
 const initState = {
-    walletIdList: [],
-    fee: '0.01 EOS',
-    nodeList: [],
-    currentNodeValue: '',
-    currentNodeInfo: null,
-    currentBlock: null,
-    block_list: [],
-    walletList: [],
-    writeNodeList: [],
-    chainNet: '',
-    bpNicks: {
-        zh: {},
-        en: {},
-    },
-    update: {
-        startUpdate: false,
-        progress: 0,
-        speed: 0,
-        total: 0,
-    },
-    is_load_accounts: true
+  walletIdList: [],
+  fee: '0.01 EOS',
+  nodeList: [],
+  currentNodeValue: '',
+  currentNodeInfo: null,
+  currentBlock: null,
+  block_list: [],
+  walletList: [],
+  writeNodeList: [],
+  chainNet: '',
+  bpNicks: {
+    zh: {},
+    en: {},
+  },
+  update: {
+    startUpdate: false,
+    progress: 0,
+    speed: 0,
+    total: 0,
+  },
+  is_load_accounts: true
 };
 
 const mutations = {

@@ -2,7 +2,7 @@
   <div class="modal is-active">
     <div class="cover-page">
       <div class="cover-page__content">
-        <div class="cover-page__title">{{tokenSymbol}} {{$t('转账')}}</div>
+        <div class="cover-page__title">{{ tokenSymbol }} {{$t('转账')}}</div>
         <form class="cover-page__form" @submit.prevent="confirmInfo()">
           <div class="field">
             <label class="label">
@@ -153,6 +153,9 @@ export default {
     wallet_symbol () {
       return this.wallet.wallet_symbol;
     },
+    wallet_show_symbol () {
+      return this.wallet.wallet_show_symbol;
+    },
     is_fee_model () {
       return this.wallet.is_fee_model;
     },
@@ -198,7 +201,7 @@ export default {
         precision: this.precision,
         walletId: this.walletData.publicKey,
         permission: this.permissions.filter(item => item.is_have)[0].name,
-        wallet_symbol: this.wallet_symbol
+        tokenSymbol: this.tokenSymbol
       })
       .then(result => {
         Message.success(this.$t('转账成功'));
@@ -211,8 +214,9 @@ export default {
         this.submitting = false;
         return Promise.reject(err);
       })
-      .then(() => {
+      .then(async () => {
         this.getAccountInfo();
+        await this.GET_TOKEN_LIST();
         this.close();
       });
     },
@@ -226,7 +230,8 @@ export default {
     ...mapActions({
       getAccountInfo: Actions.GET_ACCOUNT_INFO,
       transfer: Actions.TRANSFER,
-      getTransferRecord: Actions.GET_TRANSFER_RECORD
+      getTransferRecord: Actions.GET_TRANSFER_RECORD,
+      GET_TOKEN_LIST: Actions.GET_TOKEN_LIST
     }),
   },
   components: {

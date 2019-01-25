@@ -7,6 +7,7 @@ import { decrypt } from '@/utils/util';
 const initState = {
   data: {},
   wallet_symbol: 'EOSC',
+  wallet_show_symbol: 'EOS',
   is_fee_model: false,
   FILTER_WAY: 'EOS',
   has_cpu: true,
@@ -23,9 +24,11 @@ const initState = {
   avalaible_filter: 'eosio.token',
   // vote num in which key
   vote_num_key: 'vote',
+  has_locked: false,
 
 
   wallet_symbol: 'EOS',
+  wallet_show_symbol: 'EOSC',
   is_fee_model: true,
   FILTER_WAY: 'EOS',
   has_cpu: false,
@@ -41,6 +44,7 @@ const initState = {
   // 可用余额提取方式
   avalaible_filter: 'eosio',
   vote_num_key: 'staked',
+  has_locked: true,
 
   accountList: [],
 };
@@ -108,6 +112,9 @@ const getters = {
   },
   has_freezed (state) {
     return state.has_freezed;
+  },
+  has_locked (state) {
+    return state.has_locked;
   }
 };
 

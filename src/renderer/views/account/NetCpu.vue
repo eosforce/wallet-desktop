@@ -248,25 +248,6 @@ export default {
 .graphic img {
   width: 60px;
 }
-.slider_select{
-  width: 100%;
-  display: flex;
-  background: #fff;
-  padding: 0px;
-  border-radius: 3px;
-  overflow: hidden;
-}
-.slider_select_item{
-  color: #333;
-  width: 50%;
-  text-align: center;
-  font-size: 14px;
-  padding: 5px;
-}
-.slider_selected_item{
-  background-color: #409eff;
-  color: #fff;
-}
 
 </style>
 

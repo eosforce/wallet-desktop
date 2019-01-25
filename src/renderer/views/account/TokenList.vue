@@ -32,7 +32,7 @@
           </td>
           <td>{{ split_long_num(token.balance) + ' ' + token.symbol }}</td>
           <td>
-            <router-link class="button is-small is-outlined" :to="{name: 'tokenTransfer', params: { symbol: token.symbol, precision: token.precision }}">转账</router-link>
+            <router-link class="button is-small is-outlined" :to="{name: 'tokenTransfer', params: { symbol: token.symbol, precision: token.precision }}">{{ $t('转账') }}</router-link>
           </td>
         </tr>
 

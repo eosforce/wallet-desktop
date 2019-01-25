@@ -518,13 +518,10 @@ export const getRewardsAndBpsTable = httpEndpoint => async (accountName, current
     
   }
   let stakedTotal = calcTotalAmount(votesTable, vote_num_in);
-  // stakedTotal = calcTotalAmount(votesTable, 'vote');
 
   const unstakingTotal = calcTotalAmount(votesTable, 'unstaking');
 
   let ramstakedTotal = calcTotalAmount(votes4ramTable, vote_num_in);
-  // ramstakedTotal = calcTotalAmount(votes4ramTable, 'vote');
-
   const ramunstakingTotal = calcTotalAmount(votes4ramTable, 'unstaking');
   const rewardTotal = calcTotalAmount(rewardsTable, 'reward');
 
@@ -618,7 +615,8 @@ export const transfer = config => async ({ from, to, amount, memo = '', tokenSym
     let {EOS, auth} = filter_lib_and_auth(wallet_symbol, from, permission);
     let contract_name = wallet_symbol == 'EOS' && tokenSymbol == 'EOS' ? 'eosio' : 'eosio.token';
     let token = await EOS(config).contract(contract_name).catch(err => handleApiError(err) );
-    let res = await token.transfer(from, to, toAsset(amount, tokenSymbol), memo, auth).catch(err => handleApiError(err) );
+    amount = toAsset(amount, tokenSymbol, {precision});
+    let res = await token.transfer(from, to, amount, memo, auth).catch(err => handleApiError(err) );
     return res;
 };
 
@@ -713,19 +711,17 @@ export const unfreeze4ram = async (config, { voter, bpname, permission }) => {
     return res;
 };
 
-export const transfer_account = config => async ({name, publick_key, permissions, wallet_symbol = 'EOS'}) => {
+export const transfer_account = config => async ({name, owner_public_key, active_public_key, permissions, wallet_symbol = 'EOS'}) => {
   let res = {
     is_error: false,
     msg: '',
     data: []
   };
-
   let {EOS, auth} = filter_lib_and_auth(wallet_symbol, name, 'owner');
-
   let token = await EOS(config).contract('eosio');
   let action_res = await token.transaction('eosio', tr => {
-    tr.updateauth(name, 'active', 'owner', publick_key, auth);
-    tr.updateauth(name, 'owner', '', publick_key, auth);
+    tr.updateauth(name, 'active', 'owner', active_public_key, auth);
+    tr.updateauth(name, 'owner', '', owner_public_key, auth);
   })
   .catch(err => {
     let error_ob = null;
@@ -854,7 +850,6 @@ const test_claim = async () => {
   let eos = await EOS_ML(test_config).contract('eosio');
   await eos.claim('abc', 'sbp.b');
 }
-
 // test_claim();
 
 const test_delegatebw = async () => {

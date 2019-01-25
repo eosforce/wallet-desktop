@@ -88,9 +88,11 @@ export default {
 .modal-body {
   font-size: 14px;
   color: #bec2d1;
+  color: #484848;
 }
 .modal-title {
   color: #eff0f7;
+  color: #333;
   flex: 1;
 }
 .modal-header {

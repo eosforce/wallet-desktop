@@ -5,17 +5,26 @@
         <div class="row__title">{{$t('手续费')}}</div>
         <div class="row__content">{{ fee }}</div>
       </div>
-      <div class="row">
+      <!-- <div class="row">
         <div class="row__title">{{$t('转让权限')}}</div>
         <div class="row__content">
           <span v-for="item in permissions" v-if="item.is_have">{{ item.name }} </span>
         </div>
+      </div> -->
+      <div class="field">
+        <label class="label">{{$t('Owner公钥')}}</label>
+        <div class="control">
+          <input class="input" v-model="form.owner_public_key.value" type="text" :placeholder="$t('Owner公钥')" required />
+          <p class="help is-danger" v-show="form.owner_public_key.error">
+            {{$t('无效的公钥')}}
+          </p>
+        </div>
       </div>
       <div class="field">
-        <label class="label">{{$t('接受方公钥')}}</label>
+        <label class="label">{{$t('Active公钥')}}</label>
         <div class="control">
-          <input class="input" v-model="public_key" type="text" :placeholder="$t('接受方公钥')" required />
-          <p class="help is-danger" v-show="public_key && !public_key">
+          <input class="input" v-model="form.active_public_key.value" type="text" :placeholder="$t('Active公钥')" required />
+          <p class="help is-danger" v-show="form.active_public_key.error">
             {{$t('无效的公钥')}}
           </p>
         </div>
@@ -23,8 +32,8 @@
       <div class="field">
         <label class="label">{{$t('密码')}}</label>
         <div class="control">
-          <input class="input" v-model="password" type="password" :placeholder="$t('密码')" required />
-          <p class="help is-danger" v-show="public_key && !public_key">
+          <input class="input" v-model="form.password.value" type="password" :placeholder="$t('密码')" required />
+          <p class="help is-danger" v-show="form.password.error">
             {{$t('密码')}}
           </p>
         </div>
@@ -45,9 +54,33 @@ export default {
   data() {
     return {
       public_key: '',
+      owner_public_key: '',
+      active_public_key: '',
       password: '',
       submitting: false,
-      content: 'content'
+      content: 'content',
+      form: {
+        owner_public_key: {
+          value: '',
+          formate: new Set(['not_empty', 'ecc_public_key']),
+          error: ''
+        },
+        active_public_key: {
+          value: '',
+          formate: new Set(['not_empty', 'ecc_public_key']),
+          error: ''
+        },
+        password: {
+          value: '',
+          formate: new Set(['not_empty']),
+          error: ''
+        }
+      },
+      error: {
+        owner_public_key: '',
+        active_public_key: '',
+        password: ''
+      }
     };
   },
   computed: {
@@ -55,7 +88,8 @@ export default {
       return this.$route.params.accountName;
     },
     fee () {
-      return (this.permissions.filter(item => item.is_have).length * 0.1).toFixed(4) + ' EOSC';
+      return '0.2' + ' ' + this.wallet_show_symbol;
+      // return (this.permissions.filter(item => item.is_have).length * 0.1).toFixed(4) + ' ' + this.wallet_show_symbol;
     },
     title () {
       return this.$t('确认转让用户名')  + '?';
@@ -66,15 +100,17 @@ export default {
     permissions () {
       let res = [];
       this.baseInfo.permissions.map(item => {
+        let key = '';
         let is_have = item.required_auth.keys.find(item => {
+          key = item.key;
           if(item.key == this.wallet.data.publicKey){
             return true;
           }
         });
-        is_have = is_have ? true : false;
         res.push({
           name: item.perm_name,
-          is_have
+          key,
+          is_have: is_have ? true : false
         })
       });
       return res;
@@ -95,44 +131,71 @@ export default {
     wallet_symbol () {
       return this.wallet.wallet_symbol;
     },
+    wallet_show_symbol () {
+      return this.wallet.wallet_show_symbol;
+    },
     is_fee_model () {
       return this.wallet.is_fee_model;
     },
     ...mapState(['account', 'wallet', 'app']),
   },
+  mounted () {
+    this.init_base_key();
+  },
   methods: {
+    init_base_key () {
+      this.permissions.map(item => {
+        this.form[item.name + '_public_key']['value'] = item.key;
+      });
+    },
+    validate_form () {
+      const not_empty_validate = (val, key) => {
+        if(!val){
+          return `${key} 不能为空`;
+        }
+      }
+
+      const check_ecc_public_key = (val, key) => {
+        if(!isValidPublic(val, this.wallet_symbol)){
+          return `${key} 公钥格式不正确`
+        }
+      }
+
+      let is_error = true,
+          validate_keys = new Map([
+            ['not_empty', not_empty_validate],
+            ['ecc_public_key', check_ecc_public_key]
+          ]);
+
+      for(let _key in this.form){
+        let item = this.form[_key];
+        let validate_items = item.formate;
+        item.error = '';
+        for(let vk of validate_keys.keys()){
+          if(validate_items.has(vk)){
+            let check_res = validate_keys.get(vk)(item.value);
+            if(check_res){
+              item.error = check_res;
+              is_error = false;
+            }
+          }
+        }
+      }
+
+      return is_error;
+    },
     async submit() {
-      if(this.available < parseFloat(this.fee)){
-        Message.error({
-          title: this.$t('手续费不足')
-        });
-        return null;
+      if(!this.validate_form()){
+        return ;
       }
-      
-      if (!this.public_key) {
-        Message.error({
-          title: this.$t('请填写接受方公钥')
-        });
-        return null;
-      }
-      if (!isValidPublic(this.public_key, this.wallet_symbol)) {
-        Message.error({
-          title: this.$t('请填写正确的公钥格式')
-        });
-        return null;
-      }
-      if (this.public_key == this.wallet.data.publicKey) {
-        Message.error({
-          title: this.$t('不能转让用户到自己')
-        });
-        return null;
-      }
+
       this.submitting = true;
       let transfer_res = await this.TRANSFER_ACCOUNT({
         name: this.my_name, 
-        publick_key: filter_public_key(this.public_key, this.wallet_symbol),
+        owner_public_key: filter_public_key(this.form.owner_public_key.value, this.wallet_symbol),
+        active_public_key: filter_public_key(this.form.active_public_key.value, this.wallet_symbol),
         walletId: this.wallet.data.publicKey,
-        password: this.password,
+        password: this.form.password.value,
         permissions: this.permissions.filter(item => item.is_have).map(item => item.name),
         wallet_symbol: this.wallet_symbol
       });

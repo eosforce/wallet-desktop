@@ -293,7 +293,7 @@ const actions = {
         commit(Mutations.SET_ACCOUNT_NAME, { accountName });
         dispatch(Actions.GET_ACCOUNT_INFO, getters['GET_FILER_WAY']);
     },
-    [Actions.TRANSFER]({ state, dispatch, getters }, { from, to, amount, memo, password, tokenSymbol, precision, walletId, permission, wallet_symbol }) {
+    [Actions.TRANSFER]({ state, dispatch, getters }, { from, to, amount, memo, password, precision, walletId, permission, tokenSymbol, wallet_symbol }) {
         return getters[Getters.GET_TRANSE_CONFIG](password, from, walletId).then(async config => {
             return transfer(config)({ from, to, amount, memo, tokenSymbol, precision, permission, wallet_symbol: getters['wallet_symbol'] });
         });
@@ -338,7 +338,7 @@ const actions = {
     async GET_LOCKED_EOSC ({ state, dispatch, commit, getters }) {
         let node_url = getters[Getters.CURRENT_NODE];
         const accountName = getters[Getters.CURRENT_ACCOUNT_NAME];
-        let res = '0.0000 EOS';// await getLockedEosc(node_url)(accountName);
+        let res = !getters['has_locked']  ? '0.0000 EOS' : await getLockedEosc(node_url)(accountName);
         commit('set_locked_eosc', res);
     },
     check_total_and_set_asset_total({ state, dispatch, commit, getters }) {
@@ -397,6 +397,7 @@ const actions = {
                 item();
             }
         }
+
         dispatch('start_load_new_account');
         let cancle_requests = {
             'cancel': []
@@ -406,6 +407,7 @@ const actions = {
             dispatch(Actions.GETFREEZE);
         }
 
+        dispatch('GET_LOCKED_EOSC');
         commit('set_cancle_requests', cancle_requests.cancel);
         var baseBpsTable = state.baseBpsTable.length > 0 ? JSON.parse(JSON.stringify(state.baseBpsTable)) : null;
         var votesTable = state.votesTable.length > 0 ? JSON.parse(JSON.stringify(state.votesTable)) : null;
@@ -485,9 +487,10 @@ const actions = {
                 finished();
             });
     },
-    [Actions.GET_TOKEN_LIST]({ state, dispatch, commit, getters }, { accountName, cancle_requests }) {
+    [Actions.GET_TOKEN_LIST]({ state, dispatch, commit, getters }) {
+        let accountName = getters[Getters.CURRENT_ACCOUNT_NAME];
         commit('start_on_load_token', accountName);
-        return getTokenList(getters[Getters.CURRENT_NODE])(accountName, cancle_requests).then(result => {
+        return getTokenList(getters[Getters.CURRENT_NODE])(accountName).then(result => {
             if (accountName != state.pre_load_token_key) return;
             commit(Mutations.SET_TOKEN_LIST, { tokenList: result });
             commit('finish_on_load_token');
@@ -529,13 +532,13 @@ const actions = {
             commit(Mutations.SET_ACCOUNT_INFO, { info });
         });
     },
-    async [Actions.TRANSFER_ACCOUNT]({ state, dispatch, commit, getters }, { name, publick_key, password, walletId, permissions = ['active', 'owner'], wallet_symbol = 'EOS' }) {
+    async [Actions.TRANSFER_ACCOUNT]({ state, dispatch, commit, getters }, { name, owner_public_key, active_public_key, password, walletId, permissions = ['active', 'owner'], wallet_symbol = 'EOS' }) {
         let with_out_reject = true;
         let config = await getters[Getters.GET_TRANSE_CONFIG](password, name, walletId, with_out_reject);
         if (config.is_error) {
             return config;
         }
-        let res = await transfer_account(config)({ name, publick_key, permissions, wallet_symbol: getters['wallet_symbol'] });
+        let res = await transfer_account(config)({ name, owner_public_key, active_public_key, permissions, wallet_symbol: getters['wallet_symbol'] });
         return res;
     },
     async [Actions.DELEGATEBW]({ state, dispatch, commit, getters }, { password, walletId, from, to, net_quantity, cpu_quantity, release_to_to = 0, permission}) {

@@ -1,11 +1,17 @@
 <template>
   <div class="cover-page">
+
     <div class="cover-page__content">
       <div class="cover-page__title">
         <router-link :to="{ name: 'walletNew' }" style="margin-right:20px;color:#aaa">{{$t('创建钱包')}}</router-link>
         {{$t('导入私钥')}}
       </div>
-      <form class="cover-page__form" @submit.prevent="!submitting && submit()">
+
+      <Select v-bind:value="select_module.value" v-bind:select_list="select_module.select_list" v-on:input="select_module.value = $event"></Select>
+
+      <CreateWalletForm v-bind:with_close="false" v-bind:with_title="false" v-bind:with_random="false" v-bind:margin_top="2" v-if="select_module.value == 1"></CreateWalletForm>
+
+      <form class="cover-page__form" @submit.prevent="!submitting && submit()" v-if="select_module.value == 0">
         <div class="field">
           <label class="label">
             {{$t('选择钱包文件')}}
@@ -36,7 +42,9 @@
           </div>
         </div>
       </form>
+
     </div>
+
     <a class="modal-close is-large cover-page-close" @click="close"></a>
     <confirm-modal :title="$t('用户列表')" :show="showConfirm" @confirm="close()" :can-close="false" width="400px">
       <div>
@@ -51,8 +59,9 @@
 
 <script>
 import { mapActions } from 'vuex';
-
+import CreateWalletForm from '@/views/components/CreateWalletForm'
 import Message from '@/components/Message';
+import Select from '@/views/components/select'
 import ConfirmModal from '@/components/ConfirmModal';
 import PromptModal from '@/components/PromptModal';
 import { Actions } from '@/constants/types.constants';
@@ -79,6 +88,15 @@ export default {
       walletId: '',
       showConfirm: false,
       accountsList: [],
+
+      select_module: {
+        select_list: [
+          {value: 0, text: '导入钱包文件'},
+          {value: 1, text: '导入已有私钥'}
+        ],
+        value: 0
+      }
+
     };
   },
   methods: {
@@ -150,6 +168,8 @@ export default {
   components: {
     ConfirmModal,
     PromptModal,
+    Select,
+    CreateWalletForm
   },
 };
 </script>
