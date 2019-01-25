@@ -755,19 +755,8 @@ export const create_token = config => async ({issuer, maximum_supply}) => {
 }
 
 export const issue_token = config => async ({to, quantity, memo}) => {
-  // create
-  let res = await Eos(config)
-      .issue(to, quantity, memo, 'owner')
-      .then(res => {
-        return res;
-      })
-      .catch(err => {
-        let error_ob = null;
-        try {
-          error_ob = JSON.parse(err);
-        } catch (e) {};
-        return null;
-      });
+  let res = await Eos(config).issue(to, quantity, memo, 'owner');
+  return res;
 }
 
 /*
