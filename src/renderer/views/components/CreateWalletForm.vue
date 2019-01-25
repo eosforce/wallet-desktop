@@ -146,7 +146,7 @@ export default {
   computed: {
     form_top () {
       return {
-        marginTop: this.margin_top + 'px'
+        marginTop: (this.margin_top || 64) + 'px'
       }
     },
     publicKey() {

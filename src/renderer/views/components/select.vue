@@ -2,7 +2,6 @@
     <div class="field">
       <div class="control">
         <input class="input" v-model="value" type="hidden" required />
-
         <div class="slider_select">
           <div class="slider_select_item" v-bind:class="{'slider_selected_item': item.value == value}" @click="select_value(item.value)" v-for="item in select_list">
             {{ item.text }}
@@ -40,25 +39,9 @@ export default {
 
   },
 
-  watch: {
-    value () {
-      this.reset_value();
-    }
-  },
-
-  mounted () {
-    this.reset_value();
-  },
-
   methods: {
 
-    reset_value () {
-      this.selected_value = this.value;
-    },
-
     select_value (value) {
-      // this.selected_value = value;
-      // this.value = value;
       this.$emit('input', value);
     }
 

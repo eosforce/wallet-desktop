@@ -1,16 +1,8 @@
 <template>
   <div class="cover-page">
+    <div class="cover-page__content" v-bind:style="form_top">
 
-    <div class="cover-page__content">
-      <div class="cover-page__title">
-        <router-link :to="{ name: 'walletNew' }" style="margin-right:20px;color:#aaa">{{$t('创建钱包')}}</router-link>
-        {{$t('导入私钥')}}
-      </div>
-
-
-      <CreateWalletForm v-bind:with_close="false" v-bind:with_title="false" v-bind:with_random="false" v-bind:margin_top="2" v-if="select_module.value == 1"></CreateWalletForm>
-
-      <form class="cover-page__form" @submit.prevent="!submitting && submit()" v-if="select_module.value == 0">
+      <form class="cover-page__form" @submit.prevent="!submitting && submit()">
         <div class="field">
           <label class="label">
             {{$t('选择钱包文件')}}
@@ -44,7 +36,7 @@
 
     </div>
 
-    <a class="modal-close is-large cover-page-close" @click="close"></a>
+    <!-- <a class="modal-close is-large cover-page-close" @click="close"></a> -->
     <confirm-modal :title="$t('用户列表')" :show="showConfirm" @confirm="close()" :can-close="false" width="400px">
       <div>
         <div>{{$t('本私钥对应的用户为：')}}</div>
@@ -53,6 +45,7 @@
         </ul>
       </div>
     </confirm-modal>
+
   </div>
 </template>
 
@@ -88,15 +81,22 @@ export default {
       showConfirm: false,
       accountsList: [],
 
-      select_module: {
-        select_list: [
-          {value: 0, text: this.$t('导入钱包文件')},
-          {value: 1, text: this.$t('导入已有私钥')}
-        ],
-        value: 0
-      }
-
     };
+  },
+  props: {
+    margin_top: {
+      type: Number,
+      default () {
+        return 64;
+      }
+    }
+  },
+  computed: {
+    form_top () {
+      return {
+        marginTop: (this.margin_top || 64) + 'px'
+      }
+    },
   },
   methods: {
     selectWalletFile() {
