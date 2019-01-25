@@ -91,8 +91,8 @@ export default {
 
       select_module: {
         select_list: [
-          {value: 0, text: '导入钱包文件'},
-          {value: 1, text: '导入已有私钥'}
+          {value: 0, text: this.$t('导入钱包文件')},
+          {value: 1, text: this.$t('导入已有私钥')}
         ],
         value: 0
       }
