@@ -6,6 +6,7 @@
         {{$t('创建钱包')}}
         <router-link :to="{ name: 'walletImport' }" style="margin-left:20px;color:#aaa">{{$t('导入私钥')}}</router-link>
       </div>
+      <div class="page__title">{{ title || '' }}</div>
 
       <form class="cover-page__form" @submit.prevent="!submitting && submit()">
         <div class="field">
@@ -58,7 +59,7 @@
       </form>
     </div>
     <a  v-if="with_close" class="modal-close is-large cover-page-close" @click="close"></a>
-    <confirm-modal :title="$t('用户列表')" :show="showConfirm" @confirm="close()" :can-close="false" width="400px">
+    <confirm-modal :title="$t('用户列表')" :show="showConfirm" @confirm="success()" :can-close="false" width="400px">
       <div>
         <div>{{$t('本私钥对应的用户为：')}}</div>
         <ul>
@@ -141,6 +142,20 @@ export default {
       default () {
         return 64;
       }
+    },
+    close_to: {
+      type: Object,
+      default () {
+        return {
+          name: 'walletNew'
+        }
+      }
+    },
+    title: {
+      type: String,
+      default () {
+        return ''
+      }
     }
   },
   computed: {
@@ -209,7 +224,7 @@ export default {
           })
           .then(result => {
             if (!result.length) {
-              this.close();
+              this.success();
             } else {
               this.accountsList = result;
               this.showConfirm = true;
@@ -217,7 +232,18 @@ export default {
           });
       }
     },
+    success () {
+      if (this.walletId) {
+        this.$router.push({ name: 'walletDetail', params: { walletId: this.walletId } });
+      } else {
+        this.$router.push({ name: 'dashboard' });
+      }
+    },
     close() {
+      if(this.close_to){
+        this.$router.push(this.close_to);
+        return;
+      }
       if (this.walletId) {
         this.$router.push({ name: 'walletDetail', params: { walletId: this.walletId } });
       } else {

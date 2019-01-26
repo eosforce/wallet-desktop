@@ -137,6 +137,27 @@ export default new Router({
       },
     },
     {
+      path: './ImportKey',
+      name: 'ImportKey',
+      components: {
+        default: () => import('@/views/wallet/ImportKey'),
+      },
+    },
+    {
+      path: './CreateKey',
+      name: 'CreateKey',
+      components: {
+        default: () => import('@/views/wallet/CreateKey'),
+      },
+    },
+    {
+      path: './ImportWalletFile',
+      name: 'ImportWalletFile',
+      components: {
+        default: () => import('@/views/wallet/ImportWalletFile'),
+      },
+    },
+    {
       path: '*',
       redirect: '/',
     },

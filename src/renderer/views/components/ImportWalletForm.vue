@@ -1,6 +1,7 @@
 <template>
   <div class="cover-page">
     <div class="cover-page__content" v-bind:style="form_top">
+      <div class="page__title">{{ $t('导入钱包文件') }}</div>
 
       <form class="cover-page__form" @submit.prevent="!submitting && submit()">
         <div class="field">
@@ -37,7 +38,7 @@
     </div>
 
     <!-- <a class="modal-close is-large cover-page-close" @click="close"></a> -->
-    <confirm-modal :title="$t('用户列表')" :show="showConfirm" @confirm="close()" :can-close="false" width="400px">
+    <confirm-modal :title="$t('用户列表')" :show="showConfirm" @confirm="success()" :can-close="false" width="400px">
       <div>
         <div>{{$t('本私钥对应的用户为：')}}</div>
         <ul>
@@ -88,6 +89,14 @@ export default {
       type: Number,
       default () {
         return 64;
+      }
+    },
+    close_to: {
+      type: Object,
+      default () {
+        return {
+          name: 'walletNew'
+        }
       }
     }
   },
@@ -145,14 +154,25 @@ export default {
         })
         .then(result => {
           if (!result.length) {
-            this.close();
+            this.success();
           } else {
             this.accountsList = result;
             this.showConfirm = true;
           }
         });
     },
+    success () {
+      if (this.walletId) {
+        this.$router.push({ name: 'walletDetail', params: { walletId: this.walletId } });
+      } else {
+        this.$router.push({ name: 'dashboard' });
+      }
+    },
     close() {
+      if(this.close_to){
+        this.$router.push(this.close_to);
+        return;
+      }
       if (this.walletId) {
         this.$router.push({ name: 'walletDetail', params: { walletId: this.walletId } });
       } else {
