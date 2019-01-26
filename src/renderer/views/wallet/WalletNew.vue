@@ -43,19 +43,19 @@
 
         <div class="keys_select_item">
           <div>
-            <div class="keys_item_t1">{{ $t('创建新的秘钥') }}</div>
-            <div class="keys_item_des">{{ $t('如果你想创建一组可以在EOSForce使用的新的秘钥, 可以使用此功能。该密钥是全新的，不会有任何资产') }}</div>
+            <div class="keys_item_t1">{{ $t('创建新的私钥') }}</div>
+            <div class="keys_item_des">{{ $t('如果你想创建一组可以在EOSForce使用的新的私钥, 可以使用此功能。该密钥是全新的，不会有任何资产') }}</div>
           </div>
-          <router-link :to="{name: 'CreateKey'}" class="keys_action_btn">{{ $t('创建秘钥') }}</router-link>
+          <router-link :to="{name: 'CreateKey'}" class="keys_action_btn">{{ $t('创建私钥') }}</router-link>
         </div>
 
         <div class="keys_select_item">
           <div>
             <div class="keys_item_t1">{{ $t('导入已有私钥') }}</div>
-            <div class="keys_item_des">{{ $t('您已经有一个秘钥，并希望导入钱包中') }}</div>
+            <div class="keys_item_des">{{ $t('您已经有一个私钥，并希望导入钱包中') }}</div>
           </div>
-          <!-- <a href="" class="keys_action_btn">导入秘钥</a> -->
-          <router-link :to="{name: 'ImportKey'}" class="keys_action_btn">{{ $t('导入秘钥') }}</router-link>
+          <!-- <a href="" class="keys_action_btn">导入私钥</a> -->
+          <router-link :to="{name: 'ImportKey'}" class="keys_action_btn">{{ $t('导入私钥') }}</router-link>
         </div>
 
         <div class="keys_select_item">
