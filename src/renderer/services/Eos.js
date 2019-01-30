@@ -1,8 +1,8 @@
-import Eos from 'eosforce'
-import EOS_ML from 'eosjs'
+import '@/services/FORCEIO'
 import axios from 'axios'
 import { NODE_API_URL } from '@/constants/config.constants';
 import Store from '@/store';
+import Eos from 'eosforce'
 
 import {
   getToken,
@@ -40,11 +40,11 @@ export const getNodeList = async () => {
   return fetch(map[Store.state.app.chainNet]).then(async res => {
     let data = await res.json();
     //trans_main
-    // data.nodes.forEach(item => {
-    //   item.node_addr = '192.168.2.139';
-    //   item.port_http = '8877';
-    //   item.port_ssl = '';
-    // });
+    data.nodes.forEach(item => {
+      item.node_addr = '192.168.2.139';
+      item.port_http = '8877';
+      item.port_ssl = '';
+    });
     return data;
   });
 };
@@ -138,7 +138,7 @@ export const getTransAction = httpEndpoint => async (tid) => {
 };
 
 // 查询账户被锁定数额
-export const getLockedEosc = httpEndpoint => async (account_name, concel_container = {cancel: []}) => {
+export const getLockedEosc = httpEndpoint => async (account_name) => {
   let CancelToken = axios.CancelToken;
   let data = await axios.post(httpEndpoint + API.get_table_rows, 
     {
@@ -148,15 +148,11 @@ export const getLockedEosc = httpEndpoint => async (account_name, concel_contain
       "table_key": account_name,
       "json":true,
       "limit":1000
-    },  
-    {
-      cancelToken: new CancelToken(function executor(c) {
-        concel_container.cancel.push(c);
-      })
     }
   )
   .then(data => data.data)
   .catch(err => null);
+
   if(!data) return data;
   if(data.rows && data.rows.length){
     let balance = data.rows.length ? data.rows[0].balance : 0;
@@ -187,16 +183,11 @@ export const queryAccount = httpEndpoint => accountName => {
 };
 
 
-export const getAccount = httpEndpoint => async (accountName, concel_container = {cancel: []}) => {
+export const getAccount = httpEndpoint => async (accountName) => {
   let CancelToken = axios.CancelToken;
   let data = await axios.post(httpEndpoint + API.get_account, 
     { 
       account_name: accountName
-    },  
-    {
-      cancelToken: new CancelToken(function executor(c) {
-        concel_container.cancel.push(c);
-      })
     }
   )
   .then(data => data.data)
@@ -204,7 +195,7 @@ export const getAccount = httpEndpoint => async (accountName, concel_container =
   return data;
 };
 
-const get_filter_available_condition = (accountName, filter_way = 'EOSC') => {
+const get_filter_available_condition = (accountName, core_coin_contract = 'eosio') => {
   let base_params = { 
     scope: 'eosio',
     code: 'eosio',
@@ -213,7 +204,7 @@ const get_filter_available_condition = (accountName, filter_way = 'EOSC') => {
     limit: 10000,
     json: true,
   }
-  if(filter_way == 'EOS'){
+  if(core_coin_contract == 'eosio.token'){
     base_params.scope = base_params.table_key;
     base_params.code = 'eosio.token';
     delete base_params.table_key;
@@ -221,9 +212,8 @@ const get_filter_available_condition = (accountName, filter_way = 'EOSC') => {
   return base_params;
 }
 
-const filter_main_token_by_way = (data, accountName, filter_way = 'eosio') => {
-
-  if(filter_way == 'eosio'){
+const filter_main_token_by_way = (data, accountName, core_coin_contract = 'eosio') => {
+  if(core_coin_contract == 'eosio'){
     const account = data.rows.find(acc => acc.name === accountName);
     if (account) {
       return toBigNumber(account.available);
@@ -236,22 +226,18 @@ const filter_main_token_by_way = (data, accountName, filter_way = 'eosio') => {
   return toBigNumber(balance);
 }
 // 获取指定账户可用余额
-export const getAvailable = httpEndpoint => async (accountName, filter_way = 'eosio', concel_container = {cancel: []}) => {
-  let CancelToken = axios.CancelToken,
-      params = get_filter_available_condition(accountName, filter_way);
-  let data = await axios.post(httpEndpoint + API.get_table_rows, 
-    params,  
-    {
-      cancelToken: new CancelToken(function executor(c) {
-        concel_container.cancel.push(c);
-      })
-    }
+export const getAvailable = httpEndpoint => async (accountName, core_coin_contract = 'eosio') => {
+  let params = get_filter_available_condition(accountName, core_coin_contract);
+
+  let data = await axios.post(
+    httpEndpoint + API.get_table_rows, 
+    params
   )
   .then(data => data.data)
   .catch(err => null);
 
-  if(!data) return data;
-  return filter_main_token_by_way(data, accountName, filter_way);
+  let result = !data ? data : filter_main_token_by_way(data, accountName, core_coin_contract);
+  return result;
 };
 
 // 获取 token list
@@ -295,7 +281,7 @@ export const getTokenList = httpEndpoint => accountName => {
 };
 
 // 获取 bp 表
-export const getBpsTable = httpEndpoint => async (concel_container = {cancel: []}) => {
+export const getBpsTable = httpEndpoint => async () => {
   let CancelToken = axios.CancelToken;
   let data = await axios.post(httpEndpoint + API.get_table_rows, 
     { 
@@ -304,53 +290,33 @@ export const getBpsTable = httpEndpoint => async (concel_container = {cancel: []
       table: 'bps',
       json: true,
       limit: 1000 
-    },  
-    {
-      cancelToken: new CancelToken(function executor(c) {
-        concel_container.cancel.push(c);
-      })
     }
   )
-  .then(data => data.data.rows)
-  .catch(err => []);
+  .then(data => data.data.rows);
   return data;
 };
 
 // 获取 vote 表
-export const getVotesTable = httpEndpoint => async (accountName, table_key = '', concel_container = {cancel: []}) => {
-  let CancelToken = axios.CancelToken;
-  let data = await axios.post(
-        httpEndpoint + API.get_table_rows, 
-        { 
-          scope: string_to_name(accountName),
-          code: 'eosio',
-          table: 'votes',
-          json: true,
-          limit: 1000,
-          table_key
-        },  
-        {
-          cancelToken: new CancelToken(function executor(c) {
-            concel_container.cancel.push(c);
-          })
-        }
-  )
-  .then(data => data.data.rows)
+export const getVotesTable = httpEndpoint => async (accountName, table_key = '') => {
+  let data = await Eos({httpEndpoint}).getTableRows({
+    scope: string_to_name(accountName),
+    code: 'eosio',
+    table: 'votes',
+    json: true,
+    limit: 1000,
+    table_key
+  })
+  .then(data => data.rows)
   .catch(err => []);
   return data;
 };
 
 // 获取 votes4ram 表
-export const getVotes4ramTable = httpEndpoint => async (accountName, concel_container = {cancel: []}) => {
+export const getVotes4ramTable = httpEndpoint => async (accountName) => {
   let CancelToken = axios.CancelToken;
   let data = await axios.post(httpEndpoint + API.get_table_rows, 
     { 
       scope: string_to_name(accountName), code: 'eosio', table: 'votes4ram', json: true, limit: 1000
-    },  
-    {
-      cancelToken: new CancelToken(function executor(c) {
-        concel_container.cancel.push(c);
-      })
     }
   )
   .then(data => data.data.rows)
@@ -422,6 +388,15 @@ export const getGlobalTable = httpEndpoint => async (accountName, current_node, 
   }
 }
 
+export const get_super_bps_table = httpEndpoint => async (schedule_version, ) => {
+  let super_bps_table = await getTable(httpEndpoint)({
+    scope: 'eosio',
+    code: 'eosio',
+    table: 'schedules',
+    table_key: schedule_version,
+  });
+  return super_bps_table;
+}
 // 根据 bp 和 vote 得到分红表，返回一个对象
 export const getRewardsAndBpsTable = httpEndpoint => async (accountName, current_node, concel_container = {cancel: []}, votesTable, votes4ramTable, bpsTable, superBpsAmountTable, block, vote_num_in = 'staked') => {
   votesTable = votesTable || await getVotesTable(httpEndpoint)(accountName);
@@ -646,6 +621,7 @@ export const delegatebw = config => async ({from, to, net_quantity, cpu_quantity
   });
   return result;
 }
+
 export const unfreeze = config => {
   return async ({ voter, bpname, permission } = {}) => {
     let auth = {
@@ -660,6 +636,13 @@ export const unfreeze = config => {
       });
   };
 };
+
+export const unfreeze_from_freeeze = config => async ({account_name, permission, wallet_symbol = 'EOS'}) => {
+  let {EOS, auth} = filter_lib_and_auth(wallet_symbol, account_name, permission);
+  let token = await EOS(config).contract('eosio');
+  let res = await token.unfreeze(account_name, auth);
+  return res;
+}
 
 export const freeze = config => async ({ voter, ammount, permission, wallet_symbol = 'EOS' } = {}) => {
   let {EOS, auth} = filter_lib_and_auth(wallet_symbol, voter, permission);

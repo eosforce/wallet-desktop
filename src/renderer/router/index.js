@@ -89,6 +89,13 @@ export default new Router({
                   },
                 },
                 {
+                  name: 'UnfreezeCpuNet',
+                  path: 'UnfreezeCpuNet',
+                  components: {
+                    modal: () => import('@/views/account/UnfreezeCpuNet'),
+                  },
+                },
+                {
                   name: 'claim',
                   path: ':bpname/claim',
                   components: {

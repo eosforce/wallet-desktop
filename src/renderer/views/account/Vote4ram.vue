@@ -19,7 +19,7 @@
               {{$t('可用投票金额')}}<span class="static-text">{{staked - fee_for_claim | formatNumber({p: 4, showSymbol: true, symbol: wallet_show_symbol})}}</span>
             </div>
           </div>
-          <div class="field" v-if="selectType == 0 && is_fee_model">
+          <div class="field" v-if="selectType == 0 && IS_FEE_MODEL">
             <div class="static-label">
               {{$t('预留领取手续费')}}
               <input type="text" name="" v-model="fee_for_claim" class="small_input" >
@@ -53,7 +53,7 @@
               <p class="help is-danger" v-show="amount && !isValidAmount">
                 {{$t('金额必须为整数')}}
               </p>
-              <p class="help tips" v-if="is_fee_model">{{selectInfo.tip}}，{{$t('template.fee', {fee: symblo_change(fee, 'EOS', wallet_show_symbol) })}}</p>
+              <p class="help tips" v-if="IS_FEE_MODEL">{{selectInfo.tip}}，{{$t('template.fee', {fee: symblo_change(fee, 'EOS', wallet_show_symbol) })}}</p>
               <p class="help is-danger" v-show="amount > selectInfo.max">
                 {{selectInfo.maxTip}}
               </p>
@@ -119,7 +119,7 @@
           <div class="row__title">{{$t('修改后投票金额')}}</div>
           <div class="row__content">{{newStakedAmount | formatNumber({p: 0, showSymbol: true, symbol: wallet_show_symbol})}}</div>
         </div>
-        <div class="row" v-if="is_fee_model">
+        <div class="row" v-if="IS_FEE_MODEL">
           <div class="row__title">{{$t('手续费')}}</div>
           <div class="row__content">{{ symblo_change(fee, 'EOS', wallet_show_symbol) }} </div>
         </div>
@@ -258,8 +258,8 @@ export default {
     wallet_show_symbol () {
       return this.wallet.wallet_show_symbol;
     },
-    is_fee_model () {
-      return this.wallet.is_fee_model;
+    IS_FEE_MODEL () {
+      return this.wallet.IS_FEE_MODEL;
     },
     has_freezed () {
       return this.wallet.has_freezed;
@@ -309,7 +309,7 @@ export default {
   },
   methods: {
     update_lease_fee () {
-      if(!this.is_fee_model){
+      if(!this.IS_FEE_MODEL){
         this.fee_for_claim = 0;
         this.fee = 0;
       }

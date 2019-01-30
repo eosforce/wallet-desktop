@@ -1,7 +1,7 @@
 <template>
   <confirm-modal :show="true" v-bind:title="title" :submitting="submitting" @confirm="submit()" @close="close">
     <div>
-      <div class="row" v-if="is_fee_model">
+      <div class="row" v-if="IS_FEE_MODEL">
         <div class="row__title">{{$t('手续费')}}</div>
         <div class="row__content">{{ fee }}</div>
       </div>
@@ -89,7 +89,6 @@ export default {
     },
     fee () {
       return '0.2' + ' ' + this.wallet_show_symbol;
-      // return (this.permissions.filter(item => item.is_have).length * 0.1).toFixed(4) + ' ' + this.wallet_show_symbol;
     },
     title () {
       return this.$t('确认转让用户名')  + '?';
@@ -134,8 +133,8 @@ export default {
     wallet_show_symbol () {
       return this.wallet.wallet_show_symbol;
     },
-    is_fee_model () {
-      return this.wallet.is_fee_model;
+    IS_FEE_MODEL () {
+      return this.wallet.IS_FEE_MODEL;
     },
     ...mapState(['account', 'wallet', 'app']),
   },

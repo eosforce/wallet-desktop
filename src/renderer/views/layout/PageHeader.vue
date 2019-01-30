@@ -4,25 +4,18 @@
       <router-link class="brand__link" :to="{name: 'dashboard'}"><img src="@/assets/logo.png" class="logo"/></router-link>
     </div>
     <div class="header-navbar">
-      <!-- <div class="select">
-        <select v-model="chainNet">
-          <option :value="k" v-for="(value, k) in chainNets" :key="k">{{value}}</option>
-        </select>
-      </div> -->
+
       <div class="select" style="margin-left:10px;">
         <select v-model="nodeValue">
           <option :value="node.value" v-for="node in app.nodeList" :key="node.value">{{node.name}}</option>
         </select>
       </div>
+
       <div class="select with_lf_line">
         <select v-model="locale" @change="switchLocale(locale)">
           <option :value="k" v-for="(v, k) in locales" :key="k">{{v}}</option>
         </select>
       </div>
-
-      <!-- <div>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<router-link :to="{'name': 'config_node_list'}">管理节点</router-link>
-      </div> -->
 
       <div class="block" style="display:flex;align-items:center;">
         <div>
@@ -39,7 +32,9 @@ import { mapState, mapActions } from 'vuex';
 
 import { Actions } from '@/constants/types.constants';
 import { CHAIN_NETS } from '@/constants/config.constants';
-
+import {
+  wait_time
+} from '@/utils/util'
 export default {
   name: 'PageHeader',
   data() {
@@ -99,36 +94,15 @@ export default {
       localStorage.locale = locale;
       this.$i18n.locale = locale;
     },
-    loop() {
-      if(this.on_load_info) return ;
-      this.on_load_info = true;
-      this.loopId = setTimeout(async () => {
-        try{
-          await this.fetchNodeInfo();
-        }catch(__){
-        }
-        this.on_load_info = false;
-        this.loop();
-      }, 3 * 1000);
-    },
-    async loop_global_info() {
-      if(this.on_load_global) return ;
-      this.on_load_global = true;
+    async loop() {
 
-      this.loop_global_info_id = setTimeout(() => {
-
-        this.GET_GLOABLE_INFO()
-        .then(res => {
-          this.on_load_global = false;
-          this.loop_global_info();
-        })
-        .catch(err => {
-          this.on_load_global = false;
-          this.loop_global_info();
+      while(1){
+        await this.fetchNodeInfo().catch(error => {
+          alert(error);
         });
+        await wait_time(3000);
+      }
 
-      }, 10 * 1000);
-      
     },
     ...mapActions({
       fetchNodeInfo: Actions.FETCH_NODE_INFO,

@@ -1,4 +1,5 @@
 import { Mutations, Actions, Getters } from '@/constants/types.constants';
+import account_overview from '@/store/modules/AccountOverview'
 import {
     getAccountInfo,
     transfer,
@@ -23,7 +24,8 @@ import {
     rank_get_action,
     getLockedEosc,
     getFreeze,
-    freeze
+    freeze,
+    unfreeze_from_freeeze
 } from '@/services/Eos';
 
 const initState = {
@@ -45,37 +47,39 @@ const initState = {
         is_error: false,
         on_load: true
     },
-    available: {
-        data: null,
-        is_error: false,
-        on_load: true
-    },
-    votes_table: {
-        data: null,
-        is_error: false,
-        on_load: true
-    },
-    votes4ram_table: {
-        data: null,
-        is_error: false,
-        on_load: true
-    },
-    bps_table: {
-        data: null,
-        is_error: false,
-        on_load: true
-    },
-    super_bps_table: {
-        data: null,
-        is_error: false,
-        on_load: true
-    },
+    ...account_overview.state,
+    // available: {
+    //     data: null,
+    //     is_error: false,
+    //     on_load: true
+    // },
+    // votes_table: {
+    //     data: null,
+    //     is_error: false,
+    //     on_load: true
+    // },
+    // votes4ram_table: {
+    //     data: null,
+    //     is_error: false,
+    //     on_load: true
+    // },
+    // bps_table: {
+    //     data: null,
+    //     is_error: false,
+    //     on_load: true
+    // },
+    // super_bps_table: {
+    //     data: null,
+    //     is_error: false,
+    //     on_load: true
+    // },
+    // // 
+    // vote_and_voteram_freeze: {
+    //     data: null,
+    //     is_error: false,
+    //     on_load: true
+    // },
     // 
-    vote_and_voteram_freeze: {
-        data: null,
-        is_error: false,
-        on_load: true
-    },
     version: '',
     bpsTable: [],
     baseBpsTable: [],
@@ -279,7 +283,8 @@ const mutations = {
         for (let item of cancel) {
             state.cancle_requests.cancel.push(item);
         }
-    }
+    },
+    ...account_overview.mutations
 };
 
 const actions = {
@@ -291,9 +296,9 @@ const actions = {
         commit(Mutations.RESET_ACCOUNT_INFO, rank_get_action(server_version_string));
         commit('clear_vote_and_voteram_freeze');
         commit(Mutations.SET_ACCOUNT_NAME, { accountName });
-        dispatch(Actions.GET_ACCOUNT_INFO, getters['GET_FILER_WAY']);
+        dispatch(Actions.GET_ACCOUNT_INFO);
     },
-    [Actions.TRANSFER]({ state, dispatch, getters }, { from, to, amount, memo, password, precision, walletId, permission, tokenSymbol, wallet_symbol }) {
+    [Actions.TRANSFER]({ state, dispatch, getters }, { from, to, amount, memo, password, precision, walletId, permission, tokenSymbol}) {
         return getters[Getters.GET_TRANSE_CONFIG](password, from, walletId).then(async config => {
             return transfer(config)({ from, to, amount, memo, tokenSymbol, precision, permission, wallet_symbol: getters['wallet_symbol'] });
         });
@@ -385,13 +390,12 @@ const actions = {
         commit(Mutations.SET_VOTES4RAM_TABLE, { votes4ramTable });
         commit(Mutations.SET_VOTES_TABLE, { votesTable });
         commit(Mutations.SET_BASE_BPS_TABLE, { bpsTable });
-
         commit(Mutations.SET_SUPER_PSAMOUNT_TABLE, { superBpsAmountTable });
     },
     // @todo 接口分拆
-    async [Actions.GET_ACCOUNT_INFO]({ state, dispatch, commit, getters }, filter_way = 'EOSC') {
+    async [Actions.GET_ACCOUNT_INFO]({ state, dispatch, commit, getters }) {
         const accountName = getters[Getters.CURRENT_ACCOUNT_NAME];
-        let node_url = getters[Getters.CURRENT_NODE];
+        const node_url = getters[Getters.CURRENT_NODE];
         if (accountName != state.pre_load_key) {
             for (let item of state.cancle_requests.cancel) {
                 item();
@@ -439,7 +443,8 @@ const actions = {
 
         dispatch('check_total_and_set_asset_total');
         let ps = [];
-        ps.push(getAvailable(node_url)(accountName, getters['avalaible_filter'], cancle_requests)
+        
+        ps.push(getAvailable(node_url)(accountName, getters['CORE_COIN_CONTRACT'])
             .then(available => {
                 if (accountName != state.pre_load_key) {
                     return;
@@ -449,7 +454,7 @@ const actions = {
             }));
 
 
-        ps.push(getAccount(node_url)(accountName, cancle_requests)
+        ps.push(getAccount(node_url)(accountName)
             .then(baseInfo => {
                 if (accountName != state.pre_load_key) {
                     return;
@@ -532,7 +537,7 @@ const actions = {
             commit(Mutations.SET_ACCOUNT_INFO, { info });
         });
     },
-    async [Actions.TRANSFER_ACCOUNT]({ state, dispatch, commit, getters }, { name, owner_public_key, active_public_key, password, walletId, permissions = ['active', 'owner'], wallet_symbol = 'EOS' }) {
+    async [Actions.TRANSFER_ACCOUNT]({ state, dispatch, commit, getters }, { name, owner_public_key, active_public_key, password, walletId, permissions = ['active', 'owner']}) {
         let with_out_reject = true;
         let config = await getters[Getters.GET_TRANSE_CONFIG](password, name, walletId, with_out_reject);
         if (config.is_error) {
@@ -589,13 +594,17 @@ const actions = {
             data
         });
     },
-
     // 抵押
-
     async [Actions.FREEZE] ({ state, dispatch, commit, getters}, { password, walletId, voter, ammount, permission}){
         let config = await getters[Getters.GET_TRANSE_CONFIG](password, voter, walletId);
         let res = await freeze(config)({voter, ammount, permission, wallet_symbol: getters['wallet_symbol'] });
         dispatch(Actions.GETFREEZE);
+        return res;
+    },
+
+    async [Actions.UNFREEZECPUNET] ({ state, dispatch, commit, getters}, { password, walletId, account_name, permission}){
+        let config = await getters[Getters.GET_TRANSE_CONFIG](password, account_name, walletId);
+        let res = await unfreeze_from_freeeze(config)({account_name, permission, wallet_symbol: getters['wallet_symbol'] });
         return res;
     },
 
@@ -631,7 +640,8 @@ const actions = {
         if( involved_users.has(accountName) ){
             dispatch(Actions.GET_TRANSFER_RECORD, {accountName, pos: -1, from_top: true});    
         }
-    }
+    },
+    ...account_overview.actions
 };
 
 const getters = {

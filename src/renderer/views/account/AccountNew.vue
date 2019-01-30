@@ -75,7 +75,7 @@
           <div class="row__title">{{$t('用户名称')}}</div>
           <div class="row__content">{{accountName}}</div>
         </div>
-        <div class="row" v-if="is_fee_model">
+        <div class="row" v-if="IS_FEE_MODEL">
           <div class="row__title">{{$t('手续费')}}</div>
           <div class="row__content">0.1 EOSC</div>
         </div>
@@ -160,8 +160,8 @@ export default {
     wallet_symbol () {
       return this.wallet.wallet_symbol;
     },
-    is_fee_model () {
-      return this.wallet.is_fee_model;
+    IS_FEE_MODEL () {
+      return this.wallet.IS_FEE_MODEL;
     },
     ...mapState(['account', 'wallet', 'app']),
   },

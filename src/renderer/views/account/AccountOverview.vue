@@ -33,7 +33,7 @@
                     </li>
                 </ul>
                 <span class="is-grouped">
-          <span class="refresh fr el-icon-refresh" :class="{spin: spin}" @click="refreshOverview()"></span>
+                  <span class="refresh fr el-icon-refresh" :class="{spin: spin}" @click="refreshOverview()"></span>
                 </span>
             </div>
             <div class="box_item">
@@ -53,6 +53,7 @@
                         <span class="cl" v-if="!on_load_info">{{account.info.available | formatNumber({p: 4})}}</span>
                         <div class="load_circle account_detail_loader" v-if="on_load_info"></div>
                         <router-link class="button is-small is-link box_transfer_link" :to="{name: 'transfer'}" v-if="!on_load_info && (has_active || has_owner)">{{$t('转账')}}</router-link>
+
                     </li>
                 </ul>
             </div>
@@ -68,11 +69,11 @@
                         <span class="cl" v-if="!on_load_info && vote_back_state" >
                             {{ account.info.unstakingTotal | formatNumber({p: 0})}}
                         </span>
-                        <span v-bind:class="{'cl': unfreeze_time > 0 }" v-if="!on_load_info && !vote_back_state" >
+                        <span class="cl" v-if="!on_load_info && !vote_back_state" >
                             {{ unstaking | formatNumber({p: 0})}}
                         </span>
                         <!-- {{ unfreeze_time }} -->
-                        <router-link class="button is-small is-link box_transfer_link" :to="{name: 'Freeze'}" v-if="!on_load_info && (has_active || has_owner) && unfreeze_time > 0 && !vote_back_state">{{$t('赎回')}}</router-link>
+                        <router-link class="button is-small is-link box_transfer_link" :to="{name: 'UnfreezeCpuNet'}" v-if="!on_load_info && (has_active || has_owner) && unfreeze_time > 0 && !vote_back_state && unstaking > 0">{{$t('赎回')}}</router-link>
                         <div class="load_circle account_detail_loader" v-if="on_load_info"></div>
                         
                     </li>
@@ -181,6 +182,15 @@
                 </ul>
             </div>
             <!-- box_item -->
+            <!-- test new store start -->
+            <!-- <div>
+                availaible: {{ available_data }}<br/>
+
+                locked: {{ account.locked_eosc }}<br/>
+
+                account_info: {{ account.account_info }} <br/>
+            </div> -->
+            <!-- test new store end -->
         </div>
     </div>
 </template>
@@ -191,7 +201,8 @@ import {
 } from '@/utils/filter'
 import {
     toNumber,
-    toAsset
+    toAsset,
+    wait_time
 } from '@/utils/util'
 import { Actions } from '@/constants/types.constants';
 import Copy from 'clipboard-copy'
@@ -325,6 +336,9 @@ export default {
         vote_back_state () {
             return this.wallet.vote_back_state;
         },
+        available_data () {
+            return this.account.available;
+        },
         ...mapState(['account', 'wallet', 'app']),
     },
     mounted() {
@@ -343,17 +357,13 @@ export default {
             }, 500);
         },
         async refreshOverview() {
-            if (this.spin) return;
+            if(this.spin) return ;
             this.spin = true;
-            try {
-                let time_str = new Date().getTime();
-                this.pre_time = time_str;
+            while(1){                
+                await wait_time(10 * 1000);
                 await this.GET_ACCOUNT_INFO(this.filter_way);
-            } catch (err) {}
-            this.spin = false;
-            this.over_view_loop = setTimeout(async() => {
-                await this.refreshOverview();
-            }, 10 * 1000);
+                // await this.load_overview();
+            }
         },
         get_permission_info(item) {
             let info_dict = {
@@ -378,7 +388,8 @@ export default {
             refreshAccount: Actions.GET_ACCOUNT_OVERVIEW,
             refreshWallet: Actions.REFRESH_WALLET,
             fetchWallet: Actions.FETCH_WALLET,
-            GET_ACCOUNT_INFO: Actions.GET_ACCOUNT_INFO
+            GET_ACCOUNT_INFO: Actions.GET_ACCOUNT_INFO,
+            load_overview: 'load_overview'
         }),
         formatNumber,
         toNumber

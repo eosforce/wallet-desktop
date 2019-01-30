@@ -90,6 +90,13 @@ export const is_float = (str = '') => {
     return true;
 }
 
+export const is_int = (str = '') => {
+    let num = str * 1;
+    if(isNaN(num)) return false;
+    if( num - parseInt(num) > 0 ) return false;
+    return true;
+}
+
 export const get_node_version_num = (version_str) => {
     let res = '';
     var t = version_str.split('-');
@@ -519,3 +526,14 @@ export const string_to_name = ( _str ) => {
    }
    return bits_to_ten(name).toString();
 }
+
+export const wait_time = (_time = 3000) => {
+    return new Promise((rs, rj) => {
+        let t = setTimeout(() => {
+            clearTimeout(t);
+            rs();
+        }, _time);
+    });
+}
+
+

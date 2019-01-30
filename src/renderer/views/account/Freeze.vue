@@ -1,7 +1,7 @@
 <template>
   <confirm-modal :show="true" v-bind:title="title" :submitting="submitting" @confirm="submit()" @close="close">
     <div>
-      <div class="row" v-if="is_fee_model">
+      <div class="row" v-if="IS_FEE_MODEL">
         <div class="row__title">{{$t('手续费')}}</div>
         <div class="row__content">{{ fee }}</div>
       </div>
@@ -32,14 +32,14 @@
         <div class="row">
           <div class="row__title">{{$t('额度')}}</div>
           <div class="row__content">
-            <input class="input" v-model="FREEZE_NUM" type="text" :placeholder="EOST_NUM_PLACEHOLDER" required />
+            <input class="input" v-model="form.FREEZE_NUM.value" type="number" :placeholder="EOST_NUM_PLACEHOLDER" required />
           </div>
         </div>
-        <div class="row">
+        <div class="row" v-if="form.FREEZE_NUM.error">
           <div class="row__title">{{$t('')}}</div>
-          <p class="help is-danger" v-show="FREEZE_NUM && ERROR_FREEZE_NUM">
-              {{ ERROR_FREEZE_NUM }}
-            </p>
+          <p class="help is-danger">
+            {{ form.FREEZE_NUM.error }}
+          </p>
         </div>
       </div>
 
@@ -50,9 +50,9 @@
             {{ toAsset(new_ammount, wallet_symbol) }}
           </div>
         </div>
-        <div class="row">
+        <div class="row"  v-show="new_ammount && error_new_ammount">
           <div class="row__title">{{$t('')}}</div>
-          <p class="help is-danger" v-show="new_ammount && error_new_ammount">
+          <p class="help is-danger">
               {{ error_new_ammount }}
             </p>
         </div>
@@ -62,14 +62,17 @@
         <div class="row">
           <div class="row__title">{{$t('密码')}}</div>
           <div class="row__content">
-            <input class="input" v-model="password" type="password" :placeholder="$t('密码')" required />
+            <input class="input" v-model="form.password.value" type="password" :placeholder="$t('密码')" required />
           </div>
         </div>
-        <div class="row">
+        <div class="row" v-if="form.password.error">
           <div class="row__title">{{$t('')}}</div>
-          <p class="help is-danger" v-show="password && !password">
+          <p class="help is-danger">
+            {{ form.password.error }}
+          </p>
+          <!-- <p class="help is-danger" v-show="password && !password">
                   {{$t('密码')}}
-            </p>
+            </p> -->
         </div>
       </div>
 
@@ -84,19 +87,29 @@ import ConfirmModal from '@/components/ConfirmModal';
 import PromptModal from '@/components/PromptModal';
 import { Actions } from '@/constants/types.constants';
 import { isValidPublic, filter_public_key } from '@/utils/rules.js'
-import { is_float, toAsset, toNumber } from '@/utils/util.js'
+import { is_float, is_int, toAsset, toNumber } from '@/utils/util.js'
 export default {
   name: 'Claim',
   data() {
     return {
-      FREEZE_NUM: '',
-      password: '',
-
       selected_value: 0,
       select_list: [
         {value: 0, text: '增加'},
         {value: 1, text: '减少'}
       ],
+
+      form: {
+        FREEZE_NUM: {
+          value: '',
+          formate: new Set(['not_empty', 'is_int']),
+          error: ''
+        },
+        password: {
+          value: '',
+          formate: new Set(['not_empty']),
+          error: ''
+        }
+      },
 
       submitting: false,
       content: 'content',
@@ -106,13 +119,6 @@ export default {
     };
   },
   computed: {
-    ERROR_FREEZE_NUM () {
-      if(!this.FREEZE_NUM) return '';
-
-      if(!is_float(this.FREEZE_NUM)){
-        return this.$t('必须为数字');
-      }
-    },
 
     selected_value_txt () {
       return this.select_list.find(item => item.value == this.selected_value).text;
@@ -123,7 +129,7 @@ export default {
     },
 
     new_ammount () {
-      return this.selected_value ? toNumber(this.has_freeze_num) - toNumber(this.FREEZE_NUM) : toNumber(this.has_freeze_num) + toNumber(this.FREEZE_NUM);
+      return this.selected_value ? toNumber(this.has_freeze_num) - toNumber(this.form.FREEZE_NUM.value) : toNumber(this.has_freeze_num) + toNumber(this.form.FREEZE_NUM.value);
     },
 
     error_new_ammount () {
@@ -133,7 +139,7 @@ export default {
       return '';
     },
 
-    my_name() {
+    account_name() {
       return this.$route.params.accountName;
     },
 
@@ -186,8 +192,8 @@ export default {
       return this.wallet.wallet_symbol;
     },
 
-    is_fee_model () {
-      return this.wallet.is_fee_model;
+    IS_FEE_MODEL () {
+      return this.wallet.IS_FEE_MODEL;
     },
 
     vote_and_voteram_freeze () {
@@ -216,39 +222,64 @@ export default {
     ...mapState(['account', 'wallet', 'app']),
   },
   created () {
-    this.TO = this.my_name;
+    this.TO = this.account_name;
   },
   methods: {
+    validate_form () {
+      const not_empty_validate = (val, key) => {
+        if(!val){
+          return `${key||''} 不能为空`;
+        }
+      }
+
+      const check_ecc_public_key = (val, key) => {
+        if(!isValidPublic(val, this.wallet_symbol)){
+          return `${key} 公钥格式不正确`
+        }
+      }
+
+      const check_is_int = (val, key) => {
+        if(!is_int(val)){
+          return this.$t('必须为整数');
+        }
+      }
+
+      let is_error = true,
+          validate_keys = new Map([
+            ['not_empty', not_empty_validate],
+            ['ecc_public_key', check_ecc_public_key],
+            ['is_int', check_is_int]
+          ]);
+
+      for(let _key in this.form){
+        let item = this.form[_key];
+        let validate_items = item.formate;
+        item.error = '';
+        for(let vk of validate_keys.keys()){
+          if(validate_items.has(vk)){
+            let check_res = validate_keys.get(vk)(item.value);
+            if(check_res){
+              item.error = check_res;
+              is_error = false;
+            }
+          }
+        }
+      }
+
+      return is_error;
+    },
     async submit() {
-      
-      if (!this.FREEZE_NUM) {
-        Message.error({
-          title: this.$t('抵押数量未填写')
-        });
+
+      if(!this.validate_form()){
         return null;
       }
-
-      if(this.ERROR_FREEZE_NUM){
-        Message.error({
-          title: this.ERROR_FREEZE_NUM
-        });
-        return null;
-      }
-
-      if(this.error_new_ammount){
-        Message.error({
-          title: this.error_new_ammount
-        });
-        return null;
-      }
-
       this.submitting = true;
 
       // { password, walletId, voter, ammount, permission}
       let transfer_res = await this.FREEZE({
-        voter: this.my_name, 
+        voter: this.account_name, 
         walletId: this.wallet.data.publicKey,
-        password: this.password,
+        password: this.form.password.value,
         permission: this.permissions.filter(item => item.is_have)[0].name,
         ammount: this.new_ammount
       })

@@ -1,7 +1,7 @@
 <template>
   <confirm-modal :show="true" v-bind:title="title" :submitting="submitting" @confirm="submit()" @close="close">
     <div>
-      <div class="row" v-if="is_fee_model">
+      <div class="row" v-if="IS_FEE_MODEL">
         <div class="row__title">{{$t('手续费')}}</div>
         <div class="row__content">{{ fee }}</div>
       </div>
@@ -106,7 +106,7 @@ export default {
     },
 
     CPU_NET_PLACEHOLDER () {
-      return this.$t('抵押') + this.wallet_symbol + this.$t('数量');
+      return this.$t('抵押') + ' ' + this.wallet_symbol + this.$t('数量');
     },
 
     my_name() {
@@ -162,8 +162,8 @@ export default {
       return this.wallet.wallet_symbol;
     },
 
-    is_fee_model () {
-      return this.wallet.is_fee_model;
+    IS_FEE_MODEL () {
+      return this.wallet.IS_FEE_MODEL;
     },
 
     ...mapState(['account', 'wallet', 'app']),

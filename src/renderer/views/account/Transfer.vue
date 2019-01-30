@@ -34,7 +34,7 @@
               <input v-model="memo" min="0" class="input" type="text" :placeholder="$t('备注')" max-length="255"/>
             </div>
           </div>
-          <div class="field" v-if="is_fee_model">
+          <div class="field" v-if="IS_FEE_MODEL">
             <p class="help tips">{{$t( 'template.fee', {fee: symblo_change(app.fee) } )}}</p>
           </div>
           <div class="field is-grouped is-grouped-right">
@@ -67,7 +67,7 @@
           <div class="row__title">{{$t('转账金额')}}</div>
           <div class="row__content">{{amount | formatNumber({p: precision, showSymbol: true, symbol: symblo_change(tokenSymbol)})}}</div>
         </div>
-        <div class="row" v-if="is_fee_model">
+        <div class="row" v-if="IS_FEE_MODEL">
           <div class="row__title">{{$t('手续费')}}</div>
           <div class="row__content">{{ symblo_change(app.fee) }}</div>
         </div>
@@ -156,8 +156,8 @@ export default {
     wallet_show_symbol () {
       return this.wallet.wallet_show_symbol;
     },
-    is_fee_model () {
-      return this.wallet.is_fee_model;
+    IS_FEE_MODEL () {
+      return this.wallet.IS_FEE_MODEL;
     },
     ...mapState(['account', 'wallet', 'app']),
   },

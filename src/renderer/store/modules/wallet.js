@@ -6,45 +6,52 @@ import { decrypt } from '@/utils/util';
 
 const initState = {
   data: {},
-  wallet_symbol: 'EOSC',
-  wallet_show_symbol: 'EOS',
-  is_fee_model: false,
-  FILTER_WAY: 'EOS',
+  /*
+    eos lib, there are two eos lib , one has fee, the other has no fee
+  */
+  EOS_WITH_FEE: false,
+  wallet_symbol: 'EOST',
+  WALLET_SHOW_SYMBOL: 'EOST',
+  IS_FEE_MODEL: false,
+  // has cpu mortgage
   has_cpu: true,
+  // has net mortgage
   has_net: true,
-  // 内存投票是否有赎回状态
+  // minus vote of ram will be locked  status
   ram_back_state: false,
-  // 投票是否有赎回状态
+  // minus vote will be locked status
   vote_back_state: false,
-  // 是否有分红
+  // share released coin from block producers
   has_claim: false,
-  // 有抵押机制
+  // must freezed then can vote for ram and vote
   has_freezed: true,
-  // 可用余额提取方式
-  avalaible_filter: 'eosio.token',
-  // vote num in which key
+  // core coin in which contract account
+  CORE_COIN_CONTRACT: 'eosio.token',
+  // vote num in which key [vote, staked]
   vote_num_key: 'vote',
+  // has blocked
   has_locked: false,
 
 
-  wallet_symbol: 'EOS',
-  wallet_show_symbol: 'EOSC',
-  is_fee_model: true,
-  FILTER_WAY: 'EOS',
-  has_cpu: false,
-  has_net: false,
-  // 内存投票是否有赎回状态
-  ram_back_state: true,
-  // 投票是否有赎回状态
-  vote_back_state: true,
-  // 是否有分红
-  has_claim: true,
-  // 有抵押机制
-  has_freezed: false,
-  // 可用余额提取方式
-  avalaible_filter: 'eosio',
-  vote_num_key: 'staked',
-  has_locked: true,
+  // EOS_WITH_FEE: true,
+  // eosforce config
+  // wallet_symbol: 'EOS',
+  // wallet_show_symbol: 'EOSC',
+  // IS_FEE_MODEL: true,
+  // has_cpu: false,
+  // has_net: false,
+  // // 内存投票是否有赎回状态
+  // ram_back_state: true,
+  // // 投票是否有赎回状态
+  // vote_back_state: true,
+  // // 是否有分红
+  // has_claim: true,
+  // // 有抵押机制
+  // has_freezed: false,
+  // core coin in which contract account
+  // CORE_COIN_CONTRACT: 'eosio',
+  // vote_num_key: 'staked',
+  // has_locked: true,
 
   accountList: [],
 };
@@ -98,14 +105,11 @@ const getters = {
       return Promise.reject(new Error('密码错误'));
     }
   },
-  GET_FILER_WAY (state) {
-    return state.FILTER_WAY;
-  },
   wallet_symbol (state) {
     return state.wallet_symbol;
   },
-  avalaible_filter (state) {
-    return state.avalaible_filter;
+  CORE_COIN_CONTRACT (state) {
+    return state.CORE_COIN_CONTRACT;
   },
   vote_num_key (state) {
     return state.vote_num_key;
