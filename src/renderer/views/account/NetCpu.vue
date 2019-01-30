@@ -70,6 +70,8 @@ import PromptModal from '@/components/PromptModal';
 import { Actions } from '@/constants/types.constants';
 import { isValidPublic, filter_public_key } from '@/utils/rules.js'
 import { is_float, toAsset } from '@/utils/util.js'
+import Select from '@/views/components/select'
+
 export default {
   name: 'Claim',
   data() {
@@ -227,7 +229,8 @@ export default {
   },
   components: {
     ConfirmModal,
-    PromptModal
+    PromptModal,
+    Select
   },
 };
 </script>

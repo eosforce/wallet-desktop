@@ -19,7 +19,7 @@
           <!-- <th>{{$t('年化利率')}}</th> -->
           <!-- <th>{{$t('奖池金额')}}</th> -->
           <th>{{$t('我的投票')}}</th>
-          <th v-if="ram_back_state">{{$t('赎回金额')}}</th>
+          <th v-if="RAM_BACK_STATE">{{$t('赎回金额')}}</th>
           <th>{{$t('操作')}}</th>
         </tr>
       </thead>
@@ -58,7 +58,7 @@
             <!-- {{ bp.ramvote }} -->
             <span v-show="bp.hasRamvote">{{ (bp.ramvote ? bp.ramvote.staked || bp.ramvote.vote : 0) | formatNumber({p: 0})}}</span>
           </td>
-          <td v-if="ram_back_state">
+          <td v-if="RAM_BACK_STATE">
             <template v-if="bp.ramvote">
               <div v-show="bp.ramvote.unstaking === '0.0000 EOS'">-</div>
               <router-link v-show="bp.ramvote.unstaking !== '0.0000 EOS'" class="button is-small is-outlined" :class="{'grey-button': isLock(bp.ramvote.unstake_height)}" :to="{name: 'Unfreeze4ram', params: { bpname: bp.name }}">
@@ -93,8 +93,8 @@ export default {
     head_block_num(){
       return this.app.currentNodeInfo.head_block_num;
     },
-    ram_back_state () {
-      return this.wallet.ram_back_state;
+    RAM_BACK_STATE () {
+      return this.wallet.RAM_BACK_STATE;
     },
     ...mapState(['account', 'app', 'wallet']),
   },

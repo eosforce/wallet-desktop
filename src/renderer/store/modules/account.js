@@ -343,7 +343,7 @@ const actions = {
     async GET_LOCKED_EOSC ({ state, dispatch, commit, getters }) {
         let node_url = getters[Getters.CURRENT_NODE];
         const accountName = getters[Getters.CURRENT_ACCOUNT_NAME];
-        let res = !getters['has_locked']  ? '0.0000 EOS' : await getLockedEosc(node_url)(accountName);
+        let res = !getters['HAS_LOCKED']  ? '0.0000 EOS' : await getLockedEosc(node_url)(accountName);
         commit('set_locked_eosc', res);
     },
     check_total_and_set_asset_total({ state, dispatch, commit, getters }) {
@@ -407,7 +407,7 @@ const actions = {
             'cancel': []
         }
 
-        if(getters['has_freezed']){
+        if(getters['HAS_FREEZED']){
             dispatch(Actions.GETFREEZE);
         }
 
@@ -466,6 +466,15 @@ const actions = {
         commit('set_cancle_requests', cancle_requests.cancel);
         commit('set_cancle_requests', cancle_requests.cancel);
     },
+    async UPDATE_AVAILABLE ({state, commit, getters}) {
+        const accountName = getters[Getters.CURRENT_ACCOUNT_NAME];
+        const node_url = getters[Getters.CURRENT_NODE];
+        let available = await getAvailable(node_url)(accountName, getters['CORE_COIN_CONTRACT']);
+        if (accountName != getters[Getters.CURRENT_ACCOUNT_NAME]) {
+            return;
+        }
+        commit('update_available', available);
+    },
     [Actions.GET_TRANSFER_RECORD]({ state, commit, getters }, { accountName, pos, offset, cancle_requests, finished = () => {}, from_top = false }) {
         if (from_top) {
             offset = -20;
@@ -509,7 +518,7 @@ const actions = {
         var votesTable = state.votesTable.length > 0 ? JSON.parse(JSON.stringify(state.votesTable)) : null;
         var votes4ramTable = state.votes4ramTable.length > 0 ? JSON.parse(JSON.stringify(state.votes4ramTable)) : null;
         var superBpsAmountTable = state.superBpsAmountTable.length > 0 ? JSON.parse(JSON.stringify(state.superBpsAmountTable)) : null;
-        let vote_num_in = getters['vote_num_key'];
+        let vote_num_in = getters['VOTE_NUM_KEY'];
 
         return getAccountInfo(getters[Getters.CURRENT_NODE])(
             // {accountName, current_node, votesTable, votes4ramTable, bpsTable, superBpsAmountTable}
@@ -527,7 +536,7 @@ const actions = {
         var votesTable = state.votesTable.length > 0 ? JSON.parse(JSON.stringify(state.votesTable)) : null;
         var votes4ramTable = state.votes4ramTable.length > 0 ? JSON.parse(JSON.stringify(state.votes4ramTable)) : null;
         var superBpsAmountTable = state.superBpsAmountTable.length > 0 ? JSON.parse(JSON.stringify(state.superBpsAmountTable)) : null;
-        let vote_num_in = getters['vote_num_key'];
+        let vote_num_in = getters['VOTE_NUM_KEY'];
 
         return getAccountInfo(getters[Getters.CURRENT_NODE])(
             {accountName, current_node, votesTable, votes4ramTable, bpsTable, superBpsAmountTable, vote_num_in}).then(({ info }) => {
@@ -549,6 +558,7 @@ const actions = {
     async [Actions.DELEGATEBW]({ state, dispatch, commit, getters }, { password, walletId, from, to, net_quantity, cpu_quantity, release_to_to = 0, permission}) {
         let config = await getters[Getters.GET_TRANSE_CONFIG](password, from, walletId);
         let res = await delegatebw(config)({ from, to, net_quantity, cpu_quantity, release_to_to, permission, wallet_symbol: getters['wallet_symbol'] });
+        dispatch('UPDATE_AVAILABLE');
         return res;
     },
     async [Actions.CHECK_TRANSACTION]({ state, dispatch, commit, getters }){

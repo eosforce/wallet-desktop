@@ -261,8 +261,8 @@ export default {
     IS_FEE_MODEL () {
       return this.wallet.IS_FEE_MODEL;
     },
-    has_freezed () {
-      return this.wallet.has_freezed;
+    HAS_FREEZED () {
+      return this.wallet.HAS_FREEZED;
     },
     // unfreeze_time () {
     //         // 518400
@@ -285,7 +285,7 @@ export default {
       return toNumber(unstaking);
     },
     staked () {
-      if(this.vote_back_state){
+      if(this.VOTE_BACK_STATE){
         return this.account.info.available;
       }
       if(!this.vote_and_voteram_freeze.data){
@@ -299,8 +299,8 @@ export default {
     vote_and_voteram_freeze () {
       return this.account.vote_and_voteram_freeze;
     },
-    vote_back_state () {
-      return this.wallet.vote_back_state;
+    VOTE_BACK_STATE () {
+      return this.wallet.VOTE_BACK_STATE;
     },
     ...mapState(['account', 'wallet', 'app']),
   },

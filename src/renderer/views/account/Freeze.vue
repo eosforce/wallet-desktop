@@ -15,18 +15,7 @@
 
       </div>
 
-      <div class="field">
-        <div class="control">
-          <input class="input" v-model="selected_value" type="hidden" required />
-
-          <div class="slider_select">
-            <div class="slider_select_item" v-bind:class="{'slider_selected_item': item.value == selected_value}" @click="select_value(item.value)" v-for="item in select_list">
-              {{ item.text }}
-            </div>
-          </div>
-
-        </div>
-      </div>
+      <Select v-model="selected_value" v-bind:select_list="select_list"></Select>
 
       <div class="ipt_item">
         <div class="row">
@@ -88,14 +77,16 @@ import PromptModal from '@/components/PromptModal';
 import { Actions } from '@/constants/types.constants';
 import { isValidPublic, filter_public_key } from '@/utils/rules.js'
 import { is_float, is_int, toAsset, toNumber } from '@/utils/util.js'
+import Select from '@/views/components/select'
+
 export default {
   name: 'Claim',
   data() {
     return {
       selected_value: 0,
       select_list: [
-        {value: 0, text: '增加'},
-        {value: 1, text: '减少'}
+        {value: 0, text: this.$t('增加')},
+        {value: 1, text: this.$t('减少')}
       ],
 
       form: {
@@ -125,7 +116,7 @@ export default {
     },
 
     EOST_NUM_PLACEHOLDER () {
-      return this.$t(this.selected_value_txt) + this.wallet_symbol + this.$t('数量');
+      return this.$t(this.selected_value_txt) + ' ' + this.wallet_symbol + this.$t('数量');
     },
 
     new_ammount () {
@@ -201,7 +192,7 @@ export default {
     },
 
     has_freeze_num () {
-      if(this.vote_back_state){
+      if(this.VOTE_BACK_STATE){
         return this.account.info.available;
       }
       if(!this.vote_and_voteram_freeze.data){
@@ -215,8 +206,8 @@ export default {
     vote_and_voteram_freeze () {
       return this.account.vote_and_voteram_freeze;
     },
-    vote_back_state () {
-      return this.wallet.vote_back_state;
+    VOTE_BACK_STATE () {
+      return this.wallet.VOTE_BACK_STATE;
     },
 
     ...mapState(['account', 'wallet', 'app']),
@@ -316,7 +307,8 @@ export default {
   },
   components: {
     ConfirmModal,
-    PromptModal
+    PromptModal,
+    Select
   },
 };
 </script>

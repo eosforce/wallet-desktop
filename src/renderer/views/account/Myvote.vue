@@ -11,8 +11,8 @@
           <th>{{$t('年化利率')}}</th>
           <th>{{$t('奖池金额')}}</th>
           <th>{{$t('我的投票')}}</th>
-          <th v-if="has_claim">{{$t('待领分红')}}</th>
-          <th v-if="vote_back_state">{{$t('赎回金额')}}</th>
+          <th v-if="HAS_CLAIM">{{$t('待领分红')}}</th>
+          <th v-if="VOTE_BACK_STATE">{{$t('赎回金额')}}</th>
           <th>{{$t('操作')}}</th>
         </tr>
       </thead>
@@ -49,7 +49,7 @@
                 {{ (bp.vote.vote ? bp.vote.vote : (bp.vote.staked ? bp.vote.staked : 0)) | formatNumber({p: 0}) }}
             </template>
           </td>
-          <td v-if="has_claim">
+          <td v-if="HAS_CLAIM">
             <el-tooltip class="item" effect="dark" :content="$t('我的投票*我的投票时间/(总得票数*总投票时间)*奖励池')" placement="top-end">
               <div>
                 <router-link
@@ -62,7 +62,7 @@
             </el-tooltip>
             
           </td>
-          <td v-if="vote_back_state">
+          <td v-if="VOTE_BACK_STATE">
             <template v-if="bp.vote">
               <div v-show="bp.vote.unstaking === '0.0000 EOS'">-</div>
               <router-link v-show="bp.vote.unstaking !== '0.0000 EOS'" class="button is-small is-outlined" :class="{'grey-button': isLock(bp.vote.unstake_height)}" :to="{name: 'unfreeze', params: { bpname: bp.name }}">
@@ -107,11 +107,11 @@ export default {
     head_block_num(){
       return this.app.currentNodeInfo.head_block_num;
     },
-    vote_back_state () {
-      return this.wallet.vote_back_state;
+    VOTE_BACK_STATE () {
+      return this.wallet.VOTE_BACK_STATE;
     },
-    has_claim () {
-      return this.wallet.has_claim;
+    HAS_CLAIM () {
+      return this.wallet.HAS_CLAIM;
     },
     ...mapState(['account', 'app', 'wallet']),
   },

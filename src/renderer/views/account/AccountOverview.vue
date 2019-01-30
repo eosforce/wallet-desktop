@@ -66,18 +66,18 @@
                     </li>
                     <li class="account_detail_item min_w_200">
                         <span>{{$t('赎回总额')}}:</span>
-                        <span class="cl" v-if="!on_load_info && vote_back_state" >
+                        <span class="cl" v-if="!on_load_info && VOTE_BACK_STATE" >
                             {{ account.info.unstakingTotal | formatNumber({p: 0})}}
                         </span>
-                        <span class="cl" v-if="!on_load_info && !vote_back_state" >
+                        <span class="cl" v-if="!on_load_info && !VOTE_BACK_STATE" >
                             {{ unstaking | formatNumber({p: 0})}}
                         </span>
                         <!-- {{ unfreeze_time }} -->
-                        <router-link class="button is-small is-link box_transfer_link" :to="{name: 'UnfreezeCpuNet'}" v-if="!on_load_info && (has_active || has_owner) && unfreeze_time > 0 && !vote_back_state && unstaking > 0">{{$t('赎回')}}</router-link>
+                        <router-link class="button is-small is-link box_transfer_link" :to="{name: 'UnfreezeCpuNet'}" v-if="!on_load_info && (has_active || has_owner) && unfreeze_time > 0 && !VOTE_BACK_STATE && unstaking > 0">{{$t('赎回')}}</router-link>
                         <div class="load_circle account_detail_loader" v-if="on_load_info"></div>
                         
                     </li>
-                    <li class="account_detail_item min_w_200" v-if="has_freezed">
+                    <li class="account_detail_item min_w_200" v-if="HAS_FREEZED">
                         <span>{{$t('抵押总额')}}:</span>
                         <span class="cl" v-if="vote_and_voteram_freeze.data">
                             {{ vote_and_voteram_freeze.data.rows.length ? toNumber(vote_and_voteram_freeze.data.rows[0].staked) : 0 }}
@@ -85,7 +85,7 @@
                         <div class="load_circle account_detail_loader" v-if="!vote_and_voteram_freeze.data && vote_and_voteram_freeze.on_load"></div>
                         <router-link class="button is-small is-link box_transfer_link" :to="{name: 'Freeze'}" v-if="!on_load_info && (has_active || has_owner)">{{$t('抵押')}}</router-link>
                     </li>
-                    <li class="account_detail_item min_w_200" v-if="has_claim">
+                    <li class="account_detail_item min_w_200" v-if="HAS_CLAIM">
                         <span>{{$t('待领分红总额')}}:</span>
                         <span class="cl" v-if="!on_load_info">{{ account.info.rewardTotal * 1 > 0 ? formatNumber(account.info.rewardTotal, {p: 4}) : 0 }}</span>
                         <div class="load_circle account_detail_loader" v-if="on_load_info"></div>
@@ -107,7 +107,7 @@
                         </span>
                         <div class="load_circle account_detail_loader" v-if="on_load_info"></div>
                     </li>
-                    <li class="account_detail_item min_w_200" v-if="vote_back_state">
+                    <li class="account_detail_item min_w_200" v-if="VOTE_BACK_STATE">
                         <span>{{$t('内存租赁赎回')}}:</span>
                         <span class="cl" v-if="!on_load_info">
                         {{( ramunstakingTotal | formatNumber({p: 0}) ) || 0}}
@@ -135,7 +135,7 @@
             </div>
             <!-- box_item -->
             <!-- box_item -->
-            <div class="box_item" v-if="has_cpu">
+            <div class="box_item" v-if="HAS_CPU">
                 <ul class="account_info_box">
                     <li class="account_detail_item min_w_200">
                         <span>{{$t('CPU总量')}}:</span>
@@ -159,7 +159,7 @@
             </div>
             <!-- box_item -->
             <!-- box_item -->
-            <div class="box_item" v-if="has_net">
+            <div class="box_item" v-if="HAS_NET">
                 <ul class="account_info_box">
                     <li class="account_detail_item min_w_200">
                         <span>{{$t('网络总量')}}:</span>
@@ -289,17 +289,17 @@ export default {
         filter_way () {
             return this.wallet.FILTER_WAY;
         },
-        has_cpu () {
-            return this.wallet.has_cpu;
+        HAS_CPU () {
+            return this.wallet.HAS_CPU;
         },
-        has_net () {
-            return this.wallet.has_net;
+        HAS_NET () {
+            return this.wallet.HAS_NET;
         },
-        has_claim () {
-            return this.wallet.has_claim;
+        HAS_CLAIM () {
+            return this.wallet.HAS_CLAIM;
         },
-        has_freezed () {
-          return this.wallet.has_freezed;
+        HAS_FREEZED () {
+          return this.wallet.HAS_FREEZED;
         },
         unfreeze_time () {
             // 518400
@@ -333,8 +333,8 @@ export default {
         vote_and_voteram_freeze () {
             return this.account.vote_and_voteram_freeze;
         },
-        vote_back_state () {
-            return this.wallet.vote_back_state;
+        VOTE_BACK_STATE () {
+            return this.wallet.VOTE_BACK_STATE;
         },
         available_data () {
             return this.account.available;

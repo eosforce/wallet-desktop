@@ -14,23 +14,23 @@ const initState = {
   WALLET_SHOW_SYMBOL: 'EOST',
   IS_FEE_MODEL: false,
   // has cpu mortgage
-  has_cpu: true,
+  HAS_CPU: true,
   // has net mortgage
-  has_net: true,
+  HAS_NET: true,
   // minus vote of ram will be locked  status
-  ram_back_state: false,
+  RAM_BACK_STATE: false,
   // minus vote will be locked status
-  vote_back_state: false,
+  VOTE_BACK_STATE: false,
   // share released coin from block producers
-  has_claim: false,
+  HAS_CLAIM: false,
   // must freezed then can vote for ram and vote
-  has_freezed: true,
+  HAS_FREEZED: true,
   // core coin in which contract account
   CORE_COIN_CONTRACT: 'eosio.token',
   // vote num in which key [vote, staked]
-  vote_num_key: 'vote',
+  VOTE_NUM_KEY: 'vote',
   // has blocked
-  has_locked: false,
+  HAS_LOCKED: false,
 
 
   // EOS_WITH_FEE: true,
@@ -38,20 +38,20 @@ const initState = {
   // wallet_symbol: 'EOS',
   // wallet_show_symbol: 'EOSC',
   // IS_FEE_MODEL: true,
-  // has_cpu: false,
-  // has_net: false,
+  // HAS_CPU: false,
+  // HAS_NET: false,
   // // 内存投票是否有赎回状态
-  // ram_back_state: true,
+  // RAM_BACK_STATE: true,
   // // 投票是否有赎回状态
-  // vote_back_state: true,
+  // VOTE_BACK_STATE: true,
   // // 是否有分红
-  // has_claim: true,
+  // HAS_CLAIM: true,
   // // 有抵押机制
-  // has_freezed: false,
+  // HAS_FREEZED: false,
   // core coin in which contract account
   // CORE_COIN_CONTRACT: 'eosio',
-  // vote_num_key: 'staked',
-  // has_locked: true,
+  // VOTE_NUM_KEY: 'staked',
+  // HAS_LOCKED: true,
 
   accountList: [],
 };
@@ -111,14 +111,14 @@ const getters = {
   CORE_COIN_CONTRACT (state) {
     return state.CORE_COIN_CONTRACT;
   },
-  vote_num_key (state) {
-    return state.vote_num_key;
+  VOTE_NUM_KEY (state) {
+    return state.VOTE_NUM_KEY;
   },
-  has_freezed (state) {
-    return state.has_freezed;
+  HAS_FREEZED (state) {
+    return state.HAS_FREEZED;
   },
-  has_locked (state) {
-    return state.has_locked;
+  HAS_LOCKED (state) {
+    return state.HAS_LOCKED;
   }
 };
 
