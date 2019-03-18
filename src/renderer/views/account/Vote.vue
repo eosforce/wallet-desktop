@@ -1,6 +1,7 @@
 <template>
   <div class="modal is-active">
     <div class="cover-page">
+      {{table}}
       <div class="cover-page__content">
         <div class="cover-page__title">{{$t('超级节点投票')}}</div>
         <form class="cover-page__form" @submit.prevent="confirmInfo">
@@ -11,10 +12,13 @@
           </div>
           <div class="field">
             <div class="static-label">
-              {{$t('当前投票金额')}}<span class="static-text">{{stakedAmount | formatNumber({p: 0, showSymbol: true, symbol: wallet_show_symbol})}}</span>
+              {{$t('当前投票金额')}}
+              <span class="static-text">
+                {{(stakedAmount.split(' ')[0]) | formatNumber({p: 0, showSymbol: true, symbol: wallet_show_symbol})}}
+              </span>
             </div>
           </div>
-          <div class="field">
+          <div class="field" v-if="new Set(['0', '1']).has(selectType)">
             <div class="static-label">
               {{$t('可用投票金额')}}<span class="static-text">{{staked | formatNumber({p: 4, showSymbol: true, symbol: wallet_show_symbol}) }}</span>
             </div>
@@ -39,9 +43,21 @@
                 <input type="radio" v-model="selectType" value="1" :disabled="selectMap['1'].disabled">
                 {{$t('赎回投票')}}
               </label>
+              <label class="radio">
+                <input type="radio" v-model="selectType" value="2" :disabled="selectMap['2'].disabled">
+                {{$t('转投')}}
+              </label>
               <p class="help is-danger" v-show="amount && !isValidAmount">
                 {{$t('金额必须为整数')}}
               </p>
+            </div>
+          </div>
+          <div class="field" v-if="selectType == 2">
+            <label class="label">
+              {{$t('选择转投节点')}}
+            </label>
+            <div class="control">
+              <select_pane v-model:value="bp_select_config.value" v-bind:list="bp_select_config.list"></select_pane>
             </div>
           </div>
           <div class="field">
@@ -59,9 +75,21 @@
               </p>
             </div>
           </div>
+
           <div class="field">
-            <div class="static-label">
+            <div class="static-label" v-if="selectType == 0 || selectType == 1">
               {{$t('修改后投票金额')}}<span class="static-text">{{newStakedAmount | formatNumber({p: 0, showSymbol: true, symbol: wallet_show_symbol})}}</span>
+            </div>
+            <div class="static-label" v-if="[2].find(item => item == selectType) && amount">
+              <div>{{$t('修改后投票金额')}}</div>
+              <div>
+              <span class="">{{bpname}} : {{newStakedAmount | formatNumber({p: 0, showSymbol: true, symbol: wallet_show_symbol})}}</span>
+              </div>
+              <div v-if="bp_select_config.value">
+              <span class="">
+              {{bp_select_config.value}} : {{ (bp_select_config.dict[bp_select_config.value] + parseInt(amount) ) | formatNumber({p: 0, showSymbol: true, symbol: wallet_show_symbol})}}
+              </span>
+              </div>
             </div>
           </div>
           <div class="field is-grouped is-grouped-right">
@@ -94,9 +122,13 @@
             <label>{{$t('投票金额')}}</label>
           </div>
         </div>
-        <div class="row">
+        <div class="row" v-if="selectType != 2">
           <div class="row__title">{{$t('交易名称')}}</div>
           <div class="row__content">{{$t('超级节点投票')}}</div>
+        </div>
+        <div class="row" v-if="selectType == 2">
+          <div class="row__title">{{$t('交易名称')}}</div>
+          <div class="row__content">{{$t('超级节点转投票')}}</div>
         </div>
         <div class="row">
           <div class="row__title">{{$t('超级节点')}}</div>
@@ -114,9 +146,21 @@
           <div class="row__title">{{$t('修改后投票金额')}}</div>
           <div class="row__content">{{newStakedAmount | formatNumber({p: 0, showSymbol: true, symbol: wallet_show_symbol})}}</div>
         </div>
-        <div class="row" v-if="IS_FEE_MODEL">
+        <div class="row" v-if="selectType == 2">
+          <div class="row__title">{{$t('转投节点')}}</div>
+          <div class="row__content">{{bp_select_config.value | formatNumber({p: 0, showSymbol: true, symbol: wallet_show_symbol})}}</div>
+        </div>
+        <div class="row" v-if="selectType == 2">
+          <div class="row__title">{{$t('转投后投票')}}</div>
+          <div class="row__content">{{(bp_select_config.dict[bp_select_config.value] + parseInt(amount) ) | formatNumber({p: 0, showSymbol: true, symbol: wallet_show_symbol})}}</div>
+        </div>
+        <div class="row" v-if="IS_FEE_MODEL && selectType != 2">
           <div class="row__title">{{$t('手续费')}}</div>
           <div class="row__content">{{ symblo_change(fee, 'EOS', wallet_show_symbol) }} </div>
+        </div>
+        <div class="row" v-if="IS_FEE_MODEL && selectType == 2">
+          <div class="row__title">{{$t('手续费')}}</div>
+          <div class="row__content">{{ symblo_change('0.0100', 'EOS', wallet_show_symbol) }} </div>
         </div>
         <div class="row">
           <div class="row__title">{{$t('输入密码')}}</div>
@@ -137,7 +181,7 @@ import ConfirmModal from '@/components/ConfirmModal';
 import { Actions } from '@/constants/types.constants';
 import { isValidAmount } from '@/utils/rules';
 import { toNumber, symblo_change } from '@/utils/util';
-
+import select_pane from '@/components/select_pane.vue'
 export default {
   name: 'vote',
   data() {
@@ -149,12 +193,32 @@ export default {
       submitting: false,
       fee: 0.05,
       selectType: '0',
-      fee_for_claim: 1
+      fee_for_claim: 1,
+      bp_select_config: {
+        placeholder: '',
+        text: '',
+        value: '',
+        list: [],
+        dict: {}
+      }
     };
   },
   computed: {
     can_used_ammount () {
       return parseFloat(this.account.info.available) - (parseFloat(this.amount_for_claim_fee) || 0);
+    },
+    table() {
+      let list = [];
+      this.account.bpsTable.map(item => {
+        this.bp_select_config.dict[item.name] = item.vote ? parseInt(item.vote.staked) : '0';
+        if(item.name == this.bpname) return false;
+        list.push({
+          text: item.name + ' 已投票 ' + (item.vote ? item.vote.staked : '0'),
+          value: item.name
+        });
+      });
+      this.bp_select_config.list.splice(0, this.bp_select_config.list.length, ...list);
+      return '';
     },
     selectMap() {
       return {
@@ -173,13 +237,23 @@ export default {
           max: toNumber(this.stakedAmount),
           maxTip: this.$t('超过当前投票金额！'),
           disabled: toNumber(this.stakedAmount) <= 0,
-        }
+        },
+        '2': {
+          title: this.$t('转投金额（整数）'),
+          confirm: this.$t('转投金额（整数）'),
+          tip: this.$t('* 立即生效'),
+          max: toNumber(this.stakedAmount),
+          maxTip: this.$t('超过可用投票金额！'),
+          disabled: toNumber(this.stakedAmount) <= 0,
+        },
       };
     },
     newStakedAmount() {
       if (this.selectType === '0') {
         return toNumber(this.stakedAmount) + toNumber(this.amount);
       } else if (this.selectType === '1') {
+        return toNumber(this.stakedAmount) - toNumber(this.amount);
+      } else if (this.selectType === '2'){
         return toNumber(this.stakedAmount) - toNumber(this.amount);
       } else {
         return undefined;
@@ -301,6 +375,9 @@ export default {
       }
     },
     confirmInfo() {
+      if(this.selectType == 2){
+        if(!this.bp_select_config.value) return ;
+      }
       if (this.isValidAmount && this.newStakedAmount !== undefined) {
         if (this.selectType === '0') {
           const isOver = toNumber(this.staked) - toNumber(this.amount) - 0.1 - this.fee;
@@ -325,20 +402,23 @@ export default {
     },
     submit() {
       this.submitting = true;
-      this.vote({
-        amount: this.newStakedAmount,
-        bpname: this.bpname,
-        password: this.password,
-        voter: this.voter,
-        walletId: this.walletData.publicKey,
-        permission: this.permissions.filter(item => item.is_have)[0].name
-      })
+      if(this.selectType == 2){
+        let _form = {
+          voter: this.voter,
+          frombp: this.bpname,
+          tobp: this.bp_select_config.value,
+          restake: this.amount,
+          walletId: this.walletData.publicKey,
+          permission: this.permissions.filter(item => item.is_have)[0].name,
+          password: this.password,
+        }
+        this.revote(_form)
         .then(result => {
-          Message.success(this.$t('投票成功'));
+          Message.success(this.$t('转投成功'));
         })
         .catch(err => {
           Message.error({
-            title: `${err.code ? `code: ${err.code}` : this.$t('投票失败')}`,
+            title: `${err.code ? `code: ${err.code}` : this.$t('转投失败')}`,
             message: this.$t(err.message),
           });
           this.submitting = false;
@@ -348,6 +428,36 @@ export default {
           this.getAccountInfo({ accountName: this.voter });
           this.close();
         });
+        this.submitting = false;
+
+      }else{
+
+        this.vote({
+          amount: this.newStakedAmount,
+          bpname: this.bpname,
+          password: this.password,
+          voter: this.voter,
+          walletId: this.walletData.publicKey,
+          permission: this.permissions.filter(item => item.is_have)[0].name
+        })
+          .then(result => {
+            Message.success(this.$t('投票成功'));
+          })
+          .catch(err => {
+            Message.error({
+              title: `${err.code ? `code: ${err.code}` : this.$t('投票失败')}`,
+              message: this.$t(err.message),
+            });
+            this.submitting = false;
+            return Promise.reject(err);
+          })
+          .then(() => {
+            this.getAccountInfo({ accountName: this.voter });
+            this.close();
+          });
+
+      }
+
     },
     toggle(key, val) {
       return (this[key] = val === undefined ? !this[key] : val);
@@ -359,10 +469,12 @@ export default {
     ...mapActions({
       getAccountInfo: Actions.GET_ACCOUNT_INFO,
       vote: Actions.VOTE,
+      revote: Actions.REVOTE
     }),
   },
   components: {
     ConfirmModal,
+    select_pane
   },
 };
 </script>

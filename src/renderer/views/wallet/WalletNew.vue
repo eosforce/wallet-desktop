@@ -67,7 +67,7 @@
         </div>
       </div>
       <!--  -->
-      <div>
+      <div style="display: none;">
         <Select v-bind:select_list="select_module.select_list" v-model='select_module.value'></Select>
 
         <CreateWalletForm v-bind:with_close="false" v-bind:with_title="false" v-bind:with_random="false" v-bind:margin_top="2" v-if="select_module.value == 0"></CreateWalletForm>

@@ -10,8 +10,8 @@ const initState = {
     eos lib, there are two eos lib , one has fee, the other has no fee
   */
   EOS_WITH_FEE: false,
-  wallet_symbol: 'EOST',
-  WALLET_SHOW_SYMBOL: 'EOST',
+  wallet_symbol: 'EOS',
+  WALLET_SHOW_SYMBOL: 'EOSC',
   IS_FEE_MODEL: false,
   // has cpu mortgage
   HAS_CPU: true,
@@ -36,22 +36,22 @@ const initState = {
   // EOS_WITH_FEE: true,
   // eosforce config
   // wallet_symbol: 'EOS',
-  // wallet_show_symbol: 'EOSC',
-  // IS_FEE_MODEL: true,
-  // HAS_CPU: false,
-  // HAS_NET: false,
+  wallet_show_symbol: 'EOSC',
+  IS_FEE_MODEL: true,
+  HAS_CPU: false,
+  HAS_NET: false,
   // // 内存投票是否有赎回状态
-  // RAM_BACK_STATE: true,
+  RAM_BACK_STATE: true,
   // // 投票是否有赎回状态
-  // VOTE_BACK_STATE: true,
+  VOTE_BACK_STATE: true,
   // // 是否有分红
-  // HAS_CLAIM: true,
+  HAS_CLAIM: true,
   // // 有抵押机制
-  // HAS_FREEZED: false,
+  HAS_FREEZED: false,
   // core coin in which contract account
-  // CORE_COIN_CONTRACT: 'eosio',
-  // VOTE_NUM_KEY: 'staked',
-  // HAS_LOCKED: true,
+  CORE_COIN_CONTRACT: 'eosio',
+  VOTE_NUM_KEY: 'staked',
+  HAS_LOCKED: true,
 
   accountList: [],
 };

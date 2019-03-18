@@ -10,6 +10,7 @@ import {
     unfreeze,
     claim,
     vote4ram,
+    revote,
     unfreeze4ram,
     getTokenList,
     transfer_account,
@@ -308,6 +309,14 @@ const actions = {
             return vote(config)({ voter, bpname, amount, permission, wallet_symbol: getters['wallet_symbol'] });
         });
     },
+    [Actions.REVOTE]({ state, dispatch, getters }, { voter, frombp, tobp, restake, password, walletId, permission }) {
+        return getters[Getters.GET_TRANSE_CONFIG](password, voter, walletId).then(config => {
+          // {voter, frombp, tobp, restake, permission, wallet_symbol
+            // return revote(config)({ voter, bpname, amount, permission, wallet_symbol: getters['wallet_symbol'] });
+            return revote(config)({voter, frombp, tobp, restake, permission, wallet_symbol: getters['wallet_symbol'] })
+        });
+    },
+    // REVOTE
     async [Actions.VOTE4RAM]({ state, dispatch, getters }, { voter, bpname, amount, password, walletId, permission }) {
         let config = await getters[Getters.GET_TRANSE_CONFIG](password, voter, walletId).catch(err => {
             return {

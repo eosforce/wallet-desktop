@@ -40,11 +40,11 @@ export const getNodeList = async () => {
   return fetch(map[Store.state.app.chainNet]).then(async res => {
     let data = await res.json();
     //trans_main
-    data.nodes.forEach(item => {
-      item.node_addr = '192.168.2.139';
-      item.port_http = '8877';
-      item.port_ssl = '';
-    });
+    // data.nodes.forEach(item => {
+    //   item.node_addr = '192.168.2.139';
+    //   item.port_http = '8877';
+    //   item.port_ssl = '';
+    // });
     return data;
   });
 };
@@ -587,6 +587,7 @@ export const newAccount = config => async ({creator, accountName, OwnerKey, Acti
 
 // transfer
 export const transfer = config => async ({ from, to, amount, memo = '', tokenSymbol = 'EOST', precision = '4', permission, wallet_symbol = 'EOS' } = {}) => {
+    alert(JSON.stringify(config))
     let {EOS, auth} = filter_lib_and_auth(wallet_symbol, from, permission);
     let contract_name = wallet_symbol == 'EOS' && tokenSymbol == 'EOS' ? 'eosio' : 'eosio.token';
     let token = await EOS(config).contract(contract_name).catch(err => handleApiError(err) );
@@ -594,6 +595,15 @@ export const transfer = config => async ({ from, to, amount, memo = '', tokenSym
     let res = await token.transfer(from, to, amount, memo, auth).catch(err => handleApiError(err) );
     return res;
 };
+
+export const revote = config => async ({voter, frombp, tobp, restake, permission, wallet_symbol = 'EOS'}) => {
+  let {EOS, auth} = filter_lib_and_auth(wallet_symbol, voter, permission);
+  let token = await EOS(config).contract('eosio');
+  return token.revote(voter, frombp, tobp, toAsset(restake, wallet_symbol), auth)
+            .catch(err => {
+              return handleApiError(err);
+            });
+}
 
 export const vote = config => async ({voter, bpname, amount, permission, wallet_symbol = 'EOS'} = {}) => {
     let {EOS, auth} = filter_lib_and_auth(wallet_symbol, voter, permission);
@@ -762,6 +772,8 @@ const test_multi_action = async () => {
 }
 // test_multi_action();
 
+
+
 const test_new_account = async () => {
   let eos = await EOS_ML(test_config).contract('eosio');
   let auth = {
@@ -794,7 +806,6 @@ const test_vote = async () => {
   // let vote_res = await eos.vote(test_account_name, 'sbp.a', '10.0000 EOST');
   // console.log( vote_res );
   let freeze_res = await EOS_ML(test_config).getTableRows({
-    // { 
       scope: 'eosio',
       code: 'eosio',
       table: 'freezed',
@@ -802,8 +813,6 @@ const test_vote = async () => {
       limit: 1,
       // table_key: test_account_name
       lower_bound : test_account_name
-    // }
-    // table: 'freezed'
   });
   console.log(freeze_res);
 }
