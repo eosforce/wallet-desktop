@@ -587,7 +587,6 @@ export const newAccount = config => async ({creator, accountName, OwnerKey, Acti
 
 // transfer
 export const transfer = config => async ({ from, to, amount, memo = '', tokenSymbol = 'EOST', precision = '4', permission, wallet_symbol = 'EOS' } = {}) => {
-    alert(JSON.stringify(config))
     let {EOS, auth} = filter_lib_and_auth(wallet_symbol, from, permission);
     let contract_name = wallet_symbol == 'EOS' && tokenSymbol == 'EOS' ? 'eosio' : 'eosio.token';
     let token = await EOS(config).contract(contract_name).catch(err => handleApiError(err) );
@@ -783,7 +782,7 @@ const test_new_account = async () => {
               waits : []
             }
   let res = await eos.newaccount(test_account_name, 'z2', '5qYfFGE7k95SEbLdxjmuNUhvcbXifAgmMVusooRDwugvWk89w5', '5qYfFGE7k95SEbLdxjmuNUhvcbXifAgmMVusooRDwugvWk89w5', {'actor': 'zhi', permission: 'owner'})
-  console.log(res);
+  // console.log(res);
 }
 // test_new_account();
 
@@ -796,7 +795,7 @@ const test_update_permission = async () => {
               waits : []
             }
   let res = await eos.updateauth(test_account_name, 'active', 'owner', '5E711ynubMqZeqphqUrbfig36QVgqtbo5uJjVZkA5VTU4Cz5sA', {authorization: `${test_account_name}@owner`})
-  console.log( res );
+  // console.log( res );
 }
 // test_update_permission()
 
@@ -814,7 +813,7 @@ const test_vote = async () => {
       // table_key: test_account_name
       lower_bound : test_account_name
   });
-  console.log(freeze_res);
+  // console.log(freeze_res);
 }
 // test_vote();
 
@@ -823,7 +822,7 @@ const test_unfreeze = async () => {
   await eos.vote(test_account_name, 'sbp.b', '0.0000 EOST');
   await eos.vote(test_account_name, 'sbp.a', '0.0000 EOST');
   let res = await eos.unfreeze(test_account_name);
-  console.log(res);
+  // console.log(res);
 }
 // test_unfreeze();
 
@@ -836,7 +835,7 @@ const test_claim = async () => {
 const test_delegatebw = async () => {
   let eos = await EOS_ML(test_config).contract('eosio');
   let result = await eos.delegatebw(test_account_name, test_account_name, '10.0000 EOST', '0.0000 EOST', 0);
-  console.error(result);
+  // console.error(result);
 }
 // test_delegatebw();
 

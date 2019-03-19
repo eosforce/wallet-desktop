@@ -213,7 +213,7 @@ export default {
         this.bp_select_config.dict[item.name] = item.vote ? parseInt(item.vote.staked) : '0';
         if(item.name == this.bpname) return false;
         list.push({
-          text: item.name + ' 已投票 ' + (item.vote ? item.vote.staked : '0'),
+          text: item.name + ' ' + this.$t('已投票') + ' ' + (item.vote ? item.vote.staked : '0'),
           value: item.name
         });
       });
