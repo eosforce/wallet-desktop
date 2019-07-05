@@ -61,7 +61,7 @@
           </div>
           <div class="field">
             <div class="static-label">
-              {{$t('修改后投票金额')}}<span class="static-text">{{newStakedAmount | formatNumber({p: 0, showSymbol: true, symbol: wallet_show_symbol})}}C</span>
+              {{$t('修改后投票金额')}}<span class="static-text">{{newStakedAmount | formatNumber({p: 0, showSymbol: true, symbol: wallet_show_symbol})}}</span>
             </div>
           </div>
           <div class="field">
