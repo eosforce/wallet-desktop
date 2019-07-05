@@ -6,8 +6,6 @@ const create_cmd = (cmd, args) => {
     return new Promise((resolve, reject) => {
         var git_status = spawn(cmd, args);
         git_status.on('exit', function (data) {
-            console.log('git push end1');
-            console.log(args);
             resolve(data);
             return ;
         });
@@ -30,7 +28,10 @@ const write_package = (data) => {
     return new Promise((resolve, reject) => {
         console.log(data);
         fs.writeFile(__dirname + '/package.json', data, {flag: 'w'}, function (err) {
-            if(err) console.log(err);
+            if(err){
+              reject();
+              throw err;
+            }
             resolve(null);
         });
     });
