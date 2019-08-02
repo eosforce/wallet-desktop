@@ -40,11 +40,11 @@ export const getNodeList = async () => {
   return fetch(map[Store.state.app.chainNet]).then(async res => {
     let data = await res.json();
     //trans_main
-    // data.nodes.forEach(item => {
-    //   item.node_addr = '192.168.2.139';
-    //   item.port_http = '8877';
-    //   item.port_ssl = '';
-    // });
+    data.nodes.forEach(item => {
+      item.node_addr = '192.168.1.139';
+      item.port_http = '8001';
+      item.port_ssl = '';
+    });
     return data;
   });
 };
@@ -182,6 +182,23 @@ export const queryAccount = httpEndpoint => accountName => {
     });
 };
 
+// 查询账户定期投票
+
+export const query_fix_votes = httpEndpoint => async (accountName, limit = 1000, lower_bound = 0) => {
+  let params = {
+      json:true,
+      scope: accountName,
+      code: 'eosio',
+      table: 'fixvotes',
+      limit,
+      lower_bound
+  }
+  let data = await Eos({httpEndpoint}).getTableRows(params);
+  data.page = lower_bound;
+  return data;
+}
+
+// query_fix_votes('http://192.168.1.139:8001')('biosbpaa');
 
 export const getAccount = httpEndpoint => async (accountName) => {
   let CancelToken = axios.CancelToken;
@@ -225,6 +242,7 @@ const filter_main_token_by_way = (data, accountName, core_coin_contract = 'eosio
   let balance = data.rows.length ? data.rows[0].balance : 0;
   return toBigNumber(balance);
 }
+
 // 获取指定账户可用余额
 export const getAvailable = httpEndpoint => async (accountName, core_coin_contract = 'eosio') => {
   let params = get_filter_available_condition(accountName, core_coin_contract);
@@ -306,7 +324,15 @@ export const getVotesTable = httpEndpoint => async (accountName, table_key = '')
     limit: 1000,
     table_key
   })
-  .then(data => data.rows)
+  .then(data => {
+    // console.log(JSON.stringify(data));
+    data.rows.forEach(vote => {
+      vote.staked = vote.voteage.staked;
+      vote.voteage_update_height = vote.voteage.update_height;
+      vote.voteage = vote.voteage.age;
+    });
+    return data.rows;
+  })
   .catch(err => []);
   return data;
 };
@@ -398,9 +424,10 @@ export const get_super_bps_table = httpEndpoint => async (schedule_version, ) =>
   return super_bps_table;
 }
 // 根据 bp 和 vote 得到分红表，返回一个对象
-export const getRewardsAndBpsTable = httpEndpoint => async (accountName, current_node, concel_container = {cancel: []}, votesTable, votes4ramTable, bpsTable, superBpsAmountTable, block, vote_num_in = 'staked') => {
+export const getRewardsAndBpsTable = httpEndpoint => async (accountName, current_node, concel_container = {cancel: []}, votesTable, votes4ramTable, bpsTable, superBpsAmountTable, fix_votes_table, block, vote_num_in = 'staked') => {
   votesTable = votesTable || await getVotesTable(httpEndpoint)(accountName);
   votes4ramTable = votes4ramTable || await getVotes4ramTable(httpEndpoint)(accountName);
+  fix_votes_table = fix_votes_table || await query_fix_votes(httpEndpoint)(accountName);
   bpsTable = bpsTable || await getBpsTable(httpEndpoint)();
 
   const { head_block_num: currentHeight } = current_node || await getNodeInfo(httpEndpoint);
@@ -463,8 +490,12 @@ export const getRewardsAndBpsTable = httpEndpoint => async (accountName, current
     }
 
     if (vote) {
+      // vote.voteage = vote.voteage.age;
+      // vote.staked = vote.voteage.staked;
+      // vote.voteage_update_height = vote.voteage.update_height;
       // 我的最新票龄
       const myVoteage = calcVoteage([vote.voteage, vote.staked, currentHeight, vote.voteage_update_height]);
+      // const myVoteage = calcVoteage([vote.voteage.age, vote.voteage.staked, currentHeight, vote.voteage.update_height]);
       // 节点最新票龄
       // 我的分红
       const reward = calcReward([myVoteage, bpVoteage, bpRow.rewards_pool]);
@@ -515,6 +546,7 @@ export const getRewardsAndBpsTable = httpEndpoint => async (accountName, current
         })
       ),
     bpInfo,
+    fix_votes_table,
     votesTable,
     votes4ramTable,
     stakedTotal,
@@ -760,6 +792,7 @@ const test_config = {
   keyProvider: '',
   chainId: '8c755999b47be35914771c4c3df7dfe12f9412f5e4bb7807a2c1ae8776086a8d',
 };
+
 const test_account_name = 'abcd';
 const test_multi_action = async () => {
   let eos = await EOS_ML(test_config).contract('eosio.token');

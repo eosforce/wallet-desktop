@@ -26,7 +26,8 @@ import {
     getLockedEosc,
     getFreeze,
     freeze,
-    unfreeze_from_freeeze
+    unfreeze_from_freeeze,
+    query_fix_votes
 } from '@/services/Eos';
 
 const initState = {
@@ -86,6 +87,14 @@ const initState = {
     baseBpsTable: [],
     votesTable: [],
     votes4ramTable: [],
+    fix_votes_table: {
+      rows: [],
+      limit: 10,
+      page: 0,
+      on_load: true,
+      more: true
+    },
+    // query_fix_votes
     superBpsAmountTable: [],
     transferRecords: {
         offset: -20,
@@ -267,6 +276,16 @@ const mutations = {
     set_asset_total(state, asset_total) {
         state.info.assetTotal = asset_total;
     },
+    set_fix_votes_table (state, {fix_votes_data, account_name}) {
+        if(account_name != state.pre_load_key) return ;
+        state.fix_votes_table.data.splice(state.fix_votes_table.data.length, 0, ...fix_votes_data.rows);
+        state.fix_votes_table.page = fix_votes_data.page;
+        state.fix_votes_table.more = fix_votes_data.more;
+    },
+    start_on_load_by_key (state, {key, on_load = true, account_name}) {
+        if(account_name != state.pre_load_key) return ;
+        state[key].on_load = on_load;
+    },
     clear_info(state) {
         state.info.stakedTotal = 0;
         state.info.unstakingTotal = 0;
@@ -401,6 +420,27 @@ const actions = {
         commit(Mutations.SET_BASE_BPS_TABLE, { bpsTable });
         commit(Mutations.SET_SUPER_PSAMOUNT_TABLE, { superBpsAmountTable });
     },
+
+    async QUERY_FIX_VOTES_TABLE({ state, dispatch, commit, getters}) {
+        let account_name = getters[Getters.CURRENT_ACCOUNT_NAME];
+            node_url = getters[Getters.CURRENT_NODE],
+            current_node_info = getters[Getters.CURRENT_NODE_INFO],
+            block_info = getters[Getters.CURRENT_BLOCK],
+            limit = state.fix_votes_table.limit,
+            page  = state.fix_votes_table.page;
+
+        const state_data_key = 'fix_votes_table';
+
+        let load_params = {key: state_data_key, on_load: true, account_name};
+        commit('start_on_load_by_key', load_params);
+
+        let data = await query_fix_votes(node_url)(account_name, limit, page);
+
+        commit('set_fix_votes_table', {fix_votes_data: data, account_name});
+        
+        load_params.on_load = false;
+        commit('start_on_load_by_key', load_params);
+    },
     // @todo 接口分拆
     async [Actions.GET_ACCOUNT_INFO]({ state, dispatch, commit, getters }) {
         const accountName = getters[Getters.CURRENT_ACCOUNT_NAME];
@@ -426,6 +466,7 @@ const actions = {
         var votesTable = state.votesTable.length > 0 ? JSON.parse(JSON.stringify(state.votesTable)) : null;
         var votes4ramTable = state.votes4ramTable.length > 0 ? JSON.parse(JSON.stringify(state.votes4ramTable)) : null;
         var superBpsAmountTable = state.superBpsAmountTable.length > 0 ? JSON.parse(JSON.stringify(state.superBpsAmountTable)) : null;
+        // var fix_votes_table = state.fix_votes_table.list.length > 0 ? JSON.parse(JSON.stringify(state.fix_votes_table.list)) : null;
         let block_info = getters[Getters.CURRENT_BLOCK];
         var { bpsTable, stakedTotal, unstakingTotal, ramstakedTotal, ramunstakingTotal, rewardTotal, version } = await getRewardsAndBpsTable(node_url)(
             accountName,
@@ -435,6 +476,7 @@ const actions = {
             votes4ramTable,
             baseBpsTable,
             superBpsAmountTable,
+            // fix_votes_table,
             block_info,
             getters['vote_num_in']
         );
@@ -474,6 +516,7 @@ const actions = {
         await Promise.all(ps);
         commit('set_cancle_requests', cancle_requests.cancel);
         commit('set_cancle_requests', cancle_requests.cancel);
+
     },
     async UPDATE_AVAILABLE ({state, commit, getters}) {
         const accountName = getters[Getters.CURRENT_ACCOUNT_NAME];
