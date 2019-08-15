@@ -45,9 +45,7 @@
           </td>
           <td>{{bp.rewards_pool | formatNumber({p: 4})}}</td>
           <td>
-            <template v-if="bp.vote">
-                {{ (bp.vote.vote ? bp.vote.vote : (bp.vote.staked ? bp.vote.staked : 0)) | formatNumber({p: 0}) }}
-            </template>
+                {{ calculate_fixed_votes_by_bpname(bp.name).plus( get_bp_vote(bp).toString()) | formatNumber({p: 0}) }}
           </td>
           <td v-if="HAS_CLAIM">
             <el-tooltip class="item" effect="dark" :content="$t('我的投票*我的投票时间/(总得票数*总投票时间)*奖励池')" placement="top-end">
@@ -56,7 +54,7 @@
                   class="button is-small is-outlined"
                   :to="{ name: 'claim', params: { bpname: bp.name } }"
                 >
-                  {{bp.vote ? bp.vote.reward * 1 > 0 ? bp.vote.reward : 0 : 0 | formatNumber({p: 4}) }}
+                  {{ calculate_reward_by_bpname(bp.name).plus( get_bp_reward(bp) ) | formatNumber({p: 4}) }}
                 </router-link>
               </div>
             </el-tooltip>
@@ -89,17 +87,19 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
-import { toUrl } from '@/utils/util';
+import { mapState, mapActions } from 'vuex';
+import { toUrl, calcute_fixed_reward, toBigNumber } from '@/utils/util';
 
 export default {
   name: 'TransferRecord',
   computed: {
     table(){
-      return this.account.bpsTable.filter(bp => bp.hasVote || bp.hasrRamvote);
-      // return this.account.bpsTable.filter(bp => bp.hasVote || bp.hasrRamvote).sort((bp1, bp2) => {
-      //   return bp2.vote.staked.split(' ')[0] - bp1.vote.staked.split(' ')[0];
-      // });
+      let data = this.account.bpsTable.filter(bp => (bp.hasVote || bp.hasrRamvote) || this.MY_FIX_VOTES.rows.find(i => i.bpname == bp.name));
+      data = JSON.parse( JSON.stringify(data) );
+      return data;
+    },
+    bpsTable () {
+      return this.account.bpsTable;
     },
     on_load_bps_table(){
       return this.account.on_load_bps_table;
@@ -113,16 +113,57 @@ export default {
     HAS_CLAIM () {
       return this.wallet.HAS_CLAIM;
     },
+    MY_FIX_VOTES () {
+      let data = JSON.parse( JSON.stringify( this.account.fix_votes_table ) );
+
+      calcute_fixed_reward(data, this.head_block_num, this.bpsTable);
+
+      return data;
+    },
     ...mapState(['account', 'app', 'wallet']),
+  },
+  watch: {
+    'account.accountName' () {
+      this.QUERY_FIX_VOTES_TABLE();  
+    }
+  },
+  mounted () {
+    this.QUERY_FIX_VOTES_TABLE();  
   },
   methods: {
     isLock(unstakeHeight) {
       if (unstakeHeight === undefined) return false;
       return unstakeHeight + 86400 - this.head_block_num > 0;
     },
+    calculate_reward_by_bpname (bpname) {
+      let bp_votes = this.MY_FIX_VOTES.rows.filter(i => i.bpname == bpname);
+      let total = toBigNumber(0);
+      bp_votes.forEach(i => {
+        total = total.plus( i.reward );
+      });
+      return total;
+    },
+    calculate_fixed_votes_by_bpname (bpname) {
+      let bp_votes = this.MY_FIX_VOTES.rows.filter(i => i.bpname == bpname);
+      let total_votes = toBigNumber(0);
+      bp_votes.forEach(row => {
+        total_votes = total_votes.plus( toBigNumber(row.vote.split(' ')[0]) );
+      });
+      return total_votes;
+    },
+    get_bp_vote (bp) {
+      return toBigNumber(bp.vote && bp.vote.vote ? bp.vote.vote : (bp.vote && bp.vote.staked ? bp.vote.staked : 0));
+    },
+    get_bp_reward (bp){
+      return toBigNumber( bp.vote ? bp.vote.reward * 1 > 0 ? bp.vote.reward : 0 : 0 );
+    },
     toUrl(url) {
       return toUrl(url);
     },
+    toBigNumber,
+    ...mapActions({
+      QUERY_FIX_VOTES_TABLE: 'QUERY_FIX_VOTES_TABLE'
+    })
   },
 };
 </script>

@@ -183,7 +183,6 @@ export const queryAccount = httpEndpoint => accountName => {
 };
 
 // 查询账户定期投票
-
 export const query_fix_votes = httpEndpoint => async (accountName, limit = 1000, lower_bound = 0) => {
   let params = {
       json:true,
@@ -197,8 +196,6 @@ export const query_fix_votes = httpEndpoint => async (accountName, limit = 1000,
   data.page = lower_bound;
   return data;
 }
-
-// query_fix_votes('http://192.168.1.139:8001')('biosbpaa');
 
 export const getAccount = httpEndpoint => async (accountName) => {
   let CancelToken = axios.CancelToken;
@@ -325,7 +322,6 @@ export const getVotesTable = httpEndpoint => async (accountName, table_key = '')
     table_key
   })
   .then(data => {
-    // console.log(JSON.stringify(data));
     data.rows.forEach(vote => {
       vote.staked = vote.voteage.staked;
       vote.voteage_update_height = vote.voteage.update_height;
@@ -490,9 +486,6 @@ export const getRewardsAndBpsTable = httpEndpoint => async (accountName, current
     }
 
     if (vote) {
-      // vote.voteage = vote.voteage.age;
-      // vote.staked = vote.voteage.staked;
-      // vote.voteage_update_height = vote.voteage.update_height;
       // 我的最新票龄
       const myVoteage = calcVoteage([vote.voteage, vote.staked, currentHeight, vote.voteage_update_height]);
       // const myVoteage = calcVoteage([vote.voteage.age, vote.voteage.staked, currentHeight, vote.voteage.update_height]);

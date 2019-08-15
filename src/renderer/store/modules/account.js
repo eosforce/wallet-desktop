@@ -1,5 +1,6 @@
 import { Mutations, Actions, Getters } from '@/constants/types.constants';
 import account_overview from '@/store/modules/AccountOverview'
+import { calcute_fixed_reward, toBigNumber } from '@/utils/util'
 import {
     getAccountInfo,
     transfer,
@@ -50,38 +51,6 @@ const initState = {
         on_load: true
     },
     ...account_overview.state,
-    // available: {
-    //     data: null,
-    //     is_error: false,
-    //     on_load: true
-    // },
-    // votes_table: {
-    //     data: null,
-    //     is_error: false,
-    //     on_load: true
-    // },
-    // votes4ram_table: {
-    //     data: null,
-    //     is_error: false,
-    //     on_load: true
-    // },
-    // bps_table: {
-    //     data: null,
-    //     is_error: false,
-    //     on_load: true
-    // },
-    // super_bps_table: {
-    //     data: null,
-    //     is_error: false,
-    //     on_load: true
-    // },
-    // // 
-    // vote_and_voteram_freeze: {
-    //     data: null,
-    //     is_error: false,
-    //     on_load: true
-    // },
-    // 
     version: '',
     bpsTable: [],
     baseBpsTable: [],
@@ -92,6 +61,7 @@ const initState = {
       limit: 10,
       page: 0,
       on_load: true,
+      total_vote: toBigNumber(0),
       more: true
     },
     // query_fix_votes
@@ -278,11 +248,25 @@ const mutations = {
     },
     set_fix_votes_table (state, {fix_votes_data, account_name}) {
         if(account_name != state.pre_load_key) return ;
-        state.fix_votes_table.data.splice(state.fix_votes_table.data.length, 0, ...fix_votes_data.rows);
-        state.fix_votes_table.page = fix_votes_data.page;
+
+        state.fix_votes_table.rows.splice(state.fix_votes_table.rows.length, 0, ...fix_votes_data.rows);
         state.fix_votes_table.more = fix_votes_data.more;
+
+        let total_vote = toBigNumber(0);
+
+        state.fix_votes_table.rows.forEach(row => {
+          total_vote = total_vote.plus( toBigNumber( row.vote.split(' ')[0] ) )
+        });
+
+        state.fix_votes_table.total_vote = total_vote;
+
     },
-    start_on_load_by_key (state, {key, on_load = true, account_name}) {
+    clear_fix_votes_table (state) {
+        state.fix_votes_table.rows.splice(0, state.fix_votes_table.rows.length);
+        state.fix_votes_table.more = true;
+        state.fix_votes_table.total_vote = toBigNumber(0);
+    },
+    update_on_load_by_key (state, {key, on_load = true, account_name}) {
         if(account_name != state.pre_load_key) return ;
         state[key].on_load = on_load;
     },
@@ -315,6 +299,7 @@ const actions = {
         let { server_version_string } = getters[Getters.CURRENT_NODE_INFO];
         commit(Mutations.RESET_ACCOUNT_INFO, rank_get_action(server_version_string));
         commit('clear_vote_and_voteram_freeze');
+        commit('clear_fix_votes_table');
         commit(Mutations.SET_ACCOUNT_NAME, { accountName });
         dispatch(Actions.GET_ACCOUNT_INFO);
     },
@@ -421,25 +406,42 @@ const actions = {
         commit(Mutations.SET_SUPER_PSAMOUNT_TABLE, { superBpsAmountTable });
     },
 
-    async QUERY_FIX_VOTES_TABLE({ state, dispatch, commit, getters}) {
-        let account_name = getters[Getters.CURRENT_ACCOUNT_NAME];
+    async [Actions.QUERY_FIX_VOTES_TABLE]({ state, dispatch, commit, getters}) {
+        let account_name = getters[Getters.CURRENT_ACCOUNT_NAME],
             node_url = getters[Getters.CURRENT_NODE],
             current_node_info = getters[Getters.CURRENT_NODE_INFO],
             block_info = getters[Getters.CURRENT_BLOCK],
             limit = state.fix_votes_table.limit,
-            page  = state.fix_votes_table.page;
+            latest_key = state.fix_votes_table.rows.length ? state.fix_votes_table.rows[ state.fix_votes_table.rows.length - 1 ].key + 1 : 0;
 
         const state_data_key = 'fix_votes_table';
 
         let load_params = {key: state_data_key, on_load: true, account_name};
-        commit('start_on_load_by_key', load_params);
+        commit('update_on_load_by_key', load_params);
+        let all_fix_votes = {
+              rows: [],
+              more: false
+            },
+            is_finished = false;
 
-        let data = await query_fix_votes(node_url)(account_name, limit, page);
+        while(!is_finished){
+          let data = await query_fix_votes(node_url)(account_name, limit, latest_key);
+          if(!data.rows.length) break;
+          all_fix_votes.rows.splice(all_fix_votes.rows.length, 0, ...data.rows);
+          latest_key = all_fix_votes.rows[ all_fix_votes.rows.length - 1 ].key + 1;
+          if(!data.more) is_finished = true;
+        }
 
-        commit('set_fix_votes_table', {fix_votes_data: data, account_name});
+        calcute_fixed_reward(all_fix_votes, current_node_info.head_block_num, state.bpsTable);
+
+        commit('set_fix_votes_table', {fix_votes_data: all_fix_votes, account_name});
         
         load_params.on_load = false;
-        commit('start_on_load_by_key', load_params);
+        commit('update_on_load_by_key', load_params);
+    },
+    reload_fix_votes_table ({ state, dispatch, commit, getters }) {
+      commit('clear_fix_votes_table');
+      dispatch(Actions.QUERY_FIX_VOTES_TABLE);
     },
     // @todo 接口分拆
     async [Actions.GET_ACCOUNT_INFO]({ state, dispatch, commit, getters }) {

@@ -136,10 +136,7 @@ export default {
 </script>
 
 <style scoped>
-.sm_no_data{
-  height: 36px;
-  font-weight: 300;
-}
+
 .table td{
   vertical-align: middle;
   padding: 10px 5px;
@@ -151,26 +148,7 @@ export default {
   max-width: 200px;
   word-break: break-word;
 }
-.load_end_action_ct{
-  color: #209cee;
-  text-align: center;
-  height: 30px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.load_top_action_ct{
-  margin-bottom: 15px;
-}
-.load_end_action_ct a{
-  color: #3273dc;
-}
-.load_end_action_ct a:hover{
-  color: #1d5ec7
-}
-.load_end_action_ct .table_inner_load{
-  height: 30px;
-}
+
 .empty {
   height: 100px;
   line-height: 100px;

@@ -7,12 +7,13 @@
         <form class="cover-page__form" @submit.prevent="confirmInfo">
           <div class="field">
             <div class="static-label">
-              {{$t('超级节点名称')}}<span class="static-text">{{bpname}}</span>
+              <span>{{$t('超级节点名称')}}</span>
+              <span class="static-text">{{bpname}}</span>
             </div>
           </div>
           <div class="field">
             <div class="static-label">
-              {{$t('当前投票金额')}}
+              <span>{{$t('当前投票金额')}}</span>
               <span class="static-text">
                 {{(stakedAmount.split(' ')[0]) | formatNumber({p: 0, showSymbol: true, symbol: wallet_show_symbol})}}
               </span>
@@ -20,12 +21,13 @@
           </div>
           <div class="field" v-if="new Set(['0', '1']).has(selectType)">
             <div class="static-label">
-              {{$t('可用投票金额')}}<span class="static-text">{{staked | formatNumber({p: 4, showSymbol: true, symbol: wallet_show_symbol}) }}</span>
+              <span>{{$t('可用投票金额')}}</span>
+              <span class="static-text">{{staked | formatNumber({p: 4, showSymbol: true, symbol: wallet_show_symbol}) }}</span>
             </div>
           </div>
           <div class="field" v-if="selectType == 0 && IS_FEE_MODEL">
             <div class="static-label">
-              {{$t('预留领取手续费')}}
+              <span>{{$t('预留领取手续费')}}</span>
               <input type="text" name="" v-model="fee_for_claim" class="small_input" >
               <span class="symbol_tag">{{ wallet_show_symbol }}</span>
             </div>
@@ -78,7 +80,8 @@
 
           <div class="field">
             <div class="static-label" v-if="selectType == 0 || selectType == 1">
-              {{$t('修改后投票金额')}}<span class="static-text">{{newStakedAmount | formatNumber({p: 0, showSymbol: true, symbol: wallet_show_symbol})}}</span>
+              {{$t('修改后投票金额')}}
+              <span class="static-text">{{newStakedAmount | formatNumber({p: 0, showSymbol: true, symbol: wallet_show_symbol})}}</span>
             </div>
             <div class="static-label" v-if="[2].find(item => item == selectType) && amount">
               <div>{{$t('修改后投票金额')}}</div>

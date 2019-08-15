@@ -1,25 +1,6 @@
 <template>
   <div class="box bplist-box">
 
-    <!-- <div class="load_area" v-if="on_load_bps_table">
-        <div class="load_circle account_detail_loader"></div><div>loading</div>
-    </div> -->
-
-    <!-- test_new_store_start -->
-    <!-- <table>
-      <tr>
-        <td>
-            {{ account.bps_table.data[0] }}
-        </td>
-      </tr>
-      <tr>
-        <td>
-            {{ account.super_bps_table.data }}          
-        </td>
-      </tr>
-    </table> -->
-    <!-- test_new_store_end -->
-
     <table class="table data-table">
       <thead>
         <tr>

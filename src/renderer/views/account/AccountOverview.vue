@@ -61,7 +61,11 @@
                 <ul class="account_info_box">
                     <li class="account_detail_item min_w_200">
                         <span>{{$t('投票总额')}}:</span>
-                        <span class="cl" v-if="!on_load_info">{{account.info.stakedTotal | formatNumber({p: 0})}}</span>
+                        
+                        <span class="cl" v-if="!on_load_info">
+                          {{ total_vote | formatNumber({p: 0}) }}  
+                        </span>
+
                         <div class="load_circle account_detail_loader" v-if="on_load_info"></div>
                     </li>
                     <li class="account_detail_item min_w_200">
@@ -202,7 +206,8 @@ import {
 import {
     toNumber,
     toAsset,
-    wait_time
+    wait_time,
+    toBigNumber
 } from '@/utils/util'
 import { Actions } from '@/constants/types.constants';
 import Copy from 'clipboard-copy'
@@ -217,17 +222,20 @@ export default {
         };
     },
     computed: {
-        bpInfo() {
+        bpInfo () {
             return this.account.info.bpInfo;
         },
-        nodeInfo() {
+        nodeInfo () {
           return this.app.currentNodeInfo || {};
         },
-        on_load_info() {
+        on_load_info () {
             return this.account.on_load_info;
         },
-        baseInfo() {
+        baseInfo () {
             return this.account.info.baseInfo || { permissions: [] };
+        },
+        total_vote () {
+          return toBigNumber(this.account.info.stakedTotal).plus( this.account.fix_votes_table.total_vote )
         },
         permissions() {
             let res = [];
@@ -341,8 +349,14 @@ export default {
         },
         ...mapState(['account', 'wallet', 'app']),
     },
+    watch: {
+      'account.accountName' () {
+        this.reload_fix_votes_table();
+      }
+    },
     mounted() {
         this.refreshOverview();
+        this.QUERY_FIX_VOTES_TABLE();
     },
     destroyed() {
         clearTimeout(this.over_view_loop);
@@ -362,7 +376,6 @@ export default {
             while(1){                
                 await wait_time(10 * 1000);
                 await this.GET_ACCOUNT_INFO(this.filter_way);
-                // await this.load_overview();
             }
         },
         get_permission_info(item) {
@@ -389,7 +402,9 @@ export default {
             refreshWallet: Actions.REFRESH_WALLET,
             fetchWallet: Actions.FETCH_WALLET,
             GET_ACCOUNT_INFO: Actions.GET_ACCOUNT_INFO,
-            load_overview: 'load_overview'
+            load_overview: 'load_overview',
+            QUERY_FIX_VOTES_TABLE: 'QUERY_FIX_VOTES_TABLE',
+            reload_fix_votes_table: 'reload_fix_votes_table'
         }),
         formatNumber,
         toNumber

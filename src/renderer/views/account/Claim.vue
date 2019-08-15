@@ -132,6 +132,7 @@ export default {
           return Promise.reject(err);
         })
         .then(result => {
+          this.reload_fix_votes_table();
           this.getAccountInfo();
           this.close();
         });
@@ -142,6 +143,7 @@ export default {
     ...mapActions({
       getAccountInfo: Actions.GET_ACCOUNT_INFO,
       claim: Actions.CLAIM,
+      reload_fix_votes_table: 'reload_fix_votes_table'
     }),
   },
   components: {

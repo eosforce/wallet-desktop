@@ -27,6 +27,7 @@ import TransferRecord from '@/views/account/TransferRecord';
 import BpList from '@/views/account/BpList';
 import Vote4ramList from '@/views/account/Vote4ramList'
 import Myvote from '@/views/account/Myvote';
+import MyFixVote from '@/views/account/MyFixVote';
 import AlternateNode from '@/views/account/AlternateNode';
 import RateInstructions from '@/views/account/RateInstructions';
 import TokenList from '@/views/account/TokenList';
@@ -38,6 +39,7 @@ export default {
             tabMap: [
                 { tabName: this.$t('超级节点'), tabKey: 'BpList', img1: 'node.png', img2: 'node_w.png' },
                 { tabName: this.$t('我的投票'), tabKey: 'Myvote', img1: 'vote.png', img2: 'vote_w.png' },
+                { tabName: this.$t('定期投票'), tabKey: 'MyFixVote', img1: 'vote.png', img2: 'vote_w.png' },
                 { tabName: this.$t('内存租赁'), tabKey: 'Vote4ramList', img1: 'vote.png', img2: 'vote_w.png' },
                 { tabName: this.$t('我的 Token'), tabKey: 'TokenList', img1: 'token.png', img2: 'token_w.png' },
                 { tabName: this.$t('交易记录'), tabKey: 'TransferRecord', img1: 'exchange.png', img2: 'exchange_w.png' },
@@ -134,7 +136,8 @@ export default {
         RateInstructions,
         TokenList,
         Vote4ramList,
-        os_uri
+        os_uri,
+        MyFixVote
     },
 };
 </script>

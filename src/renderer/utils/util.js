@@ -536,4 +536,38 @@ export const wait_time = (_time = 3000) => {
     });
 }
 
+export const complete_num_with_zero = (num) => {
+  if(num < 10) return `0${num}`;
+  return num;
+}
 
+
+export const calcute_fixed_reward = (data, head_block_num, bpsTable) => {
+  data.rows.forEach(row => {
+    row.latest_block_num = row.withdraw_block_num - head_block_num;
+
+    // calculate my reward
+    const myVoteage = calcVoteage([row.votepower_age.age, row.votepower_age.staked, head_block_num, row.votepower_age.update_height]);
+    row.myVoteage = myVoteage;
+
+    let bp_item = bpsTable.find(i => i.name == row.bpname);
+    const reward = calcReward([myVoteage, bp_item.bpVoteage, bp_item.rewards_pool]);
+    row.reward = reward;
+    row.rewards_pool = bp_item.rewards_pool;
+
+    if(row.latest_block_num >= 0){
+      let finish_time = new Date( row.latest_block_num * 3 * 1000 + new Date().getTime() );
+      let year    = complete_num_with_zero(finish_time.getFullYear()),
+          month   = complete_num_with_zero(finish_time.getMonth() + 1),
+          date    = complete_num_with_zero(finish_time.getDate()),
+          hours   = complete_num_with_zero(finish_time.getHours()),
+          minutes = complete_num_with_zero(finish_time.getMinutes()),
+          seconds = complete_num_with_zero(finish_time.getSeconds());
+
+      row.finish_time = `${ year }-${ month }-${ date } ${ hours }:${ minutes }:${ seconds }`;
+
+    }else{
+      row.finish_time = -1
+    }
+  });
+}
