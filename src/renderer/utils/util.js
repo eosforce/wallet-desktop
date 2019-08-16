@@ -140,10 +140,18 @@ export const toAsset = (_amount, symbol = 'EOS', { precision = '4' } = {}) => {
     return [amount, symbol].join(' ');
 };
 
+export const get_value_by_keys = (obj, keys) => {
+  let val = obj;
+  if(typeof keys == 'string') keys = [keys];
+  keys.forEach(k => {
+    val = val[k];
+  });
+  return val;
+}
 // 累加金额，返回 BigNumber
 export const calcTotalAmount = (rows = [], key) => {
     return rows.reduce((result, row) => {
-        const value = toBigNumber(key ? row[key] : row);
+        const value = toBigNumber(key ? get_value_by_keys(row, key) : row);
         return result.plus(value);
     }, new BigNumber('0'));
 };
@@ -571,3 +579,22 @@ export const calcute_fixed_reward = (data, head_block_num, bpsTable) => {
     }
   });
 }
+
+export const calculate_fixed_votes_by_bpname = (bpname, MY_FIX_VOTES_ROWS = []) => {
+  let bp_votes = MY_FIX_VOTES_ROWS.filter(i => i.bpname == bpname);
+  let total_votes = toBigNumber(0);
+  bp_votes.forEach(row => {
+    total_votes = total_votes.plus( toBigNumber(row.vote.split(' ')[0]) );
+  });
+  return total_votes;
+}
+
+export const calculate_fixed_reward_by_bpname = (bpname, MY_FIX_VOTES_ROWS = []) => {
+  let bp_votes = MY_FIX_VOTES_ROWS.filter(i => i.bpname == bpname);
+  let total = toBigNumber(0);
+  bp_votes.forEach(i => {
+    total = total.plus( i.reward );
+  });
+  return total;
+}
+

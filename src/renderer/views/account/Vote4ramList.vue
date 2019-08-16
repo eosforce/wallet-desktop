@@ -55,7 +55,6 @@
           <td>{{bp.total_staked | formatNumber({p: 0})}}</td>
           <td>
             <span v-show="!bp.hasRamvote">-</span>
-            <!-- {{ bp.ramvote }} -->
             <span v-show="bp.hasRamvote">{{ (bp.ramvote ? bp.ramvote.staked || bp.ramvote.vote : 0) | formatNumber({p: 0})}}</span>
           </td>
           <td v-if="RAM_BACK_STATE">

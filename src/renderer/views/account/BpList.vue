@@ -49,8 +49,8 @@
           <td>{{bp.adr | formatNumber({p: 0, sign: '%', percentage: 100})}}</td>
           <td>{{bp.rewards_pool | formatNumber({p: 4})}}</td>
           <td>
-            <span v-show="!bp.hasVote">-</span>
-            <span v-show="bp.hasVote">{{ (bp.vote ? bp.vote.vote || bp.vote.staked : 0) | formatNumber({p: 0})}}</span>
+            <span v-show="!bp.total_vote">-</span>
+            <span v-show="bp.total_vote">{{ bp.total_vote | formatNumber({p: 0})}}</span>
           </td>
           <td>
             <router-link class="button is-small is-outlined" :class="{'is-modify': bp.hasVote}" :to="{name: 'vote', params: { bpname: bp.name }}">
@@ -65,13 +65,42 @@
 
 <script>
 import { mapState } from 'vuex';
-import { toUrl } from '@/utils/util';
+import { 
+         toUrl, 
+         calculate_fixed_votes_by_bpname, 
+         calcute_fixed_reward,
+         toBigNumber,
+         calculate_fixed_reward_by_bpname
+       } from '@/utils/util';
 
 export default {
   name: 'BpList',
   computed: {
     table() {
+      let data = JSON.parse( JSON.stringify( this.account.bpsTable ) );
+
+      data.forEach(row => {
+        row.fixed_vote   = calculate_fixed_votes_by_bpname(row.name, this.MY_FIX_VOTES.rows);
+        let bp_fix_vote  = (row.vote ? row.vote.vote || row.vote.staked : 0);
+        row.total_vote   = toBigNumber(bp_fix_vote).plus(row.fixed_vote);
+
+        row.fixed_reward = calculate_fixed_reward_by_bpname(row.name);
+
+        let bp_fix_reward = toBigNumber( row.vote ? row.vote.reward * 1 > 0 ? row.vote.reward : 0 : 0 );;
+        row.total_reward = row.fixed_reward.plus(bp_fix_reward);
+      });
+
+      return data;
+    },
+    bpsTable () {
       return this.account.bpsTable;
+    },
+    MY_FIX_VOTES () {
+      let data = JSON.parse( JSON.stringify( this.account.fix_votes_table ) );
+
+      calcute_fixed_reward(data, this.head_block_num, this.bpsTable);
+
+      return data;
     },
     on_load_bps_table(){
       return this.account.on_load_bps_table;

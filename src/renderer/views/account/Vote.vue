@@ -5,68 +5,85 @@
       <div class="cover-page__content">
         <div class="cover-page__title">{{$t('超级节点投票')}}</div>
         <form class="cover-page__form" @submit.prevent="confirmInfo">
-          <div class="field">
-            <div class="static-label">
+          <div class="field_item">
+            <div class="static-label form_label_item">
               <span>{{$t('超级节点名称')}}</span>
               <span class="static-text">{{bpname}}</span>
             </div>
           </div>
-          <div class="field">
-            <div class="static-label">
+          <div class="field_item">
+            <div class="static-label form_label_item">
               <span>{{$t('当前投票金额')}}</span>
+              {{ as_model_staked }} --------->
+              {{ as_model_new_staked }}
               <span class="static-text">
                 {{(stakedAmount.split(' ')[0]) | formatNumber({p: 0, showSymbol: true, symbol: wallet_show_symbol})}}
               </span>
             </div>
           </div>
-          <div class="field" v-if="new Set(['0', '1']).has(selectType)">
-            <div class="static-label">
+          <div class="field_item" v-if="new Set(['0', '1']).has(selectType)">
+            <div class="static-label form_label_item">
               <span>{{$t('可用投票金额')}}</span>
               <span class="static-text">{{staked | formatNumber({p: 4, showSymbol: true, symbol: wallet_show_symbol}) }}</span>
             </div>
           </div>
-          <div class="field" v-if="selectType == 0 && IS_FEE_MODEL">
-            <div class="static-label">
+          <div class="field_item" v-if="selectType == 0 && IS_FEE_MODEL">
+            <div class="static-label form_label_item">
               <span>{{$t('预留领取手续费')}}</span>
-              <input type="text" name="" v-model="fee_for_claim" class="small_input" >
-              <span class="symbol_tag">{{ wallet_show_symbol }}</span>
+              <div class="fee_box">
+                <input type="text" name="" v-model="fee_for_claim" class="small_input" >
+                <span class="symbol_tag">{{ wallet_show_symbol }}</span>
+              </div>
             </div>
           </div>
-          <div class="field is-horizontal">
-            <label class="label">
+          <div class="field_item is-horizontal form_label_item">
+            <label class="label" style="margin-bottom: 0px;">
               {{$t('投票类型')}}
             </label>
-            <div class="control" style="margin-left:16px;color:#fff;">
-              <label class="radio">
+            <div class="control radio_items" style="margin-left:16px;color:#fff;">
+              <label class="radio radio_item">
                 <input type="radio" v-model="selectType" value="0" :disabled="selectMap['0'].disabled">
-                {{$t('追加投票')}}
+                <span>{{$t('追加投票')}}</span>
               </label>
-              <label class="radio">
+              <label class="radio radio_item">
                 <input type="radio" v-model="selectType" value="1" :disabled="selectMap['1'].disabled">
-                {{$t('赎回投票')}}
+                <span>{{$t('赎回投票')}}</span>
               </label>
-              <label class="radio">
+              <label class="radio radio_item">
                 <input type="radio" v-model="selectType" value="2" :disabled="selectMap['2'].disabled">
-                {{$t('转投')}}
+                <span>{{$t('转投')}}</span>
               </label>
               <p class="help is-danger" v-show="amount && !isValidAmount">
                 {{$t('金额必须为整数')}}
               </p>
             </div>
           </div>
-          <div class="field" v-if="selectType == 2">
-            <label class="label">
+
+          <div class="form_label_item static-label">
+            <span class="white_ft">{{$t('投票期限')}}</span>
+            <Select v-bind:select_list='fix_fixed_list' v-model="fixed_model"></Select>
+          </div>
+
+          <div class="form_label_item static-label" v-if="fixed_model">
+            <span class="white_ft">{{$t('投票期限')}}</span>
+            <Select v-bind:select_list='fixed_time_list' v-model="fixed_time"></Select>
+          </div>
+
+          <!-- fixed_time_list -->
+
+          <div class="field_item form_label_item" v-if="selectType == 2">
+            <div class="label">
               {{$t('选择转投节点')}}
-            </label>
+            </div>
             <div class="control">
               <select_pane v-model:value="bp_select_config.value" v-bind:list="bp_select_config.list"></select_pane>
             </div>
           </div>
-          <div class="field">
+          <div class="field_item form_label_item">
             <label class="label">
               {{selectInfo.title}}
             </label>
-            <div class="control">
+            <div class="control" style="margin-top: 10px;">
               <input v-model="amount" min="0" :max="selectInfo.max" class="input" type="number" step="1" :placeholder="$t('template.symbol', {symbol: wallet_show_symbol})"  required />
               <p class="help is-danger" v-show="amount && !isValidAmount">
                 {{$t('金额必须为整数')}}
@@ -78,12 +95,12 @@
             </div>
           </div>
 
-          <div class="field">
-            <div class="static-label" v-if="selectType == 0 || selectType == 1">
-              {{$t('修改后投票金额')}}
+          <div class="field_item ">
+            <div class="static-label form_label_item" v-if="selectType == 0 || selectType == 1">
+              <span>{{$t('修改后投票金额')}}</span>
               <span class="static-text">{{newStakedAmount | formatNumber({p: 0, showSymbol: true, symbol: wallet_show_symbol})}}</span>
             </div>
-            <div class="static-label" v-if="[2].find(item => item == selectType) && amount">
+            <div class="static-label form_label_item" v-if="[2].find(item => item == selectType) && amount">
               <div>{{$t('修改后投票金额')}}</div>
               <div>
               <span class="">{{bpname}} : {{newStakedAmount | formatNumber({p: 0, showSymbol: true, symbol: wallet_show_symbol})}}</span>
@@ -95,13 +112,17 @@
               </div>
             </div>
           </div>
-          <div class="field is-grouped is-grouped-right">
-            <div class="control">
-              <a tabindex="-1" class="button cancel-button" @click="close">{{$t('取消')}}</a>
-            </div>
-            <div class="control">
-              <button type="submit" class="button is-link">{{$t('下一步')}}</button>
-            </div>
+          <div class="field_item form_label_item form_label_item_no_border">
+            <!-- <div class="control"> -->
+              
+            <!-- </div> -->
+            <!-- <div class="control"> -->
+              <div></div>
+              <div>
+                <a tabindex="-1" class="button cancel-button" @click="close">{{$t('取消')}}</a>
+                <button type="submit" class="button is-link">{{$t('下一步')}}</button>
+              </div>
+            <!-- </div> -->
           </div>
         </form>
       </div>
@@ -183,8 +204,20 @@ import Message from '@/components/Message';
 import ConfirmModal from '@/components/ConfirmModal';
 import { Actions } from '@/constants/types.constants';
 import { isValidAmount } from '@/utils/rules';
-import { toNumber, symblo_change } from '@/utils/util';
+
+import { 
+         toNumber,
+         symblo_change,
+         toUrl, 
+         calculate_fixed_votes_by_bpname, 
+         calcute_fixed_reward,
+         toBigNumber,
+         calculate_fixed_reward_by_bpname
+       } from '@/utils/util';
+
+import Select from '@/views/components/select'
 import select_pane from '@/components/select_pane.vue'
+
 export default {
   name: 'vote',
   data() {
@@ -197,6 +230,18 @@ export default {
       fee: 0.05,
       selectType: '0',
       fee_for_claim: 1,
+      fix_fixed_list: [
+        {value: 0, text: '活期'},
+        {value: 1, text: '定期'}
+      ],
+      fixed_model: 0,
+      fixed_time_list: [
+        {value: 'fvote.a', text: '约90天'},
+        {value: 'fvote.b', text: '约180天'},
+        {value: 'fvote.c', text: '约360天'},
+        {value: 'fvote.d', text: '约720天'},
+      ],
+      fixed_time: 'fvote.a',
       bp_select_config: {
         placeholder: '',
         text: '',
@@ -212,7 +257,7 @@ export default {
     },
     table() {
       let list = [];
-      this.account.bpsTable.map(item => {
+      this.bp_list_table.map(item => {
         this.bp_select_config.dict[item.name] = item.vote ? parseInt(item.vote.staked) : '0';
         if(item.name == this.bpname) return false;
         list.push({
@@ -222,6 +267,32 @@ export default {
       });
       this.bp_select_config.list.splice(0, this.bp_select_config.list.length, ...list);
       return '';
+    },
+    bp_list_table() {
+      let data = JSON.parse( JSON.stringify( this.account.bpsTable ) );
+
+      data.forEach(row => {
+        row.fixed_vote   = calculate_fixed_votes_by_bpname(row.name, this.MY_FIX_VOTES.rows);
+        let bp_fix_vote  = (row.vote ? row.vote.vote || row.vote.staked : 0);
+        row.total_vote   = toBigNumber(bp_fix_vote).plus(row.fixed_vote);
+
+        row.fixed_reward = calculate_fixed_reward_by_bpname(row.name);
+
+        let bp_fix_reward = toBigNumber( row.vote ? row.vote.reward * 1 > 0 ? row.vote.reward : 0 : 0 );;
+        row.total_reward = row.fixed_reward.plus(bp_fix_reward);
+      });
+
+      return data;
+    },
+    bpsTable () {
+      return this.account.bpsTable;
+    },
+    MY_FIX_VOTES () {
+      let data = JSON.parse( JSON.stringify( this.account.fix_votes_table ) );
+
+      calcute_fixed_reward(data, this.head_block_num, this.bpsTable);
+
+      return data;
     },
     selectMap() {
       return {
@@ -262,6 +333,26 @@ export default {
         return undefined;
       }
     },
+    as_model_new_staked () {
+      if (this.selectType === '0') {
+
+        let val = this.fixed_model ? toNumber(this.amount) :  toNumber(this.as_model_staked) + toNumber(this.amount);
+        return val;
+
+      } else if (this.selectType === '1') {
+
+        let val = this.fixed_model ? toNumber(this.as_model_staked) : toNumber(this.as_model_staked) - toNumber(this.amount);
+        return val;
+
+      } else if (this.selectType === '2'){
+
+        let val = this.fixed_model ? toNumber(this.as_model_staked) : toNumber(this.as_model_staked) - toNumber(this.amount);
+        return val;
+
+      } else {
+        return undefined;
+      }
+    },
     selectInfo() {
       return this.selectMap[this.selectType];
     },
@@ -272,16 +363,23 @@ export default {
       return this.$route.params.bpname;
     },
     stakedAmount() {
-      const bp = this.account.bpsTable && this.account.bpsTable.find(bp => this.bpname === bp.name);
+      const bp = this.bp_list_table && this.bp_list_table.find(bp => this.bpname === bp.name);
       if (bp) {
-        if (bp.vote) {
-          return bp.vote.staked || bp.vote.vote;
+        if (bp.total_vote) {
+          return bp.total_vote + ' EOS';
         } else {
           return '0 EOS';
         }
       } else {
         return null;
       }
+    },
+    as_model_staked() {
+      const bp = this.bp_list_table && this.bp_list_table.find(bp => this.bpname === bp.name);
+      if(this.fixed_model){
+        return bp.fixed_vote;
+      }
+      return toBigNumber( bp.vote ? bp.vote.staked : 0 );
     },
     isValidAmount() {
       return this.amount && isValidAmount(this.amount);
@@ -437,9 +535,12 @@ export default {
 
         this.vote({
           amount: this.newStakedAmount,
+          amount: this.as_model_new_staked,
           bpname: this.bpname,
           password: this.password,
           voter: this.voter,
+          fixed_model: this.fixed_model,
+          fixed_time: this.fixed_time,
           walletId: this.walletData.publicKey,
           permission: this.permissions.filter(item => item.is_have)[0].name
         })
@@ -477,7 +578,8 @@ export default {
   },
   components: {
     ConfirmModal,
-    select_pane
+    select_pane,
+    Select
   },
 };
 </script>
@@ -534,5 +636,33 @@ export default {
 }
 .graphic img {
   width: 60px;
+}
+.radio_item{
+  display: flex;
+  align-items: center;
+  margin-right: 20px;
+}
+.radio_item input{
+  margin-right: 10px;
+  margin-left: 20px;
+}
+.radio_items{
+  display: flex;
+  align-items: center;
+}
+.form_label_item{
+  padding: 20px 0px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 80px;
+}
+.form_label_item_no_border{
+  border-bottom: 0px;
+}
+.fee_box{
+  display: flex;
+  align-items: center;
 }
 </style>

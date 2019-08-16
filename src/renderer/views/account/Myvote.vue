@@ -54,7 +54,7 @@
                   class="button is-small is-outlined"
                   :to="{ name: 'claim', params: { bpname: bp.name } }"
                 >
-                  {{ calculate_reward_by_bpname(bp.name).plus( get_bp_reward(bp) ) | formatNumber({p: 4}) }}
+                  {{ calculate_fixed_reward_by_bpname(bp.name).plus( get_bp_reward(bp) ) | formatNumber({p: 4}) }}
                 </router-link>
               </div>
             </el-tooltip>
@@ -88,7 +88,13 @@
 
 <script>
 import { mapState, mapActions } from 'vuex';
-import { toUrl, calcute_fixed_reward, toBigNumber } from '@/utils/util';
+import { 
+  toUrl, 
+  calculate_fixed_votes_by_bpname, 
+  calcute_fixed_reward,
+  toBigNumber,
+  calculate_fixed_reward_by_bpname
+} from '@/utils/util';
 
 export default {
   name: 'TransferRecord',
@@ -101,6 +107,13 @@ export default {
     bpsTable () {
       return this.account.bpsTable;
     },
+    MY_FIX_VOTES () {
+      let data = JSON.parse( JSON.stringify( this.account.fix_votes_table ) );
+
+      calcute_fixed_reward(data, this.head_block_num, this.bpsTable);
+
+      return data;
+    },
     on_load_bps_table(){
       return this.account.on_load_bps_table;
     },
@@ -112,13 +125,6 @@ export default {
     },
     HAS_CLAIM () {
       return this.wallet.HAS_CLAIM;
-    },
-    MY_FIX_VOTES () {
-      let data = JSON.parse( JSON.stringify( this.account.fix_votes_table ) );
-
-      calcute_fixed_reward(data, this.head_block_num, this.bpsTable);
-
-      return data;
     },
     ...mapState(['account', 'app', 'wallet']),
   },
@@ -135,7 +141,7 @@ export default {
       if (unstakeHeight === undefined) return false;
       return unstakeHeight + 86400 - this.head_block_num > 0;
     },
-    calculate_reward_by_bpname (bpname) {
+    calculate_fixed_reward_by_bpname (bpname) {
       let bp_votes = this.MY_FIX_VOTES.rows.filter(i => i.bpname == bpname);
       let total = toBigNumber(0);
       bp_votes.forEach(i => {

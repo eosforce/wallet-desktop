@@ -341,7 +341,9 @@ export const getVotes4ramTable = httpEndpoint => async (accountName) => {
       scope: string_to_name(accountName), code: 'eosio', table: 'votes4ram', json: true, limit: 1000
     }
   )
-  .then(data => data.data.rows)
+  .then(data => {
+    return data.data.rows;
+  })
   .catch(err => []);
   return data;
 };
@@ -503,10 +505,10 @@ export const getRewardsAndBpsTable = httpEndpoint => async (accountName, current
 
     if(ramvote){
       const reward = 0;
-      const extraRow = { bpname: ramvote.bpname, reward, ...ramvote };
+      const extraRow = { bpname: ramvote.bpname, reward, ...ramvote, ...ramvote.voteage };
       rewardsTable.push({...extraRow});
       bpRow.ramvote = { ...extraRow };
-      bpRow.hasRamvote = ramvote.staked ? calcVoteExist(ramvote.staked, reward, ramvote.unstaking) : calcVoteExist(ramvote.vote, reward, ramvote.unstaking);
+      bpRow.hasRamvote = ramvote.voteage.staked ? calcVoteExist(ramvote.voteage.staked, reward, ramvote.unstaking) : calcVoteExist(ramvote.vote, reward, ramvote.unstaking);
     }
 
     if (bpRow.isSuperBp) {
@@ -520,7 +522,7 @@ export const getRewardsAndBpsTable = httpEndpoint => async (accountName, current
 
   const unstakingTotal = calcTotalAmount(votesTable, 'unstaking');
 
-  let ramstakedTotal = calcTotalAmount(votes4ramTable, vote_num_in);
+  let ramstakedTotal = calcTotalAmount(votes4ramTable, ['voteage', 'staked']);
   const ramunstakingTotal = calcTotalAmount(votes4ramTable, 'unstaking');
   const rewardTotal = calcTotalAmount(rewardsTable, 'reward');
 
@@ -633,6 +635,15 @@ export const vote = config => async ({voter, bpname, amount, permission, wallet_
     let {EOS, auth} = filter_lib_and_auth(wallet_symbol, voter, permission);
     let token = await EOS(config).contract('eosio');
     return token.vote(voter, bpname, toAsset(amount, wallet_symbol), auth)
+            .catch(err => {
+              return handleApiError(err);
+            });
+};
+
+export const votefix = config => async ({voter, bpname, fixed_time, amount, permission, wallet_symbol = 'EOS'} = {}) => {
+    let {EOS, auth} = filter_lib_and_auth(wallet_symbol, voter, permission);
+    let token = await EOS(config).contract('eosio');
+    return token.votefix(voter, bpname, fixed_time, toAsset(amount, wallet_symbol), auth)
             .catch(err => {
               return handleApiError(err);
             });

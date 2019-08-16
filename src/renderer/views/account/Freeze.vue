@@ -332,7 +332,7 @@ export default {
 .slider_select{
   width: 100%;
   display: flex;
-  background: #fff;
+  background: rgba(251, 251, 251, 0);
   padding: 0px;
   border-radius: 3px;
   overflow: hidden;
@@ -342,7 +342,9 @@ export default {
   width: 50%;
   text-align: center;
   font-size: 14px;
-  padding: 5px;
+  padding: 5px 10px;
+  background: #fff;
+  cursor: pointer;
 }
 .slider_selected_item{
   background-color: #409eff;

@@ -28,7 +28,8 @@ import {
     getFreeze,
     freeze,
     unfreeze_from_freeeze,
-    query_fix_votes
+    query_fix_votes,
+    votefix
 } from '@/services/Eos';
 
 const initState = {
@@ -308,9 +309,13 @@ const actions = {
             return transfer(config)({ from, to, amount, memo, tokenSymbol, precision, permission, wallet_symbol: getters['wallet_symbol'] });
         });
     },
-    [Actions.VOTE]({ state, dispatch, getters }, { voter, bpname, amount, password, walletId, permission }) {
+    [Actions.VOTE]({ state, dispatch, getters }, { voter, bpname, amount, password, walletId, permission, fixed_model, fixed_time }) {
         return getters[Getters.GET_TRANSE_CONFIG](password, voter, walletId).then(config => {
-            return vote(config)({ voter, bpname, amount, permission, wallet_symbol: getters['wallet_symbol'] });
+            if(!fixed_model){
+              return vote(config)({ voter, bpname, amount, permission, wallet_symbol: getters['wallet_symbol'] });
+            }else{
+              return votefix(config)({ voter, bpname, fixed_time, amount, permission, wallet_symbol: getters['wallet_symbol'] });
+            }
         });
     },
     [Actions.REVOTE]({ state, dispatch, getters }, { voter, frombp, tobp, restake, password, walletId, permission }) {
