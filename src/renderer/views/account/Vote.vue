@@ -1,23 +1,39 @@
 <template>
   <div class="modal is-active">
     <div class="cover-page">
-      {{table}}
+      {{ table }}
       <div class="cover-page__content">
         <div class="cover-page__title">{{$t('超级节点投票')}}</div>
+
+        {{ as_model_staked }}
         <form class="cover-page__form" @submit.prevent="confirmInfo">
           <div class="field_item">
             <div class="static-label form_label_item">
-              <span>{{$t('超级节点名称')}}</span>
+              <span>{{$t('超级节点名称')}} </span>
               <span class="static-text">{{bpname}}</span>
             </div>
           </div>
           <div class="field_item">
             <div class="static-label form_label_item">
               <span>{{$t('当前投票金额')}}</span>
-              {{ as_model_staked }} --------->
-              {{ as_model_new_staked }}
               <span class="static-text">
                 {{(stakedAmount.split(' ')[0]) | formatNumber({p: 0, showSymbol: true, symbol: wallet_show_symbol})}}
+              </span>
+            </div>
+          </div>
+          <div class="field_item" v-if="fixed_model">
+            <div class="static-label form_label_item">
+              <span>{{$t('当前定期投票金额')}}</span>
+              <span class="static-text">
+                {{as_model_staked | formatNumber({p: 0, showSymbol: true, symbol: wallet_show_symbol})}}
+              </span>
+            </div>
+          </div>
+          <div class="field_item" v-if="fixed_model == 0">
+            <div class="static-label form_label_item">
+              <span>{{$t('当前活期投票金额')}}</span>
+              <span class="static-text">
+                {{as_model_staked | formatNumber({p: 0, showSymbol: true, symbol: wallet_show_symbol})}}
               </span>
             </div>
           </div>
@@ -64,14 +80,14 @@
             <Select v-bind:select_list='fix_fixed_list' v-model="fixed_model"></Select>
           </div>
 
-          <div class="form_label_item static-label" v-if="fixed_model">
+          <div class="form_label_item static-label" v-if="fixed_model == 1">
             <span class="white_ft">{{$t('投票期限')}}</span>
             <Select v-bind:select_list='fixed_time_list' v-model="fixed_time"></Select>
           </div>
 
           <!-- fixed_time_list -->
 
-          <div class="field_item form_label_item" v-if="selectType == 2">
+          <div class="field_item form_label_item" v-if="selectType == 2 && fixed_model != 1">
             <div class="label">
               {{$t('选择转投节点')}}
             </div>
@@ -79,12 +95,33 @@
               <select_pane v-model:value="bp_select_config.value" v-bind:list="bp_select_config.list"></select_pane>
             </div>
           </div>
-          <div class="field_item form_label_item">
+
+          <div class="field_item form_label_item" v-if="selectType == 2 && fixed_model == 1">
+            <div class="label">
+              {{$t('选择节点已投定期')}}
+            </div>
+            <div class="control">
+              <select_pane v-model:value="fixed_select_config.value" v-bind:list="fixed_select_config.list"></select_pane>
+            </div>
+          </div>
+
+          <div class="field_item form_label_item" v-if="selectType == 2 && fixed_model == 1">
+            <div class="label">
+              {{$t('选择转投节点')}}
+            </div>
+            <div class="control">
+              <select_pane v-model:value="fixed_to_select_config.value" v-bind:list="fixed_to_select_config.list"></select_pane>
+            </div>
+          </div>
+
+
+          <!-- fixed_select_config -->
+          <div class="field_item form_label_item" v-if="!(selectType == 2 && fixed_model == 1)">
             <label class="label">
               {{selectInfo.title}}
             </label>
             <div class="control" style="margin-top: 10px;">
-              <input v-model="amount" min="0" :max="selectInfo.max" class="input" type="number" step="1" :placeholder="$t('template.symbol', {symbol: wallet_show_symbol})"  required />
+              <input  v-model="amount" min="0" :max="selectInfo.max" class="input" type="number" step="1" :placeholder="$t('template.symbol', {symbol: wallet_show_symbol})"  required />
               <p class="help is-danger" v-show="amount && !isValidAmount">
                 {{$t('金额必须为整数')}}
               </p>
@@ -95,12 +132,12 @@
             </div>
           </div>
 
-          <div class="field_item ">
+          <div class="field_item" v-if="fixed_model == 0">
             <div class="static-label form_label_item" v-if="selectType == 0 || selectType == 1">
               <span>{{$t('修改后投票金额')}}</span>
               <span class="static-text">{{newStakedAmount | formatNumber({p: 0, showSymbol: true, symbol: wallet_show_symbol})}}</span>
             </div>
-            <div class="static-label form_label_item" v-if="[2].find(item => item == selectType) && amount">
+            <div class="static-label form_label_item" v-if="[2].find(item => item == selectType) && amount && fixed_model == 0">
               <div>{{$t('修改后投票金额')}}</div>
               <div>
               <span class="">{{bpname}} : {{newStakedAmount | formatNumber({p: 0, showSymbol: true, symbol: wallet_show_symbol})}}</span>
@@ -112,11 +149,8 @@
               </div>
             </div>
           </div>
+
           <div class="field_item form_label_item form_label_item_no_border">
-            <!-- <div class="control"> -->
-              
-            <!-- </div> -->
-            <!-- <div class="control"> -->
               <div></div>
               <div>
                 <a tabindex="-1" class="button cancel-button" @click="close">{{$t('取消')}}</a>
@@ -162,19 +196,28 @@
           <div class="row__title">{{$t('投票人用户')}}</div>
           <div class="row__content">{{voter}}</div>
         </div>
-        <div class="row">
+        <div class="row" v-if="!(selectType == 2 && fixed_model == 1)">
           <div class="row__title">{{selectInfo.confirm}}</div>
           <div class="row__content">{{amount | formatNumber({p: 0, showSymbol: true, symbol: wallet_show_symbol})}}</div>
+        </div>
+        <div class="row" v-if="(selectType == 2 && fixed_model == 1) && fixed_select_config_num">
+          <div class="row__title">{{selectInfo.confirm}}</div>
+          <div class="row__content">{{
+          fixed_select_config_num | formatNumber({p: 0, showSymbol: true, symbol: wallet_show_symbol})}}</div>
         </div>
         <div class="row">
           <div class="row__title">{{$t('修改后投票金额')}}</div>
           <div class="row__content">{{newStakedAmount | formatNumber({p: 0, showSymbol: true, symbol: wallet_show_symbol})}}</div>
         </div>
-        <div class="row" v-if="selectType == 2">
+        <div class="row" v-if="(selectType == 2 && fixed_model == 0)">
           <div class="row__title">{{$t('转投节点')}}</div>
           <div class="row__content">{{bp_select_config.value | formatNumber({p: 0, showSymbol: true, symbol: wallet_show_symbol})}}</div>
         </div>
-        <div class="row" v-if="selectType == 2">
+        <div class="row" v-if="selectType == 2 && fixed_model == 1">
+          <div class="row__title">{{$t('转投节点')}}</div>
+          <div class="row__content">{{ fixed_to_select_config.value }}</div>
+        </div>
+        <div class="row" v-if="selectType == 2 && fixed_model == 0">
           <div class="row__title">{{$t('转投后投票')}}</div>
           <div class="row__content">{{(bp_select_config.dict[bp_select_config.value] + parseInt(amount) ) | formatNumber({p: 0, showSymbol: true, symbol: wallet_show_symbol})}}</div>
         </div>
@@ -231,41 +274,78 @@ export default {
       selectType: '0',
       fee_for_claim: 1,
       fix_fixed_list: [
-        {value: 0, text: '活期'},
-        {value: 1, text: '定期'}
+        {value: '0', text: '活期'},
+        {value: '1', text: '定期'}
       ],
-      fixed_model: 0,
+      fixed_model: '0',
       fixed_time_list: [
-        {value: 'fvote.a', text: '约90天'},
-        {value: 'fvote.b', text: '约180天'},
-        {value: 'fvote.c', text: '约360天'},
-        {value: 'fvote.d', text: '约720天'},
+        {value: 'fvote.d', text: '720天'},
+        {value: 'fvote.c', text: '360天'},
+        {value: 'fvote.b', text: '180天'},
+        {value: 'fvote.a', text: '90天'},
       ],
-      fixed_time: 'fvote.a',
+      fixed_time: 'fvote.d',
       bp_select_config: {
         placeholder: '',
         text: '',
         value: '',
         list: [],
         dict: {}
+      },
+      fixed_select_config: {
+        text: 'fixed_select_config',
+        value: '',
+        list: []
+      },
+      fixed_to_select_config: {
+        text: 'fixed_select_config',
+        value: '',
+        list: []
       }
     };
   },
   computed: {
+    fixed_select_config_num () {
+      let row = this.fixed_select_config.list.find(row => row.value == this.fixed_select_config.value);
+      return row ? row.num : 0;
+    },
     can_used_ammount () {
       return parseFloat(this.account.info.available) - (parseFloat(this.amount_for_claim_fee) || 0);
     },
     table() {
+      // fix select config
       let list = [];
+      this.fixed_to_select_config.list.splice(0, this.fixed_to_select_config.list.length);
       this.bp_list_table.map(item => {
         this.bp_select_config.dict[item.name] = item.vote ? parseInt(item.vote.staked) : '0';
+
+        this.fixed_to_select_config.list.push({
+          value: item.name,
+          text: item.name
+        })
+
         if(item.name == this.bpname) return false;
+
         list.push({
           text: item.name + ' ' + this.$t('已投票') + ' ' + (item.vote ? item.vote.staked : '0'),
           value: item.name
         });
       });
       this.bp_select_config.list.splice(0, this.bp_select_config.list.length, ...list);
+
+      // fixed select config
+      let fixed_list = [];
+      this.MY_FIX_VOTES.rows.forEach(row => {
+        if(row.bpname != this.bpname) return;
+        let vote_type = this.fixed_time_list.find(i => i.value == row.fvote_typ).text;
+        fixed_list.push({
+          text:  `${row.key} ${row.bpname} 已定投 ${vote_type} ${ symblo_change(row.vote) }`,
+          num: toBigNumber(row.vote),
+          value: row.key + ''
+        });
+      });
+
+      this.fixed_select_config.list.splice(0, this.fixed_select_config.list.length, ...fixed_list);
       return '';
     },
     bp_list_table() {
@@ -289,11 +369,12 @@ export default {
     },
     MY_FIX_VOTES () {
       let data = JSON.parse( JSON.stringify( this.account.fix_votes_table ) );
-
       calcute_fixed_reward(data, this.head_block_num, this.bpsTable);
-
+      console.log('MY_FIX_VOTES');
+      console.log(data);
       return data;
     },
+
     selectMap() {
       return {
         '0': {
@@ -316,9 +397,9 @@ export default {
           title: this.$t('转投金额（整数）'),
           confirm: this.$t('转投金额（整数）'),
           tip: this.$t('* 立即生效'),
-          max: toNumber(this.stakedAmount),
+          max:  toNumber(this.stakedAmount),
           maxTip: this.$t('超过可用投票金额！'),
-          disabled: toNumber(this.stakedAmount) <= 0,
+          disabled: this.fixed_model == 1 ? false : toNumber(this.stakedAmount) <= 0,
         },
       };
     },
@@ -328,7 +409,11 @@ export default {
       } else if (this.selectType === '1') {
         return toNumber(this.stakedAmount) - toNumber(this.amount);
       } else if (this.selectType === '2'){
-        return toNumber(this.stakedAmount) - toNumber(this.amount);
+
+        let fixed_model_val = this.fixed_select_config.list.find(row => row.value == this.fixed_select_config.value);
+        fixed_model_val = fixed_model_val ? fixed_model_val.num : 0;
+        return this.fixed_model == 1 ? this.as_model_staked - fixed_model_val : toNumber(this.stakedAmount) - toNumber(this.amount);
+
       } else {
         return undefined;
       }
@@ -336,17 +421,17 @@ export default {
     as_model_new_staked () {
       if (this.selectType === '0') {
 
-        let val = this.fixed_model ? toNumber(this.amount) :  toNumber(this.as_model_staked) + toNumber(this.amount);
+        let val = this.fixed_model == 1 ? toNumber(this.amount) :  toNumber(this.as_model_staked) + toNumber(this.amount);
         return val;
 
       } else if (this.selectType === '1') {
 
-        let val = this.fixed_model ? toNumber(this.as_model_staked) : toNumber(this.as_model_staked) - toNumber(this.amount);
+        let val = this.fixed_model == 1 ? toNumber(this.as_model_staked) : toNumber(this.as_model_staked) - toNumber(this.amount);
         return val;
 
       } else if (this.selectType === '2'){
 
-        let val = this.fixed_model ? toNumber(this.as_model_staked) : toNumber(this.as_model_staked) - toNumber(this.amount);
+        let val = this.fixed_model == 1 ? toNumber(this.as_model_staked) : toNumber(this.as_model_staked) - toNumber(this.amount);
         return val;
 
       } else {
@@ -376,7 +461,7 @@ export default {
     },
     as_model_staked() {
       const bp = this.bp_list_table && this.bp_list_table.find(bp => this.bpname === bp.name);
-      if(this.fixed_model){
+      if(this.fixed_model == 1){
         return bp.fixed_vote;
       }
       return toBigNumber( bp.vote ? bp.vote.staked : 0 );
@@ -476,9 +561,16 @@ export default {
       }
     },
     confirmInfo() {
-      if(this.selectType == 2){
+      if(this.selectType == 2 && this.fixed_model == 0){
         if(!this.bp_select_config.value) return ;
       }
+
+      if(this.selectType == 2 && this.fixed_model == 1){
+        if(!this.fixed_select_config.value || !this.fixed_to_select_config.value) return;
+        this.showConfirm = true;
+        return ;
+      }
+
       if (this.isValidAmount && this.newStakedAmount !== undefined) {
         if (this.selectType === '0') {
           const isOver = toNumber(this.staked) - toNumber(this.amount) - 0.1 - this.fee;
@@ -501,8 +593,33 @@ export default {
         this.showConfirm = true;
       }
     },
-    submit() {
+    async submit() {
       this.submitting = true;
+
+      if(this.selectType == 2 && this.fixed_model == 1){
+        let _form = {
+          voter: this.voter, 
+          fixed_key: this.fixed_select_config.value, 
+          bpname: this.fixed_to_select_config.value, 
+          pre_bp_name: this.bpname,
+          walletId: this.walletData.publicKey,
+          permission: this.permissions.filter(item => item.is_have)[0].name,
+          password: this.password,
+        }
+        let result = await this.REVOTEFIX(_form).catch(error => {
+          Message.error({
+            title: `${err.code ? `code: ${err.code}` : this.$t('转投失败')}`,
+            message: this.$t(err.message),
+          });
+          this.submitting = false;
+          throw error;
+        });
+
+        Message.success(this.$t('转投成功'));
+        this.reload_fix_votes_table();
+        this.close();
+        return ;
+      }
       if(this.selectType == 2){
         let _form = {
           voter: this.voter,
@@ -571,9 +688,11 @@ export default {
     },
     symblo_change,
     ...mapActions({
+      reload_fix_votes_table: 'reload_fix_votes_table',
       getAccountInfo: Actions.GET_ACCOUNT_INFO,
       vote: Actions.VOTE,
-      revote: Actions.REVOTE
+      revote: Actions.REVOTE,
+      REVOTEFIX: Actions.REVOTEFIX
     }),
   },
   components: {

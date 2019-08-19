@@ -31,7 +31,7 @@ export default {
     },
 
     value: {
-      type: Number,
+      type: String,
       default () {
         return 0;
       }

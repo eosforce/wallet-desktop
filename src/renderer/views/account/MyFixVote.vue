@@ -123,12 +123,12 @@ export default {
   },
   watch: {
     'account.accountName' () {
-      this.QUERY_FIX_VOTES_TABLE();  
+      this.reload_fix_votes_table();  
     }
   },
   mounted () {
-    // QUERY_FIX_VOTES_TABLE
-    this.QUERY_FIX_VOTES_TABLE();
+    // reload_fix_votes_table
+    this.reload_fix_votes_table();
   },
   methods: {
     next () {
@@ -143,7 +143,8 @@ export default {
       return toUrl(url);
     },
     ...mapActions({
-      QUERY_FIX_VOTES_TABLE: Actions.QUERY_FIX_VOTES_TABLE
+      QUERY_FIX_VOTES_TABLE: Actions.QUERY_FIX_VOTES_TABLE,
+      reload_fix_votes_table: 'reload_fix_votes_table'
     }),
   },
 };

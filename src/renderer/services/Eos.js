@@ -2,7 +2,7 @@ import '@/services/FORCEIO'
 import axios from 'axios'
 import { NODE_API_URL } from '@/constants/config.constants';
 import Store from '@/store';
-import Eos from 'eosforce'
+import Eos from 'eosforcejs'
 
 import {
   getToken,
@@ -630,6 +630,23 @@ export const revote = config => async ({voter, frombp, tobp, restake, permission
               return handleApiError(err);
             });
 }
+
+export const revotefix = config => async ({voter, fixed_key, bpname, pre_bp_name, permission, wallet_symbol = 'EOS'}) => {
+  let {EOS, auth} = filter_lib_and_auth(wallet_symbol, voter, permission);
+  let token = await EOS(config).contract('eosio');
+
+  let action_res = await token.transaction('eosio', tr => {
+    tr.claim(voter, pre_bp_name, auth);
+    tr.revotefix(voter, fixed_key, bpname, auth);
+  })
+  .catch(err => {
+    return handleApiError(err);
+  });
+
+  return action_res;
+}
+
+// revotefix
 
 export const vote = config => async ({voter, bpname, amount, permission, wallet_symbol = 'EOS'} = {}) => {
     let {EOS, auth} = filter_lib_and_auth(wallet_symbol, voter, permission);

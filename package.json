@@ -65,7 +65,7 @@
     "dayjs": "^1.6.4",
     "electron-updater": "^2.21.10",
     "element-ui": "^2.3.8",
-    "eosforce": "^15.0.5",
+    "eosforcejs": "^1.0.5",
     "eosjs": "^16.0.9",
     "sjcl": "^1.0.7",
     "vue": "^2.3.3",

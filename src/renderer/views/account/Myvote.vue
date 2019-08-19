@@ -130,11 +130,11 @@ export default {
   },
   watch: {
     'account.accountName' () {
-      this.QUERY_FIX_VOTES_TABLE();  
+      this.reload_fix_votes_table();  
     }
   },
   mounted () {
-    this.QUERY_FIX_VOTES_TABLE();  
+    this.reload_fix_votes_table();  
   },
   methods: {
     isLock(unstakeHeight) {
@@ -168,7 +168,8 @@ export default {
     },
     toBigNumber,
     ...mapActions({
-      QUERY_FIX_VOTES_TABLE: 'QUERY_FIX_VOTES_TABLE'
+      QUERY_FIX_VOTES_TABLE: 'QUERY_FIX_VOTES_TABLE',
+      reload_fix_votes_table: 'reload_fix_votes_table'
     })
   },
 };
