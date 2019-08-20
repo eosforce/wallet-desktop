@@ -7,7 +7,7 @@
 
 
           
-          <!-- {{ bp_list_table }} -->
+
           <!-- <div class="field_item is-horizontal form_label_item">
             <label class="label" style="margin-bottom: 0px;">
               {{$t('投票类型')}}
@@ -86,7 +86,7 @@
           </div>
 
 
-          <!-- <template v-if="fixed_model == 0 && vote_action_config.value == 0 ">
+          <template v-if="fixed_model == 0 && vote_action_config.value == 0 ">
 
             <div class="field_item" v-if="new Set(['0', '1']).has(selectType)">
               <div class="static-label form_label_item">
@@ -118,21 +118,96 @@
                     {{selectInfo.maxTip}}
                   </p>
                 </span>
+
               </div>
             </div>
               -------add form end -----
+          </template>
 
-          </template> -->
+          <template v-if="fixed_model == 0 && vote_action_config.value == 1">
+            
+          </template>
+
+          
+
+          <!-- <div class="field_item" v-if="new Set(['0', '1']).has(selectType)">
+            <div class="static-label form_label_item">
+              <span>{{$t('可用投票金额')}}</span>
+              <span class="static-text">{{staked | formatNumber({p: 4, showSymbol: true, symbol: wallet_show_symbol}) }}</span>
+            </div>
+          </div> -->
+
+          
 
 
-          <concat_form v-bind:list="fix_minus_form.ipt_list" v-on:form_changed="validate_fix_minus_form"  v-if="fixed_model == 0 && vote_action_config.value == 1"></concat_form>
-          <concat_form v-bind:list="fix_add_form.ipt_list" v-on:form_changed="validate_fix_add_form" v-if="fixed_model == 0 && vote_action_config.value == 0 "></concat_form>
-          <concat_form v-bind:list="fix_transfer_form.ipt_list" v-on:form_changed="validate_fix_transfer_form" v-if="fixed_model == 0 && vote_action_config.value == 2 "></concat_form>
 
-          <concat_form v-bind:list="fixed_add_form.ipt_list" v-if="fixed_model == 1 && vote_action_config.value == 0 "></concat_form>
-          <concat_form v-bind:list="fixed_transfer_form.ipt_list" v-if="fixed_model == 1 && vote_action_config.value == 1 "></concat_form>
-          <concat_form v-bind:list="fixed_transfer_form.ipt_list" v-if="fixed_model == 1 && vote_action_config.value == 2 "></concat_form>
 
+          <!-- fixed_time_list -->
+
+          
+
+          <div class="field_item form_label_item" v-if="selectType == 2 && fixed_model != 1">
+            <div class="label">
+              {{$t('选择转投节点')}}
+            </div>
+            <div class="control">
+              <select_pane v-model:value="bp_select_config.value" v-bind:list="bp_select_config.list"></select_pane>
+            </div>
+          </div>
+
+          <div class="field_item form_label_item" v-if="selectType == 2 && fixed_model == 1">
+            <div class="label">
+              {{$t('选择节点已投定期')}}
+            </div>
+            <div class="control">
+              <select_pane v-model:value="fixed_select_config.value" v-bind:list="fixed_select_config.list"></select_pane>
+            </div>
+          </div>
+
+          <div class="field_item form_label_item" v-if="selectType == 2 && fixed_model == 1">
+            <div class="label">
+              {{$t('选择转投节点')}}
+            </div>
+            <div class="control">
+              <select_pane v-model:value="fixed_to_select_config.value" v-bind:list="fixed_to_select_config.list"></select_pane>
+            </div>
+          </div>
+
+
+          <!-- fixed_select_config -->
+          <div class="field_item form_label_item" v-if="!(selectType == 2 && fixed_model == 1)">
+            <label class="label">
+              {{selectInfo.title}}
+            </label>
+            <div class="control" style="margin-top: 10px;">
+              <input  v-model="amount" min="0" :max="selectInfo.max" class="input" type="number" step="1" :placeholder="$t('template.symbol', {symbol: wallet_show_symbol})"  required />
+              <p class="help is-danger" v-show="amount && !isValidAmount">
+                {{$t('金额必须为整数')}}
+              </p>
+              <p class="help tips" v-if="IS_FEE_MODEL">{{selectInfo.tip}}，{{$t('template.fee', {fee: symblo_change(fee, 'EOS', wallet_show_symbol) })}}</p>
+              <p class="help is-danger" v-show="amount > selectInfo.max">
+                {{selectInfo.maxTip}}
+              </p>
+            </div>
+          </div>
+
+          <div class="field_item" v-if="fixed_model == 0">
+            <div class="static-label form_label_item" v-if="selectType == 0 || selectType == 1">
+              <span>{{$t('修改后投票金额')}}</span>
+              <span class="static-text">{{as_model_new_staked | formatNumber({p: 0, showSymbol: true, symbol: wallet_show_symbol})}}</span>
+            </div>
+            <div class="static-label form_label_item" v-if="selectType == 2 && amount && fixed_model == 0">
+              <div>{{$t('修改后投票金额')}}</div>
+              <div>
+              <span class="">{{bpname}} : {{as_model_new_staked | formatNumber({p: 0, showSymbol: true, symbol: wallet_show_symbol})}}</span>
+              </div>
+              <div v-if="bp_select_config.value">
+              <span class="">
+              {{bp_select_config.value}} : {{ (bp_select_config.dict[bp_select_config.value] + parseInt(amount) ) | formatNumber({p: 0, showSymbol: true, symbol: wallet_show_symbol})}}
+              </span>
+              </div>
+            </div>
+          </div>
 
           <div class="field_item form_label_item form_label_item_no_border">
               <div></div>
@@ -140,21 +215,15 @@
                 <a tabindex="-1" class="button cancel-button" @click="close">{{$t('取消')}}</a>
                 <button type="submit" class="button is-link">{{$t('下一步')}}</button>
               </div>
+            <!-- </div> -->
           </div>
-
         </form>
       </div>
       <a class="modal-close cover-page-close" @click="close"></a>
     </div>
     <confirm-modal :show="showConfirm" :submitting="submitting" @confirm="submit()" @close="toggle('showConfirm', false)">
       <div>
-
-        <div class="row" v-for="row in submit_list">
-          <div class="row__title">{{$t(row.placeholder)}}</div>
-          <div class="row__content">{{ row.value | formatNumber({p: 4, showSymbol: true, symbol: wallet_show_symbol}) }}</div>
-        </div>
-
-        <!-- <div class="graphic">
+        <div class="graphic">
           <div class="graphic-item" :style="{order: this.selectType === '0' ? 1 : 3}">
             <img v-if="this.selectType === '0'" src="@/assets/vote/avaliable.png">
             <label v-if="this.selectType === '0'">{{$t('可用余额')}}</label>
@@ -218,7 +287,7 @@
         <div class="row" v-if="IS_FEE_MODEL && selectType == 2">
           <div class="row__title">{{$t('手续费')}}</div>
           <div class="row__content">{{ symblo_change('0.0100', 'EOS', wallet_show_symbol) }} </div>
-        </div> -->
+        </div>
         <div class="row">
           <div class="row__title">{{$t('输入密码')}}</div>
           <div class="row__content">
@@ -250,162 +319,11 @@ import {
 
 import Select from '@/views/components/select'
 import select_pane from '@/components/select_pane.vue'
-import concat_form from '@/views/components/concat_form.vue'
+
 export default {
   name: 'vote',
   data() {
     return {
-
-      // 
-
-      submit_list: [],
-
-      fix_add_form: {
-        ipt_list: [
-          {
-            type: 'text',
-            value: '',
-            name: 'available',
-            placeholder: '可用余额',
-            error: ''
-          },
-          
-          {
-            type: 'input',
-            value: 1,
-            placeholder: '预留手续费',
-            name: 'claim_fee',
-            error: ''
-          },
-
-          {
-            type: 'input',
-            value: '',
-            name: 'ammount',
-            placeholder: '追加金额',
-            error: ''
-          },
-
-          {
-            type: 'text',
-            value: '',
-            name: 'has_staked',
-            placeholder: '已投票',
-            error: ''
-          },
-
-          {
-            type: 'text',
-            value: '',
-            name: 'new_val',
-            placeholder: '追加后金额',
-            hide: true,
-            error: ''
-          },
-        ]
-      },
-
-      fix_minus_form: {
-        ipt_list: [
-          {
-            type: 'text',
-            value: '',
-            name: 'has_staked',
-            placeholder: '已投票',
-            error: ''
-          },
-
-          {
-            type: 'input',
-            value: '',
-            name: 'ammount',
-            placeholder: '赎回金额'
-          },
-
-          {
-            type: 'text',
-            value: '',
-            name: 'new_val',
-            placeholder: '修改后金额',
-            hide: true,
-            error: ''
-          },
-        ]
-      },
-
-      fix_transfer_form: {
-        ipt_list: [
-          {
-            type: 'text',
-            value: '',
-            name: 'has_staked',
-            placeholder: '已投票',
-            error: ''
-          },
-
-          {
-            type: 'input',
-            value: '',
-            name: 'ammount',
-            placeholder: '转投金额（整数）'
-          },
-
-          {
-            type: 'select_pane',
-            value: '',
-            list: [],
-            name: 'transfer_to_bp',
-            placeholder: '转投到节点'
-          },
-
-          {
-            type: 'text',
-            value: '',
-            name: 'new_val',
-            placeholder: '修改后金额',
-            hide: true,
-            error: ''
-          },
-        ]
-      },
-
-      fixed_add_form: {
-        ipt_list: [
-          {
-            type: 'input',
-            value: '',
-            name: 'ammount',
-            placeholder: '追加金额'
-          },
-          {
-            type: 'input',
-            value: 1,
-            placeholder: '预留手续费',
-            name: 'claim_fee'
-          }
-        ]
-      },
-
-      fixed_transfer_form: {
-        ipt_list: [
-          {
-            type: 'select_pane',
-            value: '',
-            list: [],
-            name: 'transfer_from_bp',
-            placeholder: '已投定期'
-          },
-          {
-            type: 'select_pane',
-            value: '',
-            list: [],
-            name: 'transfer_to_bp',
-            placeholder: '转投到节点'
-          }
-        ]
-      },
-
-      // 
       amount: '',
       password: '',
       amount_for_claim_fee: 1,
@@ -472,22 +390,14 @@ export default {
     table() {
       // fix select config
       let list = [];
-
-      let fixed_to_list = this.fixed_transfer_form.ipt_list.find(item => item.name == 'transfer_to_bp');
-      fixed_to_list.list.splice(0, fixed_to_list.list.length);
-
       this.fixed_to_select_config.list.splice(0, this.fixed_to_select_config.list.length);
       this.bp_list_table.map(item => {
         this.bp_select_config.dict[item.name] = item.vote ? parseInt(item.vote.staked) : '0';
 
-        let bp_item = {
+        this.fixed_to_select_config.list.push({
           value: item.name,
           text: item.name
-        };
-
-        this.fixed_to_select_config.list.push(bp_item);
-
-        fixed_to_list.list.push(bp_item)
+        })
 
         if(item.name == this.bpname) return false;
 
@@ -498,10 +408,6 @@ export default {
       });
       this.bp_select_config.list.splice(0, this.bp_select_config.list.length, ...list);
 
-      // 
-      let transfer_to_bp = this.fix_transfer_form.ipt_list.find(item => item.name == 'transfer_to_bp');
-      transfer_to_bp.list.splice(0, transfer_to_bp.list.length, ...list);
-      // 
       // fixed select config
       let fixed_list = [];
       this.MY_FIX_VOTES.rows.forEach(row => {
@@ -515,13 +421,6 @@ export default {
       });
 
       this.fixed_select_config.list.splice(0, this.fixed_select_config.list.length, ...fixed_list);
-      let fixed_transfer_form = this.fixed_transfer_form.ipt_list.find(item => item.name == 'transfer_from_bp');
-      fixed_transfer_form.list.splice(0, fixed_transfer_form.list.length, ...fixed_list);
-
-      // update available for vote fix
-      this.fix_add_form.ipt_list.find(row => row.name == 'available').value = this.account.info.available;
-
-      // 
       return '';
     },
     bp_list_table() {
@@ -644,14 +543,7 @@ export default {
       if(this.fixed_model == 1){
         return bp.fixed_vote;
       }
-      // update_form
-      let val = toBigNumber( bp.vote ? bp.vote.staked : 0 );
-      this.fix_add_form.ipt_list.find(row => row.name == 'has_staked').value = val;
-      this.fix_minus_form.ipt_list.find(row => row.name == 'has_staked').value = val;
-      this.fix_transfer_form.ipt_list.find(row => row.name == 'has_staked').value = val;
-
-      // 
-      return val;
+      return toBigNumber( bp.vote ? bp.vote.staked : 0 );
     },
     isValidAmount() {
       return this.amount && isValidAmount(this.amount);
@@ -747,94 +639,7 @@ export default {
         this.fee = 0;
       }
     },
-    validate_fix_add_form () {
-      let available = this.fix_add_form.ipt_list.find(i => i.name == 'available');
-      let claim_fee = this.fix_add_form.ipt_list.find(i => i.name == 'claim_fee');
-      let ammount = this.fix_add_form.ipt_list.find(i => i.name == 'ammount');
-      let has_staked = this.fix_add_form.ipt_list.find(i => i.name == 'has_staked');
-      let new_val = this.fix_add_form.ipt_list.find(i => i.name == 'new_val');
-
-      if(toNumber(ammount.value) + toNumber(claim_fee.value) > toNumber(available.value)){
-        ammount.error = '超过可用余额';
-        return false;
-      }
-
-      ammount.error = '';
-
-      new_val.value = toBigNumber(ammount.value).plus( toBigNumber(has_staked.value) );
-      new_val.hide = false;
-      return true;
-    },
-    validate_fix_minus_form () {
-      let ammount = this.fix_minus_form.ipt_list.find(i => i.name == 'ammount');
-      let has_staked = this.fix_minus_form.ipt_list.find(i => i.name == 'has_staked');
-      let new_val = this.fix_minus_form.ipt_list.find(i => i.name == 'new_val');
-
-      if(toNumber(ammount.value) > toNumber(has_staked.value)){
-        ammount.error = '超过可赎回余额';
-        new_val.hide = true;
-        return false;
-      }
-
-      ammount.error = '';
-
-      new_val.value = toBigNumber(has_staked.value).minus( toBigNumber(ammount.value) );
-      new_val.hide = false;
-      return true;
-    },
-    validate_fix_transfer_form () {
-      let ammount = this.fix_transfer_form.ipt_list.find(i => i.name == 'ammount');
-      let has_staked = this.fix_transfer_form.ipt_list.find(i => i.name == 'has_staked');
-      let new_val = this.fix_transfer_form.ipt_list.find(i => i.name == 'new_val');
-      let transfer_to_bp = this.fix_transfer_form.ipt_list.find(i => i.name == 'transfer_to_bp');
-
-      if(toNumber(ammount.value) > toNumber(has_staked.value)){
-        ammount.error = '超过可转投余额';
-        new_val.hide = true;
-        return false;
-      }
-      ammount.error = '';
-
-      if(!transfer_to_bp.value){
-        transfer_to_bp.error = '未选择节点'
-        return false;
-      }
-
-      new_val.value = toBigNumber(has_staked.value).minus( toBigNumber(ammount.value) );
-      new_val.hide = false;
-      return true;
-    },
     confirmInfo() {
-
-      if(this.fixed_model == 0 && this.vote_action_config.value == 0){
-
-        if(!this.validate_fix_add_form()) return;
-        this.showConfirm = true;
-        this.submit_list.splice(0, this.submit_list.length, ...this.fix_add_form.ipt_list);
-
-        return ;
-      }
-
-      if(this.fixed_model == 0 && this.vote_action_config.value == 1){
-
-        if(!this.validate_fix_minus_form()) return;
-        this.showConfirm = true;
-        this.submit_list.splice(0, this.submit_list.length, ...this.fix_minus_form.ipt_list);
-
-        return ;
-      }
-
-      if(this.fixed_model == 0 && this.vote_action_config.value == 2){
-
-        if(!this.validate_fix_transfer_form()) return;
-        this.showConfirm = true;
-        this.submit_list.splice(0, this.submit_list.length, ...this.fix_transfer_form.ipt_list);
-
-        return ;
-      }
-
-      return ;
-
       if(this.selectType == 2 && this.fixed_model == 0){
         if(!this.bp_select_config.value) return ;
       }
@@ -870,82 +675,6 @@ export default {
     async submit() {
       this.submitting = true;
 
-      if(this.fixed_model == 0 && this.vote_action_config.value == 2){
-        let ammount = this.fix_transfer_form.ipt_list.find(i => i.name == 'ammount');
-        let has_staked = this.fix_transfer_form.ipt_list.find(i => i.name == 'has_staked');
-        let new_val = this.fix_transfer_form.ipt_list.find(i => i.name == 'new_val');
-        let transfer_to_bp = this.fix_transfer_form.ipt_list.find(i => i.name == 'transfer_to_bp');
-
-        let _form = {
-          voter: this.voter,
-          frombp: this.bpname,
-          tobp: transfer_to_bp.value,
-          restake: ammount.value,
-          walletId: this.walletData.publicKey,
-          permission: this.permissions.filter(item => item.is_have)[0].name,
-          password: this.password,
-        }
-        this.revote(_form)
-        .then(result => {
-          Message.success(this.$t('转投成功'));
-          this.submitting = false;
-        })
-        .catch(err => {
-          Message.error({
-            title: `${err.code ? `code: ${err.code}` : this.$t('转投失败')}`,
-            message: this.$t(err.message),
-          });
-          this.submitting = false;
-          return Promise.reject(err);
-        })
-        .then(() => {
-          this.getAccountInfo({ accountName: this.voter });
-          this.close();
-          this.submitting = false;
-        });
-        
-        return ;
-      }
-
-      if(this.fixed_model == 0 && new Set(['0', '1']).has( this.vote_action_config.value )){
-
-        let amount = 0;
-        if(this.vote_action_config.value == 0)
-          amount = this.fix_add_form.ipt_list.find(i => i.name == 'new_val').value;
-        if(this.vote_action_config.value == 1)
-          amount = this.fix_minus_form.ipt_list.find(i => i.name == 'new_val').value;
-
-        this.vote({
-          amount:  amount,
-          bpname: this.bpname,
-          password: this.password,
-          voter: this.voter,
-          fixed_model: this.fixed_model,
-          fixed_time: this.fixed_time,
-          walletId: this.walletData.publicKey,
-          permission: this.permissions.filter(item => item.is_have)[0].name
-        })
-        .then(result => {
-          Message.success(this.$t('投票成功'));
-          this.submitting = false;
-        })
-        .catch(err => {
-          Message.error({
-            title: `${err.code ? `code: ${err.code}` : this.$t('投票失败')}`,
-            message: this.$t(err.message),
-          });
-          this.submitting = false;
-          return Promise.reject(err);
-        })
-        .then(() => {
-          this.getAccountInfo({ accountName: this.voter });
-          this.close();
-          this.submitting = false;
-        });
-
-        
-        return ;
-      }
       if(this.selectType == 2 && this.fixed_model == 1){
         let _form = {
           voter: this.voter, 
@@ -1048,8 +777,7 @@ export default {
   components: {
     ConfirmModal,
     select_pane,
-    Select,
-    concat_form
+    Select
   },
 };
 </script>

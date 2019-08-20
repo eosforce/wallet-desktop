@@ -16,7 +16,7 @@
       </thead>
       <tbody>
         <tr v-for="row in MY_FIX_VOTES.rows">
-          <!-- <td>{{ row.myVoteage }}</td> -->
+          <td>{{ row }}</td>
           <td class="t-left">{{ row.key + 1 }}</td>
           <td class="t-left">{{ row.bpname }}</td>
           <td>{{ fix_vote_types[row.fvote_typ] }}</td>
