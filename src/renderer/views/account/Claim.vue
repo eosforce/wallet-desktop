@@ -52,6 +52,8 @@ import Message from '@/components/Message';
 import ConfirmModal from '@/components/ConfirmModal';
 import { Actions } from '@/constants/types.constants';
 
+import { toUrl, calculate_fixed_reward_by_bpname, calcute_fixed_reward } from '@/utils/util';
+
 export default {
   name: 'Claim',
   data() {
@@ -67,17 +69,24 @@ export default {
     bpname() {
       return this.$route.params.bpname;
     },
+    bpsTable () {
+      return this.account.bpsTable;
+    },
+    MY_FIX_VOTES () {
+      let data = JSON.parse( JSON.stringify( this.account.fix_votes_table ) );
+
+      calcute_fixed_reward(data, this.head_block_num, this.bpsTable);
+
+      return data;
+    },
+    head_block_num(){
+      return this.app.currentNodeInfo.head_block_num;
+    },
     rewardAmount() {
       const bp = this.account.bpsTable && this.account.bpsTable.find(bp => this.bpname === bp.name);
-      if (bp) {
-        if (bp.vote) {
-          return bp.vote.reward;
-        } else {
-          return '0 EOS';
-        }
-      } else {
-        return null;
-      }
+      let fixed_reward = calculate_fixed_reward_by_bpname(this.bpname, this.MY_FIX_VOTES.rows);
+      let fix_reward = bp && bp.vote ? bp.vote.reward : 0;
+      return fixed_reward.plus( fix_reward);
     },
     baseInfo() {
       return this.account.info.baseInfo || {permissions: []};
@@ -140,6 +149,7 @@ export default {
     close() {
       this.$router.push({ name: 'accountDetail' });
     },
+    calculate_fixed_reward_by_bpname,
     ...mapActions({
       getAccountInfo: Actions.GET_ACCOUNT_INFO,
       claim: Actions.CLAIM,

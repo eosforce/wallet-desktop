@@ -46,7 +46,7 @@
             <Select v-bind:select_list='vote_action_config.list' v-model="vote_action_config.value"></Select>
           </div>
 
-          <div class="form_label_item static-label" v-if="fixed_model == 1">
+          <div class="form_label_item static-label" v-if="fixed_model == 1 && vote_action_config.value == 0">
             <span class="white_ft">{{$t('投票期限')}}</span>
             <Select v-bind:select_list='fixed_time_list' v-model="fixed_time"></Select>
           </div>
@@ -129,9 +129,9 @@
           <concat_form v-bind:list="fix_add_form.ipt_list" v-on:form_changed="validate_fix_add_form" v-if="fixed_model == 0 && vote_action_config.value == 0 "></concat_form>
           <concat_form v-bind:list="fix_transfer_form.ipt_list" v-on:form_changed="validate_fix_transfer_form" v-if="fixed_model == 0 && vote_action_config.value == 2 "></concat_form>
 
-          <concat_form v-bind:list="fixed_add_form.ipt_list" v-if="fixed_model == 1 && vote_action_config.value == 0 "></concat_form>
-          <concat_form v-bind:list="fixed_transfer_form.ipt_list" v-if="fixed_model == 1 && vote_action_config.value == 1 "></concat_form>
-          <concat_form v-bind:list="fixed_transfer_form.ipt_list" v-if="fixed_model == 1 && vote_action_config.value == 2 "></concat_form>
+          <concat_form v-bind:list="fixed_add_form.ipt_list" v-on:form_changed="validate_fixed_add_form" v-if="fixed_model == 1 && vote_action_config.value == 0 "></concat_form>
+          <concat_form v-bind:list="fixed_minus_form.ipt_list" v-on:form_changed="validate_fixed_minus_form" v-if="fixed_model == 1 && vote_action_config.value == 1 "></concat_form>
+          <concat_form v-bind:list="fixed_transfer_form.ipt_list" v-on:form_changed="validate_fixed_transfer_form" v-if="fixed_model == 1 && vote_action_config.value == 2 "></concat_form>
 
 
           <div class="field_item form_label_item form_label_item_no_border">
@@ -149,7 +149,7 @@
     <confirm-modal :show="showConfirm" :submitting="submitting" @confirm="submit()" @close="toggle('showConfirm', false)">
       <div>
 
-        <div class="row" v-for="row in submit_list">
+        <div class="row" v-for="row in submit_list"  v-if="!row.hide_in_confirm">
           <div class="row__title">{{$t(row.placeholder)}}</div>
           <div class="row__content">{{ row.value | formatNumber({p: 4, showSymbol: true, symbol: wallet_show_symbol}) }}</div>
         </div>
@@ -372,21 +372,65 @@ export default {
       fixed_add_form: {
         ipt_list: [
           {
+            type: 'text',
+            value: '',
+            name: 'has_staked',
+            placeholder: '已投票',
+            error: ''
+          },
+          {
+            type: 'select',
+            value: '1',
+            list: [
+              {value: '1', text: '余额中'},
+              {value: '2', text: '正在赎回中'}
+            ],
+            name: 'stake_typ',
+            placeholder: '投票资产',
+            error: ''
+          },
+          {
+            type: 'text',
+            value: '',
+            name: 'available',
+            placeholder: '可用余额',
+            error: '',
+            hide: false,
+          },
+          {
+            type: 'text',
+            value: '',
+            name: 'unstaking',
+            placeholder: '正在赎回中',
+            error: '',
+            hide: true
+          },
+          {
+            type: 'input',
+            value: 1,
+            placeholder: '预留手续费',
+            name: 'claim_fee',
+            hide: false
+          },
+          {
             type: 'input',
             value: '',
             name: 'ammount',
             placeholder: '追加金额'
           },
           {
-            type: 'input',
-            value: 1,
-            placeholder: '预留手续费',
-            name: 'claim_fee'
-          }
+            type: 'text',
+            value: '',
+            name: 'new_val',
+            placeholder: '修改后金额',
+            hide: true,
+            error: ''
+          },
+          // 
         ]
       },
 
-      fixed_transfer_form: {
+      fixed_minus_form: {
         ipt_list: [
           {
             type: 'select_pane',
@@ -394,6 +438,26 @@ export default {
             list: [],
             name: 'transfer_from_bp',
             placeholder: '已投定期'
+          },
+        ]
+      },
+
+      fixed_transfer_form: {
+        ipt_list: [
+          {
+            type: 'text',
+            value: '',
+            name: 'transfer_bp',
+            hide: true,
+            placeholder: '转投节点'
+          },
+          {
+            type: 'select_pane',
+            value: '',
+            list: [],
+            name: 'transfer_from_bp',
+            placeholder: '转投记录',
+            hide_in_confirm: true
           },
           {
             type: 'select_pane',
@@ -469,12 +533,17 @@ export default {
     can_used_ammount () {
       return parseFloat(this.account.info.available) - (parseFloat(this.amount_for_claim_fee) || 0);
     },
+    head_block_num(){
+      return this.app.currentNodeInfo.head_block_num;
+    },
     table() {
       // fix select config
       let list = [];
 
       let fixed_to_list = this.fixed_transfer_form.ipt_list.find(item => item.name == 'transfer_to_bp');
       fixed_to_list.list.splice(0, fixed_to_list.list.length);
+
+
 
       this.fixed_to_select_config.list.splice(0, this.fixed_to_select_config.list.length);
       this.bp_list_table.map(item => {
@@ -487,14 +556,18 @@ export default {
 
         this.fixed_to_select_config.list.push(bp_item);
 
-        fixed_to_list.list.push(bp_item)
+        fixed_to_list.list.push(bp_item);
 
-        if(item.name == this.bpname) return false;
+        if(item.name == this.bpname){
+          this.fixed_add_form.ipt_list.find(row => row.name == 'unstaking').value = toBigNumber(item.vote.unstaking);
+          return false;
+        }
 
         list.push({
           text: item.name + ' ' + this.$t('已投票') + ' ' + (item.vote ? item.vote.staked : '0'),
           value: item.name
         });
+
       });
       this.bp_select_config.list.splice(0, this.bp_select_config.list.length, ...list);
 
@@ -503,23 +576,43 @@ export default {
       transfer_to_bp.list.splice(0, transfer_to_bp.list.length, ...list);
       // 
       // fixed select config
-      let fixed_list = [];
+      let fixed_list = [],
+          my_fixed_list = [];
+
       this.MY_FIX_VOTES.rows.forEach(row => {
         if(row.bpname != this.bpname) return;
         let vote_type = this.fixed_time_list.find(i => i.value == row.fvote_typ).text;
         fixed_list.push({
-          text:  `${row.key} ${row.bpname} 已定投 ${vote_type} ${ symblo_change(row.vote) }`,
+          text:  `${row.bpname} 已定投 ${vote_type} ${ symblo_change(row.vote) }`,
           num: toBigNumber(row.vote),
-          value: row.key + ''
+          value: row.key + '',
+          bpname: row.bpname
         });
+
+        if(row.finish_time < 0){
+          my_fixed_list.push({
+            text:  `${row.bpname} 已定投 ${vote_type} ${ symblo_change(row.vote) }`,
+            num: toBigNumber(row.vote),
+            value: row.key + ''
+          });
+        }
+
       });
 
       this.fixed_select_config.list.splice(0, this.fixed_select_config.list.length, ...fixed_list);
       let fixed_transfer_form = this.fixed_transfer_form.ipt_list.find(item => item.name == 'transfer_from_bp');
       fixed_transfer_form.list.splice(0, fixed_transfer_form.list.length, ...fixed_list);
 
+      // update minus fixed form row
+      let fixed_minus_list = this.fixed_minus_form.ipt_list.find(item => item.name == 'transfer_from_bp');
+      fixed_minus_list.list.splice(0, fixed_minus_list.list.length, ...my_fixed_list);
+      if(!my_fixed_list.length){
+        fixed_minus_list.error = '无到期可赎回投票';
+      }
+
       // update available for vote fix
       this.fix_add_form.ipt_list.find(row => row.name == 'available').value = this.account.info.available;
+      this.fixed_add_form.ipt_list.find(row => row.name == 'available').value = this.account.info.available;
 
       // 
       return '';
@@ -546,8 +639,6 @@ export default {
     MY_FIX_VOTES () {
       let data = JSON.parse( JSON.stringify( this.account.fix_votes_table ) );
       calcute_fixed_reward(data, this.head_block_num, this.bpsTable);
-      console.log('MY_FIX_VOTES');
-      console.log(data);
       return data;
     },
 
@@ -642,6 +733,8 @@ export default {
     as_model_staked() {
       const bp = this.bp_list_table && this.bp_list_table.find(bp => this.bpname === bp.name);
       if(this.fixed_model == 1){
+        this.fixed_add_form.ipt_list.find(row => row.name == 'has_staked').value = bp.fixed_vote;
+        // this.fixed_mi.ipt_list.find(row => row.name == 'has_staked').value = bp.fixed_vote;
         return bp.fixed_vote;
       }
       // update_form
@@ -649,7 +742,6 @@ export default {
       this.fix_add_form.ipt_list.find(row => row.name == 'has_staked').value = val;
       this.fix_minus_form.ipt_list.find(row => row.name == 'has_staked').value = val;
       this.fix_transfer_form.ipt_list.find(row => row.name == 'has_staked').value = val;
-
       // 
       return val;
     },
@@ -788,12 +880,16 @@ export default {
       let new_val = this.fix_transfer_form.ipt_list.find(i => i.name == 'new_val');
       let transfer_to_bp = this.fix_transfer_form.ipt_list.find(i => i.name == 'transfer_to_bp');
 
+      ammount.error = '';
+      transfer_to_bp.error = '';
+
+
       if(toNumber(ammount.value) > toNumber(has_staked.value)){
         ammount.error = '超过可转投余额';
         new_val.hide = true;
         return false;
       }
-      ammount.error = '';
+      
 
       if(!transfer_to_bp.value){
         transfer_to_bp.error = '未选择节点'
@@ -804,7 +900,85 @@ export default {
       new_val.hide = false;
       return true;
     },
+    validate_fixed_add_form () {
+      let ammount = this.fixed_add_form.ipt_list.find(i => i.name == 'ammount');
+      let claim_fee = this.fixed_add_form.ipt_list.find(i => i.name == 'claim_fee');
+      let has_staked = this.fixed_add_form.ipt_list.find(i => i.name == 'has_staked');
+      let new_val = this.fixed_add_form.ipt_list.find(i => i.name == 'new_val');
+      let available = this.fixed_add_form.ipt_list.find(i => i.name == 'available');
+      let stake_typ = this.fixed_add_form.ipt_list.find(i => i.name == 'stake_typ');
+      let unstaking = this.fixed_add_form.ipt_list.find(i => i.name == 'unstaking');
+
+      if(stake_typ.value == 1){
+        available.hide = false;
+        unstaking.hide = true;
+        claim_fee.hide = false;
+      }else{
+        available.hide = true;
+        unstaking.hide = false;
+        claim_fee.hide = true;
+      }
+
+      ammount.error = ``;
+      new_val.value = '';
+
+      if(stake_typ.value == 1){
+        let available_val = toBigNumber(available.value).minus( toBigNumber(claim_fee.value) );
+        let used_val = toBigNumber(ammount.value);
+        if( used_val.isGreaterThan( available_val ) ){
+          ammount.error = `超过可用余额`;
+          return false;
+        }
+        new_val.value = toBigNumber(ammount.value).plus( toBigNumber( has_staked.value ) ) ;
+        new_val.hide = false;
+      }
+
+      if(stake_typ.value == 2){
+        if( toBigNumber(ammount.value).isGreaterThan( toBigNumber(unstaking.value) ) ){
+          ammount.error = `超过可用余额`;
+          return false;
+        }
+        new_val.value = toBigNumber(has_staked.value).plus( toBigNumber(ammount.value) );
+        new_val.hide = false;
+      }
+      return true;
+    },
+    validate_fixed_minus_form () {
+      // transfer_from_bp
+      let transfer_from_bp = this.fixed_minus_form.ipt_list.find(i => i.name == 'transfer_from_bp');
+
+      if(!transfer_from_bp.value){
+        transfer_from_bp.error = '无到期可赎回投票';
+        return false;
+      }
+
+      return true;
+    },
+    validate_fixed_transfer_form () {
+
+      let transfer_from_bp = this.fixed_transfer_form.ipt_list.find(i => i.name == 'transfer_from_bp');
+      let transfer_to_bp = this.fixed_transfer_form.ipt_list.find(i => i.name == 'transfer_to_bp');
+      let transfer_bp = this.fixed_transfer_form.ipt_list.find(i => i.name == 'transfer_bp');
+
+      transfer_from_bp.error = '';
+      if(transfer_from_bp.value == ''){
+        transfer_from_bp.error = '未选择投票';
+        return false;
+      }
+
+      let transfer_bp_item = transfer_from_bp.list.find(row => row.value == transfer_from_bp.value);
+      transfer_bp.value = transfer_bp_item.bpname;
+
+      transfer_to_bp.error = '';
+      if(transfer_to_bp.value == ''){
+        transfer_to_bp.error = '未选择节点';
+        return false;
+      }
+
+      return true;
+    },
     confirmInfo() {
+
 
       if(this.fixed_model == 0 && this.vote_action_config.value == 0){
 
@@ -825,13 +999,37 @@ export default {
       }
 
       if(this.fixed_model == 0 && this.vote_action_config.value == 2){
-
         if(!this.validate_fix_transfer_form()) return;
         this.showConfirm = true;
         this.submit_list.splice(0, this.submit_list.length, ...this.fix_transfer_form.ipt_list);
+        return ;
+      }
+
+
+      if(this.fixed_model == 1 && this.vote_action_config.value == 0){
+        if(!this.validate_fixed_add_form()) return ;
+        this.showConfirm = true;
+        this.submit_list.splice(0, this.submit_list.length, ...this.fixed_add_form.ipt_list);
+        return ;
+      }
+
+      if(this.fixed_model == 1 && this.vote_action_config.value == 1){
+        if(!this.validate_fixed_minus_form()) return ;
+        this.showConfirm = true;
+        this.submit_list.splice(0, this.submit_list.length, ...this.fixed_minus_form.ipt_list);
+        return ;
+      }
+
+      if(this.fixed_model == 1 && this.vote_action_config.value == 2){
+
+        if(!this.validate_fixed_transfer_form()) return ;
+        this.showConfirm = true;
+        this.submit_list.splice(0, this.submit_list.length, ...this.fixed_transfer_form.ipt_list);
 
         return ;
       }
+
+      // validate_fixed_transfer_form
 
       return ;
 
@@ -869,6 +1067,122 @@ export default {
     },
     async submit() {
       this.submitting = true;
+
+      if(this.fixed_model == 1 && this.vote_action_config.value == 1){
+
+        let transfer_from_bp = this.fixed_minus_form.ipt_list.find(i => i.name == 'transfer_from_bp');
+        let _form = {
+          voter: this.voter, 
+          fixed_key: transfer_from_bp.value, 
+          bpname: this.bpname,
+          walletId: this.walletData.publicKey,
+          permission: this.permissions.filter(item => item.is_have)[0].name,
+          password: this.password,
+        }
+
+        let result = this.OUTFIXVOTE(_form)
+                    .then(result => {
+                      Message.success(this.$t('赎回成功'));
+                      this.submitting = false;
+                    })
+                    .catch(err => {
+                      Message.error({
+                        title: `${err.code ? `code: ${err.code}` : this.$t('赎回失败')}`,
+                        message: this.$t(err.message),
+                      });
+                      this.submitting = false;
+                      return Promise.reject(err);
+                    })
+                    .then(() => {
+                      this.getAccountInfo({ accountName: this.voter });
+                      this.close();
+                      this.reload_fix_votes_table();
+                      this.submitting = false;
+                    });
+
+        return ;
+      }
+
+      if(this.fixed_model == 1 && this.vote_action_config.value == 2){
+
+        let transfer_from_bp = this.fixed_transfer_form.ipt_list.find(i => i.name == 'transfer_from_bp');
+        let transfer_to_bp = this.fixed_transfer_form.ipt_list.find(i => i.name == 'transfer_to_bp');
+        // REVOTEFIX
+        let _form = {
+          voter: this.voter, 
+          fixed_key: transfer_from_bp.value, 
+          bpname: transfer_to_bp.value, 
+          pre_bp_name: this.bpname,
+          walletId: this.walletData.publicKey,
+          permission: this.permissions.filter(item => item.is_have)[0].name,
+          password: this.password,
+        }
+
+        let result = this.REVOTEFIX(_form)
+                    .then(result => {
+                      Message.success(this.$t('转投成功'));
+                      this.submitting = false;
+                    })
+                    .catch(err => {
+                      Message.error({
+                        title: `${err.code ? `code: ${err.code}` : this.$t('转投失败')}`,
+                        message: this.$t(err.message),
+                      });
+                      this.submitting = false;
+                      return Promise.reject(err);
+                    })
+                    .then(() => {
+                      this.getAccountInfo({ accountName: this.voter });
+                      this.close();
+                      this.reload_fix_votes_table();
+                      this.submitting = false;
+                    });
+
+        return ;
+      }
+
+      if(this.fixed_model == 1 && this.vote_action_config.value == 0){
+          
+        let ammount = this.fixed_add_form.ipt_list.find(i => i.name == 'ammount');
+        let claim_fee = this.fixed_add_form.ipt_list.find(i => i.name == 'claim_fee');
+        let has_staked = this.fixed_add_form.ipt_list.find(i => i.name == 'has_staked');
+        let new_val = this.fixed_add_form.ipt_list.find(i => i.name == 'new_val');
+        let available = this.fixed_add_form.ipt_list.find(i => i.name == 'available');
+        let stake_typ = this.fixed_add_form.ipt_list.find(i => i.name == 'stake_typ');
+        let unstaking = this.fixed_add_form.ipt_list.find(i => i.name == 'unstaking');
+
+        let _form = {
+          voter: this.voter,
+          bpname: this.bpname,
+          type: this.fixed_time,
+          amount: ammount.value,
+          stake_typ: stake_typ.value,
+          walletId: this.walletData.publicKey,
+          permission: this.permissions.filter(item => item.is_have)[0].name,
+          password: this.password,
+        }
+
+        let result = this.VOTEFIX(_form)
+        .then(result => {
+          Message.success(this.$t('投票成功'));
+          this.submitting = false;
+        })
+        .catch(err => {
+          Message.error({
+            title: `${err.code ? `code: ${err.code}` : this.$t('投票失败')}`,
+            message: this.$t(err.message),
+          });
+          this.submitting = false;
+          return Promise.reject(err);
+        })
+        .then(() => {
+          this.getAccountInfo({ accountName: this.voter });
+          this.close();
+          this.submitting = false;
+        });
+
+        return ;
+      }
 
       if(this.fixed_model == 0 && this.vote_action_config.value == 2){
         let ammount = this.fix_transfer_form.ipt_list.find(i => i.name == 'ammount');
@@ -946,6 +1260,8 @@ export default {
         
         return ;
       }
+
+
       if(this.selectType == 2 && this.fixed_model == 1){
         let _form = {
           voter: this.voter, 
@@ -1042,7 +1358,9 @@ export default {
       getAccountInfo: Actions.GET_ACCOUNT_INFO,
       vote: Actions.VOTE,
       revote: Actions.REVOTE,
-      REVOTEFIX: Actions.REVOTEFIX
+      VOTEFIX: Actions.VOTEFIX,
+      REVOTEFIX: Actions.REVOTEFIX,
+      OUTFIXVOTE: Actions.OUTFIXVOTE
     }),
   },
   components: {

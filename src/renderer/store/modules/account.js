@@ -30,7 +30,8 @@ import {
     revotefix,
     unfreeze_from_freeeze,
     query_fix_votes,
-    votefix
+    votefix,
+    outfixvote
 } from '@/services/Eos';
 
 const initState = {
@@ -311,28 +312,29 @@ const actions = {
     },
     [Actions.VOTE]({ state, dispatch, getters }, { voter, bpname, amount, password, walletId, permission, fixed_model, fixed_time }) {
         return getters[Getters.GET_TRANSE_CONFIG](password, voter, walletId).then(config => {
-            if(fixed_model == '1'){
-              return votefix(config)({ voter, bpname, fixed_time, amount, permission, wallet_symbol: getters['wallet_symbol'] });
-            }else{
               return vote(config)({ voter, bpname, amount, permission, wallet_symbol: getters['wallet_symbol'] });
-            }
+        });
+    },
+    [Actions.VOTEFIX]({ state, dispatch, getters }, { voter, bpname, amount, type, stake_typ, password, walletId, permission, fixed_model, fixed_time }) {
+        return getters[Getters.GET_TRANSE_CONFIG](password, voter, walletId).then(config => {
+            return votefix(config)({ voter, bpname, amount, type, stake_typ, permission, wallet_symbol: getters['wallet_symbol'] });
         });
     },
     [Actions.REVOTE]({ state, dispatch, getters }, { voter, frombp, tobp, restake, password, walletId, permission }) {
         return getters[Getters.GET_TRANSE_CONFIG](password, voter, walletId).then(config => {
-          // {voter, frombp, tobp, restake, permission, wallet_symbol
-            // return revote(config)({ voter, bpname, amount, permission, wallet_symbol: getters['wallet_symbol'] });
             return revote(config)({voter, frombp, tobp, restake, permission, wallet_symbol: getters['wallet_symbol'] })
         });
     },
     [Actions.REVOTEFIX]({ state, dispatch, getters }, { voter, fixed_key, bpname, pre_bp_name, password, walletId, permission }) {
         return getters[Getters.GET_TRANSE_CONFIG](password, voter, walletId).then(config => {
-          // {voter, frombp, tobp, restake, permission, wallet_symbol
-            // return revote(config)({ voter, bpname, amount, permission, wallet_symbol: getters['wallet_symbol'] });
             return revotefix(config)({voter, fixed_key, bpname, pre_bp_name, permission, wallet_symbol: getters['wallet_symbol'] })
         });
     },
-    // revotefix
+    [Actions.OUTFIXVOTE]({ state, dispatch, getters }, { voter, fixed_key, bpname, password, walletId, permission }) {
+        return getters[Getters.GET_TRANSE_CONFIG](password, voter, walletId).then(config => {
+            return outfixvote(config)({voter, fixed_key, bpname, permission, wallet_symbol: getters['wallet_symbol'] })
+        });
+    },
     async [Actions.VOTE4RAM]({ state, dispatch, getters }, { voter, bpname, amount, password, walletId, permission }) {
         let config = await getters[Getters.GET_TRANSE_CONFIG](password, voter, walletId).catch(err => {
             return {

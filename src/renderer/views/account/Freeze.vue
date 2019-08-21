@@ -339,7 +339,7 @@ export default {
 }
 .slider_select_item{
   color: #333;
-  width: 50%;
+  /*width: 50%;*/
   text-align: center;
   font-size: 14px;
   padding: 5px 10px;

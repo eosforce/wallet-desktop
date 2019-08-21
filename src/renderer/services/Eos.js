@@ -40,11 +40,11 @@ export const getNodeList = async () => {
   return fetch(map[Store.state.app.chainNet]).then(async res => {
     let data = await res.json();
     //trans_main
-    data.nodes.forEach(item => {
-      item.node_addr = '192.168.1.139';
-      item.port_http = '8001';
-      item.port_ssl = '';
-    });
+    // data.nodes.forEach(item => {
+    //   item.node_addr = '192.168.1.139';
+    //   item.port_http = '8001';
+    //   item.port_ssl = '';
+    // });
     return data;
   });
 };
@@ -145,7 +145,8 @@ export const getLockedEosc = httpEndpoint => async (account_name) => {
       "scope": 'eosio.lock',
       "code":"eosio.lock",
       "table":"accounts",
-      "table_key": account_name,
+      "lower_bound": account_name,
+      // "table_key": account_name,
       "json":true,
       "limit":1000
     }
@@ -168,7 +169,8 @@ export const queryAccount = httpEndpoint => accountName => {
       scope: 'eosio',
       code: 'eosio',
       table: 'accounts',
-      table_key: accountName,
+      lower_bound: accountName,
+      // table_key: accountName,
       limit: 10000,
       json: true,
     })
@@ -214,7 +216,8 @@ const get_filter_available_condition = (accountName, core_coin_contract = 'eosio
     scope: 'eosio',
     code: 'eosio',
     table: 'accounts',
-    table_key: accountName,
+    lower_bound: accountName,
+    // table_key: accountName,
     limit: 10000,
     json: true,
   }
@@ -394,12 +397,14 @@ export const getGlobalTable = httpEndpoint => async (accountName, current_node, 
   const { schedule_version } = block || await getBlock(httpEndpoint)(currentHeight);
 
   let version = schedule_version;
-  let superBpsAmountTable = await getTable(httpEndpoint)({
+  let schedules_params = {
     scope: 'eosio',
     code: 'eosio',
     table: 'schedules',
-    table_key: schedule_version,
-  }).then(result => {
+    lower_bound: schedule_version
+    // table_key: schedule_version,
+  };
+  let superBpsAmountTable = await getTable(httpEndpoint)(schedules_params).then(result => {
     version = result.rows && result.rows[0] && result.rows[0].version;
     return result.rows && result.rows[0] && result.rows[0].producers;
   });
@@ -417,7 +422,8 @@ export const get_super_bps_table = httpEndpoint => async (schedule_version, ) =>
     scope: 'eosio',
     code: 'eosio',
     table: 'schedules',
-    table_key: schedule_version,
+    lower_bound: schedule_version
+    // table_key: schedule_version,
   });
   return super_bps_table;
 }
@@ -435,7 +441,8 @@ export const getRewardsAndBpsTable = httpEndpoint => async (accountName, current
     scope: 'eosio',
     code: 'eosio',
     table: 'schedules',
-    table_key: schedule_version,
+    lower_bound: schedule_version
+    // table_key: schedule_version,
   }).then(result => {
     version = result.rows && result.rows[0] && result.rows[0].version;
     return result.rows && result.rows[0] && result.rows[0].producers;
@@ -634,7 +641,6 @@ export const revote = config => async ({voter, frombp, tobp, restake, permission
 export const revotefix = config => async ({voter, fixed_key, bpname, pre_bp_name, permission, wallet_symbol = 'EOS'}) => {
   let {EOS, auth} = filter_lib_and_auth(wallet_symbol, voter, permission);
   let token = await EOS(config).contract('eosio');
-
   let action_res = await token.transaction('eosio', tr => {
     tr.claim(voter, pre_bp_name, auth);
     tr.revotefix(voter, fixed_key, bpname, auth);
@@ -646,7 +652,20 @@ export const revotefix = config => async ({voter, fixed_key, bpname, pre_bp_name
   return action_res;
 }
 
-// revotefix
+// outfixvote
+export const outfixvote = config => async ({voter, fixed_key, bpname, permission, wallet_symbol = 'EOS'}) => {
+  let {EOS, auth} = filter_lib_and_auth(wallet_symbol, voter, permission);
+  let token = await EOS(config).contract('eosio');
+  let action_res = await token.transaction('eosio', tr => {
+    tr.claim(voter, bpname, auth);
+    tr.outfixvote(voter, fixed_key, auth);
+  })
+  .catch(err => {
+    return handleApiError(err);
+  });
+
+  return action_res;
+}
 
 export const vote = config => async ({voter, bpname, amount, permission, wallet_symbol = 'EOS'} = {}) => {
     let {EOS, auth} = filter_lib_and_auth(wallet_symbol, voter, permission);
@@ -657,10 +676,12 @@ export const vote = config => async ({voter, bpname, amount, permission, wallet_
             });
 };
 
-export const votefix = config => async ({voter, bpname, fixed_time, amount, permission, wallet_symbol = 'EOS'} = {}) => {
+// voter, bpname, amount, type, stake_typ,
+export const votefix = config => async ({voter, bpname, fixed_time, amount, type, stake_typ = 1, permission, wallet_symbol = 'EOS'} = {}) => {
     let {EOS, auth} = filter_lib_and_auth(wallet_symbol, voter, permission);
     let token = await EOS(config).contract('eosio');
-    return token.votefix(voter, bpname, fixed_time, toAsset(amount, wallet_symbol), auth)
+    stake_typ = parseInt(stake_typ);
+    return token.votefix(voter, bpname, type, toAsset(amount, wallet_symbol), stake_typ, auth)
             .catch(err => {
               return handleApiError(err);
             });
@@ -889,7 +910,6 @@ const test_claim = async () => {
 const test_delegatebw = async () => {
   let eos = await EOS_ML(test_config).contract('eosio');
   let result = await eos.delegatebw(test_account_name, test_account_name, '10.0000 EOST', '0.0000 EOST', 0);
-  // console.error(result);
 }
 // test_delegatebw();
 
