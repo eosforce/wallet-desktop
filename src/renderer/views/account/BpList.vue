@@ -10,7 +10,7 @@
           <th class="t-center">{{$t('本届出块')}}</th>
           <th>{{$t('分红比例')}}</th>
           <th>{{$t('得票总数')}}</th>
-          <th>{{$t('年化利率')}}</th>
+          <!-- <th>{{$t('年化利率')}}</th> -->
           <th>{{$t('奖池金额')}}</th>
           <th>{{$t('我的投票')}}</th>
           <th>{{$t('操作')}}</th>
@@ -18,7 +18,7 @@
       </thead>
       <tbody>
         <tr v-if="on_load_bps_table">
-          <td colspan="10">
+          <td colspan="9">
             <div class="load_area table_inner_load">
                 <div class="load_circle account_detail_loader"></div><div>{{$t('正在努力刷新')}}</div>
             </div>
@@ -46,7 +46,7 @@
           <td class="t-center">{{bp.amount || '_'}}</td>
           <td>{{(10000 - bp.commission_rate) | formatNumber({p: 2, sign: '%', percentage: 0.01})}}</td>
           <td>{{bp.total_staked | formatNumber({p: 0})}}</td>
-          <td>{{bp.adr | formatNumber({p: 0, sign: '%', percentage: 100})}}</td>
+          <!-- <td>{{bp.adr | formatNumber({p: 0, sign: '%', percentage: 100})}}</td> -->
           <td>{{bp.rewards_pool | formatNumber({p: 4})}}</td>
           <td>
             <span v-show="!bp.total_vote">-</span>

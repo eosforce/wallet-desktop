@@ -8,7 +8,7 @@
           <th class="t-left">{{$t('节点名')}}</th>
           <th>{{$t('分红比例')}}</th>
           <th>{{$t('得票总数')}}</th>
-          <th>{{$t('年化利率')}}</th>
+          <!-- <th>{{$t('年化利率')}}</th> -->
           <th>{{$t('奖池金额')}}</th>
           <th>{{$t('我的投票')}}</th>
           <th v-if="HAS_CLAIM">{{$t('待领分红')}}</th>
@@ -18,7 +18,7 @@
       </thead>
       <tbody>
         <tr v-if="on_load_bps_table">
-          <td colspan="10">
+          <td colspan="9">
             <div class="load_area table_inner_load">
                 <div class="load_circle account_detail_loader"></div><div>{{$t('正在努力刷新')}}</div>
             </div>
@@ -39,10 +39,10 @@
           <td class="t-left">{{bp.name}}</td>
           <td>{{10000 - bp.commission_rate | formatNumber({p: 2, sign: '%', percentage: 0.01})}}</td>
           <td>{{bp.total_staked | formatNumber({p: 0})}}</td>
-          <td>
+          <!-- <td>
             <span v-show="bp.order >= 24">-</span>
             <span v-show="bp.order < 24">{{bp.adr | formatNumber({p: 0, sign: '%', percentage: 100})}}</span>
-          </td>
+          </td> -->
           <td>{{bp.rewards_pool | formatNumber({p: 4})}}</td>
           <td>
                 {{ calculate_fixed_votes_by_bpname(bp.name).plus( get_bp_vote(bp).toString()) | formatNumber({p: 0}) }}
