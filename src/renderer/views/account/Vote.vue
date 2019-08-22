@@ -559,7 +559,8 @@ export default {
         fixed_to_list.list.push(bp_item);
 
         if(item.name == this.bpname){
-          this.fixed_add_form.ipt_list.find(row => row.name == 'unstaking').value = toBigNumber(item.vote.unstaking);
+          let unstaking = item.vote && item.vote.unstaking ? item.vote.unstaking : 0;
+          this.fixed_add_form.ipt_list.find(row => row.name == 'unstaking').value = toBigNumber(unstaking);
           return false;
         }
 
