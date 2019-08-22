@@ -27,6 +27,7 @@ export default {
     内存租赁: 'Memory lease',
     租赁内存: 'Lease memory',
     取消内存: 'Cancel memory',
+
     转投: 'transfer vote to',
     转投节点: 'transfer vote to',
     选择转投节点: 'choose bp transfer',
