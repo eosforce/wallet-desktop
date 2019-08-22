@@ -468,8 +468,6 @@ export default {
           }
         ]
       },
-
-      // 
       amount: '',
       password: '',
       amount_for_claim_fee: 1,
