@@ -1,6 +1,5 @@
 import { remote } from 'electron';
 import { checkForUpdates } from '@/updater';
-
 const { Menu, shell, app } = remote;
 
 export default () => {
