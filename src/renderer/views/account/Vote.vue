@@ -60,7 +60,7 @@
 
           <div class="field_item">
             <div class="static-label form_label_item">
-              <span>{{$t('当前投票金额')}}</span>
+              <span>{{$t('当前投票总金额')}}</span>
               <span class="static-text">
                 {{(stakedAmount.split(' ')[0]) | formatNumber({p: 0, showSymbol: true, symbol: wallet_show_symbol})}}
               </span>
@@ -266,14 +266,14 @@ export default {
             type: 'text',
             value: '',
             name: 'available',
-            placeholder: '可用余额',
+            placeholder: this.$t('可用余额'),
             error: ''
           },
           
           {
             type: 'input',
             value: 1,
-            placeholder: '预留手续费',
+            placeholder: this.$t('预留手续费'),
             name: 'claim_fee',
             error: ''
           },
@@ -282,7 +282,7 @@ export default {
             type: 'input',
             value: '',
             name: 'ammount',
-            placeholder: '追加金额',
+            placeholder: this.$t('追加金额'),
             error: ''
           },
 
@@ -290,7 +290,7 @@ export default {
             type: 'text',
             value: '',
             name: 'has_staked',
-            placeholder: '已投票',
+            placeholder: this.$t('已投票'),
             error: ''
           },
 
@@ -298,7 +298,7 @@ export default {
             type: 'text',
             value: '',
             name: 'new_val',
-            placeholder: '追加后金额',
+            placeholder: this.$t('追加后金额'),
             hide: true,
             error: ''
           },
@@ -311,7 +311,7 @@ export default {
             type: 'text',
             value: '',
             name: 'has_staked',
-            placeholder: '已投票',
+            placeholder: this.$t('已投票'),
             error: ''
           },
 
@@ -319,14 +319,14 @@ export default {
             type: 'input',
             value: '',
             name: 'ammount',
-            placeholder: '赎回金额'
+            placeholder: this.$t('赎回金额')
           },
 
           {
             type: 'text',
             value: '',
             name: 'new_val',
-            placeholder: '修改后金额',
+            placeholder: this.$t('修改后金额'),
             hide: true,
             error: ''
           },
@@ -339,7 +339,7 @@ export default {
             type: 'text',
             value: '',
             name: 'has_staked',
-            placeholder: '已投票',
+            placeholder: this.$t('已投票'),
             error: ''
           },
 
@@ -347,7 +347,7 @@ export default {
             type: 'input',
             value: '',
             name: 'ammount',
-            placeholder: '转投金额（整数）'
+            placeholder: this.$t('转投金额（整数）')
           },
 
           {
@@ -355,14 +355,14 @@ export default {
             value: '',
             list: [],
             name: 'transfer_to_bp',
-            placeholder: '转投到节点'
+            placeholder: this.$t('选择转投节点')
           },
 
           {
             type: 'text',
             value: '',
             name: 'new_val',
-            placeholder: '修改后金额',
+            placeholder: this.$t('修改后金额'),
             hide: true,
             error: ''
           },
@@ -375,25 +375,25 @@ export default {
             type: 'text',
             value: '',
             name: 'has_staked',
-            placeholder: '已投票',
+            placeholder: this.$t('已投票'),
             error: ''
           },
           {
             type: 'select',
             value: '1',
             list: [
-              {value: '1', text: '余额中'},
-              {value: '2', text: '正在赎回中'}
+              {value: '1', text: this.$t('余额中')},
+              {value: '2', text: this.$t('正在赎回中')}
             ],
             name: 'stake_typ',
-            placeholder: '投票资产',
+            placeholder: this.$t('投票资产'),
             error: ''
           },
           {
             type: 'text',
             value: '',
             name: 'available',
-            placeholder: '可用余额',
+            placeholder: this.$t('可用余额'),
             error: '',
             hide: false,
           },
@@ -401,14 +401,14 @@ export default {
             type: 'text',
             value: '',
             name: 'unstaking',
-            placeholder: '正在赎回中',
+            placeholder: this.$t('正在赎回中'),
             error: '',
             hide: true
           },
           {
             type: 'input',
             value: 1,
-            placeholder: '预留手续费',
+            placeholder: this.$t('预留手续费'),
             name: 'claim_fee',
             hide: false
           },
@@ -416,13 +416,13 @@ export default {
             type: 'input',
             value: '',
             name: 'ammount',
-            placeholder: '追加金额'
+            placeholder: this.$t('追加金额')
           },
           {
             type: 'text',
             value: '',
             name: 'new_val',
-            placeholder: '修改后金额',
+            placeholder: this.$t('修改后金额'),
             hide: true,
             error: ''
           },
@@ -437,7 +437,7 @@ export default {
             value: '',
             list: [],
             name: 'transfer_from_bp',
-            placeholder: '已投定期'
+            placeholder: this.$t('已投定期')
           },
         ]
       },
@@ -449,14 +449,14 @@ export default {
             value: '',
             name: 'transfer_bp',
             hide: true,
-            placeholder: '转投节点'
+            placeholder: this.$t('转投节点')
           },
           {
             type: 'select_pane',
             value: '',
             list: [],
             name: 'transfer_from_bp',
-            placeholder: '转投记录',
+            placeholder: this.$t('转投记录'),
             hide_in_confirm: true
           },
           {
@@ -464,7 +464,7 @@ export default {
             value: '',
             list: [],
             name: 'transfer_to_bp',
-            placeholder: '转投到节点'
+            placeholder: this.$t('选择转投节点')
           }
         ]
       },
@@ -480,17 +480,17 @@ export default {
       fee_for_claim: 1,
 
       fix_fixed_list: [
-        {value: '0', text: '活期'},
-        {value: '1', text: '定期'}
+        {value: '0', text: this.$t('活期')},
+        {value: '1', text: this.$t('定期')}
       ],
 
       fixed_model: '0',
 
       fixed_time_list: [
-        {value: 'fvote.d', text: '720天', des: 'x40'},
-        {value: 'fvote.c', text: '360天', des: 'x20'},
-        {value: 'fvote.b', text: '180天', des: 'x10'},
-        {value: 'fvote.a', text: '90天', des: 'x5'},
+        {value: 'fvote.d', text: '720' + this.$t('天'), des: 'x40'},
+        {value: 'fvote.c', text: '360' + this.$t('天'), des: 'x20'},
+        {value: 'fvote.b', text: '180' + this.$t('天'), des: 'x10'},
+        {value: 'fvote.a', text: '90' + this.$t('天'), des: 'x5'},
       ],
 
       fixed_time: 'fvote.d',
@@ -517,9 +517,9 @@ export default {
 
       vote_action_config: {
         list: [
-          {value: '0', text: '增加投票'},
-          {value: '1', text: '赎回投票'},
-          {value: '2', text: '转投'},
+          {value: '0', text: this.$t('增加投票')},
+          {value: '1', text: this.$t('赎回投票')},
+          {value: '2', text: this.$t('转投')},
         ],
         value: '0'
       }
@@ -608,7 +608,7 @@ export default {
       let fixed_minus_list = this.fixed_minus_form.ipt_list.find(item => item.name == 'transfer_from_bp');
       fixed_minus_list.list.splice(0, fixed_minus_list.list.length, ...my_fixed_list);
       if(!my_fixed_list.length){
-        fixed_minus_list.error = '无到期可赎回投票';
+        fixed_minus_list.error = this.$t('无到期可赎回投票');
       }
 
       // update available for vote fix

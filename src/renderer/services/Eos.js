@@ -148,10 +148,17 @@ export const getLockedEosc = httpEndpoint => async (account_name) => {
       "lower_bound": account_name,
       // "table_key": account_name,
       "json":true,
-      "limit":1000
+      "limit": 1
     }
   )
-  .then(data => data.data)
+  .then(data => {
+    if(data.data.rows.find(item => item.owner == account_name)){
+      return data.data;
+    }else{
+      data.data.rows = [];
+      return data.data;
+    }
+  })
   .catch(err => null);
 
   if(!data) return data;
