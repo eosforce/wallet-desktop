@@ -1028,41 +1028,7 @@ export default {
         return ;
       }
 
-      // validate_fixed_transfer_form
-
       return ;
-
-      if(this.selectType == 2 && this.fixed_model == 0){
-        if(!this.bp_select_config.value) return ;
-      }
-
-      if(this.selectType == 2 && this.fixed_model == 1){
-        if(!this.fixed_select_config.value || !this.fixed_to_select_config.value) return;
-        this.showConfirm = true;
-        return ;
-      }
-
-      if (this.isValidAmount && this.newStakedAmount !== undefined) {
-        if (this.selectType === '0') {
-          const isOver = toNumber(this.staked) - toNumber(this.amount) - 0.1 - this.fee;
-          if (isOver < 0.00001) {
-            return this.$confirm(
-              this.$t('您的可用余额将降低到0.1以下，可能不够缴纳后续交易的手续费，请注意预留一部分的可用资金。'),
-              this.$t('提示'),
-              {
-                confirmButtonText: this.$t('继续发送'),
-                cancelButtonText: this.$t('取消发送'),
-                type: 'warning',
-              }
-            ).then(() => {
-              this.showConfirm = true;
-            }).catch(() => {
-              this.showConfirm = false;
-            });
-          }
-        }
-        this.showConfirm = true;
-      }
     },
     async submit() {
       this.submitting = true;
@@ -1177,6 +1143,7 @@ export default {
         .then(() => {
           this.getAccountInfo({ accountName: this.voter });
           this.close();
+          this.reload_fix_votes_table();
           this.submitting = false;
         });
 
@@ -1214,6 +1181,7 @@ export default {
         .then(() => {
           this.getAccountInfo({ accountName: this.voter });
           this.close();
+          this.reload_fix_votes_table();
           this.submitting = false;
         });
         
@@ -1253,6 +1221,7 @@ export default {
         .then(() => {
           this.getAccountInfo({ accountName: this.voter });
           this.close();
+          this.reload_fix_votes_table();
           this.submitting = false;
         });
 
@@ -1260,89 +1229,6 @@ export default {
         return ;
       }
 
-
-      if(this.selectType == 2 && this.fixed_model == 1){
-        let _form = {
-          voter: this.voter, 
-          fixed_key: this.fixed_select_config.value, 
-          bpname: this.fixed_to_select_config.value, 
-          pre_bp_name: this.bpname,
-          walletId: this.walletData.publicKey,
-          permission: this.permissions.filter(item => item.is_have)[0].name,
-          password: this.password,
-        }
-        let result = await this.REVOTEFIX(_form).catch(error => {
-          Message.error({
-            title: `${err.code ? `code: ${err.code}` : this.$t('转投失败')}`,
-            message: this.$t(err.message),
-          });
-          this.submitting = false;
-          throw error;
-        });
-
-        Message.success(this.$t('转投成功'));
-        this.reload_fix_votes_table();
-        this.close();
-        return ;
-      }
-      if(this.selectType == 2){
-        let _form = {
-          voter: this.voter,
-          frombp: this.bpname,
-          tobp: this.bp_select_config.value,
-          restake: this.amount,
-          walletId: this.walletData.publicKey,
-          permission: this.permissions.filter(item => item.is_have)[0].name,
-          password: this.password,
-        }
-        this.revote(_form)
-        .then(result => {
-          Message.success(this.$t('转投成功'));
-        })
-        .catch(err => {
-          Message.error({
-            title: `${err.code ? `code: ${err.code}` : this.$t('转投失败')}`,
-            message: this.$t(err.message),
-          });
-          this.submitting = false;
-          return Promise.reject(err);
-        })
-        .then(() => {
-          this.getAccountInfo({ accountName: this.voter });
-          this.close();
-        });
-        this.submitting = false;
-
-      }else{
-
-        this.vote({
-          amount: this.newStakedAmount,
-          amount: this.as_model_new_staked,
-          bpname: this.bpname,
-          password: this.password,
-          voter: this.voter,
-          fixed_model: this.fixed_model,
-          fixed_time: this.fixed_time,
-          walletId: this.walletData.publicKey,
-          permission: this.permissions.filter(item => item.is_have)[0].name
-        })
-          .then(result => {
-            Message.success(this.$t('投票成功'));
-          })
-          .catch(err => {
-            Message.error({
-              title: `${err.code ? `code: ${err.code}` : this.$t('投票失败')}`,
-              message: this.$t(err.message),
-            });
-            this.submitting = false;
-            return Promise.reject(err);
-          })
-          .then(() => {
-            this.getAccountInfo({ accountName: this.voter });
-            this.close();
-          });
-
-      }
 
     },
     toggle(key, val) {

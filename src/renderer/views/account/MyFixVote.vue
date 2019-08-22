@@ -27,7 +27,7 @@
           <td>
             <a href="" class="button is-small is-outlined" v-if="row.is_withdraw ">撤回</a>
             <el-tooltip :content="$t('正在进行中，无法撤回')" effect="dark" placement="top-end">
-              <a href="" class="button is-small is-outlined grey-button" v-if="!row.is_withdraw ">撤回</a>
+              <span href="" class="button is-small is-outlined grey-button" v-if="!row.is_withdraw ">撤回</span>
             </el-tooltip>
           </td>
         </tr>
