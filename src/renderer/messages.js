@@ -11,7 +11,7 @@ export default {
     '当前活期投票金额': 'Current Voting Amount',
     '当前定期投票金额': 'Current Fixed Voting Amount',
     '预留手续费': 'Reserved Fee',
-    '票权总数': 'Total Voting Weight,',
+    '票权总数': 'Total Voting Weight',
     '投票资产': 'Vote From',
     '天': 'Days',
     '余额中': 'Available',
