@@ -91,7 +91,9 @@
                     </li>
                     <li class="account_detail_item min_w_200" v-if="HAS_CLAIM">
                         <span>{{$t('待领分红总额')}}:</span>
-                        <span class="cl" v-if="!on_load_info">{{ account.info.rewardTotal * 1 > 0 ? formatNumber(account.info.rewardTotal, {p: 4}) : 0 }}</span>
+                        <span class="cl" v-if="!on_load_info">
+                          {{ total_reward | formatNumber({p: 4}) }}
+                        </span>
                         <div class="load_circle account_detail_loader" v-if="on_load_info"></div>
                     </li>
                     <li v-if="bpInfo">
@@ -222,6 +224,11 @@ export default {
         };
     },
     computed: {
+        total_reward () {
+          let fix_reward = this.account.info.rewardTotal ? toBigNumber( this.account.info.rewardTotal ) : toBigNumber(0);
+          let fixed_reward = this.account.fix_votes_table.fixed_total_reward ? toBigNumber( this.account.fix_votes_table.fixed_total_reward ) : toBigNumber(0);
+          return fix_reward.plus( fixed_reward );
+        },
         bpInfo () {
             return this.account.info.bpInfo;
         },

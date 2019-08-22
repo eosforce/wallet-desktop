@@ -65,6 +65,7 @@ const initState = {
       page: 0,
       on_load: true,
       total_vote: toBigNumber(0),
+      fixed_total_reward: toBigNumber(0),
       more: true
     },
     // query_fix_votes
@@ -256,17 +257,23 @@ const mutations = {
         state.fix_votes_table.more = fix_votes_data.more;
 
         let total_vote = toBigNumber(0);
-
         state.fix_votes_table.rows.forEach(row => {
           total_vote = total_vote.plus( toBigNumber( row.vote.split(' ')[0] ) )
         });
 
+        let fixed_total_reward = toBigNumber(0);
+        state.fix_votes_table.rows.forEach(row => {
+          fixed_total_reward = fixed_total_reward.plus( row.reward );
+        });
+
         state.fix_votes_table.total_vote = total_vote;
+        state.fix_votes_table.fixed_total_reward = fixed_total_reward;
     },
     clear_fix_votes_table (state) {
         state.fix_votes_table.rows.splice(0, state.fix_votes_table.rows.length);
         state.fix_votes_table.more = true;
         state.fix_votes_table.total_vote = toBigNumber(0);
+        state.fix_votes_table.fixed_total_reward = toBigNumber(0);
     },
     update_on_load_by_key (state, {key, on_load = true, account_name}) {
         if(account_name != state.pre_load_key) return ;
@@ -448,6 +455,8 @@ const actions = {
 
         calcute_fixed_reward(all_fix_votes, current_node_info.head_block_num, state.bpsTable);
 
+        // fixed reward total
+
         commit('set_fix_votes_table', {fix_votes_data: all_fix_votes, account_name});
         
         load_params.on_load = false;
@@ -496,9 +505,11 @@ const actions = {
             block_info,
             getters['vote_num_in']
         );
+
         if (accountName != state.pre_load_key) {
             return;
         }
+
         commit(Mutations.SET_VERSION, { version });
         commit(Mutations.SET_BPS_TABLE, { bpsTable });
         commit('finish_on_load_bps_table');
@@ -506,9 +517,11 @@ const actions = {
         commit('set_unstaking_total', unstakingTotal);
         commit('set_ramstaked_total', ramstakedTotal);
         commit('set_ramunstaking_total', ramunstakingTotal);
+
         commit('set_reward_total', rewardTotal);
 
         dispatch('check_total_and_set_asset_total');
+
         let ps = [];
         
         ps.push(getAvailable(node_url)(accountName, getters['CORE_COIN_CONTRACT'])
