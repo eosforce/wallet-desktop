@@ -1,11 +1,13 @@
-osx_image: xcode8.3
+osx_image: xcode9.4
 sudo: required
 dist: trusty
-language: c
+language: node_js
+node_js: "12"
 matrix:
   include:
   - os: osx
   - os: linux
+  - os: windows
     env: CC=clang CXX=clang++ npm_config_clang=1
     compiler: clang
 addons:
@@ -18,8 +20,9 @@ before_install:
   "$TRAVIS_OS_NAME" == "linux" ] && echo "linux" || echo "darwin")-amd64-1.2.1.tar.gz
   | tar -xz -C /tmp/git-lfs --strip-components 1 && /tmp/git-lfs/git-lfs pull
 - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install --no-install-recommends -y icnsutils graphicsmagick xz-utils; fi
+env: 
+- YARN_GPG=no
 install:
-- nvm install 7
 - curl -o- -L https://yarnpkg.com/install.sh | bash
 - source ~/.bashrc
 - npm install -g xvfb-maybe
