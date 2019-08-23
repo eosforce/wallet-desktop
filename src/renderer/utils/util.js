@@ -562,7 +562,6 @@ export const calcute_fixed_reward = (data, head_block_num, bpsTable) => {
     const reward = calcReward([myVoteage, bp_item.bpVoteage, bp_item.rewards_pool]);
     row.reward = reward;
     row.rewards_pool = bp_item.rewards_pool;
-    console.log(`%c ${reward.toString()}, ${ typeof reward }, ${row.bpname}, ${row.key}`, 'color: green;')
     if(row.latest_block_num >= 0){
       let finish_time = new Date( row.latest_block_num * 3 * 1000 + new Date().getTime() );
       let year    = complete_num_with_zero(finish_time.getFullYear()),

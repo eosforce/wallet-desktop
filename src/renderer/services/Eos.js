@@ -607,9 +607,9 @@ export const getAccountInfo = httpEndpoint => async ({accountName, current_node,
 
 };
 
-const filter_lib_and_auth = (wallet_symbol = 'EOS', name, permission = 'active') => {
+const filter_lib_and_auth = (wallet_symbol = 'EOS', name, permission = 'owner') => {
   let EOS = wallet_symbol == 'EOS' ? Eos : EOS_ML;
-  let auth = wallet_symbol == 'EOS' ? {actor: name, permission} : {authorization: `${name}@${permission}`};
+  let auth = {authorization: `${name}@${permission}`};
   return {EOS, auth}
 }
 
@@ -792,6 +792,7 @@ export const transfer_account = config => async ({name, owner_public_key, active
   };
   let {EOS, auth} = filter_lib_and_auth(wallet_symbol, name, 'owner');
   let token = await EOS(config).contract('eosio');
+  console.log(`%c ${ JSON.stringify(auth) }`, 'color: orange')
   let action_res = await token.transaction('eosio', tr => {
     tr.updateauth(name, 'active', 'owner', active_public_key, auth);
     tr.updateauth(name, 'owner', '', owner_public_key, auth);
