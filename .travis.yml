@@ -27,7 +27,7 @@ install:
 - npm install -g node-hid
 - npm install -g xvfb-maybe
 - npm install -g electron-builder
-- yarn
+- npm
 script:
 - npm run build
 branches:
