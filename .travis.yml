@@ -5,7 +5,6 @@ language: node_js
 node_js: "12"
 matrix:
   include:
-  - os: windows
   - os: linux
   - os: osx
     env: CC=clang CXX=clang++ npm_config_clang=1
@@ -27,7 +26,7 @@ install:
 - npm install -g node-hid
 - npm install -g xvfb-maybe
 - npm install -g electron-builder
-- npm
+- npm install
 script:
 - npm run build
 branches:
