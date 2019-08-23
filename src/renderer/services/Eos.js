@@ -1,4 +1,3 @@
-import '@/services/FORCEIO'
 import axios from 'axios'
 import { NODE_API_URL } from '@/constants/config.constants';
 import Store from '@/store';
@@ -608,9 +607,8 @@ export const getAccountInfo = httpEndpoint => async ({accountName, current_node,
 };
 
 const filter_lib_and_auth = (wallet_symbol = 'EOS', name, permission = 'owner') => {
-  let EOS = wallet_symbol == 'EOS' ? Eos : EOS_ML;
   let auth = {authorization: `${name}@${permission}`};
-  return {EOS, auth}
+  return {EOS: Eos, auth}
 }
 
 // 创建用户
@@ -619,8 +617,7 @@ export const newAccount = config => async ({creator, accountName, OwnerKey, Acti
     actor: creator,
     permission
   }
-  let EOS = wallet_symbol == 'EOS' ? Eos : EOS_ML;
-  let result = await EOS(config).newaccount(creator, accountName, OwnerKey, ActiveKey, auth).catch(err => {
+  let result = await Eos(config).newaccount(creator, accountName, OwnerKey, ActiveKey, auth).catch(err => {
       return handleApiError(err);
     });
   return result;
