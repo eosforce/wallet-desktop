@@ -40,8 +40,8 @@ export const getNodeList = async () => {
     let data = await res.json();
     //trans_main
     // data.nodes.forEach(item => {
-    //   item.node_addr = '192.168.1.139';
-    //   item.port_http = '8001';
+    //   item.node_addr = '192.168.1.172';
+    //   item.port_http = '8080';
     //   item.port_ssl = '';
     // });
     return data;
@@ -170,16 +170,16 @@ export const getLockedEosc = httpEndpoint => async (account_name) => {
 
 // 查询账号是否存在
 export const queryAccount = httpEndpoint => accountName => {
+  let params = {
+    scope: 'eosio',
+    code: 'eosio',
+    table: 'accounts',
+    lower_bound: accountName,
+    limit: 10000,
+    json: true,
+  }
   return Eos({ httpEndpoint })
-    .getTableRows({
-      scope: 'eosio',
-      code: 'eosio',
-      table: 'accounts',
-      lower_bound: accountName,
-      // table_key: accountName,
-      limit: 10000,
-      json: true,
-    })
+    .getTableRows(params)
     .then(result => {
       const account = result.rows.find(acc => acc.name === accountName);
       if (account) {

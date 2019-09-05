@@ -79,7 +79,6 @@ export default {
   },
   methods: {
     handle (event, row) {
-      console.error('change');
       this.$emit('form_changed', '');
     }
   },
