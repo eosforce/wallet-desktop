@@ -40,7 +40,7 @@
                 <ul class="account_info_box">
                     <li class="account_detail_item min_w_200">
                         <span>{{$t('资产总额')}}:</span>
-                        <span class="cl" v-if="!on_load_info">{{(account.info.assetTotal) | formatNumber({p: 4})}}</span>
+                        <span class="cl" v-if="!on_load_info">{{total_assets | formatNumber({p: 4})}}</span>
                         <div class="load_circle account_detail_loader" v-if="on_load_info"></div>
                     </li>
                     <li class="account_detail_item min_w_200">
@@ -236,13 +236,16 @@ export default {
           return this.app.currentNodeInfo || {};
         },
         on_load_info () {
-            return this.account.on_load_info;
+            return this.account.on_load_info && this.account.fix_votes_table.on_load;
         },
         baseInfo () {
             return this.account.info.baseInfo || { permissions: [] };
         },
         total_vote () {
           return toBigNumber(this.account.info.stakedTotal).plus( this.account.fix_votes_table.total_vote )
+        },
+        total_assets () {
+          return toBigNumber(this.account.info.assetTotal).plus( this.account.fix_votes_table.total_vote );
         },
         permissions() {
             let res = [];

@@ -41,7 +41,9 @@ export const getNodeList = async () => {
     //trans_main
     // data.nodes.forEach(item => {
     //   item.node_addr = '192.168.1.172';
-    //   item.port_http = '8080';
+    //   // item.node_addr = '192.168.1.100';
+    //   item.port_http = '8001';
+    //   // item.port_http = '8001';
     //   item.port_ssl = '';
     // });
     return data;
@@ -194,7 +196,7 @@ export const queryAccount = httpEndpoint => accountName => {
 export const query_fix_votes = httpEndpoint => async (accountName, limit = 1000, lower_bound = 0) => {
   let params = {
       json:true,
-      scope: accountName,
+      scope: string_to_name(accountName),
       code: 'eosio',
       table: 'fixvotes',
       limit,
@@ -252,7 +254,7 @@ const filter_main_token_by_way = (data, accountName, core_coin_contract = 'eosio
 // 获取指定账户可用余额
 export const getAvailable = httpEndpoint => async (accountName, core_coin_contract = 'eosio') => {
   let params = get_filter_available_condition(accountName, core_coin_contract);
-
+  params.lower_bound = string_to_name(accountName);
   let data = await axios.post(
     httpEndpoint + API.get_table_rows, 
     params
