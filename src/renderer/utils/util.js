@@ -462,7 +462,7 @@ const char_to_symbol = (c) => {
          res = (code_c - code_1) + 1;
     return res
 }
-var get_max_pos = (ten_num) => {
+const get_max_pos = (ten_num) => {
     let p_n = new Array(64), res = -1;
     for (let i of p_n.keys()) {
         p_n[i] = 2 ** i;
@@ -475,7 +475,7 @@ var get_max_pos = (ten_num) => {
     }
     return res;
 }
-var ten_to_bit = (ten_num) => {
+const ten_to_bit = (ten_num) => {
     let p_n = new Array(64), res = new Array(64);
     for (let i of p_n.keys()) {
         p_n[i] = 2 ** i;
@@ -528,9 +528,6 @@ export const string_to_name = ( _str ) => {
        pos = 64 - 5 * (i + 1) - 1;
        let moved_bites = move_bite(symbol, pos);
        or_bits(name, moved_bites);
-   }
-   if (i == 12){
-      or_bits(name, ten_to_bit((char_to_symbol(_str[12]) & 0x1f )));
    }
    return bits_to_ten(name).toString();
 }
