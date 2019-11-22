@@ -11,7 +11,7 @@
           <th>{{$t('已产生分红')}}</th>
           <th>{{$t('预计到期时间')}}</th>
           <th>{{$t('状态')}}</th>
-          <th>{{$t('操作')}}</th>
+          <!-- <th>{{$t('操作')}}</th> -->
         </tr>
       </thead>
       <tbody>
@@ -24,12 +24,12 @@
           <td>{{row.reward | formatNumber({p: 4})}}</td>
           <td>{{ row.finish_time }}</td>
           <td>{{ row.is_withdraw ? '已完成' : '进行中' }}</td>
-          <td>
-            <a href="" class="button is-small is-outlined" v-if="row.is_withdraw ">撤回</a>
+          <!-- <td>
+            <a href="" class="button is-small is-outlined" v-if="!row.finish_time ">撤回</a>
             <el-tooltip :content="$t('正在进行中，无法撤回')" effect="dark" placement="top-end">
-              <span href="" class="button is-small is-outlined grey-button" v-if="!row.is_withdraw ">撤回</span>
+              <span href="" class="button is-small is-outlined grey-button" v-if="row.finish_time ">撤回</span>
             </el-tooltip>
-          </td>
+          </td> -->
         </tr>
       </tbody>
     </table>
@@ -100,7 +100,6 @@ export default {
         const reward = calcReward([myVoteage, bp_item.bpVoteage, bp_item.rewards_pool]);
         row.reward = reward;
         row.rewards_pool = bp_item.rewards_pool;
-
         if(row.latest_block_num >= 0){
           let finish_time = new Date( row.latest_block_num * 3 * 1000 + new Date().getTime() );
           let year    = complete_num_with_zero(finish_time.getFullYear()),
@@ -113,7 +112,7 @@ export default {
           row.finish_time = `${ year }-${ month }-${ date } ${ hours }:${ minutes }:${ seconds }`;
 
         }else{
-          row.finish_time = -1
+          row.finish_time = 0;
         }
 
       });
@@ -144,7 +143,8 @@ export default {
     },
     ...mapActions({
       QUERY_FIX_VOTES_TABLE: Actions.QUERY_FIX_VOTES_TABLE,
-      reload_fix_votes_table: 'reload_fix_votes_table'
+      reload_fix_votes_table: 'reload_fix_votes_table',
+      OUTFIXVOTE: Actions.OUTFIXVOTE
     }),
   },
 };

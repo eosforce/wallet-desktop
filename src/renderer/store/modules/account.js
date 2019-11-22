@@ -216,6 +216,7 @@ const mutations = {
         state.on_load_bps_table = false;
     },
     start_on_load_actions(state, {accountName, from_top = false}) {
+        console.error(accountName);
         if (accountName == state.pre_load_action_key && !from_top) return;
         state.on_load_actions = true;
         state.pre_load_action_key = accountName;
@@ -286,7 +287,7 @@ const mutations = {
         state.info.assetTotal = 0;
         state.info.baseInfo = {};
         state.info.locked_eosc = 0;
-        state.pre_load_action_key = '';
+        // state.pre_load_action_key = '';
         state.pre_load_bps_key = '';
         state.pre_load_token_key = '';
         state.votesTable = [];
