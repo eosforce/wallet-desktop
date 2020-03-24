@@ -25,7 +25,7 @@
           </td>
         </tr>
         <tr v-for="bp in table" :key="bp.name" :class="{'is-vote': bp.hasVote}" v-if="!on_load_bps_table">
-          <td class="t-left">
+          <td class="t-left first_td">
             <el-tooltip :content="$t('正在出块')" placement="left" v-show="app.currentNodeInfo.head_block_producer === bp.name">
               <img src="@/assets/loader/producing.svg" width="20">
             </el-tooltip>

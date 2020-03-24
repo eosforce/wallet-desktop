@@ -320,6 +320,12 @@ a:hover {
   // width: 5%;
   // padding: 0.5em 0.25em;
 }
+.table thead tr:hover{
+  background-color: rgba(0, 0, 0, 0);
+}
+.table tr:hover{
+  background-color: #eee;
+}
 
 .bplist-box .table td.t-center,
 .bplist-box .table th.t-center {
@@ -329,6 +335,7 @@ a:hover {
 .bplist-box .table td.t-left,
 .bplist-box .table th.t-left {
   text-align: left;
+  padding-left: 4px;
 }
 
 .bplist-box .table td,

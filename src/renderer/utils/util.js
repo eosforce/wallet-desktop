@@ -208,7 +208,7 @@ export const genTrConvertFunc = (trName, last_irreversible_block_num) => {
                 account: act.account,
                 seq: tr.global_action_seq,
                 time: tr.block_time,
-                name: '创建用户',
+                name: act.name,
                 from: act.authorization && act.authorization[0] && act.authorization[0].actor,
                 status: checkStatus(tr.status),
                 block_num: tr.block_num,
@@ -222,7 +222,7 @@ export const genTrConvertFunc = (trName, last_irreversible_block_num) => {
                 account: act.account,
                 seq: tr.global_action_seq,
                 time: tr.block_time,
-                name: '投票',
+                name: act.name,
                 from: act.data.voter,
                 to: act.data.bpname,
                 change: act.data.stake,
@@ -238,7 +238,7 @@ export const genTrConvertFunc = (trName, last_irreversible_block_num) => {
                 account: act.account,
                 seq: tr.global_action_seq,
                 time: tr.block_time,
-                name: '转账',
+                name: act.name,
                 from: act.data.from,
                 to: act.data.to,
                 change: act.data.quantity,
@@ -255,7 +255,7 @@ export const genTrConvertFunc = (trName, last_irreversible_block_num) => {
                 account: act.account,
                 seq: tr.global_action_seq,
                 time: tr.block_time,
-                name: '提取分红',
+                name: act.name,
                 from: act.data.voter,
                 to: act.data.bpname,
                 status: checkStatus(tr.status),
@@ -270,7 +270,7 @@ export const genTrConvertFunc = (trName, last_irreversible_block_num) => {
                 account: act.account,
                 seq: tr.global_action_seq,
                 time: tr.block_time,
-                name: '解冻',
+                name: act.name,
                 from: act.data.voter,
                 to: act.data.bpname,
                 status: checkStatus(tr.status),
@@ -285,7 +285,7 @@ export const genTrConvertFunc = (trName, last_irreversible_block_num) => {
                 account: act.account,
                 seq: tr.global_action_seq,
                 time: tr.block_time,
-                name: '权限转让',
+                name: act.name,
                 from: act.authorization && act.authorization[0] && act.authorization[0].actor,
                 to: act.data.bpname,
                 status: checkStatus(tr.status),
@@ -406,7 +406,6 @@ export const split_long_num = (num) => {
     return n_arr.reverse().join('') + (float_num ? '.' + float_num : '');
 }
 
-// eos 格式 转化为 eosc
 /*
   params:
     amount_with_symblo : str or number

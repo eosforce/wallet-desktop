@@ -46,7 +46,7 @@ export default {
                 { tabName: this.$t('资产说明'), tabKey: 'RateInstructions', img1: 'assets.png', img2: 'assets_w.png' },
                 { tabName: this.$t('原力生态'), tabKey: '_', img1: 'assets.png', img2: 'assets_w.png', is_url: true, url: 'https://eosforce.io' },
             ],
-            tab_name_keys: ['超级节点', '我的投票', '内存租赁','我的 Token', '交易记录', '资产说明', '原力生态'],
+            tab_name_keys: ['超级节点', '我的投票', '定期投票', '内存租赁', '我的 Token', '交易记录', '资产说明', '原力生态'],
             super_name: this.$t('超级节点'),
             spin: false,
             currentTab: 'BpList', // currentTab 用于标识当前触发的子组件,

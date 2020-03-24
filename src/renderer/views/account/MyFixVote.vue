@@ -23,7 +23,7 @@
           <td>{{ row.vote.split(' ')[0] }}</td>
           <td>{{row.reward | formatNumber({p: 4})}}</td>
           <td>{{ row.finish_time }}</td>
-          <td>{{ row.is_withdraw ? '已完成' : '进行中' }}</td>
+          <td>{{ row.is_withdraw ? $t('已完成') : $t('进行中') }}</td>
           <!-- <td>
             <a href="" class="button is-small is-outlined" v-if="!row.finish_time ">撤回</a>
             <el-tooltip :content="$t('正在进行中，无法撤回')" effect="dark" placement="top-end">

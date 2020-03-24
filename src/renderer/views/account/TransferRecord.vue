@@ -40,9 +40,15 @@
               {{record.memo}}
           </td>
           <td>
-            <div v-if="record.status == 'finished'" class="record_status">已完成</div>
-            <div v-if="record.status == 'on_process'" class="record_status">确认区块中</div>
-            <div v-if="record.status == 'unfinished'" class="record_status">交易失败</div>
+            <div v-if="record.status == 'finished'" class="record_status">
+              {{ $t('已完成') }}
+            </div>
+            <div v-if="record.status == 'on_process'" class="record_status">
+              {{ $t('确认区块中') }}
+            </div>
+            <div v-if="record.status == 'unfinished'" class="record_status">
+              {{ $t('交易失败') }}
+            </div>
           </td>
         </tr>
         <tr v-if="!on_load_actions && !recordList.length">
