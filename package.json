@@ -1,8 +1,8 @@
 {
   "name": "eosforce",
-  "version": "1.1.258",
+  "version": "1.1.257",
   "author": "",
-  "description": "eos wallet",
+  "description": "eosc wallet",
   "main": "./dist/electron/main.js",
   "scripts": {
     "build": "node .electron-vue/build.js && electron-builder",
