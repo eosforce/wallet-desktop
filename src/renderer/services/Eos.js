@@ -663,13 +663,12 @@ export const outfixvote = config => async ({voter, fixed_key, bpname, permission
   let {EOS, auth} = filter_lib_and_auth(wallet_symbol, voter, permission);
   let token = await EOS(config).contract('eosio');
   let action_res = await token.transaction('eosio', tr => {
-    tr.claim(voter, bpname, auth);
     tr.outfixvote(voter, fixed_key, auth);
+    tr.claim(voter, bpname, auth);
   })
   .catch(err => {
     return handleApiError(err);
   });
-
   return action_res;
 }
 

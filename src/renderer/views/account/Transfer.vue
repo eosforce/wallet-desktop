@@ -110,7 +110,8 @@ export default {
       return this.$route.params.accountName;
     },
     tokenSymbol() {
-      return this.$route.params.symbol || this.wallet_symbol;
+      let symbol = this.$route.params.symbol || this.wallet_symbol
+      return symbol.toUpperCase() == 'EOS' ? 'EOSC' : symbol
     },
     precision() {
       return this.$route.params.precision !== undefined ? this.$route.params.precision : '4';

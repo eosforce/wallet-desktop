@@ -387,7 +387,8 @@ export default {
             ],
             name: 'stake_typ',
             placeholder: this.$t('投票资产'),
-            error: ''
+            error: '',
+            hide: true
           },
           {
             type: 'text',
@@ -884,14 +885,14 @@ export default {
 
 
       if(toNumber(ammount.value) > toNumber(has_staked.value)){
-        ammount.error = '超过可转投余额';
+        ammount.error = this.$t('超过可转投余额');
         new_val.hide = true;
         return false;
       }
       
 
       if(!transfer_to_bp.value){
-        transfer_to_bp.error = '未选择节点'
+        transfer_to_bp.error = this.$t('未选择节点')
         return false;
       }
 
@@ -947,7 +948,7 @@ export default {
       let transfer_from_bp = this.fixed_minus_form.ipt_list.find(i => i.name == 'transfer_from_bp');
 
       if(!transfer_from_bp.value){
-        transfer_from_bp.error = '无到期可赎回投票';
+        transfer_from_bp.error = this.$transfer_from_bp('无到期可赎回投票');
         return false;
       }
 
@@ -961,7 +962,7 @@ export default {
 
       transfer_from_bp.error = '';
       if(transfer_from_bp.value == ''){
-        transfer_from_bp.error = '未选择投票';
+        transfer_from_bp.error = this.$transfer_from_bp('未选择投票');
         return false;
       }
 
@@ -970,7 +971,7 @@ export default {
 
       transfer_to_bp.error = '';
       if(transfer_to_bp.value == ''){
-        transfer_to_bp.error = '未选择节点';
+        transfer_to_bp.error = this.$transfer_from_bp('未选择节点');
         return false;
       }
 

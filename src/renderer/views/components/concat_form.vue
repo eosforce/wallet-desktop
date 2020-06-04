@@ -3,7 +3,7 @@
 
     <template v-for="row in list">
 
-      <div class="field_item" v-if="row.type == 'input' && !row.hide ">
+      <div class="field_item" :class="{'hide': row.hide}" v-if="row.type == 'input' && !row.hide ">
         <div class="static-label form_label_item">
           <span>{{$t(row.placeholder)}}</span>
           <span class="" style="margin-top: 10px;">
@@ -16,7 +16,7 @@
         </div>
       </div>
 
-      <div class="field_item" v-if="row.type == 'select_pane'">
+      <div class="field_item" :class="{'hide': row.hide}" v-if="row.type == 'select_pane'">
         <div class="static-label form_label_item">
           <span>{{$t(row.placeholder)}}</span>
           <span class="control">
@@ -28,7 +28,7 @@
         </div>
       </div>
 
-      <div class="field_item" v-if="row.type == 'text' && !row.hide ">
+      <div class="field_item" :class="{'hide': row.hide}" v-if="row.type == 'text' && !row.hide ">
         <div class="static-label form_label_item">
           <span>{{$t(row.placeholder)}}</span>
           <span class="static-text">
@@ -50,7 +50,7 @@
         </div>
       </div> -->
 
-      <div class="form_label_item static-label"  v-if="row.type == 'select'">
+      <div class="form_label_item static-label" :class="{'hide': row.hide}"  v-if="row.type == 'select'">
         <span class="white_ft">{{$t(row.placeholder)}}</span>
         <Select v-bind:select_list='row.list' v-model="row.value" v-on:input="handle"></Select>
       </div>
@@ -88,3 +88,8 @@ export default {
   }
 }
 </script>
+<style scoped="">
+.hide {
+  display: none;
+}
+</style>
