@@ -2,7 +2,7 @@
   <div class="modal is-active">
     <div class="cover-page">
       <div class="cover-page__content">
-        <div class="cover-page__title">{{ tokenSymbol }} {{$t('转账')}}</div>
+        <div class="cover-page__title">{{ symblo_change(tokenSymbol) }} {{$t('转账')}}</div>
         <form class="cover-page__form" @submit.prevent="confirmInfo()">
           <div class="field">
             <label class="label">
@@ -111,7 +111,7 @@ export default {
     },
     tokenSymbol() {
       let symbol = this.$route.params.symbol || this.wallet_symbol
-      return symbol.toUpperCase() == 'EOS' ? 'EOSC' : symbol
+      return symbol
     },
     precision() {
       return this.$route.params.precision !== undefined ? this.$route.params.precision : '4';
