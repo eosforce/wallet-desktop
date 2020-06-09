@@ -269,6 +269,17 @@ export default {
             placeholder: this.$t('可用余额'),
             error: ''
           },
+
+          {
+            type: 'text',
+            value: '0.0500 EOSC',
+            name: 'Fee',
+            decimals: 4,
+            placeholder: this.$t('手续费').split('').map((v, i) => {
+              if(i == 0) return v.toUpperCase()
+              return v
+            }).join('')
+          },
           
           {
             type: 'input',
@@ -297,17 +308,6 @@ export default {
 
           {
             type: 'text',
-            value: '0.0500 EOSC',
-            name: 'Fee',
-            decimals: 4,
-            placeholder: this.$t('手续费').split('').map((v, i) => {
-              if(i == 0) return v.toUpperCase()
-              return v
-            }).join('')
-          },
-
-          {
-            type: 'text',
             value: '',
             name: 'new_val',
             placeholder: this.$t('追加后金额'),
@@ -328,14 +328,6 @@ export default {
           },
 
           {
-            type: 'input',
-            value: '',
-            name: 'ammount',
-            placeholder: this.$t('赎回金额'),
-            placeholder_info: `${ this.$t('必须为整数') }`,
-          },
-
-          {
             type: 'text',
             value: '0.0500 EOSC',
             name: 'Fee',
@@ -344,6 +336,14 @@ export default {
               if(i == 0) return v.toUpperCase()
               return v
             }).join('')
+          },
+
+          {
+            type: 'input',
+            value: '',
+            name: 'ammount',
+            placeholder: this.$t('赎回金额'),
+            placeholder_info: `${ this.$t('必须为整数') }`,
           },
 
           {
