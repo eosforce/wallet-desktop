@@ -5,7 +5,10 @@
 
       <div class="field_item" :class="{'hide': row.hide}" v-if="row.type == 'input' && !row.hide ">
         <div class="static-label form_label_item">
-          <span>{{$t(row.placeholder)}}</span>
+          <span>
+            {{ $t(row.placeholder) }}
+            <span class="info_label_tag">{{ $t(row.placeholder_info) }}</span>
+          </span>
           <span class="" style="margin-top: 10px;">
             <input v-model="row.value" v-on:input="handle" min="0"  class="input" type="number" step="1"  required />
             <p class="help is-danger" v-if="row.error">
@@ -18,7 +21,10 @@
 
       <div class="field_item" :class="{'hide': row.hide}" v-if="row.type == 'select_pane'">
         <div class="static-label form_label_item">
-          <span>{{$t(row.placeholder)}}</span>
+          <span>
+            {{ $t(row.placeholder) }}
+            <span class="info_label_tag">{{ $t(row.placeholder_info) }}</span>
+          </span>
           <span class="control">
             <select_pane v-model:value="row.value" v-on:input="handle" v-bind:list="row.list"></select_pane>
             <p class="help is-danger" v-if="row.error">
@@ -30,10 +36,13 @@
 
       <div class="field_item" :class="{'hide': row.hide}" v-if="row.type == 'text' && !row.hide ">
         <div class="static-label form_label_item">
-          <span>{{$t(row.placeholder)}}</span>
+          <span>
+            {{ $t(row.placeholder) }}
+            <span class="info_label_tag">{{ $t(row.placeholder_info) }}</span>
+          </span>
           <span class="static-text">
             <input type="hidden" v-model="row.value" v-on:input="handle" />
-            {{ row.value | formatNumber({p: 0, showSymbol: true, symbol: 'EOSC'}) }}
+            {{ row.value | formatNumber({p: row.decimals | 0, showSymbol: true, symbol: 'EOSC'}) }}
             <p class="help is-danger" v-if="row.error">
               {{ row.error }}
             </p>
@@ -91,5 +100,10 @@ export default {
 <style scoped="">
 .hide {
   display: none;
+}
+.info_label_tag{
+  color: #737273;
+  position: relative;
+  font-size: 12px;
 }
 </style>

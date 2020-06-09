@@ -33,7 +33,7 @@
       </div>
       <div class="row">
         <div class="row__title">{{$t('手续费')}}</div>
-        <div class="row__content">0.03 EOSC</div>
+        <div class="row__content">1.0000 EOSC</div>
       </div>
       <div class="row">
         <div class="row__title">{{$t('输入密码')}}</div>

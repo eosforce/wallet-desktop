@@ -282,7 +282,8 @@ export default {
             type: 'input',
             value: '',
             name: 'ammount',
-            placeholder: this.$t('追加金额'),
+            placeholder: `${ this.$t('追加金额') }`,
+            placeholder_info: `${ this.$t('必须为整数') }`,
             error: ''
           },
 
@@ -292,6 +293,17 @@ export default {
             name: 'has_staked',
             placeholder: this.$t('已投票'),
             error: ''
+          },
+
+          {
+            type: 'text',
+            value: '0.0500 EOSC',
+            name: 'Fee',
+            decimals: 4,
+            placeholder: this.$t('手续费').split('').map((v, i) => {
+              if(i == 0) return v.toUpperCase()
+              return v
+            }).join('')
           },
 
           {
@@ -319,7 +331,19 @@ export default {
             type: 'input',
             value: '',
             name: 'ammount',
-            placeholder: this.$t('赎回金额')
+            placeholder: this.$t('赎回金额'),
+            placeholder_info: `${ this.$t('必须为整数') }`,
+          },
+
+          {
+            type: 'text',
+            value: '0.0500 EOSC',
+            name: 'Fee',
+            decimals: 4,
+            placeholder: this.$t('手续费').split('').map((v, i) => {
+              if(i == 0) return v.toUpperCase()
+              return v
+            }).join('')
           },
 
           {
@@ -344,10 +368,22 @@ export default {
           },
 
           {
+            type: 'text',
+            value: '0.2000 EOSC',
+            name: 'Fee',
+            decimals: 4,
+            placeholder: this.$t('手续费').split('').map((v, i) => {
+              if(i == 0) return v.toUpperCase()
+              return v
+            }).join('')
+          },
+
+          {
             type: 'input',
             value: '',
             name: 'ammount',
-            placeholder: this.$t('转投金额（整数）')
+            placeholder: this.$t('转投金额'),
+            placeholder_info: `${ this.$t('必须为整数') }`,
           },
 
           {
@@ -407,6 +443,16 @@ export default {
             hide: true
           },
           {
+            type: 'text',
+            value: '0.5000 EOSC',
+            name: 'Fee',
+            decimals: 4,
+            placeholder: this.$t('手续费').split('').map((v, i) => {
+              if(i == 0) return v.toUpperCase()
+              return v
+            }).join('')
+          },
+          {
             type: 'input',
             value: 1,
             placeholder: this.$t('预留手续费'),
@@ -434,6 +480,17 @@ export default {
       fixed_minus_form: {
         ipt_list: [
           {
+            type: 'text',
+            value: '1.7500 EOSC',
+            name: 'Fee',
+            decimals: 4,
+            placeholder_info: `${ this.$t('操作包含领取分红，赎回投票两步操作') }`,
+            placeholder: this.$t('手续费').split('').map((v, i) => {
+              if(i == 0) return v.toUpperCase()
+              return v
+            }).join('')
+          },
+          {
             type: 'select_pane',
             value: '',
             list: [],
@@ -445,6 +502,17 @@ export default {
 
       fixed_transfer_form: {
         ipt_list: [
+          {
+            type: 'text',
+            value: '1.7500 EOSC',
+            name: 'Fee',
+            decimals: 4,
+            placeholder_info: `${ this.$t('操作包含领取分红，转投两步操作') }`,
+            placeholder: this.$t('手续费').split('').map((v, i) => {
+              if(i == 0) return v.toUpperCase()
+              return v
+            }).join('')
+          },
           {
             type: 'text',
             value: '',
@@ -661,8 +729,8 @@ export default {
           disabled: toNumber(this.stakedAmount) <= 0,
         },
         '2': {
-          title: this.$t('转投金额（整数）'),
-          confirm: this.$t('转投金额（整数）'),
+          title: this.$t('转投金额'),
+          confirm: this.$t('转投金额'),
           tip: this.$t('* 立即生效'),
           max:  toNumber(this.stakedAmount),
           maxTip: this.$t('超过可用投票金额！'),
@@ -847,7 +915,7 @@ export default {
       let new_val = this.fix_add_form.ipt_list.find(i => i.name == 'new_val');
 
       if(toNumber(ammount.value) + toNumber(claim_fee.value) > toNumber(available.value)){
-        ammount.error = '超过可用余额';
+        ammount.error = this.$t('超过可用余额');
         return false;
       }
 
